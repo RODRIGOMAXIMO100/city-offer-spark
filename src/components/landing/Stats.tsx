@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Building2, Users, MousePointerClick, Banknote } from "lucide-react";
 
 const stats = [
@@ -33,10 +33,14 @@ const stats = [
   },
 ];
 
-function AnimatedNumber({ value, prefix = "", suffix = "" }: { value: number; prefix?: string; suffix?: string }) {
+function AnimatedNumber({ value, prefix = "", suffix = "", isVisible }: { value: number; prefix?: string; suffix?: string; isVisible: boolean }) {
   const [count, setCount] = useState(0);
+  const hasAnimated = useRef(false);
 
   useEffect(() => {
+    if (!isVisible || hasAnimated.current) return;
+    hasAnimated.current = true;
+
     const duration = 2000;
     const steps = 60;
     const increment = value / steps;
@@ -53,18 +57,15 @@ function AnimatedNumber({ value, prefix = "", suffix = "" }: { value: number; pr
     }, duration / steps);
 
     return () => clearInterval(timer);
-  }, [value]);
+  }, [value, isVisible]);
 
   const formatted = count.toLocaleString("pt-BR");
-  return (
-    <span>
-      {prefix}{formatted}{suffix}
-    </span>
-  );
+  return <span>{prefix}{formatted}{suffix}</span>;
 }
 
 export function Stats() {
   const [isVisible, setIsVisible] = useState(false);
+  const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -76,41 +77,53 @@ export function Stats() {
       { threshold: 0.2 }
     );
 
-    const element = document.getElementById("stats-section");
-    if (element) observer.observe(element);
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
 
     return () => observer.disconnect();
   }, []);
 
   return (
-    <section id="stats-section" className="py-20 bg-background">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl sm:text-4xl font-bold mb-4">
-            Números que falam por si
+    <section ref={sectionRef} className="section-padding landing-section bg-muted/30 relative overflow-hidden">
+      {/* Background */}
+      <div className="absolute inset-0 bg-grid-pattern opacity-30" />
+      
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-16">
+          <span className="text-primary font-semibold text-sm uppercase tracking-wider">Resultados</span>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold mt-3 mb-4">
+            Números que impressionam
           </h2>
-          <p className="text-lg text-muted-foreground">
-            Nossa plataforma cresce a cada dia conectando empresas, divulgadores e clientes
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            Nossa plataforma cresce a cada dia conectando o ecossistema local
           </p>
         </div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
-          {stats.map((stat) => (
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {stats.map((stat, index) => (
             <div
               key={stat.label}
-              className="text-center p-6 rounded-2xl bg-card border border-border hover:shadow-lg transition-shadow"
+              className="stat-card group"
+              style={{ animationDelay: `${index * 0.1}s` }}
             >
-              <div className={`w-14 h-14 mx-auto mb-4 rounded-xl bg-${stat.color}/10 flex items-center justify-center`}>
-                <stat.icon className={`h-7 w-7 text-${stat.color}`} />
+              {/* Glow Effect */}
+              <div className={`absolute inset-0 bg-${stat.color}/5 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
+              
+              <div className="relative">
+                <div className={`w-16 h-16 mx-auto mb-6 rounded-2xl bg-${stat.color}/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
+                  <stat.icon className={`h-8 w-8 text-${stat.color}`} />
+                </div>
+                <p className="text-4xl sm:text-5xl font-display font-bold mb-2">
+                  <AnimatedNumber 
+                    value={stat.value} 
+                    prefix={stat.prefix} 
+                    suffix={stat.suffix} 
+                    isVisible={isVisible}
+                  />
+                </p>
+                <p className="text-muted-foreground">{stat.label}</p>
               </div>
-              <p className="text-3xl sm:text-4xl font-bold mb-2">
-                {isVisible ? (
-                  <AnimatedNumber value={stat.value} prefix={stat.prefix} suffix={stat.suffix} />
-                ) : (
-                  <span>{stat.prefix}0{stat.suffix}</span>
-                )}
-              </p>
-              <p className="text-muted-foreground">{stat.label}</p>
             </div>
           ))}
         </div>
