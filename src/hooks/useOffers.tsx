@@ -21,6 +21,7 @@ export function useOffers(city?: string) {
           profiles!offers_company_id_fkey(name, instagram_url)
         `)
         .eq('active', true)
+        .is('deleted_at', null)
         .gt('expires_at', new Date().toISOString())
         .order('clicks_count', { ascending: false });
 
@@ -50,6 +51,7 @@ export function useOffers(city?: string) {
         .from('offers')
         .select('*')
         .eq('company_id', profile.id)
+        .is('deleted_at', null)
         .order('created_at', { ascending: false });
 
       if (fetchError) throw fetchError;
@@ -135,9 +137,13 @@ export function useOffers(city?: string) {
 
   const deleteOffer = async (offerId: string) => {
     try {
+      // Soft delete: apenas marca como deletado, preserva histórico de cliques
       const { error } = await supabase
         .from('offers')
-        .delete()
+        .update({ 
+          deleted_at: new Date().toISOString(),
+          active: false 
+        })
         .eq('id', offerId);
 
       if (error) throw error;
