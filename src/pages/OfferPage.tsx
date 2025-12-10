@@ -7,6 +7,22 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Loader2, Clock, MessageCircle, Globe, FileText, MapPin, Sparkles, Instagram } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+// Gera fingerprint do navegador para anti-fraude
+const generateFingerprint = (): string => {
+  const data = [
+    navigator.userAgent,
+    navigator.language,
+    screen.width,
+    screen.height,
+    screen.colorDepth,
+    new Date().getTimezoneOffset(),
+    navigator.hardwareConcurrency || 0,
+    navigator.maxTouchPoints || 0,
+  ].join('|');
+  
+  // Hash simples usando btoa
+  return btoa(data).substring(0, 32);
+};
 
 export default function OfferPage() {
   const { id } = useParams<{ id: string }>();
@@ -111,7 +127,7 @@ export default function OfferPage() {
         body: {
           offerId: offer.id,
           affiliateId,
-          clientIp: '',
+          fingerprint: generateFingerprint(),
           userAgent: navigator.userAgent,
           clickType: 'MAIN',
         },
