@@ -4,6 +4,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { HelpCircle } from "lucide-react";
 
 const faqs = [
   {
@@ -30,26 +31,19 @@ const faqs = [
     question: "Como cliente, preciso pagar algo?",
     answer: "Não! O acesso às ofertas é 100% gratuito para clientes. Você só precisa criar uma conta para usar a IA personalizada e salvar suas preferências.",
   },
-  {
-    question: "Posso ser divulgador e empresa ao mesmo tempo?",
-    answer: "Cada conta tem um tipo específico (Empresa, Divulgador ou Cliente). Se você precisa de ambos, recomendamos criar contas separadas com e-mails diferentes.",
-  },
-  {
-    question: "As ofertas têm prazo de validade?",
-    answer: "Sim, toda oferta tem uma data de expiração definida pela empresa. Após essa data, a oferta é automaticamente desativada e não aparece mais para os clientes.",
-  },
 ];
 
 export function FAQ() {
   return (
-    <section id="faq" className="py-20 bg-muted/30">
+    <section id="faq" className="section-padding landing-section">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl sm:text-4xl font-bold mb-4">
-            Perguntas Frequentes
+        <div className="text-center mb-16">
+          <span className="text-primary font-semibold text-sm uppercase tracking-wider">FAQ</span>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold mt-3 mb-4">
+            Perguntas frequentes
           </h2>
           <p className="text-lg text-muted-foreground">
-            Tire suas dúvidas sobre como funciona a plataforma
+            Tire suas dúvidas sobre a plataforma
           </p>
         </div>
 
@@ -58,12 +52,15 @@ export function FAQ() {
             <AccordionItem
               key={index}
               value={`item-${index}`}
-              className="bg-card border border-border rounded-lg px-6"
+              className="bg-card border border-border rounded-2xl px-6 data-[state=open]:shadow-lg transition-shadow"
             >
-              <AccordionTrigger className="text-left hover:no-underline py-4">
-                {faq.question}
+              <AccordionTrigger className="text-left hover:no-underline py-5 gap-4">
+                <div className="flex items-center gap-3">
+                  <HelpCircle className="h-5 w-5 text-primary shrink-0" />
+                  <span className="font-semibold">{faq.question}</span>
+                </div>
               </AccordionTrigger>
-              <AccordionContent className="text-muted-foreground pb-4">
+              <AccordionContent className="text-muted-foreground pb-5 pl-8">
                 {faq.answer}
               </AccordionContent>
             </AccordionItem>

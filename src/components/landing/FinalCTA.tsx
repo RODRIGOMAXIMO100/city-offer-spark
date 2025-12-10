@@ -31,14 +31,23 @@ const options = [
 
 export function FinalCTA() {
   return (
-    <section className="py-20 bg-gradient-to-b from-background to-muted/50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl sm:text-4xl font-bold mb-4">
-            Pronto para começar?
+    <section className="section-padding landing-section relative overflow-hidden">
+      {/* Background */}
+      <div className="absolute inset-0 bg-gradient-to-b from-muted/50 to-background" />
+      <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
+      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-accent/10 rounded-full blur-3xl" />
+      
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-16">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold mb-4">
+            Pronto para{" "}
+            <span className="bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
+              começar
+            </span>
+            ?
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Escolha como você quer participar do ecossistema clilin e comece agora mesmo
+            Escolha como você quer participar do ecossistema clilin
           </p>
         </div>
 
@@ -46,21 +55,26 @@ export function FinalCTA() {
           {options.map((option) => (
             <div
               key={option.title}
-              className={`bg-card rounded-2xl border border-border p-6 hover:border-${option.color}/50 hover:shadow-xl transition-all duration-300 flex flex-col`}
+              className={`glass-card rounded-3xl p-8 hover:shadow-2xl transition-all duration-500 flex flex-col group relative overflow-hidden`}
             >
-              <div className={`w-14 h-14 rounded-xl bg-${option.color}/10 flex items-center justify-center mb-4`}>
-                <option.icon className={`h-7 w-7 text-${option.color}`} />
+              {/* Hover Glow */}
+              <div className={`absolute inset-0 bg-${option.color}/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
+              
+              <div className="relative">
+                <div className={`w-16 h-16 rounded-2xl bg-${option.color}/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
+                  <option.icon className={`h-8 w-8 text-${option.color}`} />
+                </div>
+                
+                <h3 className="text-2xl font-display font-bold mb-2">{option.title}</h3>
+                <p className="text-muted-foreground mb-8 flex-grow">{option.description}</p>
+                
+                <Button asChild className={`w-full h-12 bg-${option.color} hover:bg-${option.color}/90 shadow-lg shadow-${option.color}/25 hover:shadow-xl hover:shadow-${option.color}/30 transition-all`}>
+                  <Link to={`/auth?role=${option.role}`}>
+                    {option.cta}
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
+                </Button>
               </div>
-              
-              <h3 className="text-xl font-semibold mb-2">{option.title}</h3>
-              <p className="text-muted-foreground mb-6 flex-grow">{option.description}</p>
-              
-              <Button asChild className={`w-full bg-${option.color} hover:bg-${option.color}/90`}>
-                <Link to={`/auth?role=${option.role}`}>
-                  {option.cta}
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
             </div>
           ))}
         </div>
