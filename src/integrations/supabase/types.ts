@@ -17,6 +17,7 @@ export type Database = {
       offer_clicks: {
         Row: {
           affiliate_id: string | null
+          click_type: string | null
           client_ip: string | null
           created_at: string
           id: string
@@ -25,6 +26,7 @@ export type Database = {
         }
         Insert: {
           affiliate_id?: string | null
+          click_type?: string | null
           client_ip?: string | null
           created_at?: string
           id?: string
@@ -33,6 +35,7 @@ export type Database = {
         }
         Update: {
           affiliate_id?: string | null
+          click_type?: string | null
           client_ip?: string | null
           created_at?: string
           id?: string
@@ -127,6 +130,7 @@ export type Database = {
           city: string
           created_at: string
           id: string
+          instagram_url: string | null
           name: string
           pix_key: string | null
           preferences: string[] | null
@@ -138,6 +142,7 @@ export type Database = {
           city?: string
           created_at?: string
           id?: string
+          instagram_url?: string | null
           name: string
           pix_key?: string | null
           preferences?: string[] | null
@@ -149,6 +154,7 @@ export type Database = {
           city?: string
           created_at?: string
           id?: string
+          instagram_url?: string | null
           name?: string
           pix_key?: string | null
           preferences?: string[] | null

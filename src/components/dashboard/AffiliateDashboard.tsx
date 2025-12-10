@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useOffers } from '@/hooks/useOffers';
 import { formatCreditsToReal, CONFIG } from '@/types/database';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Banknote, LogOut, Share2, Copy, Check, TrendingUp, Loader2, MapPin } from 'lucide-react';
+import { Banknote, LogOut, Share2, Copy, Check, TrendingUp, Loader2, MapPin, Instagram, Clock } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 export default function AffiliateDashboard() {
@@ -40,9 +40,27 @@ export default function AffiliateDashboard() {
     }
   };
 
+  const openInstagram = (instagramUrl: string) => {
+    window.open(instagramUrl, '_blank');
+  };
+
   const getScore = (offer: typeof offers[0]) => {
     if (offer.views_count === 0) return 0;
     return ((offer.clicks_count / offer.views_count) * 100).toFixed(1);
+  };
+
+  const getExpirationInfo = (expiresAt: string) => {
+    const now = new Date();
+    const expires = new Date(expiresAt);
+    const diff = expires.getTime() - now.getTime();
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    
+    if (diff <= 0) return { text: 'Expirada', color: 'bg-destructive', urgent: true };
+    if (days < 1) return { text: `${hours}h restantes!`, color: 'bg-destructive', urgent: true };
+    if (days <= 3) return { text: `${days}d restantes`, color: 'bg-orange-500', urgent: true };
+    if (days <= 7) return { text: `${days}d restantes`, color: 'bg-yellow-500', urgent: false };
+    return { text: `${days}d restantes`, color: 'bg-muted', urgent: false };
   };
 
   return (
@@ -134,22 +152,32 @@ export default function AffiliateDashboard() {
             <div className="space-y-3">
               {sortedOffers.map((offer, index) => {
                 const discount = Math.round((1 - offer.price_new / offer.price_old) * 100);
+                const expInfo = getExpirationInfo(offer.expires_at);
                 
                 return (
                   <Card key={offer.id} className="overflow-hidden">
                     <CardContent className="p-4">
-                      {/* Rank Badge */}
-                      {index < 3 && (
+                      {/* Rank Badge & Expiration */}
+                      <div className="flex justify-between items-center mb-2">
+                        {index < 3 && (
+                          <Badge 
+                            className={`${
+                              index === 0 ? 'bg-yellow-500' : 
+                              index === 1 ? 'bg-gray-400' : 
+                              'bg-amber-600'
+                            }`}
+                          >
+                            #{index + 1} Top
+                          </Badge>
+                        )}
                         <Badge 
-                          className={`mb-2 ${
-                            index === 0 ? 'bg-yellow-500' : 
-                            index === 1 ? 'bg-gray-400' : 
-                            'bg-amber-600'
-                          }`}
+                          variant="outline" 
+                          className={`ml-auto flex items-center gap-1 ${expInfo.urgent ? 'border-destructive text-destructive' : ''}`}
                         >
-                          #{index + 1} Top
+                          <Clock className="h-3 w-3" />
+                          {expInfo.text}
                         </Badge>
-                      )}
+                      </div>
 
                       <div className="flex justify-between items-start mb-2">
                         <div>
@@ -160,6 +188,20 @@ export default function AffiliateDashboard() {
                           -{discount}%
                         </Badge>
                       </div>
+
+                      {/* Instagram Button */}
+                      {offer.profiles?.instagram_url && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="w-full mb-3 text-pink-500 border-pink-500/30 hover:bg-pink-500/10"
+                          onClick={() => openInstagram(offer.profiles!.instagram_url!)}
+                        >
+                          <Instagram className="mr-2 h-4 w-4" />
+                          Conhecer no Instagram
+                          <span className="ml-2 text-xs text-muted-foreground">(grátis)</span>
+                        </Button>
+                      )}
 
                       <div className="flex items-center gap-4 text-sm mb-3">
                         <span className="line-through text-muted-foreground">

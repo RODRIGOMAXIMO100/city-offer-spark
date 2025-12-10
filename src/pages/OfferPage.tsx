@@ -5,7 +5,7 @@ import { Offer, CONFIG } from '@/types/database';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, Clock, MessageCircle, Globe, FileText, MapPin, Sparkles } from 'lucide-react';
+import { Loader2, Clock, MessageCircle, Globe, FileText, MapPin, Sparkles, Instagram } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 export default function OfferPage() {
@@ -30,7 +30,7 @@ export default function OfferPage() {
         .from('offers')
         .select(`
           *,
-          profiles!offers_company_id_fkey(name)
+          profiles!offers_company_id_fkey(name, instagram_url)
         `)
         .eq('id', id)
         .single();
@@ -39,6 +39,17 @@ export default function OfferPage() {
         toast({
           title: 'Oferta não encontrada',
           description: 'Esta oferta pode ter expirado ou sido removida.',
+          variant: 'destructive',
+        });
+        navigate('/');
+        return;
+      }
+
+      // Check if expired
+      if (new Date(data.expires_at) < new Date()) {
+        toast({
+          title: 'Oferta expirada',
+          description: 'Esta oferta já expirou.',
           variant: 'destructive',
         });
         navigate('/');
@@ -105,6 +116,7 @@ export default function OfferPage() {
           affiliateId,
           clientIp: '',
           userAgent: navigator.userAgent,
+          clickType: 'MAIN',
         },
       });
 
@@ -135,6 +147,11 @@ export default function OfferPage() {
     }
   };
 
+  const handleInstagramClick = () => {
+    if (!offer?.profiles?.instagram_url) return;
+    window.open(offer.profiles.instagram_url, '_blank');
+  };
+
   const getLinkIcon = () => {
     switch (offer?.link_type) {
       case 'WHATSAPP':
@@ -161,6 +178,19 @@ export default function OfferPage() {
     }
   };
 
+  const getExpirationUrgency = () => {
+    if (!offer) return { color: '', urgent: false };
+    const now = new Date();
+    const expires = new Date(offer.expires_at);
+    const diff = expires.getTime() - now.getTime();
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    
+    if (days < 1) return { color: 'text-destructive animate-pulse', urgent: true };
+    if (days <= 3) return { color: 'text-orange-500', urgent: true };
+    if (days <= 7) return { color: 'text-yellow-500', urgent: false };
+    return { color: 'text-secondary-foreground/80', urgent: false };
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -174,6 +204,7 @@ export default function OfferPage() {
   }
 
   const discount = Math.round((1 - offer.price_new / offer.price_old) * 100);
+  const urgency = getExpirationUrgency();
 
   return (
     <div className="min-h-screen bg-muted/30 flex items-center justify-center p-4">
@@ -184,7 +215,7 @@ export default function OfferPage() {
             <Badge variant="destructive" className="text-sm font-bold px-3 py-1">
               -{discount}% OFF
             </Badge>
-            <div className="flex items-center gap-1 text-sm opacity-90">
+            <div className={`flex items-center gap-1 text-sm ${urgency.color}`}>
               <Clock className="h-4 w-4" />
               {timeLeft}
             </div>
@@ -210,6 +241,19 @@ export default function OfferPage() {
             <p className="text-muted-foreground">
               {offer.description}
             </p>
+          )}
+
+          {/* Instagram Button */}
+          {offer.profiles?.instagram_url && (
+            <Button
+              variant="outline"
+              className="w-full text-pink-500 border-pink-500/30 hover:bg-pink-500/10"
+              onClick={handleInstagramClick}
+            >
+              <Instagram className="mr-2 h-5 w-5" />
+              Conheça no Instagram
+              <span className="ml-2 text-xs text-muted-foreground">(grátis)</span>
+            </Button>
           )}
 
           {/* Prices */}

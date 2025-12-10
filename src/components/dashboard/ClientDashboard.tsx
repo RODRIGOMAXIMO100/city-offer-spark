@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Sparkles, Send, LogOut, Bot, User, Loader2, MapPin } from 'lucide-react';
+import { Sparkles, Send, LogOut, Bot, Loader2, MapPin, Instagram } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 interface Message {
@@ -19,6 +19,7 @@ interface Message {
     price_old: number;
     price_new: number;
     discount: number;
+    instagram_url?: string;
   }>;
 }
 
@@ -100,6 +101,11 @@ export default function ClientDashboard() {
     }
   };
 
+  const openInstagram = (url: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    window.open(url, '_blank');
+  };
+
   return (
     <div className="min-h-screen bg-client-muted flex flex-col">
       {/* Header */}
@@ -161,6 +167,20 @@ export default function ClientDashboard() {
                           </Badge>
                         </div>
                         <p className="text-xs text-muted-foreground mb-2">{offer.title}</p>
+                        
+                        {/* Instagram button */}
+                        {offer.instagram_url && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="w-full mb-2 text-pink-500 border-pink-500/30 hover:bg-pink-500/10 text-xs"
+                            onClick={(e) => openInstagram(offer.instagram_url!, e)}
+                          >
+                            <Instagram className="mr-1 h-3 w-3" />
+                            Conhecer no Instagram
+                          </Button>
+                        )}
+
                         <div className="flex justify-between items-center">
                           <div>
                             <span className="text-xs line-through text-muted-foreground mr-2">

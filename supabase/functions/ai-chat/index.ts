@@ -35,7 +35,7 @@ serve(async (req) => {
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Fetch active offers from the city
+    // Fetch active offers from the city (not expired)
     const { data: offers, error: offersError } = await supabase
       .from("offers")
       .select(`
@@ -46,10 +46,11 @@ serve(async (req) => {
         price_new,
         tags,
         city,
-        profiles!offers_company_id_fkey(name)
+        profiles!offers_company_id_fkey(name, instagram_url)
       `)
       .eq("city", city)
       .eq("active", true)
+      .gt("expires_at", new Date().toISOString())
       .order("clicks_count", { ascending: false })
       .limit(20);
 
@@ -66,6 +67,7 @@ serve(async (req) => {
       discount: Math.round((1 - o.price_new / o.price_old) * 100),
       tags: o.tags || [],
       company: o.profiles?.name || "Empresa",
+      instagram_url: o.profiles?.instagram_url || null,
     })) || [];
 
     const systemPrompt = `Você é a Clilin AI, uma assistente inteligente de ofertas locais em ${city}.
