@@ -14,6 +14,47 @@ export type Database = {
   }
   public: {
     Tables: {
+      click_rate_limits: {
+        Row: {
+          blocked: boolean | null
+          click_count: number | null
+          fingerprint: string | null
+          first_click_at: string | null
+          id: string
+          ip_address: string
+          last_click_at: string | null
+          offer_id: string
+        }
+        Insert: {
+          blocked?: boolean | null
+          click_count?: number | null
+          fingerprint?: string | null
+          first_click_at?: string | null
+          id?: string
+          ip_address: string
+          last_click_at?: string | null
+          offer_id: string
+        }
+        Update: {
+          blocked?: boolean | null
+          click_count?: number | null
+          fingerprint?: string | null
+          first_click_at?: string | null
+          id?: string
+          ip_address?: string
+          last_click_at?: string | null
+          offer_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "click_rate_limits_offer_id_fkey"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "offers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       offer_clicks: {
         Row: {
           affiliate_id: string | null
@@ -234,6 +275,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      cleanup_old_rate_limits: { Args: never; Returns: undefined }
       get_current_profile_id: { Args: never; Returns: string }
       get_current_user_role: {
         Args: never
