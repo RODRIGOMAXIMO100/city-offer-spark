@@ -21,7 +21,7 @@ export type Database = {
           client_ip: string | null
           created_at: string
           id: string
-          offer_id: string
+          offer_id: string | null
           user_agent: string | null
         }
         Insert: {
@@ -30,7 +30,7 @@ export type Database = {
           client_ip?: string | null
           created_at?: string
           id?: string
-          offer_id: string
+          offer_id?: string | null
           user_agent?: string | null
         }
         Update: {
@@ -39,7 +39,7 @@ export type Database = {
           client_ip?: string | null
           created_at?: string
           id?: string
-          offer_id?: string
+          offer_id?: string | null
           user_agent?: string | null
         }
         Relationships: [
@@ -66,6 +66,7 @@ export type Database = {
           clicks_count: number
           company_id: string
           created_at: string
+          deleted_at: string | null
           description: string | null
           expires_at: string
           id: string
@@ -84,6 +85,7 @@ export type Database = {
           clicks_count?: number
           company_id: string
           created_at?: string
+          deleted_at?: string | null
           description?: string | null
           expires_at?: string
           id?: string
@@ -102,6 +104,7 @@ export type Database = {
           clicks_count?: number
           company_id?: string
           created_at?: string
+          deleted_at?: string | null
           description?: string | null
           expires_at?: string
           id?: string
