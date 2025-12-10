@@ -127,20 +127,36 @@ export function useOffers(city?: string) {
 
   const incrementView = async (offerId: string) => {
     try {
-      const { data: offer } = await supabase
-        .from('offers')
-        .select('views_count')
-        .eq('id', offerId)
-        .single();
-
-      if (offer) {
-        await supabase
-          .from('offers')
-          .update({ views_count: offer.views_count + 1 })
-          .eq('id', offerId);
-      }
+      await supabase.rpc('increment_offer_views', { offer_id: offerId });
     } catch (err) {
       console.error('Error incrementing view:', err);
+    }
+  };
+
+  const deleteOffer = async (offerId: string) => {
+    try {
+      const { error } = await supabase
+        .from('offers')
+        .delete()
+        .eq('id', offerId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Oferta deletada",
+        description: "A oferta foi removida com sucesso.",
+      });
+
+      await fetchMyOffers();
+      return true;
+    } catch (err) {
+      console.error('Error deleting offer:', err);
+      toast({
+        title: "Erro ao deletar",
+        description: (err as Error).message,
+        variant: "destructive",
+      });
+      return false;
     }
   };
 
@@ -156,5 +172,6 @@ export function useOffers(city?: string) {
     fetchMyOffers,
     createOffer,
     incrementView,
+    deleteOffer,
   };
 }

@@ -7,18 +7,36 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Coins, PlusCircle, LogOut, Eye, MousePointer, TrendingUp, Loader2, Instagram, Check, Clock } from 'lucide-react';
+import { Coins, PlusCircle, LogOut, Eye, MousePointer, TrendingUp, Loader2, Instagram, Check, Clock, Trash2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import CreateOfferModal from './CreateOfferModal';
+import PerformanceChart from './PerformanceChart';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 
 export default function CompanyDashboard() {
   const { profile, signOut, refreshProfile } = useAuth();
-  const { offers, loading, fetchMyOffers } = useOffers();
+  const { offers, loading, fetchMyOffers, deleteOffer } = useOffers();
   const { toast } = useToast();
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [instagramUrl, setInstagramUrl] = useState(profile?.instagram_url || '');
   const [savingInstagram, setSavingInstagram] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  const handleDeleteOffer = async (offerId: string) => {
+    setDeletingId(offerId);
+    await deleteOffer(offerId);
+    setDeletingId(null);
+  };
 
   useEffect(() => {
     fetchMyOffers();
@@ -194,6 +212,9 @@ export default function CompanyDashboard() {
           </Card>
         </div>
 
+        {/* Performance Chart */}
+        <PerformanceChart />
+
         {/* Create Offer Button */}
         <Button
           onClick={() => setShowCreateModal(true)}
@@ -230,7 +251,7 @@ export default function CompanyDashboard() {
                   <Card key={offer.id} className={`${!offer.active ? 'opacity-60' : ''}`}>
                     <CardContent className="p-4">
                       <div className="flex justify-between items-start mb-2">
-                        <h3 className="font-bold text-foreground">{offer.title}</h3>
+                        <h3 className="font-bold text-foreground flex-1">{offer.title}</h3>
                         <div className="flex items-center gap-2">
                           <div className={`flex items-center gap-1 text-xs ${expInfo.color}`}>
                             <Clock className="h-3 w-3" />
@@ -239,6 +260,39 @@ export default function CompanyDashboard() {
                           <Badge variant={offer.active ? 'default' : 'secondary'}>
                             {offer.active ? 'Ativa' : 'Pausada'}
                           </Badge>
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button 
+                                variant="ghost" 
+                                size="icon" 
+                                className="h-7 w-7 text-destructive hover:bg-destructive/10"
+                                disabled={deletingId === offer.id}
+                              >
+                                {deletingId === offer.id ? (
+                                  <Loader2 className="h-4 w-4 animate-spin" />
+                                ) : (
+                                  <Trash2 className="h-4 w-4" />
+                                )}
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>Deletar oferta?</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  Esta ação não pode ser desfeita. A oferta "{offer.title}" será permanentemente removida.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                                <AlertDialogAction 
+                                  onClick={() => handleDeleteOffer(offer.id)}
+                                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                >
+                                  Deletar
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
                         </div>
                       </div>
                       <p className="text-sm text-muted-foreground mb-3">
