@@ -67,19 +67,29 @@ export default function AffiliateDashboard() {
     <div className="min-h-screen bg-affiliate-muted pb-20">
       {/* Header */}
       <header className="bg-card border-b border-border sticky top-0 z-10">
-        <div className="max-w-2xl mx-auto px-4 py-4 flex justify-between items-center">
-          <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-bold text-affiliate">clilin</h1>
-            <Badge variant="outline" className="text-affiliate border-affiliate">
-              Divulgador
-            </Badge>
+        <div className="max-w-2xl mx-auto px-4 py-3">
+          {/* Top row: Logo + Logout */}
+          <div className="flex justify-between items-center mb-2">
+            <div className="flex items-center gap-2">
+              <h1 className="text-xl sm:text-2xl font-bold text-affiliate">clilin</h1>
+              <Badge variant="outline" className="text-affiliate border-affiliate text-xs">
+                Divulgador
+              </Badge>
+            </div>
+            <Button size="icon" variant="outline" onClick={signOut} className="shrink-0">
+              <LogOut className="h-4 w-4" />
+            </Button>
           </div>
-          <div className="flex items-center gap-3">
-            <div className="text-right mr-2">
-              <p className="text-xs text-muted-foreground">Saldo</p>
-              <div className="flex items-center gap-1 text-affiliate font-bold">
-                <Banknote className="h-4 w-4" />
-                {formatCreditsToReal(profile?.balance || 0)}
+          
+          {/* Bottom row: Balance + Sacar */}
+          <div className="flex justify-between items-center bg-muted/50 rounded-lg p-2">
+            <div className="flex items-center gap-2">
+              <Banknote className="h-5 w-5 text-affiliate" />
+              <div>
+                <p className="text-xs text-muted-foreground">Saldo disponível</p>
+                <p className="font-bold text-affiliate">
+                  {formatCreditsToReal(profile?.balance || 0)}
+                </p>
               </div>
             </div>
             <Button
@@ -98,9 +108,6 @@ export default function AffiliateDashboard() {
               }}
             >
               Sacar PIX
-            </Button>
-            <Button size="icon" variant="ghost" onClick={signOut}>
-              <LogOut className="h-4 w-4" />
             </Button>
           </div>
         </div>
