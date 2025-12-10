@@ -10,6 +10,7 @@ export interface Profile {
   balance: number;
   pix_key?: string;
   preferences?: string[];
+  instagram_url?: string;
   created_at: string;
   updated_at: string;
 }
@@ -40,6 +41,7 @@ export interface Offer {
   // Joined fields
   profiles?: {
     name: string;
+    instagram_url?: string;
   };
 }
 
@@ -59,6 +61,7 @@ export interface OfferClick {
   affiliate_id?: string;
   client_ip?: string;
   user_agent?: string;
+  click_type?: 'MAIN' | 'INSTAGRAM';
   created_at: string;
 }
 

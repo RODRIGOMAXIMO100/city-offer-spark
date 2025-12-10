@@ -18,9 +18,10 @@ export function useOffers(city?: string) {
         .from('offers')
         .select(`
           *,
-          profiles!offers_company_id_fkey(name)
+          profiles!offers_company_id_fkey(name, instagram_url)
         `)
         .eq('active', true)
+        .gt('expires_at', new Date().toISOString())
         .order('clicks_count', { ascending: false });
 
       if (city) {
@@ -70,6 +71,7 @@ export function useOffers(city?: string) {
     link_destination: string;
     link_type: LinkType;
     city: string;
+    expires_at: string;
   }) => {
     if (!profile) {
       toast({
@@ -98,6 +100,7 @@ export function useOffers(city?: string) {
           link_destination: offerData.link_destination,
           link_type: offerData.link_type,
           city: offerData.city,
+          expires_at: offerData.expires_at,
           tags: [...autoTags, 'oferta', 'promoção'],
         })
         .select()

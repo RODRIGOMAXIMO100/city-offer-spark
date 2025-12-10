@@ -2,20 +2,31 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useOffers } from '@/hooks/useOffers';
 import { formatCredits, CONFIG } from '@/types/database';
+import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Coins, PlusCircle, LogOut, Eye, MousePointer, TrendingUp, Loader2 } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Coins, PlusCircle, LogOut, Eye, MousePointer, TrendingUp, Loader2, Instagram, Check, Clock } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 import CreateOfferModal from './CreateOfferModal';
 
 export default function CompanyDashboard() {
   const { profile, signOut, refreshProfile } = useAuth();
   const { offers, loading, fetchMyOffers } = useOffers();
+  const { toast } = useToast();
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [instagramUrl, setInstagramUrl] = useState(profile?.instagram_url || '');
+  const [savingInstagram, setSavingInstagram] = useState(false);
 
   useEffect(() => {
     fetchMyOffers();
   }, []);
+
+  useEffect(() => {
+    setInstagramUrl(profile?.instagram_url || '');
+  }, [profile?.instagram_url]);
 
   const totalSpent = offers.reduce((acc, o) => acc + (o.clicks_count * CONFIG.CPC_COST_COMPANY), 0);
   const totalClicks = offers.reduce((acc, o) => acc + o.clicks_count, 0);
@@ -25,6 +36,65 @@ export default function CompanyDashboard() {
     setShowCreateModal(false);
     fetchMyOffers();
     refreshProfile();
+  };
+
+  const formatInstagramUrl = (input: string): string => {
+    const trimmed = input.trim();
+    if (!trimmed) return '';
+    
+    // If starts with @, convert to full URL
+    if (trimmed.startsWith('@')) {
+      return `https://instagram.com/${trimmed.slice(1)}`;
+    }
+    // If it's just a username without @
+    if (!trimmed.includes('instagram.com') && !trimmed.startsWith('http')) {
+      return `https://instagram.com/${trimmed}`;
+    }
+    // If it's already a URL, ensure https
+    if (trimmed.includes('instagram.com') && !trimmed.startsWith('http')) {
+      return `https://${trimmed}`;
+    }
+    return trimmed;
+  };
+
+  const saveInstagram = async () => {
+    if (!profile) return;
+    
+    setSavingInstagram(true);
+    const formattedUrl = formatInstagramUrl(instagramUrl);
+    
+    const { error } = await supabase
+      .from('profiles')
+      .update({ instagram_url: formattedUrl || null })
+      .eq('id', profile.id);
+
+    if (error) {
+      toast({
+        title: 'Erro ao salvar',
+        description: error.message,
+        variant: 'destructive',
+      });
+    } else {
+      toast({
+        title: 'Instagram salvo!',
+        description: 'Os clientes poderão conhecer seu estabelecimento.',
+      });
+      refreshProfile();
+    }
+    setSavingInstagram(false);
+  };
+
+  const getExpirationInfo = (expiresAt: string) => {
+    const now = new Date();
+    const expires = new Date(expiresAt);
+    const diff = expires.getTime() - now.getTime();
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    
+    if (diff <= 0) return { text: 'Expirada', color: 'text-destructive' };
+    if (days < 1) return { text: 'Últimas horas!', color: 'text-destructive' };
+    if (days <= 3) return { text: `${days}d restantes`, color: 'text-orange-500' };
+    if (days <= 7) return { text: `${days}d restantes`, color: 'text-yellow-500' };
+    return { text: `${days}d restantes`, color: 'text-muted-foreground' };
   };
 
   return (
@@ -66,6 +136,39 @@ export default function CompanyDashboard() {
       </header>
 
       <div className="max-w-2xl mx-auto px-4 py-6 space-y-6">
+        {/* Instagram Profile Section */}
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm flex items-center gap-2">
+              <Instagram className="h-4 w-4" />
+              Perfil do Instagram
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <div className="flex gap-2">
+              <Input
+                placeholder="@seu_estabelecimento ou URL"
+                value={instagramUrl}
+                onChange={(e) => setInstagramUrl(e.target.value)}
+              />
+              <Button 
+                onClick={saveInstagram} 
+                disabled={savingInstagram}
+                size="sm"
+              >
+                {savingInstagram ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Check className="h-4 w-4" />
+                )}
+              </Button>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Os clientes poderão conhecer seu estabelecimento antes de acessar a oferta.
+            </p>
+          </CardContent>
+        </Card>
+
         {/* Stats */}
         <div className="grid grid-cols-3 gap-3">
           <Card>
@@ -121,37 +224,46 @@ export default function CompanyDashboard() {
             </Card>
           ) : (
             <div className="space-y-3">
-              {offers.map((offer) => (
-                <Card key={offer.id} className={`${!offer.active ? 'opacity-60' : ''}`}>
-                  <CardContent className="p-4">
-                    <div className="flex justify-between items-start mb-2">
-                      <h3 className="font-bold text-foreground">{offer.title}</h3>
-                      <Badge variant={offer.active ? 'default' : 'secondary'}>
-                        {offer.active ? 'Ativa' : 'Pausada'}
-                      </Badge>
-                    </div>
-                    <p className="text-sm text-muted-foreground mb-3">
-                      {offer.tags?.slice(0, 4).join(', ')}
-                    </p>
-                    <div className="grid grid-cols-3 gap-2 text-center text-sm">
-                      <div className="bg-muted rounded-lg p-2">
-                        <p className="font-bold">{offer.views_count}</p>
-                        <p className="text-xs text-muted-foreground">Views</p>
+              {offers.map((offer) => {
+                const expInfo = getExpirationInfo(offer.expires_at);
+                return (
+                  <Card key={offer.id} className={`${!offer.active ? 'opacity-60' : ''}`}>
+                    <CardContent className="p-4">
+                      <div className="flex justify-between items-start mb-2">
+                        <h3 className="font-bold text-foreground">{offer.title}</h3>
+                        <div className="flex items-center gap-2">
+                          <div className={`flex items-center gap-1 text-xs ${expInfo.color}`}>
+                            <Clock className="h-3 w-3" />
+                            {expInfo.text}
+                          </div>
+                          <Badge variant={offer.active ? 'default' : 'secondary'}>
+                            {offer.active ? 'Ativa' : 'Pausada'}
+                          </Badge>
+                        </div>
                       </div>
-                      <div className="bg-muted rounded-lg p-2">
-                        <p className="font-bold">{offer.clicks_count}</p>
-                        <p className="text-xs text-muted-foreground">Cliques</p>
+                      <p className="text-sm text-muted-foreground mb-3">
+                        {offer.tags?.slice(0, 4).join(', ')}
+                      </p>
+                      <div className="grid grid-cols-3 gap-2 text-center text-sm">
+                        <div className="bg-muted rounded-lg p-2">
+                          <p className="font-bold">{offer.views_count}</p>
+                          <p className="text-xs text-muted-foreground">Views</p>
+                        </div>
+                        <div className="bg-muted rounded-lg p-2">
+                          <p className="font-bold">{offer.clicks_count}</p>
+                          <p className="text-xs text-muted-foreground">Cliques</p>
+                        </div>
+                        <div className="bg-muted rounded-lg p-2">
+                          <p className="font-bold text-destructive">
+                            -{offer.clicks_count * CONFIG.CPC_COST_COMPANY}
+                          </p>
+                          <p className="text-xs text-muted-foreground">C$ Gastos</p>
+                        </div>
                       </div>
-                      <div className="bg-muted rounded-lg p-2">
-                        <p className="font-bold text-destructive">
-                          -{offer.clicks_count * CONFIG.CPC_COST_COMPANY}
-                        </p>
-                        <p className="text-xs text-muted-foreground">C$ Gastos</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+                    </CardContent>
+                  </Card>
+                );
+              })}
             </div>
           )}
         </div>

@@ -17,7 +17,7 @@ serve(async (req) => {
   }
 
   try {
-    const { offerId, affiliateId, clientIp, userAgent } = await req.json();
+    const { offerId, affiliateId, clientIp, userAgent, clickType = 'MAIN' } = await req.json();
 
     if (!offerId) {
       return new Response(
@@ -38,7 +38,7 @@ serve(async (req) => {
         company_id,
         link_destination,
         active,
-        profiles!offers_company_id_fkey(id, balance, user_id)
+        profiles!offers_company_id_fkey(id, balance, user_id, instagram_url)
       `)
       .eq("id", offerId)
       .single();
@@ -59,7 +59,32 @@ serve(async (req) => {
     }
 
     const companyProfile = offer.profiles as any;
-    
+
+    // If it's an Instagram click, it's FREE - just record the click and return
+    if (clickType === 'INSTAGRAM') {
+      // Record click without charging
+      await supabase.from("offer_clicks").insert({
+        offer_id: offerId,
+        affiliate_id: affiliateId || null,
+        client_ip: clientIp,
+        user_agent: userAgent,
+        click_type: 'INSTAGRAM',
+      });
+
+      console.log(`Instagram click recorded for offer ${offerId} - FREE (no credits charged)`);
+
+      return new Response(
+        JSON.stringify({
+          success: true,
+          redirectUrl: companyProfile.instagram_url || offer.link_destination,
+          clickType: 'INSTAGRAM',
+          charged: false,
+        }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // MAIN click - charge credits
     // Check company balance
     if (companyProfile.balance < CPC_COST_COMPANY) {
       // Deactivate offer if no balance
@@ -125,15 +150,20 @@ serve(async (req) => {
       affiliate_id: affiliateId || null,
       client_ip: clientIp,
       user_agent: userAgent,
+      click_type: 'MAIN',
     });
 
     // 5. Increment click count
     await supabase.rpc("increment_offer_clicks", { offer_id: offerId });
 
+    console.log(`Main click processed for offer ${offerId} - Company charged ${CPC_COST_COMPANY} credits`);
+
     return new Response(
       JSON.stringify({
         success: true,
         redirectUrl: offer.link_destination,
+        clickType: 'MAIN',
+        charged: true,
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );

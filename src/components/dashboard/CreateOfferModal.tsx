@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { format, addDays } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 import { useAuth } from '@/hooks/useAuth';
 import { useOffers } from '@/hooks/useOffers';
 import { LinkType } from '@/types/database';
@@ -6,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Calendar } from '@/components/ui/calendar';
 import {
   Dialog,
   DialogContent,
@@ -13,7 +16,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { MessageCircle, FileText, Globe, Loader2 } from 'lucide-react';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import { MessageCircle, FileText, Globe, Loader2, CalendarIcon } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface CreateOfferModalProps {
   open: boolean;
@@ -39,6 +48,7 @@ export default function CreateOfferModal({ open, onClose, onSuccess }: CreateOff
     price_new: '',
     link_destination: '',
     link_type: 'WHATSAPP' as LinkType,
+    expires_at: addDays(new Date(), 7),
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -55,6 +65,7 @@ export default function CreateOfferModal({ open, onClose, onSuccess }: CreateOff
       link_destination: formData.link_destination,
       link_type: formData.link_type,
       city: profile.city,
+      expires_at: formData.expires_at.toISOString(),
     });
 
     setLoading(false);
@@ -67,10 +78,14 @@ export default function CreateOfferModal({ open, onClose, onSuccess }: CreateOff
         price_new: '',
         link_destination: '',
         link_type: 'WHATSAPP',
+        expires_at: addDays(new Date(), 7),
       });
       onSuccess();
     }
   };
+
+  const minDate = addDays(new Date(), 1);
+  const maxDate = addDays(new Date(), 30);
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -131,6 +146,42 @@ export default function CreateOfferModal({ open, onClose, onSuccess }: CreateOff
                 required
               />
             </div>
+          </div>
+
+          {/* Expiration Date Picker */}
+          <div className="space-y-2">
+            <Label>Data de Expiração *</Label>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className={cn(
+                    "w-full justify-start text-left font-normal",
+                    !formData.expires_at && "text-muted-foreground"
+                  )}
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {formData.expires_at ? (
+                    format(formData.expires_at, "PPP", { locale: ptBR })
+                  ) : (
+                    <span>Selecione uma data</span>
+                  )}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={formData.expires_at}
+                  onSelect={(date) => date && setFormData({ ...formData, expires_at: date })}
+                  disabled={(date) => date < minDate || date > maxDate}
+                  initialFocus
+                  className="p-3 pointer-events-auto"
+                />
+              </PopoverContent>
+            </Popover>
+            <p className="text-xs text-muted-foreground">
+              Mínimo: amanhã • Máximo: 30 dias
+            </p>
           </div>
 
           <div className="space-y-2">
