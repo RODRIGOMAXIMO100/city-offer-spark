@@ -8,6 +8,8 @@ import LandingPage from "./pages/LandingPage";
 import AuthPage from "./pages/AuthPage";
 import DashboardPage from "./pages/DashboardPage";
 import OfferPage from "./pages/OfferPage";
+import TermsPage from "./pages/TermsPage";
+import PrivacyPage from "./pages/PrivacyPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -36,6 +38,8 @@ const AppRoutes = () => (
     <Route path="/auth" element={<PublicRoute><AuthPage /></PublicRoute>} />
     <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
     <Route path="/offer/:id" element={<OfferPage />} />
+    <Route path="/termos" element={<TermsPage />} />
+    <Route path="/privacidade" element={<PrivacyPage />} />
     <Route path="*" element={<NotFound />} />
   </Routes>
 );
