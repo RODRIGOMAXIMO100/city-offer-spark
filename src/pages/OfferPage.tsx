@@ -59,11 +59,8 @@ export default function OfferPage() {
       setOffer(data as Offer);
       setLoading(false);
 
-      // Increment view
-      await supabase
-        .from('offers')
-        .update({ views_count: data.views_count + 1 })
-        .eq('id', id);
+      // Increment view using SECURITY DEFINER function
+      await supabase.rpc('increment_offer_views', { offer_id: id });
 
       // Anti-fraud delay
       setTimeout(() => setButtonReady(true), CONFIG.TIME_TO_INTERACTIVE);

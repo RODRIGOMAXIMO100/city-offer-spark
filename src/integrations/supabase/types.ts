@@ -244,6 +244,7 @@ export type Database = {
         Returns: boolean
       }
       increment_offer_clicks: { Args: { offer_id: string }; Returns: undefined }
+      increment_offer_views: { Args: { offer_id: string }; Returns: undefined }
     }
     Enums: {
       app_role: "COMPANY" | "AFFILIATE" | "CLIENT" | "ADMIN"
