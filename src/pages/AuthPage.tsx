@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { AppRole } from '@/types/database';
@@ -8,16 +8,12 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Building2, Users, Sparkles, Loader2 } from 'lucide-react';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '@/components/ui/command';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Building2, Users, Sparkles, Loader2, Check, ChevronsUpDown } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-
-const CITIES = [
-  'Viçosa - MG',
-  'Belo Horizonte - MG',
-  'São Paulo - SP',
-  'Rio de Janeiro - RJ',
-  'Brasília - DF',
-];
+import { BRAZIL_STATES, getCitiesByState } from '@/data/brazilLocations';
+import { cn } from '@/lib/utils';
 
 const ROLES: { value: AppRole; label: string; icon: React.ReactNode; description: string; color: string }[] = [
   {
@@ -59,8 +55,20 @@ export default function AuthPage() {
   const [signupEmail, setSignupEmail] = useState('');
   const [signupPassword, setSignupPassword] = useState('');
   const [signupName, setSignupName] = useState('');
-  const [signupCity, setSignupCity] = useState('Viçosa - MG');
+  const [signupState, setSignupState] = useState('');
+  const [signupCity, setSignupCity] = useState('');
   const [signupRole, setSignupRole] = useState<AppRole>('CLIENT');
+  const [openCityCombobox, setOpenCityCombobox] = useState(false);
+
+  const availableCities = useMemo(() => {
+    if (!signupState) return [];
+    return getCitiesByState(signupState).sort();
+  }, [signupState]);
+
+  const formattedCity = useMemo(() => {
+    if (!signupCity || !signupState) return '';
+    return `${signupCity} - ${signupState}`;
+  }, [signupCity, signupState]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -101,7 +109,7 @@ export default function AuthPage() {
       return;
     }
 
-    const { error } = await signUp(signupEmail, signupPassword, signupName, signupCity, signupRole);
+    const { error } = await signUp(signupEmail, signupPassword, signupName, formattedCity, signupRole);
 
     if (error) {
       let message = error.message;
@@ -231,19 +239,66 @@ export default function AuthPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="signup-city">Cidade</Label>
-                    <Select value={signupCity} onValueChange={setSignupCity}>
+                    <Label htmlFor="signup-state">Estado (UF)</Label>
+                    <Select value={signupState} onValueChange={(value) => {
+                      setSignupState(value);
+                      setSignupCity('');
+                    }}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Selecione a cidade" />
+                        <SelectValue placeholder="Selecione o estado" />
                       </SelectTrigger>
                       <SelectContent>
-                        {CITIES.map((city) => (
-                          <SelectItem key={city} value={city}>
-                            {city}
+                        {BRAZIL_STATES.map((state) => (
+                          <SelectItem key={state.code} value={state.code}>
+                            {state.code} - {state.name}
                           </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="signup-city">Cidade</Label>
+                    <Popover open={openCityCombobox} onOpenChange={setOpenCityCombobox}>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          role="combobox"
+                          aria-expanded={openCityCombobox}
+                          className="w-full justify-between"
+                          disabled={!signupState}
+                        >
+                          {signupCity || "Selecione a cidade..."}
+                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-full p-0">
+                        <Command>
+                          <CommandInput placeholder="Digite para buscar..." />
+                          <CommandEmpty>Nenhuma cidade encontrada.</CommandEmpty>
+                          <CommandGroup className="max-h-64 overflow-auto">
+                            {availableCities.map((city) => (
+                              <CommandItem
+                                key={city}
+                                value={city}
+                                onSelect={(currentValue) => {
+                                  setSignupCity(currentValue === signupCity ? "" : currentValue);
+                                  setOpenCityCombobox(false);
+                                }}
+                              >
+                                <Check
+                                  className={cn(
+                                    "mr-2 h-4 w-4",
+                                    signupCity === city ? "opacity-100" : "opacity-0"
+                                  )}
+                                />
+                                {city}
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
                   </div>
 
                   <div className="space-y-2">
