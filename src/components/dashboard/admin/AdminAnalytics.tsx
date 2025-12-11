@@ -62,20 +62,25 @@ export default function AdminAnalytics() {
     const previousStartDate = new Date(startDate.getTime() - days * 24 * 60 * 60 * 1000);
 
     try {
-      // Fetch clicks by day
+      // Fetch clicks by day (only MAIN clicks for revenue calculation)
       const { data: clicks } = await supabase
         .from('offer_clicks')
-        .select('created_at')
+        .select('created_at, click_type')
         .gte('created_at', startDate.toISOString());
 
-      const clicksByDay = groupByDay(clicks || [], 'created_at', days);
+      // Filter only MAIN clicks (paid clicks)
+      const paidClicks = clicks?.filter(c => c.click_type === 'MAIN') || [];
+
+      const clicksByDay = groupByDay(paidClicks, 'created_at', days);
 
       // Fetch previous period clicks for comparison
       const { data: prevClicks } = await supabase
         .from('offer_clicks')
-        .select('created_at')
+        .select('created_at, click_type')
         .gte('created_at', previousStartDate.toISOString())
         .lt('created_at', startDate.toISOString());
+
+      const prevPaidClicks = prevClicks?.filter(c => c.click_type === 'MAIN') || [];
 
       // Fetch users by role
       const { data: roles } = await supabase
@@ -118,11 +123,11 @@ export default function AdminAnalytics() {
 
       const offersByDay = groupByDay(offers || [], 'created_at', days);
 
-      // Calculate earnings (platform fee per click)
-      const currentClicks = clicks?.length || 0;
-      const previousClicks = prevClicks?.length || 0;
-      const currentEarnings = currentClicks * CONFIG.CPC_PLATFORM_PROFIT;
-      const previousEarnings = previousClicks * CONFIG.CPC_PLATFORM_PROFIT;
+      // Calculate earnings (platform fee per MAIN click only)
+      const currentPaidClicks = paidClicks.length;
+      const previousPaidClicks = prevPaidClicks.length;
+      const currentEarnings = currentPaidClicks * CONFIG.CPC_PLATFORM_PROFIT;
+      const previousEarnings = previousPaidClicks * CONFIG.CPC_PLATFORM_PROFIT;
 
       const earningsByDay = clicksByDay.map(d => ({
         date: d.date,
@@ -137,7 +142,7 @@ export default function AdminAnalytics() {
       });
 
       setComparison({
-        clicks: { current: currentClicks, previous: previousClicks },
+        clicks: { current: currentPaidClicks, previous: previousPaidClicks },
         users: { current: newUsers?.length || 0, previous: prevUsers?.length || 0 },
         earnings: { current: currentEarnings, previous: previousEarnings },
         offers: { current: offers?.length || 0, previous: prevOffers?.length || 0 }

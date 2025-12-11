@@ -265,16 +265,8 @@ serve(async (req) => {
       }
     }
 
-    // 5. Record platform fee (Clilin profit)
-    // Use a fixed platform account ID for tracking revenue
-    const PLATFORM_ACCOUNT_ID = '00000000-0000-0000-0000-000000000001';
-    await supabase.from("transactions").insert({
-      user_id: PLATFORM_ACCOUNT_ID,
-      amount: CPC_PLATFORM_FEE,
-      type: "PLATFORM_FEE",
-      description: `Taxa de plataforma - clique`,
-      offer_id: offerId,
-    });
+    // 5. Platform fee is calculated automatically: CPC_COST_COMPANY - CPC_PAYOUT_AFFILIATE = CPC_PLATFORM_FEE
+    // No need to record separately - admin dashboard calculates from CLICK_COST - CLICK_EARNING
 
     // 6. Record click
     await supabase.from("offer_clicks").insert({
