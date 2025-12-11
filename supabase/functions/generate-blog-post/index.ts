@@ -147,7 +147,8 @@ Use a função create_blog_post para retornar os dados estruturados.`;
           { role: "user", content: userPrompt },
         ],
         tools: tools,
-        tool_choice: { type: "function", function: { name: "create_blog_post" } }
+        tool_choice: { type: "function", function: { name: "create_blog_post" } },
+        max_tokens: 8192
       }),
     });
 
@@ -180,6 +181,15 @@ Use a função create_blog_post para retornar os dados estruturados.`;
     // Validate required fields
     if (!postData.title || !postData.content || !postData.excerpt) {
       throw new Error("Missing required fields in generated content");
+    }
+
+    // Log content length for debugging
+    console.log("Generated content length:", postData.content.length, "characters");
+
+    // Validate minimum content length (1000-1500 words = ~5000-8000 characters)
+    if (postData.content.length < 5000) {
+      console.error("Content too short:", postData.content.length, "characters. Expected at least 5000.");
+      throw new Error(`Generated content is too short (${postData.content.length} chars). May have been truncated.`);
     }
 
     // Ensure FAQ exists - create default if missing
