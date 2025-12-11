@@ -413,7 +413,7 @@ function AffiliateDashboardContent() {
         </div>
 
         {/* Offers List */}
-        <div>
+        <div data-tour="offers">
           <h2 className="text-sm font-bold text-muted-foreground uppercase tracking-wider mb-4">
             Ofertas Disponíveis
           </h2>
