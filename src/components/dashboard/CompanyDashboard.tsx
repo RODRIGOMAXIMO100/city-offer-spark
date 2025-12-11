@@ -12,6 +12,7 @@ import { useToast } from '@/hooks/use-toast';
 import CreateOfferModal from './CreateOfferModal';
 import PerformanceChart from './PerformanceChart';
 import FiscalDataModal from './FiscalDataModal';
+import logo from '@/assets/logo.png';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -136,7 +137,7 @@ export default function CompanyDashboard() {
       <header className="bg-card border-b border-border sticky top-0 z-10">
         <div className="max-w-2xl mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-bold text-company">clilin</h1>
+            <img src={logo} alt="clilin" className="h-8" />
             <Badge variant="outline" className="text-company border-company">
               Empresa
             </Badge>

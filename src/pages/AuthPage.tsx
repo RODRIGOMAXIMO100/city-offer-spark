@@ -14,6 +14,7 @@ import { Building2, Users, Sparkles, Loader2, Check, ChevronsUpDown } from 'luci
 import { useToast } from '@/hooks/use-toast';
 import { BRAZIL_STATES, getCitiesByState } from '@/data/brazilLocations';
 import { cn } from '@/lib/utils';
+import logoImg from '@/assets/logo.png';
 
 const ROLES: { value: AppRole; label: string; icon: React.ReactNode; description: string; color: string }[] = [
   {
@@ -137,10 +138,7 @@ export default function AuthPage() {
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-extrabold tracking-tight">
-            <span className="text-primary">clilin</span>
-            <span className="text-secondary">.</span>
-          </h1>
+          <img src={logoImg} alt="clilin" className="h-14 mx-auto" />
           <p className="text-muted-foreground mt-2">Ofertas locais inteligentes</p>
         </div>
 
