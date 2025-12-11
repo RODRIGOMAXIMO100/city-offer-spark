@@ -18,7 +18,7 @@ import {
   LineChart,
   Line
 } from 'recharts';
-import { TrendingUp, TrendingDown, Users, MousePointerClick, DollarSign, Megaphone } from 'lucide-react';
+import { TrendingUp, TrendingDown, Users, MousePointerClick, DollarSign, Megaphone, Eye, Target } from 'lucide-react';
 import { formatCredits, CONFIG } from '@/types/database';
 
 interface AnalyticsData {
@@ -27,6 +27,10 @@ interface AnalyticsData {
   earningsByDay: { date: string; earnings: number }[];
   offersByDay: { date: string; offers: number }[];
   clicksByType: { name: string; value: number; color: string }[];
+  topOffers: { name: string; clicks: number }[];
+  topAffiliates: { name: string; earnings: number }[];
+  conversionRate: number;
+  totalViews: number;
 }
 
 const COLORS = {
@@ -45,7 +49,11 @@ export default function AdminAnalytics() {
     usersByRole: [],
     earningsByDay: [],
     offersByDay: [],
-    clicksByType: []
+    clicksByType: [],
+    topOffers: [],
+    topAffiliates: [],
+    conversionRate: 0,
+    totalViews: 0
   });
   const [loading, setLoading] = useState(true);
   const [comparison, setComparison] = useState({
@@ -70,7 +78,7 @@ export default function AdminAnalytics() {
       // Fetch ALL clicks (not just MAIN)
       const { data: clicks } = await supabase
         .from('offer_clicks')
-        .select('created_at, click_type')
+        .select('created_at, click_type, affiliate_id, offer_id')
         .gte('created_at', startDate.toISOString());
 
       // Filter by type
@@ -149,12 +157,59 @@ export default function AdminAnalytics() {
         earnings: d.clicks * CONFIG.CPC_PLATFORM_PROFIT
       }));
 
+      // Fetch total views for conversion rate
+      const { data: allOffers } = await supabase
+        .from('offers')
+        .select('views_count, clicks_count, title');
+
+      const totalViews = allOffers?.reduce((sum, o) => sum + o.views_count, 0) || 0;
+      const totalClicks = allOffers?.reduce((sum, o) => sum + o.clicks_count, 0) || 0;
+      const conversionRate = totalViews > 0 ? (totalClicks / totalViews) * 100 : 0;
+
+      // Top 5 offers by clicks
+      const topOffers = (allOffers || [])
+        .sort((a, b) => b.clicks_count - a.clicks_count)
+        .slice(0, 5)
+        .map(o => ({ name: o.title.substring(0, 25) + (o.title.length > 25 ? '...' : ''), clicks: o.clicks_count }));
+
+      // Top 5 affiliates by earnings
+      const affiliateEarnings: Record<string, number> = {};
+      mainClicks.forEach(click => {
+        if (click.affiliate_id) {
+          affiliateEarnings[click.affiliate_id] = (affiliateEarnings[click.affiliate_id] || 0) + CONFIG.CPC_PAYOUT_AFFILIATE;
+        }
+      });
+
+      const topAffiliateIds = Object.entries(affiliateEarnings)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 5);
+
+      let topAffiliates: { name: string; earnings: number }[] = [];
+      if (topAffiliateIds.length > 0) {
+        const { data: affiliateProfiles } = await supabase
+          .from('profiles')
+          .select('id, name')
+          .in('id', topAffiliateIds.map(([id]) => id));
+
+        topAffiliates = topAffiliateIds.map(([id, earnings]) => {
+          const profile = affiliateProfiles?.find(p => p.id === id);
+          return {
+            name: profile?.name?.substring(0, 20) || 'Desconhecido',
+            earnings
+          };
+        });
+      }
+
       setData({
         clicksByDay,
         usersByRole,
         earningsByDay,
         offersByDay,
-        clicksByType
+        clicksByType,
+        topOffers,
+        topAffiliates,
+        conversionRate,
+        totalViews
       });
 
       setComparison({
@@ -289,6 +344,34 @@ export default function AdminAnalytics() {
         />
       </div>
 
+      {/* Conversion Rate & Views */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">Taxa de Conversão</p>
+                <p className="text-3xl font-bold text-primary">{data.conversionRate.toFixed(2)}%</p>
+                <p className="text-xs text-muted-foreground mt-1">Views → Cliques</p>
+              </div>
+              <Target className="h-10 w-10 text-primary/50" />
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">Total de Views</p>
+                <p className="text-3xl font-bold">{data.totalViews.toLocaleString('pt-BR')}</p>
+                <p className="text-xs text-muted-foreground mt-1">Todas as ofertas</p>
+              </div>
+              <Eye className="h-10 w-10 text-muted-foreground/50" />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
       {/* Charts Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Clicks Over Time */}
@@ -355,6 +438,87 @@ export default function AdminAnalytics() {
           </CardContent>
         </Card>
 
+        {/* Top 5 Offers */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Top 5 Ofertas por Cliques</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {data.topOffers.length === 0 ? (
+              <div className="h-[250px] flex items-center justify-center text-muted-foreground">
+                Sem dados
+              </div>
+            ) : (
+              <ResponsiveContainer width="100%" height={250}>
+                <BarChart data={data.topOffers} layout="vertical">
+                  <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+                  <XAxis type="number" tick={{ fill: 'hsl(var(--muted-foreground))' }} />
+                  <YAxis 
+                    type="category" 
+                    dataKey="name" 
+                    tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 11 }} 
+                    width={120}
+                  />
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: 'hsl(var(--card))', 
+                      border: '1px solid hsl(var(--border))',
+                      borderRadius: '8px'
+                    }}
+                  />
+                  <Bar 
+                    dataKey="clicks" 
+                    fill="hsl(var(--primary))"
+                    radius={[0, 4, 4, 0]}
+                    name="Cliques"
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Top 5 Affiliates */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Top 5 Afiliados por Ganhos</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {data.topAffiliates.length === 0 ? (
+              <div className="h-[250px] flex items-center justify-center text-muted-foreground">
+                Sem dados
+              </div>
+            ) : (
+              <ResponsiveContainer width="100%" height={250}>
+                <BarChart data={data.topAffiliates} layout="vertical">
+                  <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+                  <XAxis type="number" tick={{ fill: 'hsl(var(--muted-foreground))' }} />
+                  <YAxis 
+                    type="category" 
+                    dataKey="name" 
+                    tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 11 }} 
+                    width={100}
+                  />
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: 'hsl(var(--card))', 
+                      border: '1px solid hsl(var(--border))',
+                      borderRadius: '8px'
+                    }}
+                    formatter={(value: number) => [formatCredits(value), 'Ganhos']}
+                  />
+                  <Bar 
+                    dataKey="earnings" 
+                    fill="hsl(152, 69%, 40%)"
+                    radius={[0, 4, 4, 0]}
+                    name="Ganhos"
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            )}
+          </CardContent>
+        </Card>
+
         {/* Earnings Over Time */}
         <Card>
           <CardHeader>
@@ -383,35 +547,6 @@ export default function AdminAnalytics() {
                   name="Ganhos"
                 />
               </LineChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-
-        {/* Offers Created */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Ofertas Criadas por Dia</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={250}>
-              <BarChart data={data.offersByDay}>
-                <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
-                <XAxis dataKey="date" className="text-xs" tick={{ fill: 'hsl(var(--muted-foreground))' }} />
-                <YAxis className="text-xs" tick={{ fill: 'hsl(var(--muted-foreground))' }} />
-                <Tooltip 
-                  contentStyle={{ 
-                    backgroundColor: 'hsl(var(--card))', 
-                    border: '1px solid hsl(var(--border))',
-                    borderRadius: '8px'
-                  }}
-                />
-                <Bar 
-                  dataKey="clicks" 
-                  fill="hsl(258, 90%, 66%)"
-                  radius={[4, 4, 0, 0]}
-                  name="Ofertas"
-                />
-              </BarChart>
             </ResponsiveContainer>
           </CardContent>
         </Card>
