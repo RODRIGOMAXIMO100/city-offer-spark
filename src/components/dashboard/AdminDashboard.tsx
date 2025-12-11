@@ -28,6 +28,8 @@ import AdminFilters from './admin/AdminFilters';
 import AdminPagination, { usePagination } from './admin/AdminPagination';
 import AdminAnalytics from './admin/AdminAnalytics';
 import AdminWithdrawals from './admin/AdminWithdrawals';
+import AdminSecurityAdvanced from './admin/AdminSecurityAdvanced';
+import AdminAlerts from './admin/AdminAlerts';
 import UserDetailModal from './admin/UserDetailModal';
 import { exportUsers, exportOffers, exportTransactions } from './admin/AdminExport';
 
@@ -103,7 +105,6 @@ export default function AdminDashboard() {
   const [users, setUsers] = useState<UserProfile[]>([]);
   const [offers, setOffers] = useState<OfferData[]>([]);
   const [transactions, setTransactions] = useState<TransactionData[]>([]);
-  const [rateLimits, setRateLimits] = useState<RateLimitData[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Filter states
@@ -126,8 +127,7 @@ export default function AdminDashboard() {
       fetchStats(),
       fetchUsers(),
       fetchOffers(),
-      fetchTransactions(),
-      fetchRateLimits()
+      fetchTransactions()
     ]);
     setLoading(false);
   };
@@ -194,14 +194,6 @@ export default function AdminDashboard() {
     }
   };
 
-  const fetchRateLimits = async () => {
-    try {
-      const { data } = await supabase.from('click_rate_limits').select('*').order('last_click_at', { ascending: false }).limit(100);
-      setRateLimits(data || []);
-    } catch (error) {
-      console.error('Error fetching rate limits:', error);
-    }
-  };
 
   // Filtered data
   const filteredUsers = useMemo(() => {
@@ -241,7 +233,6 @@ export default function AdminDashboard() {
   const usersPagination = usePagination(filteredUsers, 15);
   const offersPagination = usePagination(filteredOffers, 15);
   const transactionsPagination = usePagination(filteredTransactions, 20);
-  const rateLimitsPagination = usePagination(rateLimits, 15);
 
   // Get unique cities
   const cities = useMemo(() => [...new Set(users.map(u => u.city))].sort(), [users]);
@@ -256,19 +247,6 @@ export default function AdminDashboard() {
       toast.error('Erro ao desativar oferta');
     }
   };
-
-  const handleBlockIP = async (id: string, blocked: boolean) => {
-    try {
-      const { error } = await supabase.from('click_rate_limits').update({ blocked: !blocked }).eq('id', id);
-      if (error) throw error;
-      toast.success(blocked ? 'IP desbloqueado' : 'IP bloqueado');
-      fetchRateLimits();
-      fetchStats();
-    } catch (error) {
-      toast.error('Erro ao atualizar bloqueio');
-    }
-  };
-
   const handleViewUser = (user: UserProfile) => {
     setSelectedUser(user);
     setUserModalOpen(true);
@@ -317,6 +295,7 @@ export default function AdminDashboard() {
             </div>
           </div>
           <div className="flex items-center gap-2">
+            <AdminAlerts />
             <Button variant="ghost" size="sm" onClick={fetchAllData} disabled={loading}>
               <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
               Atualizar
@@ -608,56 +587,7 @@ export default function AdminDashboard() {
 
           {/* Security Tab */}
           <TabsContent value="security">
-            <Card>
-              <CardHeader>
-                <CardTitle>Rate Limits & IPs Suspeitos</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>IP</TableHead>
-                      <TableHead>Cliques</TableHead>
-                      <TableHead>Primeiro Clique</TableHead>
-                      <TableHead>Último Clique</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Ações</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {rateLimitsPagination.paginatedItems.map((rl) => (
-                      <TableRow key={rl.id}>
-                        <TableCell className="font-mono text-sm">{rl.ip_address}</TableCell>
-                        <TableCell>{rl.click_count}</TableCell>
-                        <TableCell>{new Date(rl.first_click_at).toLocaleString('pt-BR')}</TableCell>
-                        <TableCell>{new Date(rl.last_click_at).toLocaleString('pt-BR')}</TableCell>
-                        <TableCell>
-                          <Badge variant={rl.blocked ? 'destructive' : 'outline'}>
-                            {rl.blocked ? 'Bloqueado' : 'Normal'}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <Button
-                            variant={rl.blocked ? 'outline' : 'destructive'}
-                            size="sm"
-                            onClick={() => handleBlockIP(rl.id, rl.blocked)}
-                          >
-                            {rl.blocked ? 'Desbloquear' : 'Bloquear'}
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-                <AdminPagination
-                  currentPage={rateLimitsPagination.currentPage}
-                  totalPages={rateLimitsPagination.totalPages}
-                  totalItems={rateLimitsPagination.totalItems}
-                  itemsPerPage={rateLimitsPagination.itemsPerPage}
-                  onPageChange={rateLimitsPagination.setCurrentPage}
-                />
-              </CardContent>
-            </Card>
+            <AdminSecurityAdvanced />
           </TabsContent>
 
           {/* Analytics Tab */}
