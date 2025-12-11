@@ -129,20 +129,23 @@ Retorne um JSON com exatamente esta estrutura:
     try {
       // Clean up the response - remove any markdown formatting
       let cleanContent = generatedContent.trim();
-      if (cleanContent.startsWith("```json")) {
-        cleanContent = cleanContent.slice(7);
-      }
-      if (cleanContent.startsWith("```")) {
-        cleanContent = cleanContent.slice(3);
-      }
-      if (cleanContent.endsWith("```")) {
-        cleanContent = cleanContent.slice(0, -3);
-      }
+      
+      // Remove markdown code blocks
+      cleanContent = cleanContent.replace(/^```json\s*/i, '');
+      cleanContent = cleanContent.replace(/^```\s*/i, '');
+      cleanContent = cleanContent.replace(/\s*```$/i, '');
       cleanContent = cleanContent.trim();
+      
+      // Try to find JSON object in the content
+      const jsonMatch = cleanContent.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        cleanContent = jsonMatch[0];
+      }
       
       postData = JSON.parse(cleanContent);
     } catch (parseError) {
-      console.error("Parse error:", parseError, "Content:", generatedContent);
+      console.error("Parse error:", parseError, "Content length:", generatedContent.length);
+      console.error("First 500 chars:", generatedContent.substring(0, 500));
       throw new Error("Failed to parse AI response as JSON");
     }
 
