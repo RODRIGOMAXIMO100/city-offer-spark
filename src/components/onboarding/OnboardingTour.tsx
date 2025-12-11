@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { useOnboarding } from '@/contexts/OnboardingContext';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
@@ -24,6 +24,10 @@ export function OnboardingTour() {
 
   const [highlightPos, setHighlightPos] = useState<HighlightPosition | null>(null);
   const [tooltipPos, setTooltipPos] = useState({ top: 0, left: 0 });
+  const [isReady, setIsReady] = useState(false);
+  const [elementNotFound, setElementNotFound] = useState(false);
+  const retryCountRef = useRef(0);
+  const maxRetries = 5;
   
   const steps = getTourSteps();
   const currentStepData = steps[tourCurrentStep];
@@ -35,12 +39,25 @@ export function OnboardingTour() {
 
     const element = document.querySelector(currentStepData.target);
     if (!element) {
-      // Se o elemento não existe, tenta o próximo step
-      if (!isLastStep) {
-        nextStep();
+      // Se ainda temos tentativas, aguardar e tentar novamente
+      if (retryCountRef.current < maxRetries) {
+        retryCountRef.current++;
+        setTimeout(updatePositions, 300);
+        return;
       }
+      // Após todas as tentativas, mostrar tooltip centralizado sem highlight
+      setHighlightPos(null);
+      setElementNotFound(true);
+      setTooltipPos({
+        top: window.innerHeight / 2 - 90,
+        left: window.innerWidth / 2 - 160,
+      });
       return;
     }
+
+    // Elemento encontrado, resetar contadores
+    retryCountRef.current = 0;
+    setElementNotFound(false);
 
     const rect = element.getBoundingClientRect();
     const padding = 8;
@@ -82,33 +99,48 @@ export function OnboardingTour() {
     tooltipTop = Math.max(16, tooltipTop);
 
     setTooltipPos({ top: tooltipTop, left: tooltipLeft });
-  }, [currentStepData, isLastStep, nextStep]);
+  }, [currentStepData]);
 
+  // Reset estados quando muda de step
   useEffect(() => {
-    if (!showTour) return;
+    if (!showTour) {
+      setIsReady(false);
+      return;
+    }
 
-    updatePositions();
+    // Reset para novo step
+    retryCountRef.current = 0;
+    setElementNotFound(false);
+    setIsReady(false);
+
+    // Delay inicial para elementos renderizarem
+    const timer = setTimeout(() => {
+      setIsReady(true);
+      updatePositions();
+    }, 400);
+
     window.addEventListener('resize', updatePositions);
     window.addEventListener('scroll', updatePositions);
 
     return () => {
+      clearTimeout(timer);
       window.removeEventListener('resize', updatePositions);
       window.removeEventListener('scroll', updatePositions);
     };
   }, [showTour, tourCurrentStep, updatePositions]);
 
-  // Scroll para o elemento em destaque
+  // Scroll para o elemento em destaque apenas quando estiver pronto
   useEffect(() => {
-    if (!showTour || !currentStepData?.target) return;
+    if (!showTour || !currentStepData?.target || !isReady) return;
 
     const element = document.querySelector(currentStepData.target);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth', block: 'center' });
       setTimeout(updatePositions, 300);
     }
-  }, [showTour, tourCurrentStep, currentStepData?.target, updatePositions]);
+  }, [showTour, tourCurrentStep, currentStepData?.target, updatePositions, isReady]);
 
-  if (!showTour || !currentStepData) return null;
+  if (!showTour || !currentStepData || !isReady) return null;
 
   const handleNext = () => {
     if (isLastStep) {
