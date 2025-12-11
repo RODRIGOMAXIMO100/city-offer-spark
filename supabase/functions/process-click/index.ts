@@ -358,6 +358,39 @@ serve(async (req) => {
           affiliate_profile_id: validAffiliateId, 
           earnings: actualAffiliatePayout 
         });
+
+        // Check if affiliate entered Top 10 weekly
+        const { data: topAffiliates } = await supabase
+          .from("affiliate_stats")
+          .select("affiliate_id, clicks_this_week")
+          .order("clicks_this_week", { ascending: false })
+          .limit(10);
+
+        if (topAffiliates) {
+          const position = topAffiliates.findIndex(a => a.affiliate_id === validAffiliateId) + 1;
+          
+          if (position > 0 && position <= 10) {
+            // Check if this is their first time in Top 10 this week
+            const { data: existingNotif } = await supabase
+              .from("notifications")
+              .select("id")
+              .eq("user_id", validAffiliateId)
+              .eq("type", "TOP_10")
+              .gte("created_at", new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString())
+              .maybeSingle();
+
+            if (!existingNotif) {
+              await supabase.from("notifications").insert({
+                user_id: validAffiliateId,
+                type: "TOP_10",
+                title: "Parabéns! Você entrou no Top 10! 🏆",
+                message: `Você está na posição #${position} do ranking semanal!`,
+                data: { position },
+              });
+              console.log(`Top 10 notification created for affiliate ${validAffiliateId} - Position ${position}`);
+            }
+          }
+        }
       }
     }
 
