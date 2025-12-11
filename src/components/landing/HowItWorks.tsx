@@ -46,20 +46,20 @@ export function HowItWorks() {
           
           {steps.map((item, index) => (
             <div key={item.title} className="relative group">
-              <div className="bg-card rounded-3xl p-8 border border-border hover:border-primary/30 hover:shadow-2xl transition-all duration-500 h-full">
+              <div className="bg-card rounded-3xl p-6 sm:p-8 border border-border hover:border-primary/30 hover:shadow-2xl transition-all duration-500 h-full">
                 {/* Step Number */}
-                <div className={`absolute -top-4 -right-4 w-12 h-12 rounded-2xl bg-${item.color} text-white font-display font-bold text-lg flex items-center justify-center shadow-lg`}>
+                <div className={`absolute -top-3 -right-3 sm:-top-4 sm:-right-4 w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-${item.color} text-white font-display font-bold text-base sm:text-lg flex items-center justify-center shadow-lg`}>
                   {item.step}
                 </div>
                 
                 {/* Icon */}
-                <div className={`w-16 h-16 rounded-2xl bg-${item.color}/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
-                  <item.icon className={`h-8 w-8 text-${item.color}`} />
+                <div className={`w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-${item.color}/10 flex items-center justify-center mb-4 sm:mb-6 group-hover:scale-110 transition-transform duration-300`}>
+                  <item.icon className={`h-7 w-7 sm:h-8 sm:w-8 text-${item.color}`} />
                 </div>
                 
                 {/* Content */}
-                <h3 className="text-xl font-display font-semibold mb-3">{item.title}</h3>
-                <p className="text-muted-foreground leading-relaxed">{item.description}</p>
+                <h3 className="text-lg sm:text-xl font-display font-semibold mb-2 sm:mb-3">{item.title}</h3>
+                <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">{item.description}</p>
               </div>
             </div>
           ))}

@@ -6,9 +6,9 @@ export function Footer() {
   return (
     <footer className="bg-card border-t border-border py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid md:grid-cols-4 gap-12">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
           {/* Logo & Description */}
-          <div className="md:col-span-2">
+          <div className="col-span-2">
             <Link to="/" className="flex items-center mb-4">
               <img src={logo} alt="clilin" className="h-10" />
             </Link>

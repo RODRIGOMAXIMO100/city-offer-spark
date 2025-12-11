@@ -51,19 +51,22 @@ export function HeroSection() {
           </div>
 
           {/* Trust Badges */}
-          <div className="flex flex-wrap justify-center gap-6 sm:gap-10 text-sm animate-fade-in-up" style={{ animationDelay: "0.4s" }}>
+          <div className="flex flex-wrap justify-center gap-4 sm:gap-6 lg:gap-10 text-sm animate-fade-in-up" style={{ animationDelay: "0.4s" }}>
             {[
               { icon: CheckCircle2, text: "Sem mensalidade" },
               { icon: CheckCircle2, text: "Pague por resultado" },
               { icon: CheckCircle2, text: "Saque via PIX" },
-              { icon: Users, text: "Ganhos compartilhados com pessoas reais da sua cidade" },
             ].map((item) => (
               <div key={item.text} className="flex items-center gap-2 text-muted-foreground">
-                <item.icon className="h-5 w-5 text-secondary" />
-                <span>{item.text}</span>
+                <item.icon className="h-4 w-4 sm:h-5 sm:w-5 text-secondary shrink-0" />
+                <span className="text-xs sm:text-sm">{item.text}</span>
               </div>
             ))}
           </div>
+          <p className="text-xs sm:text-sm text-muted-foreground mt-4 flex items-center justify-center gap-2 animate-fade-in-up" style={{ animationDelay: "0.45s" }}>
+            <Users className="h-4 w-4 text-secondary shrink-0" />
+            <span>Ganhos compartilhados com pessoas reais da sua cidade</span>
+          </p>
         </div>
 
         {/* Visual Cards */}

@@ -70,13 +70,13 @@ export function ForAffiliates() {
                   Potencial de ganhos
                 </p>
                 {earnings.map((item) => (
-                  <div key={item.level} className="flex items-center justify-between p-4 bg-muted/50 rounded-xl hover:bg-muted transition-colors">
+                  <div key={item.level} className="flex flex-col sm:flex-row sm:items-center justify-between p-3 sm:p-4 bg-muted/50 rounded-xl hover:bg-muted transition-colors gap-2">
                     <div>
                       <p className="font-semibold text-sm">{item.level}</p>
                       <p className="text-xs text-muted-foreground">{item.offers} • {item.clicks}</p>
                     </div>
-                    <div className="text-right">
-                      <span className="text-xl font-display font-bold text-affiliate">{item.value}</span>
+                    <div className="sm:text-right">
+                      <span className="text-lg sm:text-xl font-display font-bold text-affiliate">{item.value}</span>
                       <span className="text-sm text-muted-foreground">{item.period}</span>
                     </div>
                   </div>

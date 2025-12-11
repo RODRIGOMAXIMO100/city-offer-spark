@@ -91,17 +91,17 @@ export function ForCompanies() {
                   <span className="text-sm font-semibold text-company">Desempenho Hoje</span>
                   <span className="text-xs text-muted-foreground">Atualizado agora</span>
                 </div>
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="bg-card rounded-xl p-4 text-center">
-                    <p className="text-3xl font-display font-bold text-company">1.2k</p>
+                <div className="grid grid-cols-3 gap-2 sm:gap-4">
+                  <div className="bg-card rounded-xl p-3 sm:p-4 text-center">
+                    <p className="text-xl sm:text-3xl font-display font-bold text-company">1.2k</p>
                     <p className="text-xs text-muted-foreground mt-1">Views</p>
                   </div>
-                  <div className="bg-card rounded-xl p-4 text-center">
-                    <p className="text-3xl font-display font-bold text-company">340</p>
+                  <div className="bg-card rounded-xl p-3 sm:p-4 text-center">
+                    <p className="text-xl sm:text-3xl font-display font-bold text-company">340</p>
                     <p className="text-xs text-muted-foreground mt-1">Cliques</p>
                   </div>
-                  <div className="bg-card rounded-xl p-4 text-center">
-                    <p className="text-3xl font-display font-bold text-secondary">28%</p>
+                  <div className="bg-card rounded-xl p-3 sm:p-4 text-center">
+                    <p className="text-xl sm:text-3xl font-display font-bold text-secondary">28%</p>
                     <p className="text-xs text-muted-foreground mt-1">Taxa</p>
                   </div>
                 </div>
