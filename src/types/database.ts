@@ -86,10 +86,10 @@ export const CONFIG = {
   MIN_CPC: 4,
   MAX_CPC: 15,
   DEFAULT_CPC: 5,
-  AFFILIATE_SHARE: 0.60,
+  AFFILIATE_SHARE: 0.50, // 50% para divulgador, 50% para plataforma
   // Legacy: for backward compatibility in admin analytics
-  CPC_PLATFORM_PROFIT: 2, // Average estimate
-  CPC_PAYOUT_AFFILIATE: 3, // Average estimate
+  CPC_PLATFORM_PROFIT: 2.5, // Average estimate (50% of average CPC 5)
+  CPC_PAYOUT_AFFILIATE: 2.5, // Average estimate (50% of average CPC 5)
   MIN_WITHDRAW_BRL: 30.00,
   TIME_TO_INTERACTIVE: 1500,
 } as const;

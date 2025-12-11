@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useOffers } from '@/hooks/useOffers';
 import { formatCredits } from '@/types/database';
@@ -7,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { Coins, PlusCircle, LogOut, Eye, MousePointer, TrendingUp, Loader2, Instagram, Check, Clock, Trash2, Info, Star } from 'lucide-react';
+import { Coins, PlusCircle, LogOut, Eye, MousePointer, TrendingUp, Loader2, Instagram, Check, Clock, Trash2, Info, Star, ExternalLink } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import CreateOfferModal from './CreateOfferModal';
 import PerformanceChart from './PerformanceChart';
@@ -260,9 +261,14 @@ export default function CompanyDashboard() {
                 <ul className="text-sm text-muted-foreground space-y-1">
                   <li>• <strong className="text-foreground">CPC dinâmico:</strong> pague entre 4-15 C$ por clique</li>
                   <li>• <strong className="text-foreground">Offer Score alto = paga menos</strong></li>
+                  <li>• <strong className="text-foreground">Divisão 50/50:</strong> metade vai para divulgadores</li>
                   <li>• <strong className="text-foreground">Melhore:</strong> descrição, desconto, Instagram</li>
-                  <li>• <strong className="text-foreground">Cada R$ 10 = 100 créditos</strong></li>
                 </ul>
+                <Button variant="link" asChild className="h-auto p-0 text-company">
+                  <Link to="/transparencia">
+                    Entenda como funciona <ExternalLink className="ml-1 h-3 w-3" />
+                  </Link>
+                </Button>
               </div>
             </div>
           </CardContent>

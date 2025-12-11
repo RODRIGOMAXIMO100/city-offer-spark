@@ -9,27 +9,27 @@ import { HelpCircle } from "lucide-react";
 const faqs = [
   {
     question: "Quanto custa para empresas?",
-    answer: "Não há mensalidade ou taxa fixa. Você só paga quando alguém clica na sua oferta. O valor por clique é definido por você ao criar a oferta, geralmente entre R$ 0,05 e R$ 0,50 dependendo do tipo de negócio.",
+    answer: "Não há mensalidade ou taxa fixa. Você só paga quando alguém clica na sua oferta. O valor por clique varia de R$ 0,40 a R$ 1,50 (4 a 15 créditos), definido por você através de um sistema de leilão inteligente. Quanto melhor seu Offer Score, menos você paga!",
   },
   {
     question: "Como recebo minha comissão como divulgador?",
-    answer: "Cada clique válido no seu link gera créditos na sua conta. Quando atingir o mínimo de R$ 20, você pode solicitar o saque via PIX. O valor é transferido em até 24 horas para a chave PIX cadastrada.",
+    answer: "Cada clique válido no seu link gera créditos na sua conta. Você recebe 50% do CPC pago pela empresa, variando de R$ 0,20 a R$ 0,75 por clique base. Com bônus de nível (até 1.3x), pode chegar a R$ 0,97 por clique! Saque mínimo: R$ 30,00 via PIX.",
   },
   {
     question: "Preciso ter CNPJ para cadastrar minha empresa?",
     answer: "Não é obrigatório ter CNPJ. MEIs, autônomos e empresas de qualquer porte podem cadastrar ofertas. Basta ter uma conta ativa e créditos disponíveis.",
   },
   {
-    question: "Como funciona o rastreamento de cliques?",
-    answer: "Cada divulgador recebe um link único para cada oferta. Quando alguém clica, nosso sistema registra o clique, verifica se é válido (não é bot, não é repetido) e credita a comissão automaticamente.",
+    question: "Como funciona o sistema de leilão?",
+    answer: "Inspirado no Google Ads: você define um lance máximo (4-15 créditos) e seu Offer Score (nota de 0-10) determina sua posição. Posição = Lance × Score. O melhor: você paga apenas o necessário para superar o concorrente, não o lance máximo!",
   },
   {
-    question: "O que acontece se eu não tiver créditos suficientes?",
-    answer: "Empresas precisam ter créditos para manter ofertas ativas. Se o saldo zerar, as ofertas são pausadas automaticamente. Você pode adicionar créditos a qualquer momento via PIX.",
+    question: "O que é o Offer Score?",
+    answer: "É sua nota de 0 a 10 que considera: CTR Esperado (40%), Qualidade da Oferta (30%), Reputação (20%) e Relevância Local (10%). Quanto maior seu score, menor o CPC real que você paga. Vincule seu Instagram e ofereça bons descontos para aumentar!",
   },
   {
-    question: "Como cliente, preciso pagar algo?",
-    answer: "Não! O acesso às ofertas é 100% gratuito para clientes. Você só precisa criar uma conta para usar a IA personalizada e salvar suas preferências.",
+    question: "Como funciona a divisão de valores?",
+    answer: "Transparência total: do valor pago pela empresa, 50% vai para o divulgador e 50% para a plataforma. Por exemplo, se a empresa paga 8 créditos (R$ 0,80), o divulgador recebe R$ 0,40. Simples assim!",
   },
 ];
 
