@@ -567,6 +567,69 @@ export type Database = {
           },
         ]
       }
+      payments: {
+        Row: {
+          amount_brl: number
+          amount_credits: number
+          asaas_payment_id: string | null
+          confirmed_at: string | null
+          created_at: string | null
+          expires_at: string | null
+          id: string
+          installments: number | null
+          payment_method: string
+          pix_code: string | null
+          pix_qr_code: string | null
+          profile_id: string
+          status: string
+        }
+        Insert: {
+          amount_brl: number
+          amount_credits: number
+          asaas_payment_id?: string | null
+          confirmed_at?: string | null
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          installments?: number | null
+          payment_method: string
+          pix_code?: string | null
+          pix_qr_code?: string | null
+          profile_id: string
+          status?: string
+        }
+        Update: {
+          amount_brl?: number
+          amount_credits?: number
+          asaas_payment_id?: string | null
+          confirmed_at?: string | null
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          installments?: number | null
+          payment_method?: string
+          pix_code?: string | null
+          pix_qr_code?: string | null
+          profile_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "company_public_info"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payments_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       pricing_config: {
         Row: {
           affiliate_share: number
@@ -599,6 +662,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          asaas_customer_id: string | null
           avatar_url: string | null
           balance: number
           cep: string | null
@@ -621,6 +685,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          asaas_customer_id?: string | null
           avatar_url?: string | null
           balance?: number
           cep?: string | null
@@ -643,6 +708,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          asaas_customer_id?: string | null
           avatar_url?: string | null
           balance?: number
           cep?: string | null
@@ -740,6 +806,7 @@ export type Database = {
         Row: {
           amount: number
           amount_brl: number
+          asaas_transfer_id: string | null
           cpf: string
           created_at: string | null
           fraud_reasons: string[] | null
@@ -758,6 +825,7 @@ export type Database = {
         Insert: {
           amount: number
           amount_brl: number
+          asaas_transfer_id?: string | null
           cpf: string
           created_at?: string | null
           fraud_reasons?: string[] | null
@@ -776,6 +844,7 @@ export type Database = {
         Update: {
           amount?: number
           amount_brl?: number
+          asaas_transfer_id?: string | null
           cpf?: string
           created_at?: string | null
           fraud_reasons?: string[] | null

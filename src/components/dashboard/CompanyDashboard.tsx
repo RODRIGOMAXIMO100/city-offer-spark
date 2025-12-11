@@ -13,6 +13,7 @@ import { useToast } from '@/hooks/use-toast';
 import CreateOfferModal from './CreateOfferModal';
 import PerformanceChart from './PerformanceChart';
 import FiscalDataModal from './FiscalDataModal';
+import { AddCreditsModal } from './AddCreditsModal';
 import { Footer } from '@/components/landing/Footer';
 import logo from '@/assets/logo.png';
 import {
@@ -47,6 +48,7 @@ export default function CompanyDashboard() {
   const [editingOffer, setEditingOffer] = useState<Offer | null>(null);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(profile?.avatar_url || null);
+  const [showCreditsModal, setShowCreditsModal] = useState(false);
 
   // Check active offers count
   const activeOffers = offers.filter(o => o.active && !o.deleted_at && new Date(o.expires_at) > new Date());
@@ -57,13 +59,17 @@ export default function CompanyDashboard() {
     if (!profile?.cnpj || !profile?.razao_social) {
       setShowFiscalModal(true);
     } else {
-      alert('Funcionalidade de compra de créditos em breve!');
+      setShowCreditsModal(true);
     }
   };
 
   const handleFiscalDataSaved = () => {
     setShowFiscalModal(false);
-    alert('Funcionalidade de compra de créditos em breve!');
+    setShowCreditsModal(true);
+  };
+
+  const handleCreditsSuccess = () => {
+    refreshProfile();
   };
 
   const handleDeleteOffer = async (offerId: string) => {
@@ -654,6 +660,15 @@ export default function CompanyDashboard() {
         open={showFiscalModal}
         onClose={() => setShowFiscalModal(false)}
         onSuccess={handleFiscalDataSaved}
+      />
+
+      <AddCreditsModal
+        open={showCreditsModal}
+        onOpenChange={setShowCreditsModal}
+        onSuccess={handleCreditsSuccess}
+        userCpfCnpj={profile?.cnpj || profile?.cpf}
+        userName={profile?.name}
+        userEmail={profile?.email}
       />
     </div>
   );
