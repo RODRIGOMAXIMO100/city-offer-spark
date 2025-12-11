@@ -83,6 +83,13 @@ export type Database = {
             foreignKeyName: "affiliate_stats_affiliate_id_fkey"
             columns: ["affiliate_id"]
             isOneToOne: true
+            referencedRelation: "company_public_info"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "affiliate_stats_affiliate_id_fkey"
+            columns: ["affiliate_id"]
+            isOneToOne: true
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -205,6 +212,13 @@ export type Database = {
             foreignKeyName: "notifications_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
+            referencedRelation: "company_public_info"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notifications_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -239,6 +253,13 @@ export type Database = {
           user_agent?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "offer_clicks_affiliate_id_fkey"
+            columns: ["affiliate_id"]
+            isOneToOne: false
+            referencedRelation: "company_public_info"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "offer_clicks_affiliate_id_fkey"
             columns: ["affiliate_id"]
@@ -393,6 +414,13 @@ export type Database = {
           views_count?: number
         }
         Relationships: [
+          {
+            foreignKeyName: "offers_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "company_public_info"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "offers_company_id_fkey"
             columns: ["company_id"]
@@ -579,6 +607,13 @@ export type Database = {
             foreignKeyName: "transactions_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
+            referencedRelation: "company_public_info"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "transactions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -662,7 +697,21 @@ export type Database = {
             foreignKeyName: "withdrawals_reviewed_by_fkey"
             columns: ["reviewed_by"]
             isOneToOne: false
+            referencedRelation: "company_public_info"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "withdrawals_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "withdrawals_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "company_public_info"
             referencedColumns: ["id"]
           },
           {
@@ -676,7 +725,60 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      affiliate_ranking_public: {
+        Row: {
+          affiliate_id: string | null
+          affiliate_name: string | null
+          badge_color: string | null
+          current_level_id: number | null
+          level_name: string | null
+          rank_position: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "affiliate_stats_affiliate_id_fkey"
+            columns: ["affiliate_id"]
+            isOneToOne: true
+            referencedRelation: "company_public_info"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "affiliate_stats_affiliate_id_fkey"
+            columns: ["affiliate_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "affiliate_stats_current_level_id_fkey"
+            columns: ["current_level_id"]
+            isOneToOne: false
+            referencedRelation: "affiliate_levels"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      company_public_info: {
+        Row: {
+          city: string | null
+          id: string | null
+          instagram_url: string | null
+          name: string | null
+        }
+        Insert: {
+          city?: string | null
+          id?: string | null
+          instagram_url?: string | null
+          name?: string | null
+        }
+        Update: {
+          city?: string | null
+          id?: string | null
+          instagram_url?: string | null
+          name?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       calculate_offer_score: { Args: { p_offer_id: string }; Returns: number }
