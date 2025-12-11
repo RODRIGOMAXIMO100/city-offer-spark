@@ -39,17 +39,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setProfile(profileData);
       }
 
-      // Fetch role
+      // Fetch role - get highest priority if multiple exist
       const { data: roleData, error: roleError } = await supabase
         .from('user_roles')
         .select('role')
-        .eq('user_id', userId)
-        .maybeSingle();
+        .eq('user_id', userId);
 
       if (roleError) {
         console.error('Error fetching role:', roleError);
+      } else if (roleData && roleData.length > 0) {
+        // Priority: ADMIN > COMPANY > AFFILIATE > CLIENT
+        const rolePriority: Record<string, number> = {
+          'ADMIN': 4,
+          'COMPANY': 3,
+          'AFFILIATE': 2,
+          'CLIENT': 1
+        };
+        
+        const sortedRoles = roleData.sort((a, b) => 
+          (rolePriority[b.role] || 0) - (rolePriority[a.role] || 0)
+        );
+        
+        setRole(sortedRoles[0].role as AppRole);
       } else {
-        setRole(roleData?.role as AppRole || null);
+        setRole(null);
       }
     } catch (error) {
       console.error('Error fetching user data:', error);
