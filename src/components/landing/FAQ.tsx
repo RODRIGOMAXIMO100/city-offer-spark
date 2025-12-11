@@ -5,16 +5,17 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { HelpCircle } from "lucide-react";
+import { PRICING_DISCLAIMER } from "@/types/database";
 
 // Export FAQs for use in structured data
 export const faqs = [
   {
     question: "Quanto custa para empresas?",
-    answer: "Não há mensalidade ou taxa fixa. Você só paga quando alguém clica na sua oferta. O custo por clique varia de R$ 0,40 a R$ 1,00, calculado automaticamente pela qualidade da sua oferta. Quanto melhor sua nota, menos você paga!",
+    answer: `Não há mensalidade ou taxa fixa. Você só paga quando alguém clica na sua oferta. O custo por clique varia de R$ 0,40 a R$ 1,00, calculado automaticamente pela qualidade da sua oferta. Quanto melhor sua nota, menos você paga! ${PRICING_DISCLAIMER.short}`,
   },
   {
     question: "Como recebo minha comissão como divulgador?",
-    answer: "Cada clique válido no seu link gera saldo na sua conta. Você ganha de R$ 0,20 a R$ 0,75 por clique, dependendo do valor da oferta e do seu nível de divulgador (Bronze, Prata +25%, Ouro +50%). Saque mínimo: R$ 100,00 via PIX.",
+    answer: `Cada clique válido no seu link gera saldo na sua conta. Você ganha de R$ 0,20 a R$ 0,75 por clique, dependendo do valor da oferta e do seu nível de divulgador (Bronze, Prata +25%, Ouro +50%). Saque mínimo: R$ 100,00 via PIX. ${PRICING_DISCLAIMER.short}`,
   },
   {
     question: "Preciso ter CNPJ para cadastrar minha empresa?",
@@ -22,7 +23,7 @@ export const faqs = [
   },
   {
     question: "Como funciona o custo por clique (CPC)?",
-    answer: "O CPC é automático! Ofertas novas começam com nota 7 e pagam R$ 0,70 por clique. Melhore a qualidade da oferta (bons descontos, descrição completa, Instagram vinculado) para aumentar sua nota e pagar menos. Nota 10 = R$ 0,40. Nota 4 = R$ 1,00.",
+    answer: `O CPC é automático! Ofertas novas começam com nota 7 e pagam R$ 0,70 por clique. Melhore a qualidade da oferta (bons descontos, descrição completa, Instagram vinculado) para aumentar sua nota e pagar menos. Nota 10 = R$ 0,40. Nota 4 = R$ 1,00. ${PRICING_DISCLAIMER.short}`,
   },
   {
     question: "O que é a Nota da Oferta?",
@@ -30,7 +31,7 @@ export const faqs = [
   },
   {
     question: "Como funciona a divisão de valores?",
-    answer: "100% transparente: do valor pago pela empresa, 50% vai para o divulgador (pessoas reais da sua cidade) e 50% para a plataforma. Por exemplo, se a empresa paga R$ 0,80, o divulgador recebe R$ 0,40.",
+    answer: `100% transparente: do valor pago pela empresa, 50% vai para o divulgador (pessoas reais da sua cidade) e 50% para a plataforma. Por exemplo, se a empresa paga R$ 0,80, o divulgador recebe R$ 0,40. ${PRICING_DISCLAIMER.short}`,
   },
 ];
 

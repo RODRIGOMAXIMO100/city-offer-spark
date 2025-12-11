@@ -20,9 +20,11 @@ import {
   CheckCircle2,
   Info,
   Instagram,
-  FileText
+  FileText,
+  AlertCircle
 } from "lucide-react";
 import logo from "@/assets/logo.png";
+import { PRICING_DISCLAIMER } from "@/types/database";
 
 const scoreComponents = [
   {
@@ -135,6 +137,12 @@ export default function TransparencyPage() {
               <div className="text-center mb-8">
                 <h2 className="text-3xl font-display font-bold mb-2">CPC 100% Automático</h2>
                 <p className="text-muted-foreground">Sem lances manuais: sua Nota da Oferta define o custo</p>
+                
+                {/* Disclaimer Badge */}
+                <div className="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-amber-500/10 border border-amber-500/20 rounded-full">
+                  <AlertCircle className="h-4 w-4 text-amber-500" />
+                  <span className="text-sm text-amber-600 dark:text-amber-400">{PRICING_DISCLAIMER.short}</span>
+                </div>
               </div>
 
               {/* Formula Card */}

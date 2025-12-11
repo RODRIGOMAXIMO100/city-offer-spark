@@ -98,6 +98,14 @@ export const CONFIG = {
   TIME_TO_INTERACTIVE: 1500,
 } as const;
 
+// Disclaimers de preço centralizados
+export const PRICING_DISCLAIMER = {
+  short: "Valores atuais, sujeitos a alteração.",
+  full: "Valores promocionais válidos para o período de lançamento. A Clilin reserva-se o direito de ajustar valores a qualquer momento.",
+  marketplaceNote: "Custo médio de aquisição por cliente novo em apps de delivery",
+  searchAdsNote: "Custo médio por clique em anúncios de busca pagos",
+} as const;
+
 // Helper para formatar centavos para R$
 export const formatCentsToBRL = (cents: number): string => {
   const value = cents / 100;

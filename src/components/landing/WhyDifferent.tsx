@@ -1,11 +1,13 @@
-import { TrendingDown, MessageSquare, Users, BarChart3 } from "lucide-react";
+import { TrendingDown, MessageSquare, Users, BarChart3, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { PRICING_DISCLAIMER } from "@/types/database";
 
 const comparisonData = [
-  { type: "Anúncios de Busca", cpc: "~R$ 25,00", highlight: false },
-  { type: "Redes Sociais", cpc: "~R$ 3,00", highlight: false },
-  { type: "Clilin", cpc: "R$ 0,40 - R$ 1,00", highlight: true },
+  { type: "Marketplaces de Delivery*", cpc: "~R$ 15 - R$ 30", highlight: false, isMarketplace: true },
+  { type: "Anúncios de Busca", cpc: "~R$ 25,00", highlight: false, isMarketplace: false },
+  { type: "Redes Sociais", cpc: "~R$ 3,00", highlight: false, isMarketplace: false },
+  { type: "Clilin", cpc: "R$ 0,40 - R$ 1,00**", highlight: true, isMarketplace: false },
 ];
 
 const differentials = [
@@ -82,6 +84,18 @@ export function WhyDifferent() {
                 </span>
               </div>
             ))}
+          </div>
+          
+          {/* Footnotes */}
+          <div className="mt-4 space-y-1 text-xs text-muted-foreground">
+            <p className="flex items-start gap-1">
+              <span className="font-medium">*</span>
+              <span>{PRICING_DISCLAIMER.marketplaceNote}</span>
+            </p>
+            <p className="flex items-start gap-1">
+              <span className="font-medium">**</span>
+              <span>{PRICING_DISCLAIMER.full}</span>
+            </p>
           </div>
         </div>
 

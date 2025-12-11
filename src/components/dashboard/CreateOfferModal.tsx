@@ -604,6 +604,9 @@ export default function CreateOfferModal({
             <p className="text-[10px] text-muted-foreground">
               Seu custo por clique (R$ 0,40 - R$ 1,00) é calculado automaticamente com base na <strong>Nota da Oferta</strong>.
             </p>
+            <p className="text-[9px] text-amber-600 dark:text-amber-400 mt-1 italic">
+              Valores atuais, sujeitos a alteração conforme política da plataforma.
+            </p>
             <Link 
               to="/transparencia" 
               target="_blank"
