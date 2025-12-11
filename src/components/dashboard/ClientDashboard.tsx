@@ -5,8 +5,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Sparkles, Send, LogOut, Bot, Loader2, MapPin, Instagram } from 'lucide-react';
+import { Send, LogOut, Bot, Loader2, MapPin, Instagram } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import logo from '@/assets/logo.png';
 
 interface Message {
   id: string;
@@ -112,10 +113,7 @@ export default function ClientDashboard() {
       <header className="bg-card border-b border-border sticky top-0 z-10">
         <div className="max-w-2xl mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center gap-2">
-            <div className="bg-client p-1.5 rounded-lg">
-              <Sparkles className="h-5 w-5 text-client-foreground" />
-            </div>
-            <h1 className="text-xl font-bold text-foreground">Clilin AI</h1>
+            <img src={logo} alt="clilin" className="h-8" />
           </div>
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-1 text-xs text-muted-foreground">
