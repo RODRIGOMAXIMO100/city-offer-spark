@@ -259,25 +259,22 @@ export default function OfferPage() {
     }
   };
 
-  const handleInstagramClick = async () => {
+  const handleInstagramClick = () => {
     if (!offer?.profiles?.instagram_url) return;
     
-    // Record Instagram click (free, just for tracking)
-    try {
-      await supabase.functions.invoke('process-click', {
-        body: {
-          offerId: offer.id,
-          affiliateId,
-          fingerprint: fingerprint ? hashFingerprint(fingerprint) : null,
-          userAgent: navigator.userAgent,
-          clickType: 'INSTAGRAM',
-        },
-      });
-    } catch (err) {
-      console.error('Error tracking Instagram click:', err);
-    }
-    
+    // Open URL first (before async call) to avoid popup blocker on mobile
     window.open(offer.profiles.instagram_url, '_blank');
+    
+    // Record Instagram click (free, just for tracking) - fire and forget
+    supabase.functions.invoke('process-click', {
+      body: {
+        offerId: offer.id,
+        affiliateId,
+        fingerprint: fingerprint ? hashFingerprint(fingerprint) : null,
+        userAgent: navigator.userAgent,
+        clickType: 'INSTAGRAM',
+      },
+    }).catch(err => console.error('Error tracking Instagram click:', err));
   };
 
   const getLinkIcon = () => {
