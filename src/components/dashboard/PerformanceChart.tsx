@@ -13,18 +13,13 @@ import { LineChart, Line, XAxis, YAxis, ResponsiveContainer } from 'recharts';
 
 interface DailyData {
   date: string;
-  views: number;
   clicks: number;
 }
 
 const chartConfig = {
-  views: {
-    label: 'Views',
-    color: 'hsl(var(--muted-foreground))',
-  },
   clicks: {
     label: 'Cliques',
-    color: 'hsl(var(--secondary))',
+    color: 'hsl(var(--primary))',
   },
 };
 
@@ -74,40 +69,33 @@ export default function PerformanceChart() {
     ) || [];
 
     // Group by day
-    const dailyMap: Record<string, { views: number; clicks: number }> = {};
+    const dailyMap: Record<string, number> = {};
     
     // Initialize all days in period
     for (let i = period - 1; i >= 0; i--) {
       const date = new Date();
       date.setDate(date.getDate() - i);
       const key = date.toISOString().split('T')[0];
-      dailyMap[key] = { views: 0, clicks: 0 };
+      dailyMap[key] = 0;
     }
 
     // Count clicks by day
     myClicks.forEach(click => {
       const key = click.created_at.split('T')[0];
-      if (dailyMap[key]) {
-        dailyMap[key].clicks += 1;
+      if (dailyMap[key] !== undefined) {
+        dailyMap[key] += 1;
       }
     });
-
-    // Note: Views are aggregated in offers table, so we'll estimate based on total views
-    // For a more accurate chart, we'd need a views_log table
-    // For now, we'll show actual clicks and use total views / period as average
-    const totalViews = myOffers?.reduce((acc, o) => acc + o.views_count, 0) || 0;
-    const avgDailyViews = Math.round(totalViews / period);
     
     // Convert to array and format for chart
     const chartData: DailyData[] = Object.entries(dailyMap)
       .sort((a, b) => a[0].localeCompare(b[0]))
-      .map(([date, values]) => ({
+      .map(([date, clicks]) => ({
         date: new Date(date).toLocaleDateString('pt-BR', { 
           day: '2-digit', 
           month: '2-digit' 
         }),
-        views: avgDailyViews, // Using average since we don't have daily view logs
-        clicks: values.clicks,
+        clicks,
       }));
 
     setData(chartData);
@@ -166,18 +154,11 @@ export default function PerformanceChart() {
                 <ChartTooltip content={<ChartTooltipContent />} />
                 <Line
                   type="monotone"
-                  dataKey="views"
-                  stroke="var(--color-views)"
-                  strokeWidth={2}
-                  dot={false}
-                  name="Views"
-                />
-                <Line
-                  type="monotone"
                   dataKey="clicks"
                   stroke="var(--color-clicks)"
                   strokeWidth={2}
-                  dot={false}
+                  dot={{ fill: 'hsl(var(--primary))', strokeWidth: 0, r: 3 }}
+                  activeDot={{ r: 5, fill: 'hsl(var(--primary))' }}
                   name="Cliques"
                 />
               </LineChart>
@@ -190,12 +171,8 @@ export default function PerformanceChart() {
         )}
         <div className="flex justify-center gap-4 mt-2 text-xs">
           <div className="flex items-center gap-1">
-            <div className="w-3 h-0.5 bg-muted-foreground rounded" />
-            <span className="text-muted-foreground">Views (média)</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <div className="w-3 h-0.5 bg-secondary rounded" />
-            <span className="text-muted-foreground">Cliques</span>
+            <div className="w-3 h-0.5 bg-primary rounded" />
+            <span className="text-muted-foreground">Cliques por dia</span>
           </div>
         </div>
       </CardContent>
