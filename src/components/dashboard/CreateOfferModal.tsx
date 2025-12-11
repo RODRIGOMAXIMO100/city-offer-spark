@@ -21,7 +21,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { MessageCircle, FileText, Globe, Loader2, CalendarIcon, Star, ExternalLink } from 'lucide-react';
+import { MessageCircle, FileText, Globe, Loader2, CalendarIcon, Star, ExternalLink, AlertTriangle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Link } from 'react-router-dom';
 
@@ -29,6 +29,7 @@ interface CreateOfferModalProps {
   open: boolean;
   onClose: () => void;
   onSuccess: () => void;
+  hasActiveOffer?: boolean;
 }
 
 const LINK_TYPES: { value: LinkType; label: string; icon: React.ReactNode; color: string }[] = [
@@ -37,7 +38,7 @@ const LINK_TYPES: { value: LinkType; label: string; icon: React.ReactNode; color
   { value: 'SITE', label: 'Site', icon: <Globe className="h-4 w-4" />, color: 'bg-blue-500' },
 ];
 
-export default function CreateOfferModal({ open, onClose, onSuccess }: CreateOfferModalProps) {
+export default function CreateOfferModal({ open, onClose, onSuccess, hasActiveOffer = false }: CreateOfferModalProps) {
   const { profile } = useAuth();
   const { createOffer } = useOffers();
 
@@ -54,7 +55,7 @@ export default function CreateOfferModal({ open, onClose, onSuccess }: CreateOff
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!profile) return;
+    if (!profile || hasActiveOffer) return;
 
     setLoading(true);
 
@@ -89,42 +90,74 @@ export default function CreateOfferModal({ open, onClose, onSuccess }: CreateOff
   const minDate = addDays(new Date(), 1);
   const maxDate = addDays(new Date(), 30);
 
+  // If has active offer, show warning instead of form
+  if (hasActiveOffer) {
+    return (
+      <Dialog open={open} onOpenChange={onClose}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-orange-500">
+              <AlertTriangle className="h-5 w-5" />
+              Limite Atingido
+            </DialogTitle>
+          </DialogHeader>
+          <div className="py-6 text-center space-y-4">
+            <div className="bg-orange-500/10 border border-orange-500/30 rounded-lg p-4">
+              <p className="text-sm text-foreground font-medium mb-2">
+                Você já possui 1 oferta ativa!
+              </p>
+              <p className="text-xs text-muted-foreground">
+                Cada empresa pode ter apenas 1 oferta ativa por vez. 
+                Delete sua oferta atual para criar uma nova.
+              </p>
+            </div>
+            <Button onClick={onClose} variant="outline" className="w-full">
+              Entendi
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    );
+  }
+
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Nova Oferta</DialogTitle>
-          <DialogDescription>
+          <DialogTitle className="text-base sm:text-lg">Nova Oferta</DialogTitle>
+          <DialogDescription className="text-xs sm:text-sm">
             Crie uma oferta para divulgar seu negócio. Você paga apenas por clique.
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="title">Título da Oferta *</Label>
+        <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
+          <div className="space-y-1.5 sm:space-y-2">
+            <Label htmlFor="title" className="text-xs sm:text-sm">Título da Oferta *</Label>
             <Input
               id="title"
               placeholder="Ex: Combo Família - 2 Pizzas + Refri"
               value={formData.title}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
               required
+              className="text-sm"
             />
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="description">Descrição (opcional)</Label>
+          <div className="space-y-1.5 sm:space-y-2">
+            <Label htmlFor="description" className="text-xs sm:text-sm">Descrição (opcional)</Label>
             <Textarea
               id="description"
               placeholder="Detalhes da oferta..."
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               rows={2}
+              className="text-sm"
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
-            <div className="space-y-2">
-              <Label htmlFor="price_old">Preço Original *</Label>
+          <div className="grid grid-cols-2 gap-2 sm:gap-3">
+            <div className="space-y-1.5 sm:space-y-2">
+              <Label htmlFor="price_old" className="text-xs sm:text-sm">Preço Original *</Label>
               <Input
                 id="price_old"
                 type="number"
@@ -133,16 +166,17 @@ export default function CreateOfferModal({ open, onClose, onSuccess }: CreateOff
                 value={formData.price_old}
                 onChange={(e) => setFormData({ ...formData, price_old: e.target.value })}
                 required
+                className="text-sm"
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="price_new">Preço Promocional *</Label>
+            <div className="space-y-1.5 sm:space-y-2">
+              <Label htmlFor="price_new" className="text-xs sm:text-sm">Preço Promocional *</Label>
               <Input
                 id="price_new"
                 type="number"
                 step="0.01"
                 placeholder="89.90"
-                className="border-secondary bg-secondary/5"
+                className="border-secondary bg-secondary/5 text-sm"
                 value={formData.price_new}
                 onChange={(e) => setFormData({ ...formData, price_new: e.target.value })}
                 required
@@ -151,42 +185,42 @@ export default function CreateOfferModal({ open, onClose, onSuccess }: CreateOff
           </div>
 
           {/* CPC Automático Info */}
-          <div className="p-4 bg-company/5 border border-company/20 rounded-lg">
-            <div className="flex items-center gap-2 mb-2">
-              <Star className="h-4 w-4 text-company" />
-              <span className="font-medium text-sm">CPC Automático</span>
+          <div className="p-3 sm:p-4 bg-company/5 border border-company/20 rounded-lg">
+            <div className="flex items-center gap-2 mb-1.5 sm:mb-2">
+              <Star className="h-3 w-3 sm:h-4 sm:w-4 text-company" />
+              <span className="font-medium text-xs sm:text-sm">CPC Automático</span>
             </div>
-            <p className="text-xs text-muted-foreground mb-2">
+            <p className="text-[10px] sm:text-xs text-muted-foreground mb-2">
               Seu custo por clique é calculado automaticamente com base na <strong>Nota da Oferta</strong>. 
               Quanto melhor a nota, menos você paga!
             </p>
-            <div className="flex items-center justify-between text-xs bg-background rounded p-2">
+            <div className="flex items-center justify-between text-[10px] sm:text-xs bg-background rounded p-1.5 sm:p-2">
               <span className="text-muted-foreground">Range de CPC:</span>
               <span className="font-bold text-company">R$ 0,40 - R$ 1,00</span>
             </div>
             <Link 
               to="/transparencia" 
               target="_blank"
-              className="flex items-center gap-1 text-xs text-primary hover:underline mt-2"
+              className="flex items-center gap-1 text-[10px] sm:text-xs text-primary hover:underline mt-2"
             >
-              <ExternalLink className="h-3 w-3" />
+              <ExternalLink className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
               Entenda como funciona
             </Link>
           </div>
 
           {/* Expiration Date Picker */}
-          <div className="space-y-2">
-            <Label>Data de Expiração *</Label>
+          <div className="space-y-1.5 sm:space-y-2">
+            <Label className="text-xs sm:text-sm">Data de Expiração *</Label>
             <Popover>
               <PopoverTrigger asChild>
                 <Button
                   variant="outline"
                   className={cn(
-                    "w-full justify-start text-left font-normal",
+                    "w-full justify-start text-left font-normal text-sm",
                     !formData.expires_at && "text-muted-foreground"
                   )}
                 >
-                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  <CalendarIcon className="mr-2 h-3 w-3 sm:h-4 sm:w-4" />
                   {formData.expires_at ? (
                     format(formData.expires_at, "PPP", { locale: ptBR })
                   ) : (
@@ -205,34 +239,34 @@ export default function CreateOfferModal({ open, onClose, onSuccess }: CreateOff
                 />
               </PopoverContent>
             </Popover>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-[10px] sm:text-xs text-muted-foreground">
               Mínimo: amanhã • Máximo: 30 dias
             </p>
           </div>
 
-          <div className="space-y-2">
-            <Label>Destino do Clique *</Label>
-            <div className="grid grid-cols-3 gap-2">
+          <div className="space-y-1.5 sm:space-y-2">
+            <Label className="text-xs sm:text-sm">Destino do Clique *</Label>
+            <div className="grid grid-cols-3 gap-1.5 sm:gap-2">
               {LINK_TYPES.map((type) => (
                 <button
                   key={type.value}
                   type="button"
                   onClick={() => setFormData({ ...formData, link_type: type.value })}
-                  className={`p-3 rounded-lg border-2 transition-all flex flex-col items-center gap-1 ${
+                  className={`p-2 sm:p-3 rounded-lg border-2 transition-all flex flex-col items-center gap-0.5 sm:gap-1 ${
                     formData.link_type === type.value
                       ? `border-primary ${type.color} text-white`
                       : 'border-border hover:border-primary/50'
                   }`}
                 >
                   {type.icon}
-                  <span className="text-xs font-medium">{type.label}</span>
+                  <span className="text-[10px] sm:text-xs font-medium">{type.label}</span>
                 </button>
               ))}
             </div>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="link">Link *</Label>
+          <div className="space-y-1.5 sm:space-y-2">
+            <Label htmlFor="link" className="text-xs sm:text-sm">Link *</Label>
             <Input
               id="link"
               type="url"
@@ -244,21 +278,22 @@ export default function CreateOfferModal({ open, onClose, onSuccess }: CreateOff
               value={formData.link_destination}
               onChange={(e) => setFormData({ ...formData, link_destination: e.target.value })}
               required
+              className="text-sm"
             />
           </div>
 
-          <div className="bg-muted rounded-lg p-3 text-sm">
+          <div className="bg-muted rounded-lg p-2.5 sm:p-3 text-xs sm:text-sm">
             <p className="font-medium">💡 Sistema de Leilão Inteligente</p>
-            <p className="text-muted-foreground text-xs mt-1">
+            <p className="text-muted-foreground text-[10px] sm:text-xs mt-1">
               Ofertas com melhor desempenho pagam menos por clique. Seu CPC real depende da sua Nota da Oferta!
             </p>
           </div>
 
-          <div className="flex gap-3 pt-2">
-            <Button type="button" variant="outline" onClick={onClose} className="flex-1">
+          <div className="flex gap-2 sm:gap-3 pt-2">
+            <Button type="button" variant="outline" onClick={onClose} className="flex-1 text-sm">
               Cancelar
             </Button>
-            <Button type="submit" disabled={loading} className="flex-1">
+            <Button type="submit" disabled={loading} className="flex-1 text-sm">
               {loading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
