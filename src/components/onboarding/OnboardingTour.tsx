@@ -30,6 +30,7 @@ export function OnboardingTour() {
   const [isReady, setIsReady] = useState(false);
   const [elementNotFound, setElementNotFound] = useState(false);
   const retryCountRef = useRef(0);
+  const isScrollingRef = useRef(false);
   const maxRetries = 5;
   
   const steps = getTourSteps();
@@ -38,17 +39,18 @@ export function OnboardingTour() {
   const isFirstStep = tourCurrentStep === 0;
 
   const updatePositions = useCallback(() => {
+    // Bloquear updates durante scroll automático
+    if (isScrollingRef.current) return;
+    
     if (!currentStepData?.target) return;
 
     const element = document.querySelector(currentStepData.target);
     if (!element) {
-      // Se ainda temos tentativas, aguardar e tentar novamente
       if (retryCountRef.current < maxRetries) {
         retryCountRef.current++;
         setTimeout(updatePositions, 300);
         return;
       }
-      // Após todas as tentativas, mostrar tooltip centralizado sem highlight
       setHighlightPos(null);
       setElementNotFound(true);
       setTooltipPos({
@@ -58,7 +60,6 @@ export function OnboardingTour() {
       return;
     }
 
-    // Elemento encontrado, resetar contadores
     retryCountRef.current = 0;
     setElementNotFound(false);
 
@@ -72,7 +73,6 @@ export function OnboardingTour() {
       height: rect.height + padding * 2,
     });
 
-    // Calcular posição do tooltip
     const tooltipWidth = 320;
     const tooltipHeight = 180;
     let tooltipTop = 0;
@@ -97,7 +97,6 @@ export function OnboardingTour() {
         break;
     }
 
-    // Ajustar para não sair da tela
     tooltipLeft = Math.max(16, Math.min(tooltipLeft, window.innerWidth - tooltipWidth - 16));
     tooltipTop = Math.max(16, tooltipTop);
 
@@ -108,6 +107,7 @@ export function OnboardingTour() {
   useEffect(() => {
     if (!showTour) {
       setIsReady(false);
+      isScrollingRef.current = false;
       return;
     }
 
@@ -116,6 +116,7 @@ export function OnboardingTour() {
     setElementNotFound(false);
     setIsReady(false);
     setHighlightPos(null);
+    isScrollingRef.current = true; // Marcar que está scrollando
 
     // Função para processar o step
     const processStep = async () => {
@@ -130,10 +131,17 @@ export function OnboardingTour() {
         // Fazer scroll PRIMEIRO
         element.scrollIntoView({ behavior: 'smooth', block: 'center' });
         
-        // Aguardar scroll completar (600ms para smooth scroll)
-        await new Promise(resolve => setTimeout(resolve, 600));
+        // Aguardar scroll completar (800ms para smooth scroll)
+        await new Promise(resolve => setTimeout(resolve, 800));
+        
+        // Usar requestAnimationFrame para garantir que o browser terminou de renderizar
+        await new Promise(resolve => requestAnimationFrame(resolve));
+        await new Promise(resolve => requestAnimationFrame(resolve));
       }
 
+      // Liberar flag de scroll
+      isScrollingRef.current = false;
+      
       // Agora calcular posições
       updatePositions();
       
@@ -143,22 +151,30 @@ export function OnboardingTour() {
 
     processStep();
 
-    window.addEventListener('resize', updatePositions);
-    window.addEventListener('scroll', updatePositions);
+    // Handler que ignora updates durante scroll automático
+    const handleScrollResize = () => {
+      if (!isScrollingRef.current) {
+        updatePositions();
+      }
+    };
+
+    window.addEventListener('resize', handleScrollResize);
+    window.addEventListener('scroll', handleScrollResize);
 
     return () => {
-      window.removeEventListener('resize', updatePositions);
-      window.removeEventListener('scroll', updatePositions);
+      window.removeEventListener('resize', handleScrollResize);
+      window.removeEventListener('scroll', handleScrollResize);
+      isScrollingRef.current = false;
     };
   }, [showTour, tourCurrentStep, currentStepData?.target, updatePositions]);
 
   if (!showTour || !currentStepData) return null;
 
-  // Mostrar loading enquanto prepara o tour
+  // Mostrar loading enquanto prepara o tour - com pointer-events-none para bloquear interação
   if (!isReady) {
     return (
-      <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60">
-        <div className="bg-card p-6 rounded-lg shadow-2xl text-center border border-border">
+      <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 pointer-events-auto">
+        <div className="bg-card p-6 rounded-lg shadow-2xl text-center border border-border pointer-events-none">
           <Loader2 className="h-6 w-6 animate-spin mx-auto mb-3 text-primary" />
           <p className="text-sm text-foreground font-medium">Preparando tour...</p>
           <p className="text-xs text-muted-foreground mt-1">Aguarde um momento</p>
