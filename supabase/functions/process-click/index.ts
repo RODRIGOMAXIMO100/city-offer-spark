@@ -31,16 +31,8 @@ function generateTrackedWhatsAppLink(
   // Extract number from wa.me link
   const waNumber = baseLink.replace('https://wa.me/', '').split('?')[0];
   
-  // Generate short reference code
-  const refCode = offerId.substring(0, 8).toUpperCase();
-  
-  // Build message
-  let message = `Olá! 👋\nVi a oferta "${offerTitle}" no CliLin.`;
-  message += `\n\n📋 Ref: ${refCode}`;
-  
-  if (affiliateId) {
-    message += `\n👤 Indicação: ${affiliateId.substring(0, 6).toUpperCase()}`;
-  }
+  // Build simple message - no refs, no emojis
+  const message = `Olá!\nVi a oferta "${offerTitle}" no CliLin.`;
   
   const encodedMessage = encodeURIComponent(message);
   return `https://wa.me/${waNumber}?text=${encodedMessage}`;
