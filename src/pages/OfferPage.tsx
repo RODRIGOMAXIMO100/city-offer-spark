@@ -117,7 +117,7 @@ export default function OfferPage() {
         .from('offers')
         .select(`
           *,
-          profiles!offers_company_id_fkey(name, instagram_url)
+          profiles!offers_company_id_fkey(name, instagram_url, avatar_url)
         `)
         .eq('id', id)
         .single();
@@ -434,10 +434,18 @@ export default function OfferPage() {
         <CardContent className="p-6 space-y-6">
           {/* Company */}
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
-              <Sparkles className="h-4 w-4 text-primary" />
-            </div>
-            <span className="font-medium">{offer.profiles?.name || 'Empresa'}</span>
+            {offer.profiles?.avatar_url ? (
+              <img 
+                src={offer.profiles.avatar_url} 
+                alt={offer.profiles?.name || 'Empresa'} 
+                className="h-10 w-10 rounded-full object-cover border border-border"
+              />
+            ) : (
+              <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                <Sparkles className="h-5 w-5 text-primary" />
+              </div>
+            )}
+            <span className="font-medium text-foreground">{offer.profiles?.name || 'Empresa'}</span>
           </div>
 
           {/* Title */}
