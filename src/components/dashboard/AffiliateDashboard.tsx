@@ -297,18 +297,21 @@ export default function AffiliateDashboard() {
           <AffiliateRanking currentAffiliateId={profile.id} />
         )}
 
-        {/* Info Card */}
+        {/* Info Card - Earnings Explanation */}
         <Card className="bg-gradient-to-r from-affiliate to-affiliate/80 text-affiliate-foreground border-0">
           <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="bg-white/20 p-3 rounded-full">
+            <div className="flex items-start gap-3">
+              <div className="bg-white/20 p-3 rounded-full shrink-0">
                 <Share2 className="h-6 w-6" />
               </div>
-              <div>
-                <p className="font-bold">Ganhe {formatCreditsToReal(CONFIG.CPC_PAYOUT_AFFILIATE)} por clique!</p>
-                <p className="text-sm opacity-90">
-                  Copie o link das ofertas e compartilhe com seus seguidores
-                </p>
+              <div className="space-y-2">
+                <p className="font-bold text-lg">Como você ganha dinheiro?</p>
+                <ul className="text-sm opacity-95 space-y-1">
+                  <li>• <strong>R$ 0,30 por clique</strong> no seu link de divulgação</li>
+                  <li>• <strong>Sem limite de ganhos</strong> - quanto mais divulgar, mais ganha</li>
+                  <li>• <strong>Saque mínimo: R$ 30,00</strong> via PIX instantâneo</li>
+                  <li>• <strong>Multiplicadores de nível</strong> aumentam seus ganhos!</li>
+                </ul>
               </div>
             </div>
           </CardContent>

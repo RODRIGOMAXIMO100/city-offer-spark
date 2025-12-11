@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { Coins, PlusCircle, LogOut, Eye, MousePointer, TrendingUp, Loader2, Instagram, Check, Clock, Trash2 } from 'lucide-react';
+import { Coins, PlusCircle, LogOut, Eye, MousePointer, TrendingUp, Loader2, Instagram, Check, Clock, Trash2, Info } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import CreateOfferModal from './CreateOfferModal';
 import PerformanceChart from './PerformanceChart';
@@ -230,6 +230,25 @@ export default function CompanyDashboard() {
 
         {/* Performance Chart */}
         <PerformanceChart />
+
+        {/* Pricing Explanation Card */}
+        <Card className="bg-gradient-to-r from-company/10 to-company/5 border-company/20">
+          <CardContent className="p-4">
+            <div className="flex items-start gap-3">
+              <div className="bg-company/20 p-2 rounded-full shrink-0">
+                <Info className="h-5 w-5 text-company" />
+              </div>
+              <div className="space-y-2">
+                <p className="font-bold text-foreground">Como funciona a cobrança?</p>
+                <ul className="text-sm text-muted-foreground space-y-1">
+                  <li>• <strong className="text-foreground">R$ 0,50 por clique</strong> - você só paga quando há interesse real</li>
+                  <li>• <strong className="text-foreground">Visualizações são gratuitas</strong> - sem custo extra</li>
+                  <li>• <strong className="text-foreground">Cada R$ 10 = 100 créditos</strong> (20 cliques garantidos)</li>
+                </ul>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Create Offer Button */}
         <Button
