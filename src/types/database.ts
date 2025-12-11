@@ -84,12 +84,12 @@ export interface OfferClick {
 export const CONFIG = {
   CREDIT_VALUE_BRL: 0.10,
   MIN_CPC: 4,
-  MAX_CPC: 15,
-  DEFAULT_CPC: 5,
+  MAX_CPC: 10, // CPC automático: 14 - Nota (range 4-10)
+  DEFAULT_CPC: 7, // CPC para nota inicial 7
   AFFILIATE_SHARE: 0.50, // 50% para divulgador, 50% para plataforma
   // Legacy: for backward compatibility in admin analytics
-  CPC_PLATFORM_PROFIT: 2.5, // Average estimate (50% of average CPC 5)
-  CPC_PAYOUT_AFFILIATE: 2.5, // Average estimate (50% of average CPC 5)
+  CPC_PLATFORM_PROFIT: 3.5, // Average estimate (50% of average CPC 7)
+  CPC_PAYOUT_AFFILIATE: 3.5, // Average estimate (50% of average CPC 7)
   MIN_WITHDRAW_BRL: 30.00,
   TIME_TO_INTERACTIVE: 1500,
 } as const;
