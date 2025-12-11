@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { Navbar } from "@/components/landing/Navbar";
 import { HeroSection } from "@/components/landing/HeroSection";
+import { WhyDifferent } from "@/components/landing/WhyDifferent";
 import { PublicAIChat } from "@/components/landing/PublicAIChat";
 import { HowItWorks } from "@/components/landing/HowItWorks";
 import { ForCompanies } from "@/components/landing/ForCompanies";
@@ -54,6 +55,7 @@ export default function LandingPage() {
       <Navbar />
       <main>
         <HeroSection />
+        <WhyDifferent />
         <PublicAIChat />
         <HowItWorks />
         <ForCompanies />
