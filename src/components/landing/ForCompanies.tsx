@@ -73,10 +73,11 @@ export function ForCompanies() {
               ))}
             </div>
 
-            <Button size="lg" asChild className="bg-company hover:bg-company/90 shadow-xl shadow-company/25 hover:shadow-2xl hover:shadow-company/30 transition-all h-14 px-8">
+            <Button size="lg" asChild className="bg-company hover:bg-company/90 shadow-xl shadow-company/25 hover:shadow-2xl hover:shadow-company/30 transition-all h-12 sm:h-14 px-6 sm:px-8 text-sm sm:text-base">
               <Link to="/auth?role=COMPANY">
-                Cadastrar Minha Empresa
-                <ArrowRight className="ml-2 h-5 w-5" />
+                <span className="sm:hidden">Cadastrar Empresa</span>
+                <span className="hidden sm:inline">Cadastrar Minha Empresa</span>
+                <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
               </Link>
             </Button>
           </div>

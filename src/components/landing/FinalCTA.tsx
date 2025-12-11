@@ -8,6 +8,7 @@ const options = [
     title: "Empresa",
     description: "Cadastre ofertas e pague apenas por cliques verificados",
     cta: "Começar como Empresa",
+    ctaMobile: "Começar",
     color: "company",
     role: "COMPANY",
   },
@@ -16,6 +17,7 @@ const options = [
     title: "Divulgador",
     description: "Ganhe comissão real compartilhando ofertas — pessoas reais da sua cidade divulgando para você",
     cta: "Começar como Divulgador",
+    ctaMobile: "Começar",
     color: "affiliate",
     role: "AFFILIATE",
   },
@@ -24,6 +26,7 @@ const options = [
     title: "Cliente",
     description: "Encontre as melhores ofertas com ajuda da IA",
     cta: "Descobrir Ofertas",
+    ctaMobile: "Descobrir",
     color: "client",
     role: "CLIENT",
   },
@@ -70,7 +73,8 @@ export function FinalCTA() {
                 
                 <Button asChild className={`w-full h-10 sm:h-12 text-sm sm:text-base bg-${option.color} hover:bg-${option.color}/90 shadow-lg shadow-${option.color}/25 hover:shadow-xl hover:shadow-${option.color}/30 transition-all`}>
                   <Link to={`/auth?role=${option.role}`}>
-                    {option.cta}
+                    <span className="sm:hidden">{option.ctaMobile}</span>
+                    <span className="hidden sm:inline">{option.cta}</span>
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>
                 </Button>
