@@ -99,7 +99,7 @@ export function ForAffiliates() {
             
             <p className="text-lg text-muted-foreground mb-10 leading-relaxed">
               Você já influencia pessoas na sua região. Agora pode ganhar dinheiro 
-              compartilhando ofertas que sua audiência vai adorar.
+              compartilhando ofertas que sua audiência vai adorar. <strong className="text-foreground">100% do valor pago pelas empresas é dividido entre a plataforma e você</strong> — pessoas reais da sua cidade.
             </p>
 
             {/* Benefits */}

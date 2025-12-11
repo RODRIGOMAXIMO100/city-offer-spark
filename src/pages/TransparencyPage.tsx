@@ -153,7 +153,7 @@ export default function TransparencyPage() {
                     <span className="text-2xl font-bold text-muted-foreground">=</span>
                     <div className="bg-card rounded-xl p-4 shadow-lg border-2 border-accent">
                       <p className="text-sm text-muted-foreground mb-1">CPC</p>
-                      <p className="text-2xl font-bold text-accent">7 C$</p>
+                      <p className="text-2xl font-bold text-accent">R$ 0,70</p>
                     </div>
                   </div>
                   <p className="text-center mt-6 text-muted-foreground">
@@ -181,10 +181,9 @@ export default function TransparencyPage() {
                     <div className="overflow-x-auto">
                       <table className="w-full text-sm">
                         <thead>
-                          <tr className="border-b border-border">
+                        <tr className="border-b border-border">
                             <th className="text-center py-2 px-3">Nota</th>
-                            <th className="text-center py-2 px-3">CPC</th>
-                            <th className="text-center py-2 px-3">Custo Real</th>
+                            <th className="text-center py-2 px-3">Custo por Clique</th>
                             <th className="text-left py-2 px-3">Significado</th>
                           </tr>
                         </thead>
@@ -192,8 +191,7 @@ export default function TransparencyPage() {
                           {cpcExamples.map((ex, i) => (
                             <tr key={i} className={i === 0 ? "bg-secondary/10" : ""}>
                               <td className="text-center py-2 px-3 font-bold">{ex.score}</td>
-                              <td className="text-center py-2 px-3">{ex.cpc} C$</td>
-                              <td className="text-center py-2 px-3 text-secondary font-bold">R$ {(ex.cpc * 0.10).toFixed(2)}</td>
+                              <td className="text-center py-2 px-3 text-secondary font-bold">R$ {(ex.cpc * 0.10).toFixed(2).replace('.', ',')}</td>
                               <td className="py-2 px-3 text-muted-foreground">{ex.reason}</td>
                             </tr>
                           ))}
@@ -398,7 +396,7 @@ export default function TransparencyPage() {
                       <tbody>
                         {earningsExamples.map((ex, i) => (
                           <tr key={i} className="border-b border-border/50 hover:bg-muted/50">
-                            <td className="py-3 px-4 font-medium">{ex.cpc} C$</td>
+                            <td className="py-3 px-4 font-medium">R$ {(ex.cpc * 0.10).toFixed(2).replace('.', ',')}</td>
                             <td className="text-center py-3 px-4 text-company font-bold">{ex.company}</td>
                             <td className="text-center py-3 px-4 text-muted-foreground">{ex.platform}</td>
                             <td className="text-center py-3 px-4 text-affiliate font-bold">{ex.affiliate}</td>
@@ -458,7 +456,7 @@ export default function TransparencyPage() {
                     </div>
                   </div>
                   <p className="text-xs text-muted-foreground mt-4">
-                    *Com CPC máximo (10 C$) + multiplicador Diamante (1.3x)
+                    *Com CPC máximo (R$ 1,00) + multiplicador Diamante (1.3x)
                   </p>
                 </CardContent>
               </Card>
@@ -500,7 +498,7 @@ export default function TransparencyPage() {
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm text-muted-foreground mb-4">
-                    Baseado em CPC médio de 7 C$ (R$ 0,35 por clique base):
+                    Baseado em CPC médio de R$ 0,70 (R$ 0,35 por clique para o divulgador):
                   </p>
                   <div className="grid sm:grid-cols-3 gap-4">
                     <div className="bg-card rounded-xl p-4 text-center border border-border">

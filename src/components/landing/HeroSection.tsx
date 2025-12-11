@@ -56,6 +56,7 @@ export function HeroSection() {
               { icon: CheckCircle2, text: "Sem mensalidade" },
               { icon: CheckCircle2, text: "Pague por resultado" },
               { icon: CheckCircle2, text: "Saque via PIX" },
+              { icon: Users, text: "Ganhos compartilhados com pessoas reais da sua cidade" },
             ].map((item) => (
               <div key={item.text} className="flex items-center gap-2 text-muted-foreground">
                 <item.icon className="h-5 w-5 text-secondary" />

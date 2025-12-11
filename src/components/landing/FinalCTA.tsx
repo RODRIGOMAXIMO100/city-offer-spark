@@ -14,7 +14,7 @@ const options = [
   {
     icon: Users,
     title: "Divulgador",
-    description: "Compartilhe ofertas e ganhe comissão por cada clique",
+    description: "Ganhe comissão real compartilhando ofertas — pessoas reais da sua cidade divulgando para você",
     cta: "Começar como Divulgador",
     color: "affiliate",
     role: "AFFILIATE",

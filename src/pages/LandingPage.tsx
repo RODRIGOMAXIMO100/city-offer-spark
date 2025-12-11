@@ -7,7 +7,6 @@ import { HowItWorks } from "@/components/landing/HowItWorks";
 import { ForCompanies } from "@/components/landing/ForCompanies";
 import { ForAffiliates } from "@/components/landing/ForAffiliates";
 import { ForClients } from "@/components/landing/ForClients";
-import { Stats } from "@/components/landing/Stats";
 import { FAQ } from "@/components/landing/FAQ";
 import { FinalCTA } from "@/components/landing/FinalCTA";
 import { Footer } from "@/components/landing/Footer";
@@ -39,7 +38,6 @@ export default function LandingPage() {
         <ForCompanies />
         <ForAffiliates />
         <ForClients />
-        <Stats />
         <FAQ />
         <FinalCTA />
       </main>
