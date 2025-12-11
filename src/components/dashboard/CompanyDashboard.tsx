@@ -11,6 +11,7 @@ import { Coins, PlusCircle, LogOut, Eye, MousePointer, TrendingUp, Loader2, Inst
 import { useToast } from '@/hooks/use-toast';
 import CreateOfferModal from './CreateOfferModal';
 import PerformanceChart from './PerformanceChart';
+import FiscalDataModal from './FiscalDataModal';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -28,9 +29,23 @@ export default function CompanyDashboard() {
   const { offers, loading, fetchMyOffers, deleteOffer } = useOffers();
   const { toast } = useToast();
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showFiscalModal, setShowFiscalModal] = useState(false);
   const [instagramUrl, setInstagramUrl] = useState(profile?.instagram_url || '');
   const [savingInstagram, setSavingInstagram] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  const handleBuyCredits = () => {
+    if (!profile?.cnpj || !profile?.razao_social) {
+      setShowFiscalModal(true);
+    } else {
+      alert('Funcionalidade de compra de créditos em breve!');
+    }
+  };
+
+  const handleFiscalDataSaved = () => {
+    setShowFiscalModal(false);
+    alert('Funcionalidade de compra de créditos em breve!');
+  };
 
   const handleDeleteOffer = async (offerId: string) => {
     setDeletingId(offerId);
@@ -138,7 +153,7 @@ export default function CompanyDashboard() {
               size="icon"
               variant="outline"
               className="rounded-full border-secondary text-secondary hover:bg-secondary hover:text-secondary-foreground"
-              onClick={() => alert('Funcionalidade de compra de créditos em breve!')}
+              onClick={handleBuyCredits}
             >
               <PlusCircle className="h-4 w-4" />
             </Button>
@@ -328,6 +343,13 @@ export default function CompanyDashboard() {
         open={showCreateModal}
         onClose={() => setShowCreateModal(false)}
         onSuccess={handleOfferCreated}
+      />
+
+      {/* Fiscal Data Modal */}
+      <FiscalDataModal
+        open={showFiscalModal}
+        onClose={() => setShowFiscalModal(false)}
+        onSuccess={handleFiscalDataSaved}
       />
     </div>
   );

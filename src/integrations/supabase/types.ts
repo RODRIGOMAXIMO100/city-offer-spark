@@ -171,37 +171,61 @@ export type Database = {
       profiles: {
         Row: {
           balance: number
+          cep: string | null
           city: string
+          cnpj: string | null
+          cpf: string | null
           created_at: string
+          endereco_fiscal: string | null
           id: string
           instagram_url: string | null
           name: string
+          nome_completo: string | null
           pix_key: string | null
+          pix_tipo: string | null
           preferences: string[] | null
+          razao_social: string | null
+          telefone: string | null
           updated_at: string
           user_id: string
         }
         Insert: {
           balance?: number
+          cep?: string | null
           city?: string
+          cnpj?: string | null
+          cpf?: string | null
           created_at?: string
+          endereco_fiscal?: string | null
           id?: string
           instagram_url?: string | null
           name: string
+          nome_completo?: string | null
           pix_key?: string | null
+          pix_tipo?: string | null
           preferences?: string[] | null
+          razao_social?: string | null
+          telefone?: string | null
           updated_at?: string
           user_id: string
         }
         Update: {
           balance?: number
+          cep?: string | null
           city?: string
+          cnpj?: string | null
+          cpf?: string | null
           created_at?: string
+          endereco_fiscal?: string | null
           id?: string
           instagram_url?: string | null
           name?: string
+          nome_completo?: string | null
           pix_key?: string | null
+          pix_tipo?: string | null
           preferences?: string[] | null
+          razao_social?: string | null
+          telefone?: string | null
           updated_at?: string
           user_id?: string
         }

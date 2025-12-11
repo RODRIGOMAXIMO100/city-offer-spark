@@ -7,12 +7,36 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Banknote, LogOut, Share2, Copy, Check, TrendingUp, Loader2, MapPin, Instagram, Clock } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import PaymentDataModal from './PaymentDataModal';
 
 export default function AffiliateDashboard() {
   const { profile, signOut } = useAuth();
   const { offers, loading } = useOffers(profile?.city);
   const { toast } = useToast();
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+
+  const handleWithdraw = () => {
+    if ((profile?.balance || 0) * CONFIG.CREDIT_VALUE_BRL < CONFIG.MIN_WITHDRAW_BRL) {
+      toast({
+        title: 'Saldo insuficiente',
+        description: `Mínimo para saque: R$ ${CONFIG.MIN_WITHDRAW_BRL.toFixed(2)}`,
+        variant: 'destructive',
+      });
+      return;
+    }
+    
+    if (!profile?.cpf || !profile?.pix_key) {
+      setShowPaymentModal(true);
+    } else {
+      alert('Funcionalidade de saque PIX em breve!');
+    }
+  };
+
+  const handlePaymentDataSaved = () => {
+    setShowPaymentModal(false);
+    alert('Funcionalidade de saque PIX em breve!');
+  };
 
   const sortedOffers = [...offers].sort((a, b) => {
     const scoreA = a.views_count > 0 ? (a.clicks_count / a.views_count) * 100 : 0;
@@ -95,17 +119,7 @@ export default function AffiliateDashboard() {
             <Button
               size="sm"
               className="bg-affiliate hover:bg-affiliate/90 text-affiliate-foreground"
-              onClick={() => {
-                if ((profile?.balance || 0) * CONFIG.CREDIT_VALUE_BRL < CONFIG.MIN_WITHDRAW_BRL) {
-                  toast({
-                    title: 'Saldo insuficiente',
-                    description: `Mínimo para saque: R$ ${CONFIG.MIN_WITHDRAW_BRL.toFixed(2)}`,
-                    variant: 'destructive',
-                  });
-                } else {
-                  alert('Funcionalidade de saque PIX em breve!');
-                }
-              }}
+              onClick={handleWithdraw}
             >
               Sacar PIX
             </Button>
@@ -271,6 +285,13 @@ export default function AffiliateDashboard() {
           )}
         </div>
       </div>
+
+      {/* Payment Data Modal */}
+      <PaymentDataModal
+        open={showPaymentModal}
+        onClose={() => setShowPaymentModal(false)}
+        onSuccess={handlePaymentDataSaved}
+      />
     </div>
   );
 }
