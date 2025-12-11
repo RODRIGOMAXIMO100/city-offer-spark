@@ -100,7 +100,14 @@ export const formatCreditsToReal = (credits: number): string => {
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
 };
 
-// Helper to format just credits
+// Helper to format balance (credits) as R$ - Main display function
+export const formatBalance = (credits: number): string => {
+  const value = credits * CONFIG.CREDIT_VALUE_BRL;
+  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+};
+
+// Legacy: kept for compatibility, use formatBalance instead
 export const formatCredits = (credits: number): string => {
-  return `${credits} C$`;
+  const value = credits * CONFIG.CREDIT_VALUE_BRL;
+  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
 };

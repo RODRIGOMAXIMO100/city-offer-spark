@@ -1,4 +1,4 @@
-import { formatCredits } from '@/types/database';
+import { CONFIG } from '@/types/database';
 
 interface ExportableUser {
   name: string;
@@ -83,13 +83,13 @@ const downloadCSV = (filename: string, headers: string[], rows: string[][]) => {
 };
 
 export const exportUsers = (users: ExportableUser[]) => {
-  const headers = ['Nome', 'Email', 'Tipo', 'Cidade', 'Saldo (créditos)', 'Data Cadastro'];
+  const headers = ['Nome', 'Email', 'Tipo', 'Cidade', 'Saldo (R$)', 'Data Cadastro'];
   const rows = users.map(user => [
     user.name,
     user.email || '',
     translateRole(user.role),
     user.city,
-    String(user.balance),
+    (user.balance * CONFIG.CREDIT_VALUE_BRL).toFixed(2),
     formatDate(user.created_at)
   ]);
   
@@ -112,11 +112,11 @@ export const exportOffers = (offers: ExportableOffer[]) => {
 };
 
 export const exportTransactions = (transactions: ExportableTransaction[]) => {
-  const headers = ['Usuário', 'Tipo', 'Valor (créditos)', 'Descrição', 'Data/Hora'];
+  const headers = ['Usuário', 'Tipo', 'Valor (R$)', 'Descrição', 'Data/Hora'];
   const rows = transactions.map(tx => [
     tx.user_name || '',
     translateTransactionType(tx.type),
-    String(tx.amount),
+    (tx.amount * CONFIG.CREDIT_VALUE_BRL).toFixed(2),
     tx.description || '',
     formatDateTime(tx.created_at)
   ]);

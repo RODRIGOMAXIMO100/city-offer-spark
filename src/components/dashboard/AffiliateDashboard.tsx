@@ -307,8 +307,8 @@ export default function AffiliateDashboard() {
               <div className="space-y-2">
                 <p className="font-bold text-lg">Divisão 50/50 - Transparência Total!</p>
                 <ul className="text-sm opacity-95 space-y-1">
-                  <li>• <strong>R$ 0,20 a R$ 0,75 por clique</strong> - você recebe 50% do CPC!</li>
-                  <li>• <strong>Bônus de nível até +30%</strong> - pode chegar a R$ 0,97/clique!</li>
+                  <li>• <strong>R$ 0,20 a R$ 0,50 por clique</strong> - você recebe 50% do CPC!</li>
+                  <li>• <strong>Bônus de nível até +30%</strong> - pode chegar a R$ 0,65/clique!</li>
                   <li>• <strong>Saque mínimo: R$ 30,00</strong> via PIX instantâneo</li>
                   <li>• <strong><a href="/transparencia" className="underline">Veja como funciona →</a></strong></li>
                 </ul>
@@ -428,7 +428,7 @@ export default function AffiliateDashboard() {
                       <div className="flex justify-between items-center bg-affiliate/10 rounded-lg p-2 mb-3">
                         <span className="text-sm">Sua comissão (50% do CPC)</span>
                         <span className="font-bold text-affiliate">
-                          R$ 0,20 - R$ 0,75/clique
+                          R$ 0,20 - R$ 0,50/clique
                         </span>
                       </div>
 

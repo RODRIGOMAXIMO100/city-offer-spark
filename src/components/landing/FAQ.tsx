@@ -9,27 +9,27 @@ import { HelpCircle } from "lucide-react";
 const faqs = [
   {
     question: "Quanto custa para empresas?",
-    answer: "Não há mensalidade ou taxa fixa. Você só paga quando alguém clica na sua oferta. O valor por clique varia de R$ 0,40 a R$ 1,50 (4 a 15 créditos), definido por você através de um sistema de leilão inteligente. Quanto melhor sua Nota da Oferta, menos você paga!",
+    answer: "Não há mensalidade ou taxa fixa. Você só paga quando alguém clica na sua oferta. O valor por clique varia de R$ 0,40 a R$ 1,00, calculado automaticamente pela sua Nota da Oferta. Quanto melhor sua nota, menos você paga!",
   },
   {
     question: "Como recebo minha comissão como divulgador?",
-    answer: "Cada clique válido no seu link gera créditos na sua conta. Você recebe 50% do CPC pago pela empresa, variando de R$ 0,20 a R$ 0,75 por clique base. Com bônus de nível (até 1.3x), pode chegar a R$ 0,97 por clique! Saque mínimo: R$ 30,00 via PIX.",
+    answer: "Cada clique válido no seu link gera saldo na sua conta. Você recebe 50% do CPC pago pela empresa, variando de R$ 0,20 a R$ 0,50 por clique base. Com bônus de nível (até 1.3x), pode chegar a R$ 0,65 por clique! Saque mínimo: R$ 30,00 via PIX.",
   },
   {
     question: "Preciso ter CNPJ para cadastrar minha empresa?",
-    answer: "Não é obrigatório ter CNPJ. MEIs, autônomos e empresas de qualquer porte podem cadastrar ofertas. Basta ter uma conta ativa e créditos disponíveis.",
+    answer: "Não é obrigatório ter CNPJ. MEIs, autônomos e empresas de qualquer porte podem cadastrar ofertas. Basta ter uma conta ativa e saldo disponível.",
   },
   {
-    question: "Como funciona o sistema de leilão?",
-    answer: "Inspirado no Google Ads: você define um lance máximo (4-15 créditos) e sua Nota da Oferta (nota de 0-10) determina sua posição. Posição = Lance × Nota. O melhor: você paga apenas o necessário para superar o concorrente, não o lance máximo!",
+    question: "Como funciona o sistema de precificação?",
+    answer: "O CPC é calculado automaticamente pela fórmula: CPC = R$ 1,40 - (Nota × R$ 0,10). Sua Nota da Oferta (4 a 10) determina quanto você paga. Nota 10 = R$ 0,40/clique. Nota 4 = R$ 1,00/clique. Melhore sua nota para pagar menos!",
   },
   {
     question: "O que é a Nota da Oferta?",
-    answer: "É sua nota de 0 a 10 que considera: CTR Esperado (40%), Qualidade da Oferta (30%), Reputação (20%) e Relevância Local (10%). Quanto maior sua nota, menor o CPC real que você paga. Vincule seu Instagram e ofereça bons descontos para aumentar!",
+    answer: "É sua nota de 4 a 10 que considera: CTR (40%), Qualidade da Oferta (35%) e Reputação (25%). Quanto maior sua nota, menor o CPC que você paga. Vincule seu Instagram e ofereça bons descontos para aumentar!",
   },
   {
     question: "Como funciona a divisão de valores?",
-    answer: "Transparência total: do valor pago pela empresa, 50% vai para o divulgador e 50% para a plataforma. Por exemplo, se a empresa paga 8 créditos (R$ 0,80), o divulgador recebe R$ 0,40. Simples assim!",
+    answer: "Transparência total: do valor pago pela empresa, 50% vai para o divulgador e 50% para a plataforma. Por exemplo, se a empresa paga R$ 0,80, o divulgador recebe R$ 0,40. Simples assim!",
   },
 ];
 

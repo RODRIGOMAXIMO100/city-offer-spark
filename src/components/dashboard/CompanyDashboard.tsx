@@ -2,13 +2,13 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useOffers } from '@/hooks/useOffers';
-import { formatCredits } from '@/types/database';
+import { formatBalance, CONFIG } from '@/types/database';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { Coins, PlusCircle, LogOut, Eye, MousePointer, TrendingUp, Loader2, Instagram, Check, Clock, Trash2, Info, Star, ExternalLink } from 'lucide-react';
+import { Banknote, PlusCircle, LogOut, Eye, MousePointer, TrendingUp, Loader2, Instagram, Check, Clock, Trash2, Info, Star, ExternalLink } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import CreateOfferModal from './CreateOfferModal';
 import PerformanceChart from './PerformanceChart';
@@ -162,8 +162,8 @@ export default function CompanyDashboard() {
             <div className="text-right mr-2">
               <p className="text-xs text-muted-foreground">Saldo</p>
               <div className="flex items-center gap-1 text-company font-bold">
-                <Coins className="h-4 w-4" />
-                {formatCredits(profile?.balance || 0)}
+                <Banknote className="h-4 w-4" />
+                {formatBalance(profile?.balance || 0)}
               </div>
             </div>
             <Button
@@ -259,7 +259,7 @@ export default function CompanyDashboard() {
               <div className="space-y-2">
                 <p className="font-bold text-foreground">Sistema de Leilão Inteligente</p>
                 <ul className="text-sm text-muted-foreground space-y-1">
-                  <li>• <strong className="text-foreground">CPC dinâmico:</strong> pague entre 4-15 C$ por clique</li>
+                  <li>• <strong className="text-foreground">CPC dinâmico:</strong> pague entre R$ 0,40 a R$ 1,00 por clique</li>
                   <li>• <strong className="text-foreground">Nota alta = paga menos</strong></li>
                   <li>• <strong className="text-foreground">Divisão 50/50:</strong> metade vai para divulgadores</li>
                   <li>• <strong className="text-foreground">Melhore:</strong> descrição, desconto, Instagram</li>
@@ -330,7 +330,7 @@ export default function CompanyDashboard() {
                                 </TooltipContent>
                               </Tooltip>
                               <span className="text-xs text-muted-foreground">
-                                Lance: {maxBid} C$
+                                CPC: R$ {((14 - offerScore) * CONFIG.CREDIT_VALUE_BRL).toFixed(2)}
                               </span>
                             </div>
                           </div>
