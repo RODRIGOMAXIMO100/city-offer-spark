@@ -13,7 +13,7 @@ const benefits = [
   {
     icon: Banknote,
     title: "Comissão por clique",
-    description: "Cada clique no seu link gera créditos que viram dinheiro real.",
+    description: "Cada clique no seu link gera saldo real na sua conta.",
   },
   {
     icon: Share2,

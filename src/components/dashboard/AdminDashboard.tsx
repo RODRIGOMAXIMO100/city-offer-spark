@@ -23,7 +23,7 @@ import {
   BarChart3,
   Banknote
 } from 'lucide-react';
-import { formatCredits, CONFIG } from '@/types/database';
+import { formatBalance, CONFIG } from '@/types/database';
 import AdminFilters from './admin/AdminFilters';
 import AdminPagination, { usePagination } from './admin/AdminPagination';
 import AdminAnalytics from './admin/AdminAnalytics';
@@ -349,7 +349,7 @@ export default function AdminDashboard() {
           <Card className="hover:shadow-lg transition-shadow">
             <CardContent className="p-4 text-center">
               <TrendingUp className="h-6 w-6 mx-auto mb-2 text-green-500" />
-              <p className="text-2xl font-bold">{formatCredits(stats.platformEarnings)}</p>
+              <p className="text-2xl font-bold">{formatBalance(stats.platformEarnings)}</p>
               <p className="text-xs text-muted-foreground">Ganhos</p>
             </CardContent>
           </Card>
@@ -432,7 +432,7 @@ export default function AdminDashboard() {
                         <TableCell className="text-muted-foreground">{user.email || '-'}</TableCell>
                         <TableCell>{getRoleBadge(user.role || 'N/A')}</TableCell>
                         <TableCell>{user.city}</TableCell>
-                        <TableCell>{formatCredits(user.balance)}</TableCell>
+                        <TableCell>{formatBalance(user.balance)}</TableCell>
                         <TableCell>{new Date(user.created_at).toLocaleDateString('pt-BR')}</TableCell>
                         <TableCell>
                           <Button variant="ghost" size="sm" onClick={() => handleViewUser(user)}>
@@ -562,7 +562,7 @@ export default function AdminDashboard() {
                       <TableRow key={tx.id}>
                         <TableCell className="font-medium">{tx.user_name}</TableCell>
                         <TableCell>{getTransactionBadge(tx.type)}</TableCell>
-                        <TableCell>{formatCredits(tx.amount)}</TableCell>
+                        <TableCell>{formatBalance(tx.amount)}</TableCell>
                         <TableCell className="max-w-[200px] truncate">{tx.description || '-'}</TableCell>
                         <TableCell>{new Date(tx.created_at).toLocaleString('pt-BR')}</TableCell>
                       </TableRow>
