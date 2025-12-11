@@ -334,7 +334,8 @@ export default function OfferPage() {
   const urgency = getExpirationUrgency();
 
   return (
-    <div className="min-h-screen bg-muted/30 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-muted/30 flex flex-col">
+      <div className="flex-1 flex items-center justify-center p-4">
       <Card className="w-full max-w-md shadow-xl border-0 overflow-hidden animate-fade-in">
         {/* Header with discount badge */}
         <div className="bg-gradient-to-r from-secondary to-secondary/80 p-4 text-secondary-foreground">
@@ -444,6 +445,7 @@ export default function OfferPage() {
           </div>
         </CardContent>
       </Card>
+      </div>
 
       <Footer />
     </div>
