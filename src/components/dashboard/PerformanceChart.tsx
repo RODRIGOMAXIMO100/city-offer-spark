@@ -87,28 +87,31 @@ export default function PerformanceChart() {
     const myClicks = clicksResult.data?.filter(c => c.click_type === 'MAIN') || [];
     const myViews = viewsResult.data || [];
 
-    // Group by day
+    // Group by day using UTC dates consistently
     const dailyMap: Record<string, { views: number; clicks: number }> = {};
     
-    // Initialize all days in period
+    // Initialize all days in period (use UTC)
     for (let i = period - 1; i >= 0; i--) {
       const date = new Date();
       date.setDate(date.getDate() - i);
-      const key = date.toISOString().split('T')[0];
+      // Use local date string to match user's timezone
+      const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
       dailyMap[key] = { views: 0, clicks: 0 };
     }
 
-    // Count clicks by day
+    // Count clicks by day (convert from UTC to local)
     myClicks.forEach(click => {
-      const key = click.created_at.split('T')[0];
+      const clickDate = new Date(click.created_at);
+      const key = `${clickDate.getFullYear()}-${String(clickDate.getMonth() + 1).padStart(2, '0')}-${String(clickDate.getDate()).padStart(2, '0')}`;
       if (dailyMap[key]) {
         dailyMap[key].clicks += 1;
       }
     });
 
-    // Count views by day
+    // Count views by day (convert from UTC to local)
     myViews.forEach(view => {
-      const key = view.created_at.split('T')[0];
+      const viewDate = new Date(view.created_at);
+      const key = `${viewDate.getFullYear()}-${String(viewDate.getMonth() + 1).padStart(2, '0')}-${String(viewDate.getDate()).padStart(2, '0')}`;
       if (dailyMap[key]) {
         dailyMap[key].views += 1;
       }
@@ -118,7 +121,7 @@ export default function PerformanceChart() {
     const chartData: DailyData[] = Object.entries(dailyMap)
       .sort((a, b) => a[0].localeCompare(b[0]))
       .map(([date, values]) => ({
-        date: new Date(date).toLocaleDateString('pt-BR', { 
+        date: new Date(date + 'T12:00:00').toLocaleDateString('pt-BR', { 
           day: '2-digit', 
           month: '2-digit' 
         }),
