@@ -7,6 +7,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Send, LogOut, Bot, Loader2, MapPin, Instagram } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { Footer } from '@/components/landing/Footer';
 import logo from '@/assets/logo.png';
 
 interface Message {
@@ -244,6 +245,8 @@ export default function ClientDashboard() {
           </p>
         </div>
       </div>
+
+      <Footer />
     </div>
   );
 }

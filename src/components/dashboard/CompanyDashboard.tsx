@@ -13,6 +13,7 @@ import { useToast } from '@/hooks/use-toast';
 import CreateOfferModal from './CreateOfferModal';
 import PerformanceChart from './PerformanceChart';
 import FiscalDataModal from './FiscalDataModal';
+import { Footer } from '@/components/landing/Footer';
 import logo from '@/assets/logo.png';
 import {
   AlertDialog,
@@ -421,6 +422,8 @@ export default function CompanyDashboard() {
         onClose={() => setShowFiscalModal(false)}
         onSuccess={handleFiscalDataSaved}
       />
+
+      <Footer />
     </div>
   );
 }
