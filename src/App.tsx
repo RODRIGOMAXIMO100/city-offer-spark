@@ -12,6 +12,7 @@ import AdminDashboard from "./components/dashboard/AdminDashboard";
 import OfferPage from "./pages/OfferPage";
 import TermsPage from "./pages/TermsPage";
 import PrivacyPage from "./pages/PrivacyPage";
+import TransparencyPage from "./pages/TransparencyPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -58,6 +59,7 @@ const AppRoutes = () => (
     <Route path="/offer/:id" element={<OfferPage />} />
     <Route path="/termos" element={<TermsPage />} />
     <Route path="/privacidade" element={<PrivacyPage />} />
+    <Route path="/transparencia" element={<TransparencyPage />} />
     <Route path="*" element={<NotFound />} />
   </Routes>
 );

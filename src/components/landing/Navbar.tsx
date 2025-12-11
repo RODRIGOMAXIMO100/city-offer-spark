@@ -49,6 +49,12 @@ export function Navbar() {
                 {item.label}
               </button>
             ))}
+            <Link 
+              to="/transparencia" 
+              className="px-4 py-2 text-sm font-medium text-primary hover:text-primary/80 rounded-lg hover:bg-primary/5 transition-all"
+            >
+              Transparência
+            </Link>
           </div>
 
           {/* Desktop CTA */}
@@ -88,6 +94,13 @@ export function Navbar() {
                   {item.label}
                 </button>
               ))}
+              <Link 
+                to="/transparencia" 
+                onClick={() => setIsOpen(false)}
+                className="text-left px-4 py-3 text-primary hover:bg-primary/5 rounded-lg transition-colors font-medium"
+              >
+                Transparência
+              </Link>
               <div className="flex flex-col gap-2 pt-4 mt-2 border-t border-border">
                 <Button variant="outline" asChild className="w-full">
                   <Link to="/auth">Entrar</Link>
