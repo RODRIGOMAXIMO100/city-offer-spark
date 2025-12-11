@@ -20,7 +20,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { MessageCircle, FileText, Globe, Loader2, CalendarIcon, Star, ExternalLink, AlertTriangle, ImagePlus, X, MapPin, Tag } from 'lucide-react';
+import { MessageCircle, Globe, Loader2, CalendarIcon, Star, ExternalLink, AlertTriangle, ImagePlus, X, MapPin } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Link } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
@@ -36,9 +36,44 @@ interface CreateOfferModalProps {
 
 const LINK_TYPES: { value: LinkType; label: string; icon: React.ReactNode; color: string }[] = [
   { value: 'WHATSAPP', label: 'WhatsApp', icon: <MessageCircle className="h-4 w-4" />, color: 'bg-green-500' },
-  { value: 'MENU', label: 'Cardápio', icon: <FileText className="h-4 w-4" />, color: 'bg-red-500' },
-  { value: 'SITE', label: 'Site', icon: <Globe className="h-4 w-4" />, color: 'bg-blue-500' },
+  { value: 'SITE', label: 'Site/Cardápio', icon: <Globe className="h-4 w-4" />, color: 'bg-blue-500' },
 ];
+
+// Phone number formatting helpers
+const formatPhoneNumber = (value: string): string => {
+  const numbers = value.replace(/\D/g, '').slice(0, 11);
+  if (numbers.length <= 10) {
+    return numbers.replace(/(\d{2})(\d{0,4})(\d{0,4})/, (_, p1, p2, p3) => {
+      let result = '';
+      if (p1) result += `(${p1}`;
+      if (p2) result += `) ${p2}`;
+      if (p3) result += `-${p3}`;
+      return result;
+    });
+  }
+  return numbers.replace(/(\d{2})(\d{0,5})(\d{0,4})/, (_, p1, p2, p3) => {
+    let result = '';
+    if (p1) result += `(${p1}`;
+    if (p2) result += `) ${p2}`;
+    if (p3) result += `-${p3}`;
+    return result;
+  });
+};
+
+const extractPhoneFromWaMe = (link: string): string => {
+  const match = link.match(/wa\.me\/55(\d{10,11})/);
+  return match ? formatPhoneNumber(match[1]) : '';
+};
+
+const isValidBrazilianPhone = (phone: string): boolean => {
+  const numbers = phone.replace(/\D/g, '');
+  return numbers.length >= 10 && numbers.length <= 11;
+};
+
+const getWhatsAppLink = (phone: string): string => {
+  const numbers = phone.replace(/\D/g, '');
+  return `https://wa.me/55${numbers}`;
+};
 
 const MAX_TITLE_LENGTH = 60;
 const MAX_DESCRIPTION_LENGTH = 200;
@@ -73,19 +108,31 @@ export default function CreateOfferModal({
   const [newImages, setNewImages] = useState<File[]>([]);
   const [existingImages, setExistingImages] = useState<string[]>([]);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
+  const [phoneNumber, setPhoneNumber] = useState('');
 
   // Populate form when editing
   useEffect(() => {
     if (editOffer && open) {
+      // Convert MENU type to SITE for compatibility
+      const linkType = editOffer.link_type === 'MENU' ? 'SITE' : editOffer.link_type;
+      
       setFormData({
         title: editOffer.title,
         description: editOffer.description || '',
         price_old: editOffer.price_old.toString(),
         price_new: editOffer.price_new.toString(),
-        link_destination: editOffer.link_destination,
-        link_type: editOffer.link_type,
+        link_destination: linkType === 'WHATSAPP' ? '' : editOffer.link_destination,
+        link_type: linkType,
         expires_at: new Date(editOffer.expires_at),
       });
+      
+      // Extract phone number from wa.me link if WhatsApp
+      if (editOffer.link_type === 'WHATSAPP') {
+        setPhoneNumber(extractPhoneFromWaMe(editOffer.link_destination));
+      } else {
+        setPhoneNumber('');
+      }
+      
       setExistingImages((editOffer as any).images || []);
       setNewImages([]);
       setPreviewUrls([]);
@@ -100,6 +147,7 @@ export default function CreateOfferModal({
         link_type: 'WHATSAPP',
         expires_at: addDays(new Date(), 7),
       });
+      setPhoneNumber('');
       setExistingImages([]);
       setNewImages([]);
       setPreviewUrls([]);
@@ -150,7 +198,18 @@ export default function CreateOfferModal({
     e.preventDefault();
     if (!profile || (!canCreate && !isEditing)) return;
 
+    // Validate WhatsApp phone number
+    if (formData.link_type === 'WHATSAPP' && !isValidBrazilianPhone(phoneNumber)) {
+      alert('Por favor, insira um número de WhatsApp válido com DDD');
+      return;
+    }
+
     setLoading(true);
+
+    // Get the final link destination
+    const finalLinkDestination = formData.link_type === 'WHATSAPP' 
+      ? getWhatsAppLink(phoneNumber) 
+      : formData.link_destination;
 
     let result;
     if (isEditing && editOffer) {
@@ -159,7 +218,7 @@ export default function CreateOfferModal({
         description: formData.description || undefined,
         price_old: parseFloat(formData.price_old),
         price_new: parseFloat(formData.price_new),
-        link_destination: formData.link_destination,
+        link_destination: finalLinkDestination,
         link_type: formData.link_type,
         expires_at: formData.expires_at.toISOString(),
         newImages: newImages,
@@ -171,7 +230,7 @@ export default function CreateOfferModal({
         description: formData.description || undefined,
         price_old: parseFloat(formData.price_old),
         price_new: parseFloat(formData.price_new),
-        link_destination: formData.link_destination,
+        link_destination: finalLinkDestination,
         link_type: formData.link_type,
         city: profile.city,
         expires_at: formData.expires_at.toISOString(),
@@ -445,7 +504,7 @@ export default function CreateOfferModal({
           {/* Link Type */}
           <div className="space-y-1.5">
             <Label className="text-sm">Destino do Clique *</Label>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-2 gap-2">
               {LINK_TYPES.map((type) => (
                 <button
                   key={type.value}
@@ -465,23 +524,40 @@ export default function CreateOfferModal({
             </div>
           </div>
 
-          {/* Link URL */}
-          <div className="space-y-1.5">
-            <Label htmlFor="link" className="text-sm">Link *</Label>
-            <Input
-              id="link"
-              type="url"
-              placeholder={
-                formData.link_type === 'WHATSAPP'
-                  ? 'https://wa.me/5531999999999'
-                  : 'https://seu-site.com'
-              }
-              value={formData.link_destination}
-              onChange={(e) => setFormData({ ...formData, link_destination: e.target.value })}
-              required
-              className="text-sm"
-            />
-          </div>
+          {/* Link Input - Conditional based on type */}
+          {formData.link_type === 'WHATSAPP' ? (
+            <div className="space-y-1.5">
+              <Label htmlFor="phone" className="text-sm">Número do WhatsApp *</Label>
+              <Input
+                id="phone"
+                type="tel"
+                placeholder="(31) 99999-9999"
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(formatPhoneNumber(e.target.value))}
+                maxLength={16}
+                className="text-sm"
+              />
+              {isValidBrazilianPhone(phoneNumber) && (
+                <p className="text-xs text-green-600 flex items-center gap-1">
+                  <MessageCircle className="h-3 w-3" />
+                  Link: wa.me/55{phoneNumber.replace(/\D/g, '')}
+                </p>
+              )}
+            </div>
+          ) : (
+            <div className="space-y-1.5">
+              <Label htmlFor="link" className="text-sm">Link do Site ou Cardápio *</Label>
+              <Input
+                id="link"
+                type="url"
+                placeholder="https://meusite.com.br"
+                value={formData.link_destination}
+                onChange={(e) => setFormData({ ...formData, link_destination: e.target.value })}
+                required
+                className="text-sm"
+              />
+            </div>
+          )}
 
           {/* Expiration Date */}
           <div className="space-y-1.5">
