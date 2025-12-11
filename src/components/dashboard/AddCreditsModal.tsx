@@ -5,7 +5,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, CreditCard, QrCode, Copy, Check, AlertCircle } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Loader2, CreditCard, QrCode, Copy, Check, AlertCircle, Info } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { CONFIG } from '@/types/database';
@@ -194,7 +195,7 @@ export function AddCreditsModal({
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>
-            {step === 'amount' && 'Adicionar Créditos'}
+            {step === 'amount' && 'Adicionar Saldo'}
             {step === 'method' && 'Escolha o método'}
             {step === 'pix' && 'Pagar com PIX'}
             {step === 'card' && 'Pagar com Cartão'}
@@ -205,6 +206,14 @@ export function AddCreditsModal({
         {/* Step: Amount */}
         {step === 'amount' && (
           <div className="space-y-4">
+            {/* Mensagem informativa do valor mínimo */}
+            <div className="flex items-center gap-2 p-3 rounded-lg bg-primary/10 border border-primary/20">
+              <Info className="h-4 w-4 text-primary shrink-0" />
+              <p className="text-sm text-primary">
+                Valor mínimo para depósito: <strong>R$ {CONFIG.MIN_DEPOSIT_BRL.toFixed(2)}</strong>
+              </p>
+            </div>
+
             <div className="grid grid-cols-2 gap-2">
               {PRESET_AMOUNTS.map((value) => (
                 <Button
@@ -231,10 +240,13 @@ export function AddCreditsModal({
                   className="pl-10"
                 />
               </div>
-              {customAmount && amount < CONFIG.MIN_DEPOSIT_BRL && (
-                <p className="text-sm text-destructive mt-1">
-                  Valor mínimo: R$ {CONFIG.MIN_DEPOSIT_BRL.toFixed(2)}
-                </p>
+              {customAmount && parseFloat(customAmount.replace(',', '.')) < CONFIG.MIN_DEPOSIT_BRL && (
+                <Alert variant="destructive" className="mt-2">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>
+                    O valor mínimo para depósito é R$ {CONFIG.MIN_DEPOSIT_BRL.toFixed(2)}
+                  </AlertDescription>
+                </Alert>
               )}
             </div>
 
