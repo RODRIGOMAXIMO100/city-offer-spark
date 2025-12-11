@@ -14,6 +14,87 @@ export type Database = {
   }
   public: {
     Tables: {
+      affiliate_levels: {
+        Row: {
+          badge_color: string
+          benefits: string[] | null
+          commission_multiplier: number | null
+          id: number
+          min_clicks: number
+          name: string
+        }
+        Insert: {
+          badge_color: string
+          benefits?: string[] | null
+          commission_multiplier?: number | null
+          id?: number
+          min_clicks: number
+          name: string
+        }
+        Update: {
+          badge_color?: string
+          benefits?: string[] | null
+          commission_multiplier?: number | null
+          id?: number
+          min_clicks?: number
+          name?: string
+        }
+        Relationships: []
+      }
+      affiliate_stats: {
+        Row: {
+          affiliate_id: string
+          clicks_this_month: number | null
+          clicks_this_week: number | null
+          current_level_id: number | null
+          id: string
+          level_progress: number | null
+          rank_position: number | null
+          total_clicks: number | null
+          total_earnings: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          affiliate_id: string
+          clicks_this_month?: number | null
+          clicks_this_week?: number | null
+          current_level_id?: number | null
+          id?: string
+          level_progress?: number | null
+          rank_position?: number | null
+          total_clicks?: number | null
+          total_earnings?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          affiliate_id?: string
+          clicks_this_month?: number | null
+          clicks_this_week?: number | null
+          current_level_id?: number | null
+          id?: string
+          level_progress?: number | null
+          rank_position?: number | null
+          total_clicks?: number | null
+          total_earnings?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "affiliate_stats_affiliate_id_fkey"
+            columns: ["affiliate_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "affiliate_stats_current_level_id_fkey"
+            columns: ["current_level_id"]
+            isOneToOne: false
+            referencedRelation: "affiliate_levels"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       click_rate_limits: {
         Row: {
           blocked: boolean | null
@@ -54,6 +135,39 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      device_fingerprints: {
+        Row: {
+          blocked: boolean | null
+          device_id: string
+          fingerprint_data: Json | null
+          first_seen_at: string | null
+          id: string
+          ip_address: string
+          is_suspicious: boolean | null
+          last_seen_at: string | null
+        }
+        Insert: {
+          blocked?: boolean | null
+          device_id: string
+          fingerprint_data?: Json | null
+          first_seen_at?: string | null
+          id?: string
+          ip_address: string
+          is_suspicious?: boolean | null
+          last_seen_at?: string | null
+        }
+        Update: {
+          blocked?: boolean | null
+          device_id?: string
+          fingerprint_data?: Json | null
+          first_seen_at?: string | null
+          id?: string
+          ip_address?: string
+          is_suspicious?: boolean | null
+          last_seen_at?: string | null
+        }
+        Relationships: []
       }
       offer_clicks: {
         Row: {
@@ -164,6 +278,47 @@ export type Database = {
             columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      page_sessions: {
+        Row: {
+          client_ip: string
+          device_id: string | null
+          fingerprint_hash: string | null
+          id: string
+          offer_id: string
+          session_token: string
+          started_at: string | null
+          validated: boolean | null
+        }
+        Insert: {
+          client_ip: string
+          device_id?: string | null
+          fingerprint_hash?: string | null
+          id?: string
+          offer_id: string
+          session_token: string
+          started_at?: string | null
+          validated?: boolean | null
+        }
+        Update: {
+          client_ip?: string
+          device_id?: string | null
+          fingerprint_hash?: string | null
+          id?: string
+          offer_id?: string
+          session_token?: string
+          started_at?: string | null
+          validated?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "page_sessions_offer_id_fkey"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "offers"
             referencedColumns: ["id"]
           },
         ]
@@ -297,12 +452,90 @@ export type Database = {
         }
         Relationships: []
       }
+      withdrawals: {
+        Row: {
+          amount: number
+          amount_brl: number
+          cpf: string
+          created_at: string | null
+          fraud_reasons: string[] | null
+          fraud_score: number | null
+          id: string
+          nome_completo: string
+          pix_key: string
+          pix_tipo: string
+          rejection_reason: string | null
+          requested_at: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: Database["public"]["Enums"]["withdrawal_status"] | null
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          amount_brl: number
+          cpf: string
+          created_at?: string | null
+          fraud_reasons?: string[] | null
+          fraud_score?: number | null
+          id?: string
+          nome_completo: string
+          pix_key: string
+          pix_tipo: string
+          rejection_reason?: string | null
+          requested_at?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: Database["public"]["Enums"]["withdrawal_status"] | null
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          amount_brl?: number
+          cpf?: string
+          created_at?: string | null
+          fraud_reasons?: string[] | null
+          fraud_score?: number | null
+          id?: string
+          nome_completo?: string
+          pix_key?: string
+          pix_tipo?: string
+          rejection_reason?: string | null
+          requested_at?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: Database["public"]["Enums"]["withdrawal_status"] | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "withdrawals_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "withdrawals_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
       cleanup_old_rate_limits: { Args: never; Returns: undefined }
+      cleanup_old_sessions: { Args: never; Returns: undefined }
+      get_affiliate_level: { Args: { total_clicks: number }; Returns: number }
+      get_commission_multiplier: {
+        Args: { affiliate_profile_id: string }
+        Returns: number
+      }
       get_current_profile_id: { Args: never; Returns: string }
       get_current_user_role: {
         Args: never
@@ -317,6 +550,10 @@ export type Database = {
       }
       increment_offer_clicks: { Args: { offer_id: string }; Returns: undefined }
       increment_offer_views: { Args: { offer_id: string }; Returns: undefined }
+      update_affiliate_stats: {
+        Args: { affiliate_profile_id: string; earnings: number }
+        Returns: undefined
+      }
     }
     Enums: {
       app_role: "COMPANY" | "AFFILIATE" | "CLIENT" | "ADMIN"
@@ -327,6 +564,12 @@ export type Database = {
         | "CLICK_EARNING"
         | "WITHDRAW"
         | "PLATFORM_FEE"
+      withdrawal_status:
+        | "PENDING"
+        | "APPROVED"
+        | "REJECTED"
+        | "PROCESSING"
+        | "COMPLETED"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -462,6 +705,13 @@ export const Constants = {
         "CLICK_EARNING",
         "WITHDRAW",
         "PLATFORM_FEE",
+      ],
+      withdrawal_status: [
+        "PENDING",
+        "APPROVED",
+        "REJECTED",
+        "PROCESSING",
+        "COMPLETED",
       ],
     },
   },
