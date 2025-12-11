@@ -136,12 +136,26 @@ export function OnboardingTour() {
         await new Promise(resolve => setTimeout(resolve, 150));
       }
       
-      // Aguardar elementos renderizarem - mais tempo para garantir
-      await new Promise(resolve => setTimeout(resolve, 300));
+      // Aguardar elementos renderizarem - tempo aumentado para garantir
+      await new Promise(resolve => setTimeout(resolve, 500));
 
-      const element = currentStepData?.target 
-        ? document.querySelector(currentStepData.target) 
-        : null;
+      // Buscar elemento com retry
+      let element: Element | null = null;
+      let retries = 0;
+      const maxSearchRetries = 10;
+      
+      console.log(`[Tour] Step ${tourCurrentStep}: buscando ${currentStepData?.target}`);
+      
+      while (!element && retries < maxSearchRetries && currentStepData?.target) {
+        element = document.querySelector(currentStepData.target);
+        if (!element) {
+          retries++;
+          console.log(`[Tour] Tentativa ${retries}/${maxSearchRetries} para encontrar ${currentStepData.target}`);
+          await new Promise(resolve => setTimeout(resolve, 200));
+        }
+      }
+      
+      console.log(`[Tour] Elemento encontrado: ${!!element} após ${retries} tentativas`);
 
       if (element) {
         const viewportHeight = window.innerHeight;
@@ -149,10 +163,9 @@ export function OnboardingTour() {
         
         // Função para verificar se elemento está bem centralizado
         const isWellPositioned = () => {
-          const r = element.getBoundingClientRect();
+          const r = element!.getBoundingClientRect();
           const elementCenter = r.top + r.height / 2;
           const distanceFromCenter = Math.abs(elementCenter - viewportCenter);
-          // Considerar bem posicionado se estiver dentro de 30% do centro
           return distanceFromCenter < viewportHeight * 0.3 && r.top > 80 && r.bottom < viewportHeight - 80;
         };
         
@@ -160,9 +173,11 @@ export function OnboardingTour() {
         let rect = element.getBoundingClientRect();
         const initialDistance = Math.abs(rect.top - viewportCenter);
         
+        console.log(`[Tour] Posição inicial: top=${rect.top}, bem posicionado=${isWellPositioned()}`);
+        
         // Sempre fazer scroll se não estiver bem posicionado
         if (!isWellPositioned()) {
-          // Primeiro scroll
+          console.log(`[Tour] Fazendo scroll para elemento...`);
           element.scrollIntoView({ 
             behavior: 'smooth', 
             block: 'center',
@@ -173,8 +188,9 @@ export function OnboardingTour() {
           const scrollTime = Math.min(900, Math.max(500, initialDistance));
           await new Promise(resolve => setTimeout(resolve, scrollTime));
           
-          // Verificação pós-scroll - se ainda não está bem posicionado, tentar novamente
+          // Verificação pós-scroll
           if (!isWellPositioned()) {
+            console.log(`[Tour] Segunda tentativa de scroll...`);
             element.scrollIntoView({ 
               behavior: 'smooth', 
               block: 'center'
@@ -182,13 +198,14 @@ export function OnboardingTour() {
             await new Promise(resolve => setTimeout(resolve, 400));
           }
         } else {
-          // Elemento já visível, só pequena pausa
           await new Promise(resolve => setTimeout(resolve, 100));
         }
         
-        // Usar requestAnimationFrame para garantir que o browser terminou de renderizar
         await new Promise(resolve => requestAnimationFrame(resolve));
         await new Promise(resolve => setTimeout(resolve, 50));
+      } else {
+        console.warn(`[Tour] Elemento não encontrado após ${maxSearchRetries} tentativas: ${currentStepData?.target}`);
+        setElementNotFound(true);
       }
 
       // Liberar flag de scroll
