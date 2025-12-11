@@ -9,7 +9,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Calendar } from '@/components/ui/calendar';
-import { Slider } from '@/components/ui/slider';
 import {
   Dialog,
   DialogContent,
@@ -22,8 +21,9 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { MessageCircle, FileText, Globe, Loader2, CalendarIcon, TrendingUp, Info } from 'lucide-react';
+import { MessageCircle, FileText, Globe, Loader2, CalendarIcon, Star, ExternalLink } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Link } from 'react-router-dom';
 
 interface CreateOfferModalProps {
   open: boolean;
@@ -50,7 +50,6 @@ export default function CreateOfferModal({ open, onClose, onSuccess }: CreateOff
     link_destination: '',
     link_type: 'WHATSAPP' as LinkType,
     expires_at: addDays(new Date(), 7),
-    max_cpc_bid: 5,
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -68,7 +67,7 @@ export default function CreateOfferModal({ open, onClose, onSuccess }: CreateOff
       link_type: formData.link_type,
       city: profile.city,
       expires_at: formData.expires_at.toISOString(),
-      max_cpc_bid: formData.max_cpc_bid,
+      max_cpc_bid: 7, // Valor padrão - CPC agora é automático baseado na nota
     });
 
     setLoading(false);
@@ -82,7 +81,6 @@ export default function CreateOfferModal({ open, onClose, onSuccess }: CreateOff
         link_destination: '',
         link_type: 'WHATSAPP',
         expires_at: addDays(new Date(), 7),
-        max_cpc_bid: 5,
       });
       onSuccess();
     }
@@ -90,16 +88,6 @@ export default function CreateOfferModal({ open, onClose, onSuccess }: CreateOff
 
   const minDate = addDays(new Date(), 1);
   const maxDate = addDays(new Date(), 30);
-
-  // Estimate CPC based on bid (simplified estimation)
-  const getEstimatedCpc = () => {
-    const minCpc = 4;
-    const estimatedLow = Math.max(minCpc, formData.max_cpc_bid - 2);
-    const estimatedHigh = formData.max_cpc_bid;
-    return { low: estimatedLow, high: estimatedHigh };
-  };
-
-  const estimatedCpc = getEstimatedCpc();
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -162,42 +150,28 @@ export default function CreateOfferModal({ open, onClose, onSuccess }: CreateOff
             </div>
           </div>
 
-          {/* Dynamic CPC Bid Section */}
-          <div className="space-y-3 p-4 bg-company/5 border border-company/20 rounded-lg">
-            <div className="flex items-center justify-between">
-              <Label className="flex items-center gap-2">
-                <TrendingUp className="h-4 w-4 text-company" />
-                Lance Máximo por Clique
-              </Label>
-              <span className="font-bold text-company">{formData.max_cpc_bid} C$</span>
+          {/* CPC Automático Info */}
+          <div className="p-4 bg-company/5 border border-company/20 rounded-lg">
+            <div className="flex items-center gap-2 mb-2">
+              <Star className="h-4 w-4 text-company" />
+              <span className="font-medium text-sm">CPC Automático</span>
             </div>
-            
-            <Slider
-              value={[formData.max_cpc_bid]}
-              onValueChange={(value) => setFormData({ ...formData, max_cpc_bid: value[0] })}
-              min={4}
-              max={15}
-              step={1}
-              className="w-full"
-            />
-            
-            <div className="flex justify-between text-xs text-muted-foreground">
-              <span>4 C$ (mín)</span>
-              <span>15 C$ (máx)</span>
+            <p className="text-xs text-muted-foreground mb-2">
+              Seu custo por clique é calculado automaticamente com base na <strong>Nota da Oferta</strong>. 
+              Quanto melhor a nota, menos você paga!
+            </p>
+            <div className="flex items-center justify-between text-xs bg-background rounded p-2">
+              <span className="text-muted-foreground">Range de CPC:</span>
+              <span className="font-bold text-company">R$ 0,40 - R$ 1,00</span>
             </div>
-
-            <div className="bg-background rounded p-2 text-sm">
-              <div className="flex items-center gap-1 text-muted-foreground">
-                <Info className="h-3 w-3" />
-                <span>CPC estimado: </span>
-                <span className="font-bold text-foreground">
-                  {estimatedCpc.low}-{estimatedCpc.high} C$
-                </span>
-              </div>
-              <p className="text-xs text-muted-foreground mt-1">
-                Quanto melhor sua oferta, menos você paga!
-              </p>
-            </div>
+            <Link 
+              to="/transparencia" 
+              target="_blank"
+              className="flex items-center gap-1 text-xs text-primary hover:underline mt-2"
+            >
+              <ExternalLink className="h-3 w-3" />
+              Entenda como funciona
+            </Link>
           </div>
 
           {/* Expiration Date Picker */}

@@ -25,7 +25,7 @@ import logo from "@/assets/logo.png";
 
 const scoreComponents = [
   {
-    name: "CTR Esperado",
+    name: "CTR / Engajamento",
     weight: 40,
     description: "Taxa de cliques vs visualizações comparada com a média da cidade",
     tips: ["Crie títulos atrativos", "Ofereça descontos reais", "Use tags relevantes"],
@@ -33,38 +33,31 @@ const scoreComponents = [
   },
   {
     name: "Qualidade da Oferta",
-    weight: 30,
+    weight: 35,
     description: "Baseado no percentual de desconto e completude da oferta",
-    tips: ["Desconto de 50%+ = máximo", "Adicione descrição completa", "Use pelo menos 3 tags"],
+    tips: ["Desconto de 30%+ = máximo", "Adicione descrição completa", "Use pelo menos 3 tags"],
     color: "bg-secondary"
   },
   {
     name: "Reputação da Empresa",
-    weight: 20,
+    weight: 25,
     description: "Instagram vinculado e tempo na plataforma",
     tips: ["Vincule seu Instagram", "Mantenha ofertas ativas", "Tempo na plataforma conta"],
     color: "bg-accent"
-  },
-  {
-    name: "Relevância Local",
-    weight: 10,
-    description: "Performance das suas ofertas na sua cidade específica",
-    tips: ["Foque em ofertas locais", "Conheça seu público", "Adapte às tendências"],
-    color: "bg-affiliate"
   }
 ];
 
+// Exemplos de CPC automático baseado na nota
 const cpcExamples = [
-  { bid: 4, score: 8.0, rank: 32, realCpc: 4, position: 1 },
-  { bid: 8, score: 5.0, rank: 40, realCpc: 7, position: 2 },
-  { bid: 10, score: 4.0, rank: 40, realCpc: 9, position: 3 },
+  { score: 10, cpc: 4, position: 1, reason: "Nota máxima = CPC mínimo" },
+  { score: 7, cpc: 7, position: 2, reason: "Nota inicial padrão" },
+  { score: 4, cpc: 10, position: 3, reason: "Nota mínima = CPC máximo" },
 ];
 
 const earningsExamples = [
   { cpc: 4, company: "R$ 0,40", platform: "R$ 0,20", affiliate: "R$ 0,20", affiliateBase: 2 },
-  { cpc: 8, company: "R$ 0,80", platform: "R$ 0,40", affiliate: "R$ 0,40", affiliateBase: 4 },
-  { cpc: 12, company: "R$ 1,20", platform: "R$ 0,60", affiliate: "R$ 0,60", affiliateBase: 6 },
-  { cpc: 15, company: "R$ 1,50", platform: "R$ 0,75", affiliate: "R$ 0,75", affiliateBase: 7.5 },
+  { cpc: 7, company: "R$ 0,70", platform: "R$ 0,35", affiliate: "R$ 0,35", affiliateBase: 3.5 },
+  { cpc: 10, company: "R$ 1,00", platform: "R$ 0,50", affiliate: "R$ 0,50", affiliateBase: 5 },
 ];
 
 const levelMultipliers = [
@@ -137,11 +130,11 @@ export default function TransparencyPage() {
               </TabsTrigger>
             </TabsList>
 
-            {/* Tab 1: Leilão */}
+            {/* Tab 1: CPC Automático */}
             <TabsContent value="auction" className="space-y-8">
               <div className="text-center mb-8">
-                <h2 className="text-3xl font-display font-bold mb-2">Sistema de Leilão Inteligente</h2>
-                <p className="text-muted-foreground">Inspirado no Google Ads: pague o mínimo necessário</p>
+                <h2 className="text-3xl font-display font-bold mb-2">CPC 100% Automático</h2>
+                <p className="text-muted-foreground">Sem lances manuais: sua Nota da Oferta define o custo</p>
               </div>
 
               {/* Formula Card */}
@@ -149,74 +142,66 @@ export default function TransparencyPage() {
                 <CardContent className="p-8">
                   <div className="flex flex-col md:flex-row items-center justify-center gap-4 text-center">
                     <div className="bg-card rounded-xl p-4 shadow-lg">
-                      <p className="text-sm text-muted-foreground mb-1">Seu Lance</p>
-                      <p className="text-2xl font-bold text-primary">8 C$</p>
+                      <p className="text-sm text-muted-foreground mb-1">Fórmula</p>
+                      <p className="text-2xl font-bold text-primary">14</p>
                     </div>
-                    <span className="text-2xl font-bold text-muted-foreground">×</span>
+                    <span className="text-2xl font-bold text-muted-foreground">−</span>
                     <div className="bg-card rounded-xl p-4 shadow-lg">
                       <p className="text-sm text-muted-foreground mb-1">Nota da Oferta</p>
-                      <p className="text-2xl font-bold text-secondary">7.5</p>
+                      <p className="text-2xl font-bold text-secondary">7</p>
                     </div>
                     <span className="text-2xl font-bold text-muted-foreground">=</span>
                     <div className="bg-card rounded-xl p-4 shadow-lg border-2 border-accent">
-                      <p className="text-sm text-muted-foreground mb-1">Offer Rank</p>
-                      <p className="text-2xl font-bold text-accent">60</p>
+                      <p className="text-sm text-muted-foreground mb-1">CPC</p>
+                      <p className="text-2xl font-bold text-accent">7 C$</p>
                     </div>
                   </div>
                   <p className="text-center mt-6 text-muted-foreground">
-                    Maior Offer Rank = Melhor posição no feed dos divulgadores
+                    Quanto maior sua nota, menor o custo por clique!
                   </p>
                 </CardContent>
               </Card>
 
-              {/* How Real CPC Works */}
+              {/* How CPC Works */}
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Calculator className="h-5 w-5 text-primary" />
-                    CPC Real: Pague Menos com Score Alto
+                    CPC = 14 − Nota da Oferta
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <p className="text-muted-foreground">
-                    Você define um <strong>lance máximo</strong> (4-15 C$), mas só paga o necessário 
-                    para superar o concorrente. Quanto maior sua Nota da Oferta, menos você paga!
+                    O CPC é calculado automaticamente. Não há lances manuais! 
+                    Sua única tarefa é <strong>melhorar a qualidade da oferta</strong> para pagar menos.
                   </p>
                   
                   <div className="bg-muted/50 rounded-xl p-4">
-                    <p className="text-sm font-medium mb-3">Exemplo prático na mesma cidade:</p>
+                    <p className="text-sm font-medium mb-3">Tabela de CPC por Nota:</p>
                     <div className="overflow-x-auto">
                       <table className="w-full text-sm">
                         <thead>
                           <tr className="border-b border-border">
-                            <th className="text-left py-2 px-3">Empresa</th>
-                            <th className="text-center py-2 px-3">Lance</th>
-                            <th className="text-center py-2 px-3">Score</th>
-                            <th className="text-center py-2 px-3">Rank</th>
-                            <th className="text-center py-2 px-3">CPC Real</th>
-                            <th className="text-center py-2 px-3">Posição</th>
+                            <th className="text-center py-2 px-3">Nota</th>
+                            <th className="text-center py-2 px-3">CPC</th>
+                            <th className="text-center py-2 px-3">Custo Real</th>
+                            <th className="text-left py-2 px-3">Significado</th>
                           </tr>
                         </thead>
                         <tbody>
                           {cpcExamples.map((ex, i) => (
                             <tr key={i} className={i === 0 ? "bg-secondary/10" : ""}>
-                              <td className="py-2 px-3 font-medium">
-                                {i === 0 ? "Você ⭐" : `Concorrente ${i}`}
-                              </td>
-                              <td className="text-center py-2 px-3">{ex.bid} C$</td>
-                              <td className="text-center py-2 px-3">{ex.score}</td>
-                              <td className="text-center py-2 px-3 font-bold">{ex.rank}</td>
-                              <td className="text-center py-2 px-3 text-secondary font-bold">{ex.realCpc} C$</td>
-                              <td className="text-center py-2 px-3">
-                                <Badge variant={i === 0 ? "default" : "secondary"}>#{ex.position}</Badge>
-                              </td>
+                              <td className="text-center py-2 px-3 font-bold">{ex.score}</td>
+                              <td className="text-center py-2 px-3">{ex.cpc} C$</td>
+                              <td className="text-center py-2 px-3 text-secondary font-bold">R$ {(ex.cpc * 0.10).toFixed(2)}</td>
+                              <td className="py-2 px-3 text-muted-foreground">{ex.reason}</td>
                             </tr>
                           ))}
                         </tbody>
                       </table>
                     </div>
                     <p className="text-xs text-muted-foreground mt-3">
-                      💡 A empresa com lance 4 C$ ganhou porque tem score 8.0! Pagou menos e ficou em 1º.
+                      💡 Ofertas novas começam com Nota 7. Melhore sua oferta para pagar menos!
                     </p>
                   </div>
                 </CardContent>
@@ -224,28 +209,28 @@ export default function TransparencyPage() {
 
               {/* Key Points */}
               <div className="grid sm:grid-cols-3 gap-4">
-                <Card className="bg-primary/5 border-primary/20">
-                  <CardContent className="p-6 text-center">
-                    <Zap className="h-8 w-8 text-primary mx-auto mb-3" />
-                    <h4 className="font-bold mb-1">Lance Mínimo</h4>
-                    <p className="text-2xl font-bold text-primary">4 C$</p>
-                    <p className="text-xs text-muted-foreground mt-1">R$ 0,40</p>
-                  </CardContent>
-                </Card>
                 <Card className="bg-secondary/5 border-secondary/20">
                   <CardContent className="p-6 text-center">
-                    <Target className="h-8 w-8 text-secondary mx-auto mb-3" />
-                    <h4 className="font-bold mb-1">Lance Médio</h4>
-                    <p className="text-2xl font-bold text-secondary">8 C$</p>
-                    <p className="text-xs text-muted-foreground mt-1">R$ 0,80</p>
+                    <Zap className="h-8 w-8 text-secondary mx-auto mb-3" />
+                    <h4 className="font-bold mb-1">Nota 10</h4>
+                    <p className="text-2xl font-bold text-secondary">R$ 0,40</p>
+                    <p className="text-xs text-muted-foreground mt-1">CPC mínimo</p>
                   </CardContent>
                 </Card>
-                <Card className="bg-accent/5 border-accent/20">
+                <Card className="bg-primary/5 border-primary/20">
                   <CardContent className="p-6 text-center">
-                    <Award className="h-8 w-8 text-accent mx-auto mb-3" />
-                    <h4 className="font-bold mb-1">Lance Máximo</h4>
-                    <p className="text-2xl font-bold text-accent">15 C$</p>
-                    <p className="text-xs text-muted-foreground mt-1">R$ 1,50</p>
+                    <Target className="h-8 w-8 text-primary mx-auto mb-3" />
+                    <h4 className="font-bold mb-1">Nota 7</h4>
+                    <p className="text-2xl font-bold text-primary">R$ 0,70</p>
+                    <p className="text-xs text-muted-foreground mt-1">CPC inicial</p>
+                  </CardContent>
+                </Card>
+                <Card className="bg-destructive/5 border-destructive/20">
+                  <CardContent className="p-6 text-center">
+                    <Award className="h-8 w-8 text-destructive mx-auto mb-3" />
+                    <h4 className="font-bold mb-1">Nota 4</h4>
+                    <p className="text-2xl font-bold text-destructive">R$ 1,00</p>
+                    <p className="text-xs text-muted-foreground mt-1">CPC máximo</p>
                   </CardContent>
                 </Card>
               </div>
@@ -333,7 +318,7 @@ export default function TransparencyPage() {
                     <div className="flex items-start gap-3">
                       <Percent className="h-5 w-5 text-destructive shrink-0 mt-0.5" />
                       <div>
-                        <p className="font-medium text-sm">Desconto de 50%+</p>
+                        <p className="font-medium text-sm">Desconto de 30%+</p>
                         <p className="text-xs text-muted-foreground">+3 pontos na Qualidade</p>
                       </div>
                     </div>
@@ -454,7 +439,7 @@ export default function TransparencyPage() {
             <TabsContent value="earnings" className="space-y-8">
               <div className="text-center mb-8">
                 <h2 className="text-3xl font-display font-bold mb-2">Ganhos do Divulgador</h2>
-                <p className="text-muted-foreground">De R$ 0,20 a R$ 0,97 por clique (com bônus de nível)</p>
+                <p className="text-muted-foreground">De R$ 0,20 a R$ 0,65 por clique (com bônus de nível)</p>
               </div>
 
               {/* Earnings Range */}
@@ -468,12 +453,12 @@ export default function TransparencyPage() {
                     </div>
                     <span className="text-2xl text-muted-foreground">→</span>
                     <div>
-                      <p className="text-4xl font-display font-bold text-affiliate">R$ 0,97</p>
+                      <p className="text-4xl font-display font-bold text-affiliate">R$ 0,65</p>
                       <p className="text-xs text-muted-foreground">máximo*</p>
                     </div>
                   </div>
                   <p className="text-xs text-muted-foreground mt-4">
-                    *Com CPC máximo (15 C$) + multiplicador Diamante (1.3x)
+                    *Com CPC máximo (10 C$) + multiplicador Diamante (1.3x)
                   </p>
                 </CardContent>
               </Card>
@@ -515,22 +500,22 @@ export default function TransparencyPage() {
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm text-muted-foreground mb-4">
-                    Baseado em CPC médio de 8 C$ (R$ 0,40 por clique base):
+                    Baseado em CPC médio de 7 C$ (R$ 0,35 por clique base):
                   </p>
                   <div className="grid sm:grid-cols-3 gap-4">
                     <div className="bg-card rounded-xl p-4 text-center border border-border">
                       <p className="text-sm text-muted-foreground">10 cliques/dia</p>
-                      <p className="text-2xl font-bold text-affiliate mt-1">R$ 60</p>
+                      <p className="text-2xl font-bold text-affiliate mt-1">R$ 105</p>
                       <p className="text-xs text-muted-foreground">/mês</p>
                     </div>
                     <div className="bg-card rounded-xl p-4 text-center border border-border">
                       <p className="text-sm text-muted-foreground">50 cliques/dia</p>
-                      <p className="text-2xl font-bold text-affiliate mt-1">R$ 300</p>
+                      <p className="text-2xl font-bold text-affiliate mt-1">R$ 525</p>
                       <p className="text-xs text-muted-foreground">/mês</p>
                     </div>
                     <div className="bg-card rounded-xl p-4 text-center border border-border">
                       <p className="text-sm text-muted-foreground">100 cliques/dia</p>
-                      <p className="text-2xl font-bold text-affiliate mt-1">R$ 600</p>
+                      <p className="text-2xl font-bold text-affiliate mt-1">R$ 1.050</p>
                       <p className="text-xs text-muted-foreground">/mês</p>
                     </div>
                   </div>
