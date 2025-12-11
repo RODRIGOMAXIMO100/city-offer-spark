@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Loader2, CreditCard, QrCode, Copy, Check, AlertCircle, Info } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -539,23 +540,21 @@ export function AddCreditsModal({
 
             <div>
               <Label>Parcelas</Label>
-              <div className="grid grid-cols-4 gap-2 mt-2">
-                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((n) => (
-                  <Button
-                    key={n}
-                    type="button"
-                    variant={installments === n ? 'default' : 'outline'}
-                    size="sm"
-                    onClick={() => setInstallments(n)}
-                    className="text-xs"
-                  >
-                    {n}x
-                  </Button>
-                ))}
-              </div>
-              <p className="text-sm text-muted-foreground mt-2">
-                {installments}x de R$ {(amount / installments).toFixed(2)} sem juros
-              </p>
+              <Select 
+                value={installments.toString()} 
+                onValueChange={(value) => setInstallments(Number(value))}
+              >
+                <SelectTrigger className="mt-2">
+                  <SelectValue placeholder="Selecione o parcelamento" />
+                </SelectTrigger>
+                <SelectContent>
+                  {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((n) => (
+                    <SelectItem key={n} value={n.toString()}>
+                      {n}x de R$ {(amount / n).toFixed(2)} sem juros
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             <Button 
