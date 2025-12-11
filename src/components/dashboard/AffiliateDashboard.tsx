@@ -12,6 +12,7 @@ import PaymentDataModal from './PaymentDataModal';
 import AffiliateLevel from './AffiliateLevel';
 import AffiliateRanking from './AffiliateRanking';
 import NotificationBell from './NotificationBell';
+import logo from '@/assets/logo.png';
 
 interface Withdrawal {
   id: string;
@@ -216,7 +217,7 @@ export default function AffiliateDashboard() {
           {/* Top row: Logo + Logout */}
           <div className="flex justify-between items-center mb-2">
             <div className="flex items-center gap-2">
-              <h1 className="text-xl sm:text-2xl font-bold text-affiliate">clilin</h1>
+              <img src={logo} alt="clilin" className="h-8" />
               <Badge variant="outline" className="text-affiliate border-affiliate text-xs">
                 Divulgador
               </Badge>

@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-import { Instagram, Mail, Sparkles } from "lucide-react";
+import { Instagram, Mail } from "lucide-react";
+import logo from "@/assets/logo.png";
 
 export function Footer() {
   return (
@@ -8,13 +9,8 @@ export function Footer() {
         <div className="grid md:grid-cols-4 gap-12">
           {/* Logo & Description */}
           <div className="md:col-span-2">
-            <Link to="/" className="flex items-center gap-2 mb-4">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary via-accent to-secondary flex items-center justify-center">
-                <Sparkles className="h-5 w-5 text-white" />
-              </div>
-              <span className="text-2xl font-display font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                clilin
-              </span>
+            <Link to="/" className="flex items-center mb-4">
+              <img src={logo} alt="clilin" className="h-10" />
             </Link>
             <p className="text-muted-foreground max-w-md leading-relaxed">
               Plataforma de ofertas locais que conecta empresas, divulgadores e clientes 
