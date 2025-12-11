@@ -129,7 +129,10 @@ export function useOffers(city?: string) {
 
   const incrementView = async (offerId: string) => {
     try {
+      // Increment the counter
       await supabase.rpc('increment_offer_views', { offer_id: offerId });
+      // Log the view for daily tracking
+      await supabase.from('offer_views').insert({ offer_id: offerId });
     } catch (err) {
       console.error('Error incrementing view:', err);
     }

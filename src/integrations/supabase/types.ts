@@ -255,6 +255,35 @@ export type Database = {
           },
         ]
       }
+      offer_views: {
+        Row: {
+          client_ip: string | null
+          created_at: string
+          id: string
+          offer_id: string
+        }
+        Insert: {
+          client_ip?: string | null
+          created_at?: string
+          id?: string
+          offer_id: string
+        }
+        Update: {
+          client_ip?: string | null
+          created_at?: string
+          id?: string
+          offer_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "offer_views_offer_id_fkey"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "offers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       offers: {
         Row: {
           active: boolean

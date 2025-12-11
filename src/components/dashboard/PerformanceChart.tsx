@@ -13,10 +13,15 @@ import { LineChart, Line, XAxis, YAxis, ResponsiveContainer } from 'recharts';
 
 interface DailyData {
   date: string;
+  views: number;
   clicks: number;
 }
 
 const chartConfig = {
+  views: {
+    label: 'Views',
+    color: 'hsl(var(--muted-foreground))',
+  },
   clicks: {
     label: 'Cliques',
     color: 'hsl(var(--primary))',
@@ -43,59 +48,82 @@ export default function PerformanceChart() {
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - period);
     
-    // Get clicks data
-    const { data: clicks, error: clicksError } = await supabase
-      .from('offer_clicks')
-      .select('created_at, offer_id, click_type')
-      .gte('created_at', startDate.toISOString());
-
-    // Get my offers
+    // Get my offers first
     const { data: myOffers } = await supabase
       .from('offers')
-      .select('id, views_count, created_at')
+      .select('id')
       .eq('company_id', profile.id);
 
-    if (clicksError) {
-      console.error('Error fetching clicks:', clicksError);
+    const myOfferIds = myOffers?.map(o => o.id) || [];
+    
+    if (myOfferIds.length === 0) {
+      setData([]);
       setLoading(false);
       return;
     }
 
-    const myOfferIds = new Set(myOffers?.map(o => o.id) || []);
-    
-    // Filter clicks for my offers only (MAIN clicks)
-    const myClicks = clicks?.filter(c => 
-      myOfferIds.has(c.offer_id) && c.click_type === 'MAIN'
-    ) || [];
+    // Get clicks and views data in parallel
+    const [clicksResult, viewsResult] = await Promise.all([
+      supabase
+        .from('offer_clicks')
+        .select('created_at, offer_id, click_type')
+        .in('offer_id', myOfferIds)
+        .gte('created_at', startDate.toISOString()),
+      supabase
+        .from('offer_views')
+        .select('created_at, offer_id')
+        .in('offer_id', myOfferIds)
+        .gte('created_at', startDate.toISOString())
+    ]);
+
+    if (clicksResult.error) {
+      console.error('Error fetching clicks:', clicksResult.error);
+    }
+    if (viewsResult.error) {
+      console.error('Error fetching views:', viewsResult.error);
+    }
+
+    // Filter MAIN clicks only
+    const myClicks = clicksResult.data?.filter(c => c.click_type === 'MAIN') || [];
+    const myViews = viewsResult.data || [];
 
     // Group by day
-    const dailyMap: Record<string, number> = {};
+    const dailyMap: Record<string, { views: number; clicks: number }> = {};
     
     // Initialize all days in period
     for (let i = period - 1; i >= 0; i--) {
       const date = new Date();
       date.setDate(date.getDate() - i);
       const key = date.toISOString().split('T')[0];
-      dailyMap[key] = 0;
+      dailyMap[key] = { views: 0, clicks: 0 };
     }
 
     // Count clicks by day
     myClicks.forEach(click => {
       const key = click.created_at.split('T')[0];
-      if (dailyMap[key] !== undefined) {
-        dailyMap[key] += 1;
+      if (dailyMap[key]) {
+        dailyMap[key].clicks += 1;
+      }
+    });
+
+    // Count views by day
+    myViews.forEach(view => {
+      const key = view.created_at.split('T')[0];
+      if (dailyMap[key]) {
+        dailyMap[key].views += 1;
       }
     });
     
     // Convert to array and format for chart
     const chartData: DailyData[] = Object.entries(dailyMap)
       .sort((a, b) => a[0].localeCompare(b[0]))
-      .map(([date, clicks]) => ({
+      .map(([date, values]) => ({
         date: new Date(date).toLocaleDateString('pt-BR', { 
           day: '2-digit', 
           month: '2-digit' 
         }),
-        clicks,
+        views: values.views,
+        clicks: values.clicks,
       }));
 
     setData(chartData);
@@ -154,6 +182,15 @@ export default function PerformanceChart() {
                 <ChartTooltip content={<ChartTooltipContent />} />
                 <Line
                   type="monotone"
+                  dataKey="views"
+                  stroke="var(--color-views)"
+                  strokeWidth={2}
+                  dot={{ fill: 'hsl(var(--muted-foreground))', strokeWidth: 0, r: 3 }}
+                  activeDot={{ r: 5, fill: 'hsl(var(--muted-foreground))' }}
+                  name="Views"
+                />
+                <Line
+                  type="monotone"
                   dataKey="clicks"
                   stroke="var(--color-clicks)"
                   strokeWidth={2}
@@ -171,8 +208,12 @@ export default function PerformanceChart() {
         )}
         <div className="flex justify-center gap-4 mt-2 text-xs">
           <div className="flex items-center gap-1">
+            <div className="w-3 h-0.5 bg-muted-foreground rounded" />
+            <span className="text-muted-foreground">Views</span>
+          </div>
+          <div className="flex items-center gap-1">
             <div className="w-3 h-0.5 bg-primary rounded" />
-            <span className="text-muted-foreground">Cliques por dia</span>
+            <span className="text-muted-foreground">Cliques</span>
           </div>
         </div>
       </CardContent>
