@@ -103,6 +103,13 @@ export function PublicAIChat() {
     setSelectedCity('');
   };
 
+  const resetChat = () => {
+    setChatStarted(false);
+    setShowNoOffersScreen(false);
+    setMessages([]);
+    setInputText('');
+  };
+
   const shareOnWhatsApp = () => {
     const message = `Oi! Conhece a Clilin? É uma plataforma nova onde você pode divulgar ofertas do seu negócio e ganhar novos clientes! 🚀\n\nEu já estou esperando ofertas de ${formattedCity} por lá.\n\nPara empresas: ${window.location.origin}/auth?role=COMPANY\nPara clientes: ${window.location.origin}`;
     const encodedMessage = encodeURIComponent(message);
@@ -376,14 +383,23 @@ export function PublicAIChat() {
         <Card className="glass-card border-primary/20 shadow-2xl overflow-hidden">
           {/* Chat Header */}
           <div className="bg-gradient-to-r from-client to-client/80 p-4 text-white">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
-                  <Bot className="h-5 w-5" />
+            <div className="flex items-center justify-between gap-2">
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={resetChat}
+                className="text-white/90 hover:text-white hover:bg-white/20 text-xs px-2"
+              >
+                <ArrowLeft className="mr-1 h-3 w-3" />
+                Trocar Cidade
+              </Button>
+              <div className="flex items-center gap-2 flex-1 justify-center">
+                <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
+                  <Bot className="h-4 w-4" />
                 </div>
-                <div>
-                  <h3 className="font-semibold">Clilin AI</h3>
-                  <div className="flex items-center gap-1 text-xs opacity-90">
+                <div className="text-center">
+                  <h3 className="font-semibold text-sm">Clilin AI</h3>
+                  <div className="flex items-center justify-center gap-1 text-xs opacity-90">
                     <MapPin className="h-3 w-3" />
                     {formattedCity}
                   </div>
@@ -393,7 +409,7 @@ export function PublicAIChat() {
                 size="sm"
                 variant="secondary"
                 onClick={() => navigate('/auth?role=CLIENT')}
-                className="text-xs"
+                className="text-xs px-2"
               >
                 <UserPlus className="mr-1 h-3 w-3" />
                 Criar Conta

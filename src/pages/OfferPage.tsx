@@ -5,7 +5,7 @@ import { Offer, CONFIG } from '@/types/database';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, Clock, MessageCircle, Globe, FileText, MapPin, Sparkles, Instagram, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Loader2, Clock, MessageCircle, Globe, FileText, MapPin, Sparkles, Instagram, ChevronLeft, ChevronRight, ArrowLeft, Search } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import logo from '@/assets/logo.png';
 
@@ -346,6 +346,22 @@ export default function OfferPage() {
 
   return (
     <div className="min-h-screen bg-muted/30 flex flex-col">
+      {/* Navigation Header */}
+      <div className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b">
+        <div className="max-w-md mx-auto px-4 py-3 flex items-center justify-between">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => navigate('/#ai-chat')}
+            className="text-muted-foreground hover:text-foreground"
+          >
+            <ArrowLeft className="mr-1 h-4 w-4" />
+            Buscar Ofertas
+          </Button>
+          <img src={logo} alt="Clilin" className="h-6" />
+        </div>
+      </div>
+
       <div className="flex-1 flex items-center justify-center p-4">
       <Card className="w-full max-w-md shadow-xl border-0 overflow-hidden animate-fade-in">
         {/* Image Gallery */}
@@ -507,8 +523,21 @@ export default function OfferPage() {
       </Card>
       </div>
 
-      <div className="py-6 flex justify-center">
-        <img src={logo} alt="clilin" className="h-8 opacity-60" />
+      {/* Footer with navigation */}
+      <div className="py-6 space-y-4">
+        <div className="max-w-md mx-auto px-4">
+          <Button
+            variant="outline"
+            className="w-full"
+            onClick={() => navigate('/#ai-chat')}
+          >
+            <Search className="mr-2 h-4 w-4" />
+            Ver Mais Ofertas em {offer.city.split(' - ')[0]}
+          </Button>
+        </div>
+        <div className="flex justify-center">
+          <img src={logo} alt="clilin" className="h-8 opacity-60" />
+        </div>
       </div>
     </div>
   );
