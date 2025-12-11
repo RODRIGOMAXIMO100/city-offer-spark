@@ -68,8 +68,9 @@ export function OnboardingTour() {
     const rect = element.getBoundingClientRect();
     const padding = 8;
 
+    // IMPORTANTE: Usar apenas rect (já é relativo ao viewport) pois container é fixed
     setHighlightPos({
-      top: rect.top - padding + window.scrollY,
+      top: rect.top - padding,
       left: rect.left - padding,
       width: rect.width + padding * 2,
       height: rect.height + padding * 2,
@@ -80,27 +81,29 @@ export function OnboardingTour() {
     let tooltipTop = 0;
     let tooltipLeft = 0;
 
+    // IMPORTANTE: Sem window.scrollY pois container é fixed
     switch (currentStepData.position) {
       case 'bottom':
-        tooltipTop = rect.bottom + 16 + window.scrollY;
+        tooltipTop = rect.bottom + 16;
         tooltipLeft = rect.left + rect.width / 2 - tooltipWidth / 2;
         break;
       case 'top':
-        tooltipTop = rect.top - tooltipHeight - 16 + window.scrollY;
+        tooltipTop = rect.top - tooltipHeight - 16;
         tooltipLeft = rect.left + rect.width / 2 - tooltipWidth / 2;
         break;
       case 'left':
-        tooltipTop = rect.top + rect.height / 2 - tooltipHeight / 2 + window.scrollY;
+        tooltipTop = rect.top + rect.height / 2 - tooltipHeight / 2;
         tooltipLeft = rect.left - tooltipWidth - 16;
         break;
       case 'right':
-        tooltipTop = rect.top + rect.height / 2 - tooltipHeight / 2 + window.scrollY;
+        tooltipTop = rect.top + rect.height / 2 - tooltipHeight / 2;
         tooltipLeft = rect.right + 16;
         break;
     }
 
+    // Garantir que tooltip fica dentro da viewport
     tooltipLeft = Math.max(16, Math.min(tooltipLeft, window.innerWidth - tooltipWidth - 16));
-    tooltipTop = Math.max(16, tooltipTop);
+    tooltipTop = Math.max(16, Math.min(tooltipTop, window.innerHeight - tooltipHeight - 16));
 
     setTooltipPos({ top: tooltipTop, left: tooltipLeft });
   }, [currentStepData]);
@@ -178,24 +181,28 @@ export function OnboardingTour() {
         // Sempre fazer scroll se não estiver bem posicionado
         if (!isWellPositioned()) {
           console.log(`[Tour] Fazendo scroll para elemento...`);
-          element.scrollIntoView({ 
-            behavior: 'smooth', 
-            block: 'center',
-            inline: 'nearest'
+          
+          // Usar scrollTo com offset calculado para centralizar melhor
+          const elementRect = element.getBoundingClientRect();
+          const elementCenterY = elementRect.top + window.scrollY + elementRect.height / 2;
+          const targetScrollY = elementCenterY - viewportCenter;
+          
+          window.scrollTo({
+            top: Math.max(0, targetScrollY),
+            behavior: 'smooth'
           });
           
-          // Tempo de espera proporcional à distância - mínimo 500ms, máximo 900ms
-          const scrollTime = Math.min(900, Math.max(500, initialDistance));
-          await new Promise(resolve => setTimeout(resolve, scrollTime));
+          // Tempo de espera fixo mais longo para garantir scroll completo
+          await new Promise(resolve => setTimeout(resolve, 700));
           
-          // Verificação pós-scroll
+          // Verificação pós-scroll - tentar novamente se necessário
           if (!isWellPositioned()) {
             console.log(`[Tour] Segunda tentativa de scroll...`);
             element.scrollIntoView({ 
               behavior: 'smooth', 
               block: 'center'
             });
-            await new Promise(resolve => setTimeout(resolve, 400));
+            await new Promise(resolve => setTimeout(resolve, 500));
           }
         } else {
           await new Promise(resolve => setTimeout(resolve, 100));
