@@ -12,9 +12,14 @@ import { Button } from '@/components/ui/button';
 import { ReadingProgress } from '@/components/blog/ReadingProgress';
 import { TableOfContents } from '@/components/blog/TableOfContents';
 import { ShareSidebar } from '@/components/blog/ShareSidebar';
-import { Calendar, User, ArrowLeft, Clock, ArrowRight } from 'lucide-react';
+import { Calendar, User, ArrowLeft, Clock, ArrowRight, Eye, ChevronRight, Home } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+
+interface FAQItem {
+  question: string;
+  answer: string;
+}
 
 interface BlogPost {
   id: string;
@@ -30,6 +35,8 @@ interface BlogPost {
   published_at: string;
   author_name: string;
   updated_at: string;
+  views: number;
+  faq: FAQItem[] | null;
 }
 
 interface RelatedPost {
@@ -41,11 +48,18 @@ interface RelatedPost {
   featured_image: string | null;
 }
 
+interface AdjacentPost {
+  slug: string;
+  title: string;
+}
+
 export default function BlogPostPage() {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const [post, setPost] = useState<BlogPost | null>(null);
   const [relatedPosts, setRelatedPosts] = useState<RelatedPost[]>([]);
+  const [prevPost, setPrevPost] = useState<AdjacentPost | null>(null);
+  const [nextPost, setNextPost] = useState<AdjacentPost | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -69,13 +83,21 @@ export default function BlogPostPage() {
         return;
       }
 
-      setPost(data);
+      // Parse FAQ if it's a string
+      const parsedPost = {
+        ...data,
+        faq: typeof data.faq === 'string' ? JSON.parse(data.faq) : data.faq
+      };
 
+      setPost(parsedPost);
+
+      // Increment views
       await supabase
         .from('blog_posts')
         .update({ views: (data.views || 0) + 1 })
         .eq('id', data.id);
 
+      // Fetch related posts
       const { data: related } = await supabase
         .from('blog_posts')
         .select('id, title, slug, excerpt, category, featured_image')
@@ -85,6 +107,30 @@ export default function BlogPostPage() {
         .limit(3);
 
       setRelatedPosts(related || []);
+
+      // Fetch previous post (older)
+      const { data: prev } = await supabase
+        .from('blog_posts')
+        .select('slug, title')
+        .eq('status', 'published')
+        .lt('published_at', data.published_at)
+        .order('published_at', { ascending: false })
+        .limit(1)
+        .single();
+
+      setPrevPost(prev);
+
+      // Fetch next post (newer)
+      const { data: next } = await supabase
+        .from('blog_posts')
+        .select('slug, title')
+        .eq('status', 'published')
+        .gt('published_at', data.published_at)
+        .order('published_at', { ascending: true })
+        .limit(1)
+        .single();
+
+      setNextPost(next);
     } catch (error) {
       console.error('Error fetching post:', error);
       navigate('/blog');
@@ -187,11 +233,38 @@ export default function BlogPostPage() {
           { name: post.title, url: `/blog/${post.slug}` },
         ]}
       />
+      {/* FAQ Schema for Rich Snippets */}
+      {post.faq && post.faq.length > 0 && (
+        <StructuredData
+          type="FAQPage"
+          faqs={post.faq}
+        />
+      )}
 
       <Navbar />
 
+      {/* Visual Breadcrumb */}
+      <div className="pt-20 pb-2 bg-muted/30 border-b border-border">
+        <div className="container mx-auto px-4 max-w-5xl">
+          <nav className="flex items-center gap-2 text-sm text-muted-foreground" aria-label="Breadcrumb">
+            <Link to="/" className="flex items-center gap-1 hover:text-primary transition-colors">
+              <Home className="h-4 w-4" />
+              <span className="hidden sm:inline">Home</span>
+            </Link>
+            <ChevronRight className="h-4 w-4" />
+            <Link to="/blog" className="hover:text-primary transition-colors">
+              Blog
+            </Link>
+            <ChevronRight className="h-4 w-4" />
+            <span className="text-foreground truncate max-w-[200px] sm:max-w-xs">
+              {post.title}
+            </span>
+          </nav>
+        </div>
+      </div>
+
       {/* Hero Section */}
-      <header className="pt-24 pb-8 bg-gradient-to-b from-muted/50 to-background">
+      <header className="pt-8 pb-8 bg-gradient-to-b from-muted/50 to-background">
         <div className="container mx-auto px-4 max-w-5xl">
           <Link
             to="/blog"
@@ -214,7 +287,7 @@ export default function BlogPostPage() {
           </p>
 
           <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
-            <div className="flex items-center gap-2">
+            <Link to={`/autor/${post.author_name.toLowerCase().replace(/\s+/g, '-')}`} className="flex items-center gap-2 hover:text-primary transition-colors">
               <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
                 <User className="h-5 w-5 text-primary" />
               </div>
@@ -222,7 +295,7 @@ export default function BlogPostPage() {
                 <p className="font-medium text-foreground">{post.author_name}</p>
                 <p className="text-xs">Autor</p>
               </div>
-            </div>
+            </Link>
             <div className="h-8 w-px bg-border" />
             <span className="flex items-center gap-1.5">
               <Calendar className="h-4 w-4" />
@@ -240,6 +313,11 @@ export default function BlogPostPage() {
             <span className="flex items-center gap-1.5">
               <Clock className="h-4 w-4" />
               {estimateReadTime(post.content)}
+            </span>
+            <div className="h-8 w-px bg-border" />
+            <span className="flex items-center gap-1.5">
+              <Eye className="h-4 w-4" />
+              {(post.views || 0).toLocaleString('pt-BR')} visualizações
             </span>
           </div>
         </div>
@@ -309,20 +387,64 @@ export default function BlogPostPage() {
               </div>
             </div>
 
+            {/* Post Navigation */}
+            <div className="mt-12 pt-8 border-t border-border">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {prevPost ? (
+                  <Link
+                    to={`/blog/${prevPost.slug}`}
+                    className="group p-4 rounded-xl border border-border hover:border-primary/50 hover:bg-muted/50 transition-all"
+                  >
+                    <span className="text-xs text-muted-foreground flex items-center gap-1 mb-2">
+                      <ArrowLeft className="h-3 w-3" />
+                      Post anterior
+                    </span>
+                    <p className="font-medium text-foreground group-hover:text-primary transition-colors line-clamp-2">
+                      {prevPost.title}
+                    </p>
+                  </Link>
+                ) : (
+                  <div />
+                )}
+                {nextPost && (
+                  <Link
+                    to={`/blog/${nextPost.slug}`}
+                    className="group p-4 rounded-xl border border-border hover:border-primary/50 hover:bg-muted/50 transition-all text-right"
+                  >
+                    <span className="text-xs text-muted-foreground flex items-center justify-end gap-1 mb-2">
+                      Próximo post
+                      <ArrowRight className="h-3 w-3" />
+                    </span>
+                    <p className="font-medium text-foreground group-hover:text-primary transition-colors line-clamp-2">
+                      {nextPost.title}
+                    </p>
+                  </Link>
+                )}
+              </div>
+            </div>
+
             {/* Author Card */}
             <div className="mt-12 p-6 bg-card border border-border rounded-2xl">
               <div className="flex items-start gap-4">
-                <div className="h-16 w-16 rounded-full bg-gradient-to-br from-primary to-affiliate flex items-center justify-center text-white font-bold text-xl shrink-0">
+                <Link 
+                  to={`/autor/${post.author_name.toLowerCase().replace(/\s+/g, '-')}`}
+                  className="h-16 w-16 rounded-full bg-gradient-to-br from-primary to-affiliate flex items-center justify-center text-white font-bold text-xl shrink-0 hover:scale-105 transition-transform"
+                >
                   {post.author_name.charAt(0)}
-                </div>
+                </Link>
                 <div className="flex-1">
-                  <p className="font-semibold text-foreground text-lg">{post.author_name}</p>
+                  <Link 
+                    to={`/autor/${post.author_name.toLowerCase().replace(/\s+/g, '-')}`}
+                    className="font-semibold text-foreground text-lg hover:text-primary transition-colors"
+                  >
+                    {post.author_name}
+                  </Link>
                   <p className="text-sm text-muted-foreground mt-1 leading-relaxed">
                     Especialista em marketing digital, ofertas locais e estratégias de afiliados. 
                     Compartilhando conhecimento prático para ajudar você a economizar e ganhar dinheiro na sua cidade.
                   </p>
                   <div className="flex gap-3 mt-3">
-                    <Link to="/blog" className="text-sm text-primary hover:underline">
+                    <Link to={`/autor/${post.author_name.toLowerCase().replace(/\s+/g, '-')}`} className="text-sm text-primary hover:underline">
                       Ver todos os artigos →
                     </Link>
                   </div>
@@ -347,13 +469,17 @@ export default function BlogPostPage() {
               {relatedPosts.map((relatedPost) => (
                 <Link key={relatedPost.id} to={`/blog/${relatedPost.slug}`} className="group">
                   <Card className="h-full overflow-hidden hover:border-primary/50 transition-all hover:shadow-lg">
-                    {relatedPost.featured_image && (
+                    {relatedPost.featured_image ? (
                       <div className="aspect-video overflow-hidden">
                         <img
                           src={relatedPost.featured_image}
                           alt={relatedPost.title}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                         />
+                      </div>
+                    ) : (
+                      <div className="aspect-video bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
+                        <span className="text-4xl opacity-50">📝</span>
                       </div>
                     )}
                     <CardHeader className="pb-2">

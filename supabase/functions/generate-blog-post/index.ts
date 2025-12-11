@@ -162,7 +162,70 @@ Retorne um JSON com exatamente esta estrutura:
     const timestamp = Date.now().toString(36);
     const uniqueSlug = `${baseSlug}-${timestamp}`;
 
-    // Insert blog post as draft
+    // Generate featured image with AI
+    let featuredImageUrl = null;
+    try {
+      console.log("Generating featured image...");
+      
+      const imagePrompt = `Create a professional, modern blog header image for an article about "${postData.title}". 
+Style: Clean, minimalist, vibrant colors, marketing/business theme. 
+Include visual elements related to: ${theme.keywords.slice(0, 3).join(", ")}.
+Aspect ratio: 16:9, suitable for web blog header.
+No text in the image.`;
+
+      const imageResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${lovableApiKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "google/gemini-2.5-flash-image-preview",
+          messages: [
+            { role: "user", content: imagePrompt }
+          ],
+          modalities: ["image", "text"]
+        }),
+      });
+
+      if (imageResponse.ok) {
+        const imageData = await imageResponse.json();
+        const imageBase64 = imageData.choices?.[0]?.message?.images?.[0]?.image_url?.url;
+        
+        if (imageBase64) {
+          // Extract base64 data (remove data:image/png;base64, prefix)
+          const base64Data = imageBase64.replace(/^data:image\/\w+;base64,/, "");
+          const imageBytes = Uint8Array.from(atob(base64Data), c => c.charCodeAt(0));
+          
+          // Upload to Supabase storage
+          const imagePath = `blog/${uniqueSlug}.png`;
+          const { error: uploadError } = await supabase.storage
+            .from("offer-images")
+            .upload(imagePath, imageBytes, {
+              contentType: "image/png",
+              upsert: true
+            });
+
+          if (!uploadError) {
+            const { data: publicUrl } = supabase.storage
+              .from("offer-images")
+              .getPublicUrl(imagePath);
+            
+            featuredImageUrl = publicUrl.publicUrl;
+            console.log("Image uploaded:", featuredImageUrl);
+          } else {
+            console.error("Image upload error:", uploadError);
+          }
+        }
+      } else {
+        console.error("Image generation failed:", await imageResponse.text());
+      }
+    } catch (imageError) {
+      console.error("Image generation error:", imageError);
+      // Continue without image
+    }
+
+    // Insert blog post
     const { data: newPost, error: insertError } = await supabase
       .from("blog_posts")
       .insert({
@@ -177,6 +240,8 @@ Retorne um JSON com exatamente esta estrutura:
         status: "published",
         published_at: new Date().toISOString(),
         author_name: "Equipe Clilin",
+        featured_image: featuredImageUrl,
+        faq: postData.faq || null,
       })
       .select()
       .single();
@@ -195,7 +260,7 @@ Retorne um JSON com exatamente esta estrutura:
       })
       .eq("id", theme.id);
 
-    console.log("Post created:", newPost.id, newPost.title);
+    console.log("Post created:", newPost.id, newPost.title, "Image:", featuredImageUrl ? "Yes" : "No");
 
     return new Response(
       JSON.stringify({
@@ -204,6 +269,7 @@ Retorne um JSON com exatamente esta estrutura:
           id: newPost.id,
           title: newPost.title,
           slug: newPost.slug,
+          featured_image: featuredImageUrl,
         },
       }),
       {
