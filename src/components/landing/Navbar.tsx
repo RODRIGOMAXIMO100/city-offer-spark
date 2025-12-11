@@ -50,6 +50,12 @@ export function Navbar() {
               </button>
             ))}
             <Link 
+              to="/blog" 
+              className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground rounded-lg hover:bg-muted/50 transition-all"
+            >
+              Blog
+            </Link>
+            <Link 
               to="/transparencia" 
               className="px-4 py-2 text-sm font-medium text-primary hover:text-primary/80 rounded-lg hover:bg-primary/5 transition-all"
             >
@@ -94,6 +100,13 @@ export function Navbar() {
                   {item.label}
                 </button>
               ))}
+              <Link 
+                to="/blog" 
+                onClick={() => setIsOpen(false)}
+                className="text-left px-4 py-3 text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-lg transition-colors"
+              >
+                Blog
+              </Link>
               <Link 
                 to="/transparencia" 
                 onClick={() => setIsOpen(false)}
