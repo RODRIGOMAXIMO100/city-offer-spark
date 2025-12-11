@@ -784,6 +784,48 @@ export type Database = {
           },
         ]
       }
+      user_onboarding: {
+        Row: {
+          bonus_earned: number | null
+          checklist_items: Json | null
+          completed_at: string | null
+          created_at: string | null
+          id: string
+          role: string
+          tour_completed: boolean | null
+          tour_current_step: number | null
+          updated_at: string | null
+          user_id: string
+          welcome_bonus_claimed: boolean | null
+        }
+        Insert: {
+          bonus_earned?: number | null
+          checklist_items?: Json | null
+          completed_at?: string | null
+          created_at?: string | null
+          id?: string
+          role: string
+          tour_completed?: boolean | null
+          tour_current_step?: number | null
+          updated_at?: string | null
+          user_id: string
+          welcome_bonus_claimed?: boolean | null
+        }
+        Update: {
+          bonus_earned?: number | null
+          checklist_items?: Json | null
+          completed_at?: string | null
+          created_at?: string | null
+          id?: string
+          role?: string
+          tour_completed?: boolean | null
+          tour_current_step?: number | null
+          updated_at?: string | null
+          user_id?: string
+          welcome_bonus_claimed?: boolean | null
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           id: string
@@ -956,6 +998,10 @@ export type Database = {
       }
       cleanup_old_rate_limits: { Args: never; Returns: undefined }
       cleanup_old_sessions: { Args: never; Returns: undefined }
+      credit_onboarding_bonus: {
+        Args: { p_amount: number; p_bonus_type: string; p_user_id: string }
+        Returns: boolean
+      }
       get_affiliate_level: { Args: { total_clicks: number }; Returns: number }
       get_commission_multiplier: {
         Args: { affiliate_profile_id: string }

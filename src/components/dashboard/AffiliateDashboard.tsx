@@ -14,6 +14,8 @@ import AffiliateRanking from './AffiliateRanking';
 import NotificationBell from './NotificationBell';
 import AffiliateTutorial from './AffiliateTutorial';
 import { Footer } from '@/components/landing/Footer';
+import { OnboardingProvider, useOnboarding } from '@/contexts/OnboardingContext';
+import { WelcomeModal, OnboardingTour, OnboardingChecklist } from '@/components/onboarding';
 import logo from '@/assets/logo.png';
 
 interface Withdrawal {
@@ -31,10 +33,11 @@ interface Earning {
   offer_title: string | null;
 }
 
-export default function AffiliateDashboard() {
+function AffiliateDashboardContent() {
   const { profile, signOut, refreshProfile } = useAuth();
   const { offers, loading } = useOffers(profile?.city);
   const { toast } = useToast();
+  const { claimBonus, hasClaimedBonus } = useOnboarding();
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [withdrawing, setWithdrawing] = useState(false);
@@ -189,6 +192,11 @@ export default function AffiliateDashboard() {
         description: 'Compartilhe com seus seguidores e ganhe comissão.',
       });
       setTimeout(() => setCopiedId(null), 2000);
+      
+      // Claim bonus for first link copied
+      if (!hasClaimedBonus('first_link_copied')) {
+        claimBonus('first_link_copied');
+      }
     } catch {
       toast({
         title: 'Erro ao copiar',
@@ -264,7 +272,7 @@ export default function AffiliateDashboard() {
           </div>
           
           {/* Balance row */}
-          <div className="flex items-center gap-2 bg-muted/50 rounded-lg p-2 mb-2">
+          <div data-tour="balance" className="flex items-center gap-2 bg-muted/50 rounded-lg p-2 mb-2">
             <Banknote className="h-5 w-5 text-affiliate shrink-0" />
             <div className="flex-1 min-w-0">
               <p className="text-xs text-muted-foreground">Saldo disponível</p>
@@ -273,6 +281,7 @@ export default function AffiliateDashboard() {
               </p>
             </div>
             <Button
+              data-tour="withdraw"
               size="sm"
               className="bg-affiliate hover:bg-affiliate/90 text-affiliate-foreground shrink-0"
               onClick={handleWithdraw}
@@ -553,5 +562,16 @@ export default function AffiliateDashboard() {
 
       <Footer />
     </div>
+  );
+}
+
+export default function AffiliateDashboard() {
+  return (
+    <OnboardingProvider>
+      <AffiliateDashboardContent />
+      <WelcomeModal />
+      <OnboardingTour />
+      <OnboardingChecklist />
+    </OnboardingProvider>
   );
 }
