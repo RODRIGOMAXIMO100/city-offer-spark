@@ -21,8 +21,10 @@ import {
   Eye,
   RefreshCw,
   BarChart3,
-  Banknote
+  Banknote,
+  FileText
 } from 'lucide-react';
+import { AdminBlog } from './admin/AdminBlog';
 import { formatBalance, CONFIG } from '@/types/database';
 import AdminFilters from './admin/AdminFilters';
 import AdminPagination, { usePagination } from './admin/AdminPagination';
@@ -373,7 +375,7 @@ export default function AdminDashboard() {
         {/* Tabs */}
         <Tabs defaultValue="users" className="space-y-4" onValueChange={resetFilters}>
           <div className="overflow-x-auto -mx-3 px-3 sm:mx-0 sm:px-0">
-            <TabsList className="inline-flex w-auto min-w-full sm:grid sm:w-full sm:grid-cols-6">
+            <TabsList className="inline-flex w-auto min-w-full sm:grid sm:w-full sm:grid-cols-7">
               <TabsTrigger value="users" className="flex-1 sm:flex-none text-xs sm:text-sm">
                 <Users className="h-4 w-4 sm:mr-2" />
                 <span className="hidden sm:inline">Usuários</span>
@@ -389,6 +391,10 @@ export default function AdminDashboard() {
               <TabsTrigger value="withdrawals" className="flex-1 sm:flex-none text-xs sm:text-sm">
                 <Banknote className="h-4 w-4 sm:mr-2" />
                 <span className="hidden sm:inline">Saques</span>
+              </TabsTrigger>
+              <TabsTrigger value="blog" className="flex-1 sm:flex-none text-xs sm:text-sm">
+                <FileText className="h-4 w-4 sm:mr-2" />
+                <span className="hidden sm:inline">Blog</span>
               </TabsTrigger>
               <TabsTrigger value="security" className="flex-1 sm:flex-none text-xs sm:text-sm">
                 <Shield className="h-4 w-4 sm:mr-2" />
@@ -599,6 +605,11 @@ export default function AdminDashboard() {
           {/* Withdrawals Tab */}
           <TabsContent value="withdrawals">
             <AdminWithdrawals />
+          </TabsContent>
+
+          {/* Blog Tab */}
+          <TabsContent value="blog">
+            <AdminBlog />
           </TabsContent>
 
           {/* Security Tab */}

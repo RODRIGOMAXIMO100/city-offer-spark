@@ -14,3 +14,12 @@ verify_jwt = false
 
 [functions.create-notification]
 verify_jwt = false
+
+[functions.generate-blog-post]
+verify_jwt = true
+
+[functions.generate-sitemap]
+verify_jwt = false
+
+[functions.publish-scheduled-posts]
+verify_jwt = false
