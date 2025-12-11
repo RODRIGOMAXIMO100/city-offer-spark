@@ -118,10 +118,16 @@ export default function AffiliateLevel({ affiliateId }: AffiliateLevelProps) {
     return Math.min((clicksInLevel / clicksNeeded) * 100, 100);
   };
 
-  const getMultiplierBonus = () => {
-    if (!currentLevel) return '0%';
-    const bonus = (currentLevel.commission_multiplier - 1) * 100;
-    return bonus > 0 ? `+${bonus.toFixed(0)}%` : '0%';
+  const getRealCommission = () => {
+    if (!currentLevel) return { percent: '50%', perClick: 'R$ 0,20 - R$ 0,50' };
+    const basePercent = 50 * currentLevel.commission_multiplier;
+    const minPerClick = (0.20 * currentLevel.commission_multiplier).toFixed(2).replace('.', ',');
+    const maxPerClick = (0.50 * currentLevel.commission_multiplier).toFixed(2).replace('.', ',');
+    return { 
+      percent: `${basePercent.toFixed(0)}%`, 
+      perClick: `R$ ${minPerClick} - R$ ${maxPerClick}`,
+      multiplier: currentLevel.commission_multiplier
+    };
   };
 
   if (loading) {
@@ -140,49 +146,54 @@ export default function AffiliateLevel({ affiliateId }: AffiliateLevelProps) {
     );
   }
 
+  const commission = getRealCommission();
+
   return (
     <Card className="overflow-hidden">
       <CardContent className="p-0">
         {/* Current Level Banner */}
         <div 
-          className="p-4 text-white"
+          className="p-3 sm:p-4 text-white"
           style={{ 
             background: `linear-gradient(135deg, ${currentLevel?.badge_color || '#CD7F32'}, ${currentLevel?.badge_color || '#CD7F32'}99)` 
           }}
         >
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
             <div className="flex items-center gap-3">
-              <div className="bg-white/20 p-2 rounded-full">
+              <div className="bg-white/20 p-2 rounded-full shrink-0">
                 {getLevelIcon(currentLevel?.name || 'Bronze')}
               </div>
               <div>
-                <p className="text-sm opacity-80">Seu nível</p>
-                <p className="text-xl font-bold">{currentLevel?.name || 'Bronze'}</p>
+                <p className="text-xs sm:text-sm opacity-80">Seu nível</p>
+                <p className="text-lg sm:text-xl font-bold">{currentLevel?.name || 'Bronze'}</p>
               </div>
             </div>
-            <Badge className="bg-white/20 text-white border-white/30">
-              {getMultiplierBonus()} comissão
-            </Badge>
+            <div className="flex flex-col sm:items-end gap-1 ml-11 sm:ml-0">
+              <Badge className="bg-white/20 text-white border-white/30 w-fit">
+                {commission.percent} do CPC
+              </Badge>
+              <span className="text-xs sm:text-sm font-semibold">{commission.perClick}/clique</span>
+            </div>
           </div>
         </div>
 
         {/* Progress */}
-        <div className="p-4 space-y-4">
+        <div className="p-3 sm:p-4 space-y-4">
           {/* Stats */}
-          <div className="grid grid-cols-3 gap-2 text-center">
-            <div className="bg-muted/50 rounded-lg py-2">
-              <p className="text-lg font-bold">{stats?.total_clicks || 0}</p>
-              <p className="text-xs text-muted-foreground">Cliques totais</p>
+          <div className="grid grid-cols-3 gap-1.5 sm:gap-2 text-center">
+            <div className="bg-muted/50 rounded-lg py-2 px-1">
+              <p className="text-base sm:text-lg font-bold">{stats?.total_clicks || 0}</p>
+              <p className="text-[10px] sm:text-xs text-muted-foreground">Cliques totais</p>
             </div>
-            <div className="bg-muted/50 rounded-lg py-2">
-              <p className="text-lg font-bold">{stats?.clicks_this_month || 0}</p>
-              <p className="text-xs text-muted-foreground">Este mês</p>
+            <div className="bg-muted/50 rounded-lg py-2 px-1">
+              <p className="text-base sm:text-lg font-bold">{stats?.clicks_this_month || 0}</p>
+              <p className="text-[10px] sm:text-xs text-muted-foreground">Este mês</p>
             </div>
-            <div className="bg-muted/50 rounded-lg py-2">
-              <p className="text-lg font-bold">
+            <div className="bg-muted/50 rounded-lg py-2 px-1">
+              <p className="text-base sm:text-lg font-bold">
                 {stats?.rank_position ? `#${stats.rank_position}` : '-'}
               </p>
-              <p className="text-xs text-muted-foreground">Ranking</p>
+              <p className="text-[10px] sm:text-xs text-muted-foreground">Ranking</p>
             </div>
           </div>
 
@@ -218,33 +229,38 @@ export default function AffiliateLevel({ affiliateId }: AffiliateLevelProps) {
 
           {/* All Levels */}
           <div className="pt-2 border-t">
-            <p className="text-sm font-medium mb-2">Níveis disponíveis:</p>
-            <div className="flex gap-2 overflow-x-auto pb-2">
+            <p className="text-xs sm:text-sm font-medium mb-2">Níveis e comissões:</p>
+            <div className="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1">
               {allLevels.map((level) => {
                 const isUnlocked = (stats?.total_clicks || 0) >= level.min_clicks;
                 const isCurrent = level.id === currentLevel?.id;
+                const levelPercent = (50 * level.commission_multiplier).toFixed(0);
+                const levelPerClick = (0.35 * level.commission_multiplier).toFixed(2).replace('.', ',');
                 
                 return (
                   <div
                     key={level.id}
                     className={`flex-shrink-0 p-2 rounded-lg text-center ${
                       isCurrent 
-                        ? 'ring-2 ring-affiliate' 
+                        ? 'ring-2 ring-affiliate bg-affiliate/10' 
                         : isUnlocked 
                           ? 'bg-muted' 
                           : 'bg-muted/30 opacity-50'
                     }`}
-                    style={{ minWidth: '80px' }}
+                    style={{ minWidth: '85px' }}
                   >
                     <div 
-                      className="h-8 w-8 rounded-full mx-auto flex items-center justify-center text-white mb-1"
+                      className="h-7 w-7 sm:h-8 sm:w-8 rounded-full mx-auto flex items-center justify-center text-white mb-1"
                       style={{ backgroundColor: level.badge_color }}
                     >
                       {getLevelIcon(level.name)}
                     </div>
                     <p className="text-xs font-medium">{level.name}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {level.min_clicks > 0 ? `${level.min_clicks}+` : '0'}
+                    <p className="text-[10px] text-muted-foreground">
+                      {level.min_clicks > 0 ? `${level.min_clicks}+ cliques` : 'Inicial'}
+                    </p>
+                    <p className="text-[10px] font-semibold text-affiliate mt-0.5">
+                      {levelPercent}% · ~R$ {levelPerClick}
                     </p>
                   </div>
                 );

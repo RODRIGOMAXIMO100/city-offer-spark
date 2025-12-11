@@ -263,75 +263,78 @@ export default function AffiliateDashboard() {
             </Button>
           </div>
           
-          {/* Bottom row: Balance + Sacar */}
-          <div className="flex justify-between items-center bg-muted/50 rounded-lg p-2">
-            <div className="flex items-center gap-2">
-              <Banknote className="h-5 w-5 text-affiliate" />
-              <div>
-                <p className="text-xs text-muted-foreground">Saldo disponível</p>
-                <p className="font-bold text-affiliate">
-                  {formatCreditsToReal(profile?.balance || 0)}
-                </p>
-              </div>
+          {/* Balance row */}
+          <div className="flex items-center gap-2 bg-muted/50 rounded-lg p-2 mb-2">
+            <Banknote className="h-5 w-5 text-affiliate shrink-0" />
+            <div className="flex-1 min-w-0">
+              <p className="text-xs text-muted-foreground">Saldo disponível</p>
+              <p className="font-bold text-affiliate">
+                {formatCreditsToReal(profile?.balance || 0)}
+              </p>
             </div>
-            <div className="flex gap-2">
-              <AffiliateTutorial />
-              {profile?.id && <NotificationBell userId={profile.id} />}
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={() => { setShowEarnings(!showEarnings); setShowWithdrawals(false); }}
-                title="Histórico de Ganhos"
-              >
-                <Coins className="h-4 w-4" />
-              </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={() => { setShowWithdrawals(!showWithdrawals); setShowEarnings(false); }}
-                title="Histórico de Saques"
-              >
-                <History className="h-4 w-4" />
-              </Button>
-              <Button
-                size="sm"
-                className="bg-affiliate hover:bg-affiliate/90 text-affiliate-foreground"
-                onClick={handleWithdraw}
-                disabled={withdrawing}
-              >
-                {withdrawing ? (
-                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                ) : null}
-                Sacar PIX
-              </Button>
-            </div>
+            <Button
+              size="sm"
+              className="bg-affiliate hover:bg-affiliate/90 text-affiliate-foreground shrink-0"
+              onClick={handleWithdraw}
+              disabled={withdrawing}
+            >
+              {withdrawing ? (
+                <Loader2 className="h-4 w-4 animate-spin sm:mr-2" />
+              ) : null}
+              <span className="hidden sm:inline">Sacar PIX</span>
+              <span className="sm:hidden">PIX</span>
+            </Button>
+          </div>
+
+          {/* Action buttons row */}
+          <div className="flex gap-1.5 sm:gap-2 flex-wrap">
+            <AffiliateTutorial />
+            {profile?.id && <NotificationBell userId={profile.id} />}
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => { setShowEarnings(!showEarnings); setShowWithdrawals(false); }}
+              className="flex-1 sm:flex-none min-w-0"
+            >
+              <Coins className="h-4 w-4 sm:mr-1.5 shrink-0" />
+              <span className="hidden sm:inline">Ganhos</span>
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => { setShowWithdrawals(!showWithdrawals); setShowEarnings(false); }}
+              className="flex-1 sm:flex-none min-w-0"
+            >
+              <History className="h-4 w-4 sm:mr-1.5 shrink-0" />
+              <span className="hidden sm:inline">Saques</span>
+            </Button>
           </div>
 
           {/* Earnings History */}
           {showEarnings && (
-            <div className="mt-3 bg-affiliate/10 rounded-lg p-3">
-              <div className="flex justify-between items-center mb-2">
-                <p className="text-sm font-medium flex items-center gap-2">
-                  <Coins className="h-4 w-4 text-affiliate" />
-                  Histórico de Ganhos
+            <div className="mt-3 bg-affiliate/10 rounded-lg p-2 sm:p-3">
+              <div className="flex justify-between items-center mb-2 gap-2">
+                <p className="text-xs sm:text-sm font-medium flex items-center gap-1.5">
+                  <Coins className="h-4 w-4 text-affiliate shrink-0" />
+                  <span className="truncate">Histórico de Ganhos</span>
                 </p>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-muted-foreground whitespace-nowrap">
                   Total: <strong className="text-affiliate">{formatCreditsToReal(earnings.reduce((sum, e) => sum + e.amount, 0))}</strong>
                 </p>
               </div>
               {earnings.length === 0 ? (
                 <p className="text-sm text-muted-foreground text-center py-4">Nenhum ganho registrado ainda.</p>
               ) : (
-                <div className="space-y-2 max-h-48 overflow-y-auto">
+                <div className="space-y-1.5 max-h-48 overflow-y-auto">
                   {earnings.map((e) => (
-                    <div key={e.id} className="flex justify-between items-center text-sm bg-background rounded p-2">
-                      <div>
+                    <div key={e.id} className="flex justify-between items-center text-sm bg-background rounded p-2 gap-2">
+                      <div className="min-w-0 flex-1">
                         <p className="font-medium text-affiliate">{formatCreditsToReal(e.amount)}</p>
-                        <p className="text-xs text-muted-foreground truncate max-w-[180px]">
+                        <p className="text-xs text-muted-foreground truncate">
                           {e.offer_title || 'Oferta'}
                         </p>
                       </div>
-                      <p className="text-xs text-muted-foreground">{formatDate(e.created_at)}</p>
+                      <p className="text-[10px] sm:text-xs text-muted-foreground whitespace-nowrap">{formatDate(e.created_at)}</p>
                     </div>
                   ))}
                 </div>
@@ -341,19 +344,19 @@ export default function AffiliateDashboard() {
 
           {/* Withdrawal History */}
           {showWithdrawals && withdrawals.length > 0 && (
-            <div className="mt-3 bg-muted/30 rounded-lg p-3">
-              <p className="text-sm font-medium mb-2">Histórico de Saques</p>
-              <div className="space-y-2 max-h-40 overflow-y-auto">
+            <div className="mt-3 bg-muted/30 rounded-lg p-2 sm:p-3">
+              <p className="text-xs sm:text-sm font-medium mb-2">Histórico de Saques</p>
+              <div className="space-y-1.5 max-h-40 overflow-y-auto">
                 {withdrawals.map((w) => (
-                  <div key={w.id} className="flex justify-between items-center text-sm bg-background rounded p-2">
-                    <div>
+                  <div key={w.id} className="flex justify-between items-center text-sm bg-background rounded p-2 gap-2">
+                    <div className="min-w-0">
                       <p className="font-medium">R$ {w.amount_brl.toFixed(2)}</p>
-                      <p className="text-xs text-muted-foreground">{formatDate(w.requested_at)}</p>
+                      <p className="text-[10px] sm:text-xs text-muted-foreground">{formatDate(w.requested_at)}</p>
                     </div>
-                    <div className="text-right">
+                    <div className="text-right shrink-0">
                       {getStatusBadge(w.status)}
                       {w.rejection_reason && (
-                        <p className="text-xs text-destructive mt-1">{w.rejection_reason}</p>
+                        <p className="text-[10px] sm:text-xs text-destructive mt-1 max-w-[120px] truncate">{w.rejection_reason}</p>
                       )}
                     </div>
                   </div>
@@ -484,28 +487,28 @@ export default function AffiliateDashboard() {
                       </div>
 
                       {/* Stats */}
-                      <div className="grid grid-cols-3 gap-2 mb-3 text-center text-xs">
-                        <div className="bg-muted rounded-lg py-2">
-                          <p className="font-bold">{offer.views_count}</p>
+                      <div className="grid grid-cols-3 gap-1.5 sm:gap-2 mb-3 text-center text-[10px] sm:text-xs">
+                        <div className="bg-muted rounded-lg py-1.5 sm:py-2 px-1">
+                          <p className="font-bold text-sm sm:text-base">{offer.views_count}</p>
                           <p className="text-muted-foreground">Views</p>
                         </div>
-                        <div className="bg-muted rounded-lg py-2">
-                          <p className="font-bold">{offer.clicks_count}</p>
+                        <div className="bg-muted rounded-lg py-1.5 sm:py-2 px-1">
+                          <p className="font-bold text-sm sm:text-base">{offer.clicks_count}</p>
                           <p className="text-muted-foreground">Cliques</p>
                         </div>
-                        <div className="bg-affiliate/10 rounded-lg py-2">
-                          <div className="flex items-center justify-center gap-1">
+                        <div className="bg-affiliate/10 rounded-lg py-1.5 sm:py-2 px-1">
+                          <div className="flex items-center justify-center gap-0.5">
                             <TrendingUp className="h-3 w-3 text-affiliate" />
-                            <p className="font-bold text-affiliate">{getScore(offer)}%</p>
+                            <p className="font-bold text-sm sm:text-base text-affiliate">{getScore(offer)}%</p>
                           </div>
                           <p className="text-muted-foreground">CTR</p>
                         </div>
                       </div>
 
                       {/* Commission - Dynamic based on offer */}
-                      <div className="flex justify-between items-center bg-affiliate/10 rounded-lg p-2 mb-3">
-                        <span className="text-sm">Sua comissão (50% do CPC)</span>
-                        <span className="font-bold text-affiliate">
+                      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center bg-affiliate/10 rounded-lg p-2 mb-3 gap-0.5 sm:gap-2">
+                        <span className="text-xs sm:text-sm text-muted-foreground">Sua comissão base (50%)</span>
+                        <span className="font-bold text-affiliate text-sm sm:text-base">
                           R$ 0,20 - R$ 0,50/clique
                         </span>
                       </div>
