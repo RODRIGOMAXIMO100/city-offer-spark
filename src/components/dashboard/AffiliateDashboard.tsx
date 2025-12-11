@@ -5,11 +5,12 @@ import { formatCreditsToReal, CONFIG } from '@/types/database';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Banknote, LogOut, Share2, Copy, Check, TrendingUp, Loader2, MapPin, Instagram, Clock, History } from 'lucide-react';
+import { Banknote, LogOut, Share2, Copy, Check, TrendingUp, Loader2, MapPin, Instagram, Clock, History, Trophy } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import PaymentDataModal from './PaymentDataModal';
 import AffiliateLevel from './AffiliateLevel';
+import AffiliateRanking from './AffiliateRanking';
 
 interface Withdrawal {
   id: string;
@@ -286,6 +287,11 @@ export default function AffiliateDashboard() {
         {/* Affiliate Level Card */}
         {profile?.id && (
           <AffiliateLevel affiliateId={profile.id} />
+        )}
+
+        {/* Ranking Section */}
+        {profile?.id && (
+          <AffiliateRanking currentAffiliateId={profile.id} />
         )}
 
         {/* Info Card */}
