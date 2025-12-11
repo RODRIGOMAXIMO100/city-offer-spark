@@ -176,6 +176,7 @@ export type Database = {
           cnpj: string | null
           cpf: string | null
           created_at: string
+          email: string | null
           endereco_fiscal: string | null
           id: string
           instagram_url: string | null
@@ -196,6 +197,7 @@ export type Database = {
           cnpj?: string | null
           cpf?: string | null
           created_at?: string
+          email?: string | null
           endereco_fiscal?: string | null
           id?: string
           instagram_url?: string | null
@@ -216,6 +218,7 @@ export type Database = {
           cnpj?: string | null
           cpf?: string | null
           created_at?: string
+          email?: string | null
           endereco_fiscal?: string | null
           id?: string
           instagram_url?: string | null

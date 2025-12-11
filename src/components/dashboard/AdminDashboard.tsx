@@ -39,6 +39,7 @@ interface UserProfile {
   id: string;
   user_id: string;
   name: string;
+  email?: string;
   city: string;
   balance: number;
   created_at: string;
@@ -395,6 +396,7 @@ export default function AdminDashboard() {
                   <TableHeader>
                     <TableRow>
                       <TableHead>Nome</TableHead>
+                      <TableHead>Email</TableHead>
                       <TableHead>Tipo</TableHead>
                       <TableHead>Cidade</TableHead>
                       <TableHead>Saldo</TableHead>
@@ -405,6 +407,7 @@ export default function AdminDashboard() {
                     {users.map((user) => (
                       <TableRow key={user.id}>
                         <TableCell className="font-medium">{user.name}</TableCell>
+                        <TableCell className="text-muted-foreground">{user.email || '-'}</TableCell>
                         <TableCell>{getRoleBadge(user.role || 'N/A')}</TableCell>
                         <TableCell>{user.city}</TableCell>
                         <TableCell>{formatCredits(user.balance)}</TableCell>

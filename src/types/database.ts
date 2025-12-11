@@ -6,6 +6,7 @@ export interface Profile {
   id: string;
   user_id: string;
   name: string;
+  email?: string;
   city: string;
   balance: number;
   pix_key?: string;
