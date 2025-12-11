@@ -38,66 +38,102 @@ serve(async (req) => {
     const theme = themes[0];
     console.log("Selected theme:", theme.theme);
 
-    // Generate blog post with AI
+    // Generate blog post with AI using TOOL CALLING for reliable structured output
     const systemPrompt = `Você é um especialista em marketing de conteúdo e SEO para o mercado brasileiro. 
-Você escreve artigos para o blog da Clilin, uma plataforma de ofertas locais e programa de afiliados em cidades do Brasil.
+Você escreve artigos para o blog da Clilin, uma plataforma de ofertas locais e programa de afiliados.
 
 Seu objetivo é criar conteúdo que:
-1. Seja ALTAMENTE otimizado para SEO com as keywords fornecidas (use-as naturalmente 3-5 vezes)
+1. Seja ALTAMENTE otimizado para SEO com as keywords fornecidas (use-as 3-5 vezes)
 2. Seja útil, prático e ORIGINAL para o leitor
-3. Tenha entre 1000-1500 palavras para melhor rankeamento
-4. Use linguagem acessível e conversacional em português brasileiro
+3. Tenha entre 1000-1500 palavras
+4. Use linguagem acessível em português brasileiro
 5. Inclua subtítulos (H2, H3) estratégicos com keywords
-6. Tenha uma introdução envolvente com a keyword principal
-7. Inclua listas, dicas práticas e exemplos reais
-8. OBRIGATÓRIO: Termine com uma seção de FAQ com exatamente 3 perguntas frequentes
-9. Seja formatado em HTML válido
+6. Inclua listas, dicas práticas e exemplos reais
+7. Termine com seção FAQ com 3 perguntas
 
 REGRAS DE FORMATAÇÃO HTML:
 - Use <h2> para títulos principais de seção
-- Use <h3> para subtítulos dentro das seções
+- Use <h3> para subtítulos
 - Use <p> para parágrafos
 - Use <ul> e <li> para listas
-- Use <strong> para destacar termos importantes
-- Use <blockquote> para citações ou dicas especiais
-- NÃO use <h1> (é reservado para o título da página)
-- OBRIGATÓRIO: Inclua uma seção de FAQ no HTML assim:
+- Use <strong> para termos importantes
+- Use <blockquote> para citações
+- NÃO use <h1> (reservado para título)
+- Inclua seção FAQ:
   <h2>Perguntas Frequentes</h2>
-  <h3>Pergunta 1?</h3>
-  <p>Resposta 1...</p>
+  <h3>Pergunta?</h3>
+  <p>Resposta...</p>
 
-LINKS INTERNOS OBRIGATÓRIOS (inclua 2-3 no conteúdo):
-- <a href="/auth">cadastre-se grátis</a> ou <a href="/auth">criar conta</a>
-- <a href="/blog">mais artigos</a> ou <a href="/blog">nosso blog</a>
-- <a href="/">página inicial</a> ou <a href="/">Clilin</a>
-
-IMPORTANTE: Retorne APENAS um JSON válido, sem markdown, sem backticks.
-CRÍTICO: O campo "faq" é OBRIGATÓRIO e deve conter exatamente 3 perguntas.`;
+LINKS INTERNOS (inclua 2-3):
+- <a href="/auth">cadastre-se grátis</a>
+- <a href="/blog">mais artigos</a>
+- <a href="/">Clilin</a>`;
 
     const userPrompt = `Crie um artigo de blog completo sobre: "${theme.theme}"
 
-Keywords OBRIGATÓRIAS para incluir naturalmente: ${theme.keywords.join(", ")}
+Keywords OBRIGATÓRIAS: ${theme.keywords.join(", ")}
 Categoria: ${theme.category}
 
-ATENÇÃO: Todos os campos são OBRIGATÓRIOS, especialmente o campo "faq" com 3 perguntas.
+Use a função create_blog_post para retornar os dados estruturados.`;
 
-Retorne um JSON com exatamente esta estrutura (TODOS OS CAMPOS SÃO OBRIGATÓRIOS):
-{
-  "title": "Título atraente e otimizado para SEO (50-60 chars)",
-  "slug": "url-do-post-em-kebab-case-sem-acentos",
-  "excerpt": "Resumo envolvente de 150-160 caracteres para meta description com keyword principal",
-  "content": "Conteúdo HTML completo com H2, H3, parágrafos, listas, links internos e seção FAQ",
-  "meta_title": "Título SEO com keyword principal (max 60 chars)",
-  "meta_description": "Meta description persuasiva com keyword (max 160 chars)",
-  "keywords": ["keyword1", "keyword2", "keyword3", "keyword4", "keyword5"],
-  "faq": [
-    {"question": "Pergunta relevante 1 sobre o tema?", "answer": "Resposta completa e útil de 2-3 frases"},
-    {"question": "Pergunta relevante 2 sobre o tema?", "answer": "Resposta completa e útil de 2-3 frases"},
-    {"question": "Pergunta relevante 3 sobre o tema?", "answer": "Resposta completa e útil de 2-3 frases"}
-  ]
-}
+    // Define the tool for structured output extraction
+    const tools = [
+      {
+        type: "function",
+        function: {
+          name: "create_blog_post",
+          description: "Create a complete blog post with all required fields",
+          parameters: {
+            type: "object",
+            properties: {
+              title: {
+                type: "string",
+                description: "Título atraente e otimizado para SEO (50-60 caracteres)"
+              },
+              slug: {
+                type: "string",
+                description: "URL do post em kebab-case sem acentos (ex: como-ganhar-dinheiro-online)"
+              },
+              excerpt: {
+                type: "string",
+                description: "Resumo envolvente de 150-160 caracteres para meta description"
+              },
+              content: {
+                type: "string",
+                description: "Conteúdo HTML completo com H2, H3, parágrafos, listas, links internos e seção FAQ"
+              },
+              meta_title: {
+                type: "string",
+                description: "Título SEO com keyword principal (max 60 caracteres)"
+              },
+              meta_description: {
+                type: "string",
+                description: "Meta description persuasiva com keyword (max 160 caracteres)"
+              },
+              keywords: {
+                type: "array",
+                items: { type: "string" },
+                description: "5 keywords relevantes para o artigo"
+              },
+              faq: {
+                type: "array",
+                items: {
+                  type: "object",
+                  properties: {
+                    question: { type: "string", description: "Pergunta frequente sobre o tema" },
+                    answer: { type: "string", description: "Resposta completa de 2-3 frases" }
+                  },
+                  required: ["question", "answer"]
+                },
+                description: "3 perguntas frequentes com respostas"
+              }
+            },
+            required: ["title", "slug", "excerpt", "content", "meta_title", "meta_description", "keywords", "faq"]
+          }
+        }
+      }
+    ];
 
-LEMBRETE: O campo "faq" é OBRIGATÓRIO. Não omita este campo!`;
     const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -110,6 +146,8 @@ LEMBRETE: O campo "faq" é OBRIGATÓRIO. Não omita este campo!`;
           { role: "system", content: systemPrompt },
           { role: "user", content: userPrompt },
         ],
+        tools: tools,
+        tool_choice: { type: "function", function: { name: "create_blog_post" } }
       }),
     });
 
@@ -120,37 +158,23 @@ LEMBRETE: O campo "faq" é OBRIGATÓRIO. Não omita este campo!`;
     }
 
     const aiData = await aiResponse.json();
-    const generatedContent = aiData.choices?.[0]?.message?.content;
-
-    if (!generatedContent) {
-      throw new Error("No content generated");
-    }
-
-    console.log("Generated content:", generatedContent.substring(0, 200));
-
-    // Parse JSON response
+    console.log("AI response received");
+    
+    // Extract data from tool call
     let postData;
     try {
-      // Clean up the response - remove any markdown formatting
-      let cleanContent = generatedContent.trim();
-      
-      // Remove markdown code blocks
-      cleanContent = cleanContent.replace(/^```json\s*/i, '');
-      cleanContent = cleanContent.replace(/^```\s*/i, '');
-      cleanContent = cleanContent.replace(/\s*```$/i, '');
-      cleanContent = cleanContent.trim();
-      
-      // Try to find JSON object in the content
-      const jsonMatch = cleanContent.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        cleanContent = jsonMatch[0];
+      const toolCall = aiData.choices?.[0]?.message?.tool_calls?.[0];
+      if (!toolCall || toolCall.function.name !== "create_blog_post") {
+        console.error("No tool call found, response:", JSON.stringify(aiData).substring(0, 500));
+        throw new Error("AI did not return expected tool call");
       }
       
-      postData = JSON.parse(cleanContent);
+      postData = JSON.parse(toolCall.function.arguments);
+      console.log("Parsed post data:", postData.title);
     } catch (parseError) {
-      console.error("Parse error:", parseError, "Content length:", generatedContent.length);
-      console.error("First 500 chars:", generatedContent.substring(0, 500));
-      throw new Error("Failed to parse AI response as JSON");
+      console.error("Tool call parse error:", parseError);
+      console.error("AI response:", JSON.stringify(aiData).substring(0, 1000));
+      throw new Error("Failed to parse AI tool call response");
     }
 
     // Validate required fields
@@ -160,7 +184,7 @@ LEMBRETE: O campo "faq" é OBRIGATÓRIO. Não omita este campo!`;
 
     // Ensure FAQ exists - create default if missing
     if (!postData.faq || !Array.isArray(postData.faq) || postData.faq.length === 0) {
-      console.log("FAQ missing, generating default FAQ based on theme");
+      console.log("FAQ missing, generating default FAQ");
       postData.faq = [
         { question: `O que é ${theme.theme.split(' ').slice(0, 4).join(' ')}?`, answer: "Esta é uma estratégia importante para quem busca resultados no mercado local e digital. Confira o artigo completo para entender melhor." },
         { question: "Como posso começar?", answer: "O primeiro passo é se cadastrar na plataforma Clilin e explorar as oportunidades disponíveis na sua cidade." },
