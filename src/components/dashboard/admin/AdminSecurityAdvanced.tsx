@@ -270,20 +270,28 @@ export default function AdminSecurityAdvanced() {
 
       {/* Tabs */}
       <Tabs defaultValue="rate-limits">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="rate-limits">
-            <Globe className="h-4 w-4 mr-2" />
-            Rate Limits ({rateLimits.length})
-          </TabsTrigger>
-          <TabsTrigger value="fingerprints">
-            <Fingerprint className="h-4 w-4 mr-2" />
-            Fingerprints ({fingerprints.length})
-          </TabsTrigger>
-          <TabsTrigger value="suspicious">
-            <AlertTriangle className="h-4 w-4 mr-2" />
-            Afiliados ({suspiciousAffiliates.length})
-          </TabsTrigger>
-        </TabsList>
+        <div className="overflow-x-auto -mx-3 px-3 sm:mx-0 sm:px-0">
+          <TabsList className="inline-flex w-auto min-w-full sm:grid sm:w-full sm:grid-cols-3">
+            <TabsTrigger value="rate-limits" className="flex-1 sm:flex-none text-xs sm:text-sm">
+              <Globe className="h-4 w-4 sm:mr-2" />
+              <span className="hidden sm:inline">Rate Limits</span>
+              <span className="sm:hidden ml-1">({rateLimits.length})</span>
+              <span className="hidden sm:inline ml-1">({rateLimits.length})</span>
+            </TabsTrigger>
+            <TabsTrigger value="fingerprints" className="flex-1 sm:flex-none text-xs sm:text-sm">
+              <Fingerprint className="h-4 w-4 sm:mr-2" />
+              <span className="hidden sm:inline">Fingerprints</span>
+              <span className="sm:hidden ml-1">({fingerprints.length})</span>
+              <span className="hidden sm:inline ml-1">({fingerprints.length})</span>
+            </TabsTrigger>
+            <TabsTrigger value="suspicious" className="flex-1 sm:flex-none text-xs sm:text-sm">
+              <AlertTriangle className="h-4 w-4 sm:mr-2" />
+              <span className="hidden sm:inline">Afiliados</span>
+              <span className="sm:hidden ml-1">({suspiciousAffiliates.length})</span>
+              <span className="hidden sm:inline ml-1">({suspiciousAffiliates.length})</span>
+            </TabsTrigger>
+          </TabsList>
+        </div>
 
         {/* Rate Limits Tab */}
         <TabsContent value="rate-limits">
@@ -295,48 +303,50 @@ export default function AdminSecurityAdvanced() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>IP</TableHead>
-                    <TableHead>Cliques</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Primeiro Clique</TableHead>
-                    <TableHead>Último Clique</TableHead>
-                    <TableHead>Ações</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {rateLimitsPagination.paginatedItems.map((rl) => (
-                    <TableRow key={rl.id}>
-                      <TableCell className="font-mono text-sm">{rl.ip_address}</TableCell>
-                      <TableCell>{rl.click_count}</TableCell>
-                      <TableCell>
-                        {rl.blocked ? (
-                          <Badge variant="destructive">Bloqueado</Badge>
-                        ) : (
-                          <Badge variant="secondary">Ativo</Badge>
-                        )}
-                      </TableCell>
-                      <TableCell className="text-sm text-muted-foreground">
-                        {rl.first_click_at ? new Date(rl.first_click_at).toLocaleString('pt-BR') : '-'}
-                      </TableCell>
-                      <TableCell className="text-sm text-muted-foreground">
-                        {rl.last_click_at ? new Date(rl.last_click_at).toLocaleString('pt-BR') : '-'}
-                      </TableCell>
-                      <TableCell>
-                        <Button
-                          variant={rl.blocked ? 'outline' : 'destructive'}
-                          size="sm"
-                          onClick={() => handleBlockIP(rl.id, rl.blocked)}
-                        >
-                          {rl.blocked ? <Check className="h-4 w-4" /> : <Ban className="h-4 w-4" />}
-                        </Button>
-                      </TableCell>
+              <div className="overflow-x-auto -mx-4 sm:mx-0">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="min-w-[100px]">IP</TableHead>
+                      <TableHead>Cliques</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead className="hidden md:table-cell">Primeiro</TableHead>
+                      <TableHead className="hidden sm:table-cell">Último</TableHead>
+                      <TableHead>Ações</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {rateLimitsPagination.paginatedItems.map((rl) => (
+                      <TableRow key={rl.id}>
+                        <TableCell className="font-mono text-xs sm:text-sm">{rl.ip_address}</TableCell>
+                        <TableCell>{rl.click_count}</TableCell>
+                        <TableCell>
+                          {rl.blocked ? (
+                            <Badge variant="destructive">Bloqueado</Badge>
+                          ) : (
+                            <Badge variant="secondary">Ativo</Badge>
+                          )}
+                        </TableCell>
+                        <TableCell className="text-xs text-muted-foreground hidden md:table-cell">
+                          {rl.first_click_at ? new Date(rl.first_click_at).toLocaleDateString('pt-BR') : '-'}
+                        </TableCell>
+                        <TableCell className="text-xs text-muted-foreground hidden sm:table-cell">
+                          {rl.last_click_at ? new Date(rl.last_click_at).toLocaleDateString('pt-BR') : '-'}
+                        </TableCell>
+                        <TableCell>
+                          <Button
+                            variant={rl.blocked ? 'outline' : 'destructive'}
+                            size="sm"
+                            onClick={() => handleBlockIP(rl.id, rl.blocked)}
+                          >
+                            {rl.blocked ? <Check className="h-4 w-4" /> : <Ban className="h-4 w-4" />}
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
               <AdminPagination
                 currentPage={rateLimitsPagination.currentPage}
                 totalPages={rateLimitsPagination.totalPages}
@@ -364,52 +374,54 @@ export default function AdminSecurityAdvanced() {
                 </div>
               ) : (
                 <>
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Device ID</TableHead>
-                        <TableHead>IP</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead>Primeira Vez</TableHead>
-                        <TableHead>Última Vez</TableHead>
-                        <TableHead>Ações</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {fingerprintsPagination.paginatedItems.map((fp) => (
-                        <TableRow key={fp.id}>
-                          <TableCell className="font-mono text-xs max-w-[150px] truncate">
-                            {fp.device_id}
-                          </TableCell>
-                          <TableCell className="font-mono text-sm">{fp.ip_address}</TableCell>
-                          <TableCell>
-                            {fp.blocked ? (
-                              <Badge variant="destructive">Bloqueado</Badge>
-                            ) : fp.is_suspicious ? (
-                              <Badge className="bg-orange-500">Suspeito</Badge>
-                            ) : (
-                              <Badge variant="secondary">Normal</Badge>
-                            )}
-                          </TableCell>
-                          <TableCell className="text-sm text-muted-foreground">
-                            {fp.first_seen_at ? new Date(fp.first_seen_at).toLocaleString('pt-BR') : '-'}
-                          </TableCell>
-                          <TableCell className="text-sm text-muted-foreground">
-                            {fp.last_seen_at ? new Date(fp.last_seen_at).toLocaleString('pt-BR') : '-'}
-                          </TableCell>
-                          <TableCell>
-                            <Button
-                              variant={fp.blocked ? 'outline' : 'destructive'}
-                              size="sm"
-                              onClick={() => handleBlockDevice(fp.id, fp.blocked)}
-                            >
-                              {fp.blocked ? <Check className="h-4 w-4" /> : <Ban className="h-4 w-4" />}
-                            </Button>
-                          </TableCell>
+                  <div className="overflow-x-auto -mx-4 sm:mx-0">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead className="min-w-[100px]">Device ID</TableHead>
+                          <TableHead className="hidden sm:table-cell">IP</TableHead>
+                          <TableHead>Status</TableHead>
+                          <TableHead className="hidden lg:table-cell">Primeira</TableHead>
+                          <TableHead className="hidden md:table-cell">Última</TableHead>
+                          <TableHead>Ações</TableHead>
                         </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
+                      </TableHeader>
+                      <TableBody>
+                        {fingerprintsPagination.paginatedItems.map((fp) => (
+                          <TableRow key={fp.id}>
+                            <TableCell className="font-mono text-[10px] sm:text-xs max-w-[80px] sm:max-w-[150px] truncate">
+                              {fp.device_id}
+                            </TableCell>
+                            <TableCell className="font-mono text-xs sm:text-sm hidden sm:table-cell">{fp.ip_address}</TableCell>
+                            <TableCell>
+                              {fp.blocked ? (
+                                <Badge variant="destructive">Bloqueado</Badge>
+                              ) : fp.is_suspicious ? (
+                                <Badge className="bg-orange-500">Suspeito</Badge>
+                              ) : (
+                                <Badge variant="secondary">Normal</Badge>
+                              )}
+                            </TableCell>
+                            <TableCell className="text-xs text-muted-foreground hidden lg:table-cell">
+                              {fp.first_seen_at ? new Date(fp.first_seen_at).toLocaleDateString('pt-BR') : '-'}
+                            </TableCell>
+                            <TableCell className="text-xs text-muted-foreground hidden md:table-cell">
+                              {fp.last_seen_at ? new Date(fp.last_seen_at).toLocaleDateString('pt-BR') : '-'}
+                            </TableCell>
+                            <TableCell>
+                              <Button
+                                variant={fp.blocked ? 'outline' : 'destructive'}
+                                size="sm"
+                                onClick={() => handleBlockDevice(fp.id, fp.blocked)}
+                              >
+                                {fp.blocked ? <Check className="h-4 w-4" /> : <Ban className="h-4 w-4" />}
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
                   <AdminPagination
                     currentPage={fingerprintsPagination.currentPage}
                     totalPages={fingerprintsPagination.totalPages}
