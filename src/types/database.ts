@@ -11,6 +11,16 @@ export interface Profile {
   pix_key?: string;
   preferences?: string[];
   instagram_url?: string;
+  // Dados fiscais (empresa)
+  cnpj?: string;
+  razao_social?: string;
+  endereco_fiscal?: string;
+  cep?: string;
+  telefone?: string;
+  // Dados pagamento (afiliado)
+  cpf?: string;
+  nome_completo?: string;
+  pix_tipo?: string;
   created_at: string;
   updated_at: string;
 }
