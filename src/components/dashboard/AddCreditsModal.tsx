@@ -50,68 +50,11 @@ const detectCardBrand = (cardNumber: string): CardBrand => {
   return null;
 };
 
-// Componentes de ícones das bandeiras - SVGs realistas baseados nas logos oficiais
-const CardBrandIcon = ({ brand, active = false, size = 'md' }: { brand: CardBrand; active?: boolean; size?: 'sm' | 'md' }) => {
-  const sizeClasses = size === 'sm' ? 'w-8 h-5' : 'w-10 h-6';
-  const opacityClass = active ? 'opacity-100' : 'opacity-50';
-  
-  const brands: Record<string, JSX.Element> = {
-    visa: (
-      <svg viewBox="0 0 750 471" className={`${sizeClasses} ${opacityClass} transition-opacity`}>
-        <rect fill="#1A1F71" width="750" height="471" rx="40"/>
-        <path fill="#FFFFFF" d="M278.2 334.2l33.4-195.8h53.4l-33.4 195.8H278.2zM524.3 142.3c-10.5-4-27-8.4-47.5-8.4c-52.4 0-89.3 26.3-89.6 64c-.3 27.9 26.4 43.4 46.5 52.7c20.7 9.5 27.6 15.6 27.5 24.1c-.1 13-16.5 18.9-31.8 18.9c-21.3 0-32.6-2.9-50-10.2l-6.9-3.1l-7.5 43.7c12.4 5.4 35.4 10.1 59.2 10.4c55.7 0 91.9-26 92.3-66.2c.2-22.1-14-38.9-44.6-52.7c-18.6-9-30-15-29.9-24.1c0-8.1 9.6-16.7 30.4-16.7c17.4-.3 30 3.5 39.8 7.4l4.8 2.2l7.3-42z"/>
-        <path fill="#FFFFFF" d="M661.6 138.4h-41c-12.7 0-22.2 3.5-27.8 16.1l-78.7 177.7h55.7s9.1-23.9 11.2-29.1c6.1 0 60.3.1 68 .1c1.6 6.8 6.5 29 6.5 29h49.2l-43.1-193.8zM596.6 268.7c4.4-11.2 21.2-54.3 21.2-54.3c-.3.5 4.4-11.2 7-18.5l3.6 16.7s10.2 46.3 12.3 56.1h-44.1z"/>
-        <path fill="#FFFFFF" d="M232.8 138.4l-51.9 133.6l-5.5-26.9c-9.6-30.8-39.6-64.1-73.1-80.8l47.4 169.7h56.1l83.4-195.6h-56.4z"/>
-        <path fill="#F9A533" d="M131.9 138.4H46.6l-.6 3.5c66.5 16.1 110.6 54.9 128.9 101.6l-18.6-89.3c-3.2-12.2-12.5-15.5-24.4-15.8z"/>
-      </svg>
-    ),
-    mastercard: (
-      <svg viewBox="0 0 750 471" className={`${sizeClasses} ${opacityClass} transition-opacity`}>
-        <rect fill="#000000" width="750" height="471" rx="40"/>
-        <circle fill="#EB001B" cx="282" cy="235.5" r="117"/>
-        <circle fill="#F79E1B" cx="468" cy="235.5" r="117"/>
-        <path fill="#FF5F00" d="M375 141.5c-32.5 26-53.4 65.4-53.4 109.5c0 44.1 20.9 83.5 53.4 109.5c32.5-26 53.4-65.4 53.4-109.5c0-44.1-20.9-83.5-53.4-109.5z"/>
-      </svg>
-    ),
-    elo: (
-      <svg viewBox="0 0 750 471" className={`${sizeClasses} ${opacityClass} transition-opacity`}>
-        <rect fill="#000000" width="750" height="471" rx="40"/>
-        <ellipse fill="#FFCB05" cx="250" cy="235" rx="90" ry="90"/>
-        <ellipse fill="#00A4E0" cx="375" cy="235" rx="90" ry="90"/>
-        <ellipse fill="#EF4123" cx="500" cy="235" rx="90" ry="90"/>
-        <text x="375" y="260" textAnchor="middle" fill="#FFFFFF" fontSize="100" fontWeight="bold" fontFamily="Arial">elo</text>
-      </svg>
-    ),
-    hipercard: (
-      <svg viewBox="0 0 750 471" className={`${sizeClasses} ${opacityClass} transition-opacity`}>
-        <rect fill="#822124" width="750" height="471" rx="40"/>
-        <text x="375" y="280" textAnchor="middle" fill="#FFFFFF" fontSize="140" fontWeight="bold" fontFamily="Arial, sans-serif">HIPERCARD</text>
-      </svg>
-    ),
-    amex: (
-      <svg viewBox="0 0 750 471" className={`${sizeClasses} ${opacityClass} transition-opacity`}>
-        <rect fill="#006FCF" width="750" height="471" rx="40"/>
-        <text x="375" y="220" textAnchor="middle" fill="#FFFFFF" fontSize="80" fontWeight="bold" fontFamily="Arial, sans-serif">AMERICAN</text>
-        <text x="375" y="300" textAnchor="middle" fill="#FFFFFF" fontSize="80" fontWeight="bold" fontFamily="Arial, sans-serif">EXPRESS</text>
-      </svg>
-    ),
-  };
-
-  if (!brand) return null;
-  return brands[brand] || null;
-};
-
-const AllCardBrands = ({ activeBrand, size = 'sm' }: { activeBrand?: CardBrand; size?: 'sm' | 'md' }) => (
-  <div className="flex items-center gap-1">
-    {(['visa', 'mastercard', 'elo', 'hipercard', 'amex'] as const).map((brand) => (
-      <CardBrandIcon 
-        key={brand} 
-        brand={brand} 
-        active={!activeBrand || activeBrand === brand}
-        size={size}
-      />
-    ))}
-  </div>
+// Lista de bandeiras aceitas em texto
+const AcceptedBrands = () => (
+  <span className="text-xs text-muted-foreground">
+    Visa, Mastercard, Elo, Hipercard, Amex
+  </span>
 );
 
 export function AddCreditsModal({ 
@@ -400,8 +343,8 @@ export function AddCreditsModal({
                 </div>
                 <div className="flex-1">
                   <h3 className="font-semibold">Cartão de Crédito</h3>
-                  <p className="text-sm text-muted-foreground mb-2">Até 12x sem juros</p>
-                  <AllCardBrands size="sm" />
+                  <p className="text-sm text-muted-foreground">Até 12x sem juros</p>
+                  <AcceptedBrands />
                 </div>
               </CardContent>
             </Card>
@@ -486,7 +429,7 @@ export function AddCreditsModal({
             {/* Bandeiras aceitas */}
             <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50 border">
               <span className="text-sm text-muted-foreground">Bandeiras aceitas:</span>
-              <AllCardBrands activeBrand={detectCardBrand(cardNumber)} size="sm" />
+              <AcceptedBrands />
             </div>
 
             <div>
@@ -502,7 +445,9 @@ export function AddCreditsModal({
                 />
                 {detectCardBrand(cardNumber) && (
                   <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                    <CardBrandIcon brand={detectCardBrand(cardNumber)} active size="sm" />
+                    <span className="text-xs font-medium text-primary capitalize">
+                      {detectCardBrand(cardNumber)}
+                    </span>
                   </div>
                 )}
               </div>
