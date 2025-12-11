@@ -7,6 +7,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Loader2, Clock, MessageCircle, Globe, FileText, MapPin, Sparkles, Instagram } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { Footer } from '@/components/landing/Footer';
 
 // Generate persistent device ID
 const getDeviceId = (): string => {
@@ -444,12 +445,7 @@ export default function OfferPage() {
         </CardContent>
       </Card>
 
-      {/* Powered by */}
-      <div className="fixed bottom-4 left-0 right-0 text-center">
-        <span className="text-xs text-muted-foreground">
-          Powered by <span className="font-bold text-primary">clilin</span>
-        </span>
-      </div>
+      <Footer />
     </div>
   );
 }
