@@ -264,61 +264,88 @@ export default function BlogPostPage() {
       </div>
 
       {/* Hero Section */}
-      <header className="pt-8 pb-8 bg-gradient-to-b from-muted/50 to-background">
+      <header className="pt-6 sm:pt-8 pb-6 sm:pb-8 bg-gradient-to-b from-muted/50 to-background">
         <div className="container mx-auto px-4 max-w-5xl">
           <Link
             to="/blog"
-            className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors mb-6 text-sm"
+            className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors mb-4 sm:mb-6 text-sm"
           >
             <ArrowLeft className="h-4 w-4" />
-            Voltar para o blog
+            <span className="hidden sm:inline">Voltar para o blog</span>
+            <span className="sm:hidden">Voltar</span>
           </Link>
 
-          <Badge className={`mb-4 ${getCategoryColor(post.category)} border`}>
+          <Badge className={`mb-3 sm:mb-4 ${getCategoryColor(post.category)} border`}>
             {getCategoryLabel(post.category)}
           </Badge>
 
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-display font-bold mb-6 leading-tight text-foreground">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-display font-bold mb-4 sm:mb-6 leading-tight text-foreground">
             {post.title}
           </h1>
 
-          <p className="text-lg text-muted-foreground mb-6 max-w-3xl">
+          <p className="text-base sm:text-lg text-muted-foreground mb-4 sm:mb-6 max-w-3xl">
             {post.excerpt}
           </p>
 
-          <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
+          {/* Author and metadata - responsive grid */}
+          <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-3 sm:gap-4 text-sm text-muted-foreground">
             <Link to={`/autor/${post.author_name.toLowerCase().replace(/\s+/g, '-')}`} className="flex items-center gap-2 hover:text-primary transition-colors">
-              <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-                <User className="h-5 w-5 text-primary" />
+              <div className="h-9 w-9 sm:h-10 sm:w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                <User className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
               </div>
               <div>
-                <p className="font-medium text-foreground">{post.author_name}</p>
+                <p className="font-medium text-foreground text-sm">{post.author_name}</p>
                 <p className="text-xs">Autor</p>
               </div>
             </Link>
-            <div className="h-8 w-px bg-border" />
-            <span className="flex items-center gap-1.5">
-              <Calendar className="h-4 w-4" />
-              {format(new Date(post.published_at), "dd MMM yyyy", { locale: ptBR })}
-            </span>
-            {post.updated_at && post.updated_at !== post.published_at && (
-              <>
-                <div className="h-8 w-px bg-border" />
+            
+            {/* Mobile: grid layout for metadata */}
+            <div className="grid grid-cols-2 gap-2 sm:hidden">
+              <span className="flex items-center gap-1.5 text-xs">
+                <Calendar className="h-3.5 w-3.5" />
+                {format(new Date(post.published_at), "dd MMM yyyy", { locale: ptBR })}
+              </span>
+              <span className="flex items-center gap-1.5 text-xs">
+                <Clock className="h-3.5 w-3.5" />
+                {estimateReadTime(post.content)}
+              </span>
+              <span className="flex items-center gap-1.5 text-xs">
+                <Eye className="h-3.5 w-3.5" />
+                {(post.views || 0).toLocaleString('pt-BR')} views
+              </span>
+              {post.updated_at && post.updated_at !== post.published_at && (
                 <span className="flex items-center gap-1.5 text-xs">
-                  Atualizado: {format(new Date(post.updated_at), "dd MMM yyyy", { locale: ptBR })}
+                  Atualizado: {format(new Date(post.updated_at), "dd MMM", { locale: ptBR })}
                 </span>
-              </>
-            )}
-            <div className="h-8 w-px bg-border" />
-            <span className="flex items-center gap-1.5">
-              <Clock className="h-4 w-4" />
-              {estimateReadTime(post.content)}
-            </span>
-            <div className="h-8 w-px bg-border" />
-            <span className="flex items-center gap-1.5">
-              <Eye className="h-4 w-4" />
-              {(post.views || 0).toLocaleString('pt-BR')} visualizações
-            </span>
+              )}
+            </div>
+            
+            {/* Desktop: inline layout with separators */}
+            <div className="hidden sm:contents">
+              <div className="h-8 w-px bg-border" />
+              <span className="flex items-center gap-1.5">
+                <Calendar className="h-4 w-4" />
+                {format(new Date(post.published_at), "dd MMM yyyy", { locale: ptBR })}
+              </span>
+              {post.updated_at && post.updated_at !== post.published_at && (
+                <>
+                  <div className="h-8 w-px bg-border" />
+                  <span className="flex items-center gap-1.5 text-xs">
+                    Atualizado: {format(new Date(post.updated_at), "dd MMM yyyy", { locale: ptBR })}
+                  </span>
+                </>
+              )}
+              <div className="h-8 w-px bg-border" />
+              <span className="flex items-center gap-1.5">
+                <Clock className="h-4 w-4" />
+                {estimateReadTime(post.content)}
+              </span>
+              <div className="h-8 w-px bg-border" />
+              <span className="flex items-center gap-1.5">
+                <Eye className="h-4 w-4" />
+                {(post.views || 0).toLocaleString('pt-BR')} visualizações
+              </span>
+            </div>
           </div>
         </div>
       </header>
@@ -380,11 +407,9 @@ export default function BlogPostPage() {
             )}
 
             {/* Mobile Share */}
-            <div className="lg:hidden mt-8 p-4 bg-muted/50 rounded-xl">
+            <div className="lg:hidden mt-6 sm:mt-8 p-4 bg-muted/50 rounded-xl">
               <p className="text-sm font-medium text-muted-foreground mb-3">Compartilhar:</p>
-              <div className="flex gap-2">
-                <ShareSidebar title={post.title} url={currentUrl} />
-              </div>
+              <ShareSidebar title={post.title} url={currentUrl} horizontal />
             </div>
 
             {/* Post Navigation */}
@@ -424,26 +449,26 @@ export default function BlogPostPage() {
             </div>
 
             {/* Author Card */}
-            <div className="mt-12 p-6 bg-card border border-border rounded-2xl">
-              <div className="flex items-start gap-4">
+            <div className="mt-8 sm:mt-12 p-4 sm:p-6 bg-card border border-border rounded-xl sm:rounded-2xl">
+              <div className="flex flex-col sm:flex-row items-center sm:items-start gap-3 sm:gap-4 text-center sm:text-left">
                 <Link 
                   to={`/autor/${post.author_name.toLowerCase().replace(/\s+/g, '-')}`}
-                  className="h-16 w-16 rounded-full bg-gradient-to-br from-primary to-affiliate flex items-center justify-center text-white font-bold text-xl shrink-0 hover:scale-105 transition-transform"
+                  className="h-14 w-14 sm:h-16 sm:w-16 rounded-full bg-gradient-to-br from-primary to-affiliate flex items-center justify-center text-white font-bold text-lg sm:text-xl shrink-0 hover:scale-105 transition-transform"
                 >
                   {post.author_name.charAt(0)}
                 </Link>
                 <div className="flex-1">
                   <Link 
                     to={`/autor/${post.author_name.toLowerCase().replace(/\s+/g, '-')}`}
-                    className="font-semibold text-foreground text-lg hover:text-primary transition-colors"
+                    className="font-semibold text-foreground text-base sm:text-lg hover:text-primary transition-colors"
                   >
                     {post.author_name}
                   </Link>
-                  <p className="text-sm text-muted-foreground mt-1 leading-relaxed">
+                  <p className="text-xs sm:text-sm text-muted-foreground mt-1 leading-relaxed">
                     Especialista em marketing digital, ofertas locais e estratégias de afiliados. 
                     Compartilhando conhecimento prático para ajudar você a economizar e ganhar dinheiro na sua cidade.
                   </p>
-                  <div className="flex gap-3 mt-3">
+                  <div className="flex justify-center sm:justify-start gap-3 mt-3">
                     <Link to={`/autor/${post.author_name.toLowerCase().replace(/\s+/g, '-')}`} className="text-sm text-primary hover:underline">
                       Ver todos os artigos →
                     </Link>
@@ -461,11 +486,11 @@ export default function BlogPostPage() {
 
         {/* Related Posts */}
         {relatedPosts.length > 0 && (
-          <section className="mt-16 pt-12 border-t border-border">
-            <h2 className="text-2xl font-display font-bold mb-8 text-foreground">
+          <section className="mt-10 sm:mt-16 pt-8 sm:pt-12 border-t border-border">
+            <h2 className="text-xl sm:text-2xl font-display font-bold mb-6 sm:mb-8 text-foreground">
               Continue lendo
             </h2>
-            <div className="grid md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
               {relatedPosts.map((relatedPost) => (
                 <Link key={relatedPost.id} to={`/blog/${relatedPost.slug}`} className="group">
                   <Card className="h-full overflow-hidden hover:border-primary/50 transition-all hover:shadow-lg">
@@ -479,23 +504,23 @@ export default function BlogPostPage() {
                       </div>
                     ) : (
                       <div className="aspect-video bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
-                        <span className="text-4xl opacity-50">📝</span>
+                        <span className="text-3xl sm:text-4xl opacity-50">📝</span>
                       </div>
                     )}
-                    <CardHeader className="pb-2">
+                    <CardHeader className="p-3 sm:p-4 pb-2">
                       <Badge variant="secondary" className="w-fit text-xs mb-2">
                         {getCategoryLabel(relatedPost.category)}
                       </Badge>
-                      <CardTitle className="text-lg line-clamp-2 group-hover:text-primary transition-colors">
+                      <CardTitle className="text-base sm:text-lg line-clamp-2 group-hover:text-primary transition-colors">
                         {relatedPost.title}
                       </CardTitle>
                     </CardHeader>
-                    <CardContent>
-                      <p className="text-sm text-muted-foreground line-clamp-2">
+                    <CardContent className="p-3 sm:p-4 pt-0">
+                      <p className="text-xs sm:text-sm text-muted-foreground line-clamp-2">
                         {relatedPost.excerpt}
                       </p>
-                      <span className="inline-flex items-center gap-1 text-sm text-primary mt-3 group-hover:gap-2 transition-all">
-                        Ler mais <ArrowRight className="h-4 w-4" />
+                      <span className="inline-flex items-center gap-1 text-xs sm:text-sm text-primary mt-2 sm:mt-3 group-hover:gap-2 transition-all">
+                        Ler mais <ArrowRight className="h-3 w-3 sm:h-4 sm:w-4" />
                       </span>
                     </CardContent>
                   </Card>

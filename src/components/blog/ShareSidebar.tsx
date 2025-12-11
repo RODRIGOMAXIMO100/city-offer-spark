@@ -5,9 +5,10 @@ import { toast } from 'sonner';
 interface ShareSidebarProps {
   title: string;
   url: string;
+  horizontal?: boolean;
 }
 
-export function ShareSidebar({ title, url }: ShareSidebarProps) {
+export function ShareSidebar({ title, url, horizontal = false }: ShareSidebarProps) {
   const shareButtons = [
     {
       icon: Facebook,
@@ -47,6 +48,25 @@ export function ShareSidebar({ title, url }: ShareSidebarProps) {
       color: 'hover:bg-primary/10 hover:text-primary hover:border-primary/30'
     }
   ];
+
+  if (horizontal) {
+    return (
+      <div className="flex flex-wrap gap-2">
+        {shareButtons.map((button) => (
+          <Button
+            key={button.label}
+            variant="outline"
+            size="sm"
+            onClick={button.onClick}
+            className={`h-9 px-3 rounded-full transition-all ${button.color}`}
+          >
+            <button.icon className="h-4 w-4 mr-1.5" />
+            <span className="text-xs">{button.label}</span>
+          </Button>
+        ))}
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-2">
