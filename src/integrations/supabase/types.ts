@@ -255,6 +255,47 @@ export type Database = {
           },
         ]
       }
+      offer_scores: {
+        Row: {
+          calculated_at: string
+          ctr_score: number
+          id: string
+          offer_id: string
+          quality_score: number
+          relevance_score: number
+          reputation_score: number
+          total_score: number
+        }
+        Insert: {
+          calculated_at?: string
+          ctr_score?: number
+          id?: string
+          offer_id: string
+          quality_score?: number
+          relevance_score?: number
+          reputation_score?: number
+          total_score?: number
+        }
+        Update: {
+          calculated_at?: string
+          ctr_score?: number
+          id?: string
+          offer_id?: string
+          quality_score?: number
+          relevance_score?: number
+          reputation_score?: number
+          total_score?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "offer_scores_offer_id_fkey"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "offers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       offer_views: {
         Row: {
           client_ip: string | null
@@ -291,12 +332,14 @@ export type Database = {
           clicks_count: number
           company_id: string
           created_at: string
+          current_offer_score: number
           deleted_at: string | null
           description: string | null
           expires_at: string
           id: string
           link_destination: string
           link_type: Database["public"]["Enums"]["link_type"]
+          max_cpc_bid: number
           price_new: number
           price_old: number
           tags: string[] | null
@@ -310,12 +353,14 @@ export type Database = {
           clicks_count?: number
           company_id: string
           created_at?: string
+          current_offer_score?: number
           deleted_at?: string | null
           description?: string | null
           expires_at?: string
           id?: string
           link_destination: string
           link_type?: Database["public"]["Enums"]["link_type"]
+          max_cpc_bid?: number
           price_new: number
           price_old: number
           tags?: string[] | null
@@ -329,12 +374,14 @@ export type Database = {
           clicks_count?: number
           company_id?: string
           created_at?: string
+          current_offer_score?: number
           deleted_at?: string | null
           description?: string | null
           expires_at?: string
           id?: string
           link_destination?: string
           link_type?: Database["public"]["Enums"]["link_type"]
+          max_cpc_bid?: number
           price_new?: number
           price_old?: number
           tags?: string[] | null
@@ -392,6 +439,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      pricing_config: {
+        Row: {
+          affiliate_share: number
+          created_at: string
+          default_cpc: number
+          id: string
+          max_cpc: number
+          min_cpc: number
+          updated_at: string
+        }
+        Insert: {
+          affiliate_share?: number
+          created_at?: string
+          default_cpc?: number
+          id?: string
+          max_cpc?: number
+          min_cpc?: number
+          updated_at?: string
+        }
+        Update: {
+          affiliate_share?: number
+          created_at?: string
+          default_cpc?: number
+          id?: string
+          max_cpc?: number
+          min_cpc?: number
+          updated_at?: string
+        }
+        Relationships: []
       }
       profiles: {
         Row: {
@@ -599,6 +676,11 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      calculate_offer_score: { Args: { p_offer_id: string }; Returns: number }
+      calculate_real_cpc: {
+        Args: { p_city: string; p_offer_id: string }
+        Returns: number
+      }
       cleanup_old_rate_limits: { Args: never; Returns: undefined }
       cleanup_old_sessions: { Args: never; Returns: undefined }
       get_affiliate_level: { Args: { total_clicks: number }; Returns: number }
@@ -620,6 +702,7 @@ export type Database = {
       }
       increment_offer_clicks: { Args: { offer_id: string }; Returns: undefined }
       increment_offer_views: { Args: { offer_id: string }; Returns: undefined }
+      recalculate_all_offer_scores: { Args: never; Returns: undefined }
       reset_weekly_clicks: { Args: never; Returns: undefined }
       update_affiliate_stats: {
         Args: { affiliate_profile_id: string; earnings: number }

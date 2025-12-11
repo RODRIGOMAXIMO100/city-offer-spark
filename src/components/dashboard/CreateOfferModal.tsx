@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Calendar } from '@/components/ui/calendar';
+import { Slider } from '@/components/ui/slider';
 import {
   Dialog,
   DialogContent,
@@ -21,7 +22,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { MessageCircle, FileText, Globe, Loader2, CalendarIcon } from 'lucide-react';
+import { MessageCircle, FileText, Globe, Loader2, CalendarIcon, TrendingUp, Info } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface CreateOfferModalProps {
@@ -49,6 +50,7 @@ export default function CreateOfferModal({ open, onClose, onSuccess }: CreateOff
     link_destination: '',
     link_type: 'WHATSAPP' as LinkType,
     expires_at: addDays(new Date(), 7),
+    max_cpc_bid: 5,
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -66,6 +68,7 @@ export default function CreateOfferModal({ open, onClose, onSuccess }: CreateOff
       link_type: formData.link_type,
       city: profile.city,
       expires_at: formData.expires_at.toISOString(),
+      max_cpc_bid: formData.max_cpc_bid,
     });
 
     setLoading(false);
@@ -79,6 +82,7 @@ export default function CreateOfferModal({ open, onClose, onSuccess }: CreateOff
         link_destination: '',
         link_type: 'WHATSAPP',
         expires_at: addDays(new Date(), 7),
+        max_cpc_bid: 5,
       });
       onSuccess();
     }
@@ -86,6 +90,16 @@ export default function CreateOfferModal({ open, onClose, onSuccess }: CreateOff
 
   const minDate = addDays(new Date(), 1);
   const maxDate = addDays(new Date(), 30);
+
+  // Estimate CPC based on bid (simplified estimation)
+  const getEstimatedCpc = () => {
+    const minCpc = 4;
+    const estimatedLow = Math.max(minCpc, formData.max_cpc_bid - 2);
+    const estimatedHigh = formData.max_cpc_bid;
+    return { low: estimatedLow, high: estimatedHigh };
+  };
+
+  const estimatedCpc = getEstimatedCpc();
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -145,6 +159,44 @@ export default function CreateOfferModal({ open, onClose, onSuccess }: CreateOff
                 onChange={(e) => setFormData({ ...formData, price_new: e.target.value })}
                 required
               />
+            </div>
+          </div>
+
+          {/* Dynamic CPC Bid Section */}
+          <div className="space-y-3 p-4 bg-company/5 border border-company/20 rounded-lg">
+            <div className="flex items-center justify-between">
+              <Label className="flex items-center gap-2">
+                <TrendingUp className="h-4 w-4 text-company" />
+                Lance Máximo por Clique
+              </Label>
+              <span className="font-bold text-company">{formData.max_cpc_bid} C$</span>
+            </div>
+            
+            <Slider
+              value={[formData.max_cpc_bid]}
+              onValueChange={(value) => setFormData({ ...formData, max_cpc_bid: value[0] })}
+              min={4}
+              max={15}
+              step={1}
+              className="w-full"
+            />
+            
+            <div className="flex justify-between text-xs text-muted-foreground">
+              <span>4 C$ (mín)</span>
+              <span>15 C$ (máx)</span>
+            </div>
+
+            <div className="bg-background rounded p-2 text-sm">
+              <div className="flex items-center gap-1 text-muted-foreground">
+                <Info className="h-3 w-3" />
+                <span>CPC estimado: </span>
+                <span className="font-bold text-foreground">
+                  {estimatedCpc.low}-{estimatedCpc.high} C$
+                </span>
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">
+                Quanto melhor sua oferta, menos você paga!
+              </p>
             </div>
           </div>
 
@@ -222,9 +274,9 @@ export default function CreateOfferModal({ open, onClose, onSuccess }: CreateOff
           </div>
 
           <div className="bg-muted rounded-lg p-3 text-sm">
-            <p className="font-medium">💡 Custo por clique: 5 créditos</p>
+            <p className="font-medium">💡 Sistema de Leilão Inteligente</p>
             <p className="text-muted-foreground text-xs mt-1">
-              Você só paga quando alguém clica para acessar sua oferta.
+              Ofertas com melhor desempenho pagam menos por clique. Seu CPC real depende do seu Offer Score!
             </p>
           </div>
 

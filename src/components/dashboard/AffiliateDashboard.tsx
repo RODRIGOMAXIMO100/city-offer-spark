@@ -305,12 +305,12 @@ export default function AffiliateDashboard() {
                 <Share2 className="h-6 w-6" />
               </div>
               <div className="space-y-2">
-                <p className="font-bold text-lg">Como você ganha dinheiro?</p>
+                <p className="font-bold text-lg">Sistema de Ganhos Dinâmicos!</p>
                 <ul className="text-sm opacity-95 space-y-1">
-                  <li>• <strong>R$ 0,30 por clique</strong> no seu link de divulgação</li>
-                  <li>• <strong>Sem limite de ganhos</strong> - quanto mais divulgar, mais ganha</li>
+                  <li>• <strong>R$ 0,24 a R$ 0,90 por clique</strong> - depende da oferta!</li>
+                  <li>• <strong>Ofertas premium pagam mais</strong> - fique de olho nos valores</li>
                   <li>• <strong>Saque mínimo: R$ 30,00</strong> via PIX instantâneo</li>
-                  <li>• <strong>Multiplicadores de nível</strong> aumentam seus ganhos!</li>
+                  <li>• <strong>Multiplicadores de nível</strong> aumentam ainda mais!</li>
                 </ul>
               </div>
             </div>
@@ -424,11 +424,11 @@ export default function AffiliateDashboard() {
                         </div>
                       </div>
 
-                      {/* Commission */}
+                      {/* Commission - Dynamic based on offer */}
                       <div className="flex justify-between items-center bg-affiliate/10 rounded-lg p-2 mb-3">
-                        <span className="text-sm">Sua comissão</span>
+                        <span className="text-sm">Sua comissão estimada</span>
                         <span className="font-bold text-affiliate">
-                          {formatCreditsToReal(CONFIG.CPC_PAYOUT_AFFILIATE)}/clique
+                          R$ 0,24 - R$ 0,90/clique
                         </span>
                       </div>
 

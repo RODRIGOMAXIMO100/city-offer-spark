@@ -6,17 +6,11 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-// Business config
-const CPC_COST_COMPANY = 5; // Credits company pays
-const CPC_PAYOUT_AFFILIATE_BASE = 3; // Base credits affiliate receives
-const CPC_PLATFORM_FEE = 2; // Platform profit
-
 // Anti-fraud config
-const COOLDOWN_HOURS = 24; // Cooldown between clicks from same IP/offer
-const GLOBAL_RATE_LIMIT_PER_HOUR = 50; // Max clicks per IP per hour (anti-bot)
-const MIN_SESSION_AGE_MS = 1500; // Minimum time on page before click is valid (1.5 seconds)
+const COOLDOWN_HOURS = 24;
+const GLOBAL_RATE_LIMIT_PER_HOUR = 50;
+const MIN_SESSION_AGE_MS = 1500;
 
-// Extract real client IP
 function getClientIp(req: Request): string {
   return (
     req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
@@ -45,7 +39,7 @@ serve(async (req) => {
 
     const clientIp = getClientIp(req);
 
-    console.log(`Processing click - Offer: ${offerId}, IP: ${clientIp}, Type: ${clickType}, Session: ${sessionToken?.substring(0, 8) || 'none'}`);
+    console.log(`Processing click - Offer: ${offerId}, IP: ${clientIp}, Type: ${clickType}`);
 
     if (!offerId) {
       return new Response(
@@ -66,6 +60,9 @@ serve(async (req) => {
         company_id,
         link_destination,
         active,
+        city,
+        max_cpc_bid,
+        current_offer_score,
         profiles!offers_company_id_fkey(id, balance, user_id, instagram_url)
       `)
       .eq("id", offerId)
@@ -113,9 +110,9 @@ serve(async (req) => {
 
     // ========== ANTI-FRAUD CHECKS FOR MAIN CLICKS ==========
 
-    // 1. Session validation (server-side time check)
+    // 1. Session validation
     if (sessionToken) {
-      const { data: session, error: sessionError } = await supabase
+      const { data: session } = await supabase
         .from("page_sessions")
         .select("*")
         .eq("session_token", sessionToken)
@@ -126,7 +123,7 @@ serve(async (req) => {
         const sessionAge = Date.now() - new Date(session.started_at).getTime();
         
         if (sessionAge < MIN_SESSION_AGE_MS) {
-          console.log(`Session too young - Age: ${sessionAge}ms, Required: ${MIN_SESSION_AGE_MS}ms`);
+          console.log(`Session too young - Age: ${sessionAge}ms`);
           return new Response(
             JSON.stringify({ 
               error: "Clique muito rápido. Aguarde um momento.",
@@ -137,7 +134,6 @@ serve(async (req) => {
           );
         }
 
-        // Mark session as validated
         await supabase
           .from("page_sessions")
           .update({ validated: true })
@@ -147,7 +143,6 @@ serve(async (req) => {
 
     // 2. Advanced fingerprint check
     if (deviceId && advancedFingerprint) {
-      // Check if this device is blocked
       const { data: existingDevice } = await supabase
         .from("device_fingerprints")
         .select("*")
@@ -166,14 +161,12 @@ serve(async (req) => {
         );
       }
 
-      // Check if same deviceId was used from different IP recently (suspicious)
       if (existingDevice && existingDevice.ip_address !== clientIp) {
         const timeSinceLastSeen = Date.now() - new Date(existingDevice.last_seen_at).getTime();
         const hoursAgo = timeSinceLastSeen / (1000 * 60 * 60);
 
         if (hoursAgo < 1) {
           console.log(`Suspicious: same deviceId from different IP within 1 hour`);
-          // Mark as suspicious but don't block
           await supabase
             .from("device_fingerprints")
             .update({ is_suspicious: true })
@@ -181,7 +174,6 @@ serve(async (req) => {
         }
       }
 
-      // Upsert device fingerprint
       await supabase
         .from("device_fingerprints")
         .upsert({
@@ -192,7 +184,7 @@ serve(async (req) => {
         }, { onConflict: 'device_id,ip_address' });
     }
 
-    // 3. Global rate limit check (anti-bot): max 50 clicks per IP per hour
+    // 3. Global rate limit check
     const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
     const { count: recentClickCount } = await supabase
       .from("offer_clicks")
@@ -201,7 +193,7 @@ serve(async (req) => {
       .gte("created_at", oneHourAgo);
 
     if (recentClickCount && recentClickCount >= GLOBAL_RATE_LIMIT_PER_HOUR) {
-      console.log(`Rate limit exceeded for IP ${clientIp} - ${recentClickCount} clicks in last hour`);
+      console.log(`Rate limit exceeded for IP ${clientIp}`);
       return new Response(
         JSON.stringify({ 
           error: "Muitos cliques detectados. Tente novamente mais tarde.",
@@ -278,10 +270,27 @@ serve(async (req) => {
       }
     }
 
-    // ========== PROCEED WITH VALID CLICK ==========
+    // ========== CALCULATE DYNAMIC CPC (Google Ads Style) ==========
+    
+    // Get dynamic CPC using database function
+    const { data: realCpc } = await supabase
+      .rpc("calculate_real_cpc", { p_offer_id: offerId, p_city: offer.city });
+    
+    const cpcCost = realCpc || 5; // Fallback to 5 if function fails
+    
+    console.log(`Dynamic CPC calculated - Offer: ${offerId}, CPC: ${cpcCost}, Bid: ${offer.max_cpc_bid}, Score: ${offer.current_offer_score}`);
+
+    // Get pricing config for affiliate share
+    const { data: pricingConfig } = await supabase
+      .from("pricing_config")
+      .select("*")
+      .limit(1)
+      .single();
+    
+    const affiliateShare = pricingConfig?.affiliate_share || 0.60;
 
     // Check company balance
-    if (companyProfile.balance < CPC_COST_COMPANY) {
+    if (companyProfile.balance < cpcCost) {
       await supabase
         .from("offers")
         .update({ active: false })
@@ -303,10 +312,10 @@ serve(async (req) => {
       last_click_at: new Date().toISOString(),
     }, { onConflict: 'offer_id,ip_address' });
 
-    // 2. Debit company
+    // 2. Debit company with DYNAMIC CPC
     const { error: debitError } = await supabase
       .from("profiles")
-      .update({ balance: companyProfile.balance - CPC_COST_COMPANY })
+      .update({ balance: companyProfile.balance - cpcCost })
       .eq("id", companyProfile.id);
 
     if (debitError) {
@@ -314,16 +323,16 @@ serve(async (req) => {
       throw new Error("Erro ao processar pagamento");
     }
 
-    // 3. Record company transaction
+    // 3. Record company transaction with actual CPC
     await supabase.from("transactions").insert({
       user_id: companyProfile.id,
-      amount: -CPC_COST_COMPANY,
+      amount: -cpcCost,
       type: "CLICK_COST",
-      description: `Clique na oferta`,
+      description: `Clique na oferta (CPC: ${cpcCost})`,
       offer_id: offerId,
     });
 
-    // 4. Credit affiliate if valid (with level multiplier)
+    // 4. Credit affiliate if valid (with level multiplier and dynamic earnings)
     let actualAffiliatePayout = 0;
     if (validAffiliateId) {
       const { data: affiliateProfile } = await supabase
@@ -338,7 +347,10 @@ serve(async (req) => {
           .rpc("get_commission_multiplier", { affiliate_profile_id: validAffiliateId });
 
         const multiplier = multiplierResult || 1.0;
-        actualAffiliatePayout = Math.floor(CPC_PAYOUT_AFFILIATE_BASE * multiplier);
+        
+        // Calculate affiliate payout: CPC × affiliate_share × level_multiplier
+        const basePayout = Math.floor(cpcCost * affiliateShare);
+        actualAffiliatePayout = Math.floor(basePayout * multiplier);
 
         await supabase
           .from("profiles")
@@ -349,7 +361,7 @@ serve(async (req) => {
           user_id: affiliateProfile.id,
           amount: actualAffiliatePayout,
           type: "CLICK_EARNING",
-          description: `Comissão por clique (${multiplier}x)`,
+          description: `Comissão por clique (CPC: ${cpcCost}, ${multiplier}x)`,
           offer_id: offerId,
         });
 
@@ -370,7 +382,6 @@ serve(async (req) => {
           const position = topAffiliates.findIndex(a => a.affiliate_id === validAffiliateId) + 1;
           
           if (position > 0 && position <= 10) {
-            // Check if this is their first time in Top 10 this week
             const { data: existingNotif } = await supabase
               .from("notifications")
               .select("id")
@@ -387,7 +398,6 @@ serve(async (req) => {
                 message: `Você está na posição #${position} do ranking semanal!`,
                 data: { position },
               });
-              console.log(`Top 10 notification created for affiliate ${validAffiliateId} - Position ${position}`);
             }
           }
         }
@@ -406,7 +416,7 @@ serve(async (req) => {
     // 6. Increment click count
     await supabase.rpc("increment_offer_clicks", { offer_id: offerId });
 
-    console.log(`Main click processed - Offer: ${offerId}, Company: -${CPC_COST_COMPANY}, Affiliate: ${validAffiliateId ? `+${actualAffiliatePayout}` : 'none'}`);
+    console.log(`Main click processed - Offer: ${offerId}, CPC: ${cpcCost}, Company: -${cpcCost}, Affiliate: ${validAffiliateId ? `+${actualAffiliatePayout}` : 'none'}`);
 
     return new Response(
       JSON.stringify({
@@ -414,6 +424,7 @@ serve(async (req) => {
         redirectUrl: offer.link_destination,
         clickType: 'MAIN',
         charged: true,
+        cpc: cpcCost,
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );

@@ -74,6 +74,7 @@ export function useOffers(city?: string) {
     link_type: LinkType;
     city: string;
     expires_at: string;
+    max_cpc_bid?: number;
   }) => {
     if (!profile) {
       toast({
@@ -104,6 +105,7 @@ export function useOffers(city?: string) {
           city: offerData.city,
           expires_at: offerData.expires_at,
           tags: [...autoTags, 'oferta', 'promoção'],
+          max_cpc_bid: offerData.max_cpc_bid || 5,
         })
         .select()
         .single();
