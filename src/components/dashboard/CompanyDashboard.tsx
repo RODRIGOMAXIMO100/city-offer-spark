@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { Banknote, PlusCircle, LogOut, Eye, MousePointer, TrendingUp, Loader2, Instagram, Check, Clock, Trash2, Info, Star, ExternalLink, AlertTriangle, Pencil, Image } from 'lucide-react';
+import { Banknote, PlusCircle, LogOut, Eye, MousePointer, TrendingUp, Loader2, Instagram, Check, Clock, Trash2, Info, Star, ExternalLink, AlertTriangle, Pencil, Image, HelpCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import CreateOfferModal from './CreateOfferModal';
 import PerformanceChart from './PerformanceChart';
@@ -42,7 +42,7 @@ function CompanyDashboardContent() {
   const { profile, signOut, refreshProfile, user } = useAuth();
   const { offers, loading, fetchMyOffers, deleteOffer } = useOffers();
   const { toast } = useToast();
-  const { claimBonus, hasClaimedBonus } = useOnboarding();
+  const { claimBonus, hasClaimedBonus, startTour } = useOnboarding();
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showFiscalModal, setShowFiscalModal] = useState(false);
   const [instagramUrl, setInstagramUrl] = useState(profile?.instagram_url || '');
@@ -283,6 +283,7 @@ function CompanyDashboardContent() {
   };
 
   return (
+    <TooltipProvider>
     <div className="min-h-screen bg-company-muted pb-20">
       {/* Header */}
       <header className="bg-card border-b border-border sticky top-0 z-10">
@@ -314,6 +315,21 @@ function CompanyDashboardContent() {
             >
               <PlusCircle className="h-3 w-3 sm:h-4 sm:w-4" />
             </Button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  onClick={startTour}
+                  className="h-8 w-8 sm:h-9 sm:w-9"
+                >
+                  <HelpCircle className="h-3 w-3 sm:h-4 sm:w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Ver tour guiado</p>
+              </TooltipContent>
+            </Tooltip>
             <Button
               size="icon"
               variant="ghost"
@@ -703,6 +719,7 @@ function CompanyDashboardContent() {
       <OnboardingTour />
       <OnboardingChecklist />
     </div>
+    </TooltipProvider>
   );
 }
 
