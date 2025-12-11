@@ -13,6 +13,7 @@ import AffiliateLevel from './AffiliateLevel';
 import AffiliateRanking from './AffiliateRanking';
 import NotificationBell from './NotificationBell';
 import AffiliateTutorial from './AffiliateTutorial';
+import { Footer } from '@/components/landing/Footer';
 import logo from '@/assets/logo.png';
 
 interface Withdrawal {
@@ -550,6 +551,8 @@ export default function AffiliateDashboard() {
         onClose={() => setShowPaymentModal(false)}
         onSuccess={handlePaymentDataSaved}
       />
+
+      <Footer />
     </div>
   );
 }

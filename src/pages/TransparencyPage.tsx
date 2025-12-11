@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
+import { Footer } from "@/components/landing/Footer";
 import { 
   ArrowRight, 
   TrendingUp, 
@@ -578,12 +579,7 @@ export default function TransparencyPage() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="py-8 px-4 border-t border-border">
-        <div className="max-w-6xl mx-auto text-center text-sm text-muted-foreground">
-          <p>© {new Date().getFullYear()} Clilin. Todos os direitos reservados.</p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }
