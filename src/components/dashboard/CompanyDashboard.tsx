@@ -260,7 +260,7 @@ export default function CompanyDashboard() {
                 <p className="font-bold text-foreground">Sistema de Leilão Inteligente</p>
                 <ul className="text-sm text-muted-foreground space-y-1">
                   <li>• <strong className="text-foreground">CPC dinâmico:</strong> pague entre 4-15 C$ por clique</li>
-                  <li>• <strong className="text-foreground">Offer Score alto = paga menos</strong></li>
+                  <li>• <strong className="text-foreground">Nota alta = paga menos</strong></li>
                   <li>• <strong className="text-foreground">Divisão 50/50:</strong> metade vai para divulgadores</li>
                   <li>• <strong className="text-foreground">Melhore:</strong> descrição, desconto, Instagram</li>
                 </ul>
@@ -325,7 +325,7 @@ export default function CompanyDashboard() {
                                   </div>
                                 </TooltipTrigger>
                                 <TooltipContent>
-                                  <p className="font-medium">Offer Score</p>
+                                  <p className="font-medium">Nota da Oferta</p>
                                   <p className="text-xs">{getScoreTip(offerScore)}</p>
                                 </TooltipContent>
                               </Tooltip>

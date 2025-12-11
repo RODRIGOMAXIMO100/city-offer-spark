@@ -9,7 +9,7 @@ import { HelpCircle } from "lucide-react";
 const faqs = [
   {
     question: "Quanto custa para empresas?",
-    answer: "Não há mensalidade ou taxa fixa. Você só paga quando alguém clica na sua oferta. O valor por clique varia de R$ 0,40 a R$ 1,50 (4 a 15 créditos), definido por você através de um sistema de leilão inteligente. Quanto melhor seu Offer Score, menos você paga!",
+    answer: "Não há mensalidade ou taxa fixa. Você só paga quando alguém clica na sua oferta. O valor por clique varia de R$ 0,40 a R$ 1,50 (4 a 15 créditos), definido por você através de um sistema de leilão inteligente. Quanto melhor sua Nota da Oferta, menos você paga!",
   },
   {
     question: "Como recebo minha comissão como divulgador?",
@@ -21,11 +21,11 @@ const faqs = [
   },
   {
     question: "Como funciona o sistema de leilão?",
-    answer: "Inspirado no Google Ads: você define um lance máximo (4-15 créditos) e seu Offer Score (nota de 0-10) determina sua posição. Posição = Lance × Score. O melhor: você paga apenas o necessário para superar o concorrente, não o lance máximo!",
+    answer: "Inspirado no Google Ads: você define um lance máximo (4-15 créditos) e sua Nota da Oferta (nota de 0-10) determina sua posição. Posição = Lance × Nota. O melhor: você paga apenas o necessário para superar o concorrente, não o lance máximo!",
   },
   {
-    question: "O que é o Offer Score?",
-    answer: "É sua nota de 0 a 10 que considera: CTR Esperado (40%), Qualidade da Oferta (30%), Reputação (20%) e Relevância Local (10%). Quanto maior seu score, menor o CPC real que você paga. Vincule seu Instagram e ofereça bons descontos para aumentar!",
+    question: "O que é a Nota da Oferta?",
+    answer: "É sua nota de 0 a 10 que considera: CTR Esperado (40%), Qualidade da Oferta (30%), Reputação (20%) e Relevância Local (10%). Quanto maior sua nota, menor o CPC real que você paga. Vincule seu Instagram e ofereça bons descontos para aumentar!",
   },
   {
     question: "Como funciona a divisão de valores?",

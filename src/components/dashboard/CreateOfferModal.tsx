@@ -276,7 +276,7 @@ export default function CreateOfferModal({ open, onClose, onSuccess }: CreateOff
           <div className="bg-muted rounded-lg p-3 text-sm">
             <p className="font-medium">💡 Sistema de Leilão Inteligente</p>
             <p className="text-muted-foreground text-xs mt-1">
-              Ofertas com melhor desempenho pagam menos por clique. Seu CPC real depende do seu Offer Score!
+              Ofertas com melhor desempenho pagam menos por clique. Seu CPC real depende da sua Nota da Oferta!
             </p>
           </div>
 

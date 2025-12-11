@@ -125,7 +125,7 @@ export default function TransparencyPage() {
               </TabsTrigger>
               <TabsTrigger value="score" className="flex items-center gap-2 py-3 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
                 <Star className="h-4 w-4" />
-                <span className="hidden sm:inline">Offer Score</span>
+                <span className="hidden sm:inline">Nota da Oferta</span>
               </TabsTrigger>
               <TabsTrigger value="division" className="flex items-center gap-2 py-3 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
                 <Percent className="h-4 w-4" />
@@ -154,7 +154,7 @@ export default function TransparencyPage() {
                     </div>
                     <span className="text-2xl font-bold text-muted-foreground">×</span>
                     <div className="bg-card rounded-xl p-4 shadow-lg">
-                      <p className="text-sm text-muted-foreground mb-1">Offer Score</p>
+                      <p className="text-sm text-muted-foreground mb-1">Nota da Oferta</p>
                       <p className="text-2xl font-bold text-secondary">7.5</p>
                     </div>
                     <span className="text-2xl font-bold text-muted-foreground">=</span>
@@ -180,7 +180,7 @@ export default function TransparencyPage() {
                 <CardContent className="space-y-4">
                   <p className="text-muted-foreground">
                     Você define um <strong>lance máximo</strong> (4-15 C$), mas só paga o necessário 
-                    para superar o concorrente. Quanto maior seu Offer Score, menos você paga!
+                    para superar o concorrente. Quanto maior sua Nota da Oferta, menos você paga!
                   </p>
                   
                   <div className="bg-muted/50 rounded-xl p-4">
@@ -251,10 +251,10 @@ export default function TransparencyPage() {
               </div>
             </TabsContent>
 
-            {/* Tab 2: Offer Score */}
+            {/* Tab 2: Nota da Oferta */}
             <TabsContent value="score" className="space-y-8">
               <div className="text-center mb-8">
-                <h2 className="text-3xl font-display font-bold mb-2">Entenda o Offer Score</h2>
+                <h2 className="text-3xl font-display font-bold mb-2">Entenda a Nota da Oferta</h2>
                 <p className="text-muted-foreground">Sua nota de 0 a 10 que determina quanto você paga</p>
               </div>
 
