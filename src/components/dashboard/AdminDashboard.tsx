@@ -20,12 +20,14 @@ import {
   Ban,
   Eye,
   RefreshCw,
-  BarChart3
+  BarChart3,
+  Banknote
 } from 'lucide-react';
 import { formatCredits, CONFIG } from '@/types/database';
 import AdminFilters from './admin/AdminFilters';
 import AdminPagination, { usePagination } from './admin/AdminPagination';
 import AdminAnalytics from './admin/AdminAnalytics';
+import AdminWithdrawals from './admin/AdminWithdrawals';
 import UserDetailModal from './admin/UserDetailModal';
 import { exportUsers, exportOffers, exportTransactions } from './admin/AdminExport';
 
@@ -383,7 +385,7 @@ export default function AdminDashboard() {
 
         {/* Tabs */}
         <Tabs defaultValue="users" className="space-y-4" onValueChange={resetFilters}>
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="users">
               <Users className="h-4 w-4 mr-2" />
               Usuários
@@ -395,6 +397,10 @@ export default function AdminDashboard() {
             <TabsTrigger value="transactions">
               <DollarSign className="h-4 w-4 mr-2" />
               Transações
+            </TabsTrigger>
+            <TabsTrigger value="withdrawals">
+              <Banknote className="h-4 w-4 mr-2" />
+              Saques
             </TabsTrigger>
             <TabsTrigger value="security">
               <Shield className="h-4 w-4 mr-2" />
@@ -593,6 +599,11 @@ export default function AdminDashboard() {
                 />
               </CardContent>
             </Card>
+          </TabsContent>
+
+          {/* Withdrawals Tab */}
+          <TabsContent value="withdrawals">
+            <AdminWithdrawals />
           </TabsContent>
 
           {/* Security Tab */}
