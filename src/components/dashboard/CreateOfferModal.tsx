@@ -367,6 +367,11 @@ export default function CreateOfferModal({
                 )}
                 <div className="flex-1 min-w-0">
                   <h4 className="font-bold text-sm truncate">{formData.title}</h4>
+                  {formData.description && (
+                    <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">
+                      {formData.description}
+                    </p>
+                  )}
                   {formData.price_old && formData.price_new && (
                     <div className="flex items-center gap-2 mt-1">
                       <span className="text-xs text-muted-foreground line-through">
