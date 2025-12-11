@@ -9,7 +9,7 @@ interface AuthContextType {
   profile: Profile | null;
   role: AppRole | null;
   loading: boolean;
-  signUp: (email: string, password: string, name: string, city: string, role: AppRole) => Promise<{ error: Error | null }>;
+  signUp: (email: string, password: string, name: string, city: string, role: AppRole, cnpj?: string) => Promise<{ error: Error | null }>;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
@@ -110,7 +110,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => subscription.unsubscribe();
   }, []);
 
-  const signUp = async (email: string, password: string, name: string, city: string, userRole: AppRole) => {
+  const signUp = async (email: string, password: string, name: string, city: string, userRole: AppRole, cnpj?: string) => {
     try {
       const redirectUrl = `${window.location.origin}/`;
       
@@ -135,6 +135,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             name,
             city,
             balance: userRole === 'COMPANY' ? 100 : 0, // Companies start with 100 credits
+            cnpj: cnpj || null, // Save CNPJ for companies
           });
 
         if (profileError) {

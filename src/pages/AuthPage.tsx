@@ -59,7 +59,23 @@ export default function AuthPage() {
   const [signupState, setSignupState] = useState('');
   const [signupCity, setSignupCity] = useState('');
   const [signupRole, setSignupRole] = useState<AppRole>('CLIENT');
+  const [signupCnpj, setSignupCnpj] = useState('');
   const [openCityCombobox, setOpenCityCombobox] = useState(false);
+
+  const formatCnpj = (value: string) => {
+    const numbers = value.replace(/\D/g, '').slice(0, 14);
+    return numbers
+      .replace(/(\d{2})(\d)/, '$1.$2')
+      .replace(/(\d{3})(\d)/, '$1.$2')
+      .replace(/(\d{3})(\d)/, '$1/$2')
+      .replace(/(\d{4})(\d)/, '$1-$2');
+  };
+
+  const handleCnpjChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSignupCnpj(formatCnpj(e.target.value));
+  };
+
+  const cnpjNumbers = signupCnpj.replace(/\D/g, '');
 
   const availableCities = useMemo(() => {
     if (!signupState) return [];
@@ -110,7 +126,20 @@ export default function AuthPage() {
       return;
     }
 
-    const { error } = await signUp(signupEmail, signupPassword, signupName, formattedCity, signupRole);
+    // Validate CNPJ for companies
+    if (signupRole === 'COMPANY') {
+      if (cnpjNumbers.length !== 14) {
+        toast({
+          title: 'CNPJ inválido',
+          description: 'Por favor, informe um CNPJ válido com 14 dígitos.',
+          variant: 'destructive',
+        });
+        setIsLoading(false);
+        return;
+      }
+    }
+
+    const { error } = await signUp(signupEmail, signupPassword, signupName, formattedCity, signupRole, signupRole === 'COMPANY' ? cnpjNumbers : undefined);
 
     if (error) {
       let message = error.message;
@@ -235,6 +264,24 @@ export default function AuthPage() {
                       required
                     />
                   </div>
+
+                  {/* CNPJ Field - Only for Companies */}
+                  {signupRole === 'COMPANY' && (
+                    <div className="space-y-2">
+                      <Label htmlFor="signup-cnpj">CNPJ</Label>
+                      <Input
+                        id="signup-cnpj"
+                        type="text"
+                        placeholder="00.000.000/0000-00"
+                        value={signupCnpj}
+                        onChange={handleCnpjChange}
+                        required
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Obrigatório para empresas. Usado para emissão de nota fiscal.
+                      </p>
+                    </div>
+                  )}
 
                   <div className="space-y-2">
                     <Label htmlFor="signup-state">Estado (UF)</Label>
