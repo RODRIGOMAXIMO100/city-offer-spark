@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { SEOHead } from '@/components/seo/SEOHead';
 import { StructuredData } from '@/components/seo/StructuredData';
@@ -8,7 +8,8 @@ import { Footer } from '@/components/landing/Footer';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Calendar, Clock, User, ArrowRight, Search } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Calendar, User, ArrowRight, Search, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -33,23 +34,62 @@ const CATEGORIES = [
   { value: 'geral', label: 'Geral' },
 ];
 
+const POSTS_PER_PAGE = 9;
+
 export default function BlogPage() {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('todos');
+  const [selectedCategory, setSelectedCategory] = useState(searchParams.get('categoria') || 'todos');
+  const [currentPage, setCurrentPage] = useState(Number(searchParams.get('pagina')) || 1);
+  const [totalPosts, setTotalPosts] = useState(0);
 
   useEffect(() => {
     fetchPosts();
-  }, []);
+  }, [currentPage, selectedCategory]);
+
+  useEffect(() => {
+    // Update URL params
+    const params = new URLSearchParams();
+    if (selectedCategory !== 'todos') params.set('categoria', selectedCategory);
+    if (currentPage > 1) params.set('pagina', currentPage.toString());
+    setSearchParams(params, { replace: true });
+  }, [currentPage, selectedCategory, setSearchParams]);
 
   const fetchPosts = async () => {
     try {
-      const { data, error } = await supabase
+      setLoading(true);
+      
+      // First, get total count
+      let countQuery = supabase
+        .from('blog_posts')
+        .select('id', { count: 'exact', head: true })
+        .eq('status', 'published');
+      
+      if (selectedCategory !== 'todos') {
+        countQuery = countQuery.eq('category', selectedCategory);
+      }
+      
+      const { count } = await countQuery;
+      setTotalPosts(count || 0);
+
+      // Then fetch paginated posts
+      const from = (currentPage - 1) * POSTS_PER_PAGE;
+      const to = from + POSTS_PER_PAGE - 1;
+
+      let query = supabase
         .from('blog_posts')
         .select('id, title, slug, excerpt, featured_image, category, published_at, author_name, keywords')
         .eq('status', 'published')
-        .order('published_at', { ascending: false });
+        .order('published_at', { ascending: false })
+        .range(from, to);
+
+      if (selectedCategory !== 'todos') {
+        query = query.eq('category', selectedCategory);
+      }
+
+      const { data, error } = await query;
 
       if (error) throw error;
       setPosts(data || []);
@@ -64,9 +104,20 @@ export default function BlogPage() {
     const matchesSearch =
       post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       post.excerpt.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === 'todos' || post.category === selectedCategory;
-    return matchesSearch && matchesCategory;
+    return matchesSearch;
   });
+
+  const totalPages = Math.ceil(totalPosts / POSTS_PER_PAGE);
+
+  const handleCategoryChange = (category: string) => {
+    setSelectedCategory(category);
+    setCurrentPage(1);
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   const getCategoryLabel = (category: string) => {
     const cat = CATEGORIES.find((c) => c.value === category);
@@ -86,13 +137,35 @@ export default function BlogPage() {
     }
   };
 
+  // Generate page numbers to display
+  const getPageNumbers = () => {
+    const pages: (number | 'ellipsis')[] = [];
+    
+    if (totalPages <= 7) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else {
+      pages.push(1);
+      if (currentPage > 3) pages.push('ellipsis');
+      
+      const start = Math.max(2, currentPage - 1);
+      const end = Math.min(totalPages - 1, currentPage + 1);
+      
+      for (let i = start; i <= end; i++) pages.push(i);
+      
+      if (currentPage < totalPages - 2) pages.push('ellipsis');
+      pages.push(totalPages);
+    }
+    
+    return pages;
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <SEOHead
-        title="Blog - Dicas de Marketing Local e Afiliados"
+        title={`Blog - Dicas de Marketing Local e Afiliados${currentPage > 1 ? ` | Página ${currentPage}` : ''}`}
         description="Aprenda estratégias de marketing local, dicas para ganhar dinheiro como afiliado e como encontrar as melhores ofertas. Blog atualizado diariamente."
         keywords={['blog', 'marketing local', 'afiliados', 'dicas', 'ofertas', 'ganhar dinheiro']}
-        canonicalUrl="/blog"
+        canonicalUrl={currentPage > 1 ? `/blog?pagina=${currentPage}` : '/blog'}
       />
       <StructuredData type="Organization" />
       <StructuredData type="WebSite" />
@@ -134,7 +207,7 @@ export default function BlogPage() {
               {CATEGORIES.map((cat) => (
                 <button
                   key={cat.value}
-                  onClick={() => setSelectedCategory(cat.value)}
+                  onClick={() => handleCategoryChange(cat.value)}
                   className={`px-4 py-2 rounded-full text-sm transition-all ${
                     selectedCategory === cat.value
                       ? 'bg-primary text-primary-foreground'
@@ -173,52 +246,107 @@ export default function BlogPage() {
               </p>
             </div>
           ) : (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredPosts.map((post) => (
-                <Link key={post.id} to={`/blog/${post.slug}`}>
-                  <Card className="overflow-hidden h-full hover:border-primary/50 transition-all duration-300 group">
-                    {post.featured_image ? (
-                      <img
-                        src={post.featured_image}
-                        alt={post.title}
-                        className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-                        loading="lazy"
-                      />
-                    ) : (
-                      <div className="w-full h-48 bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
-                        <span className="text-6xl opacity-50">📝</span>
-                      </div>
-                    )}
-                    <CardHeader className="pb-2">
-                      <Badge className={`w-fit ${getCategoryColor(post.category)}`}>
-                        {getCategoryLabel(post.category)}
-                      </Badge>
-                      <CardTitle className="line-clamp-2 group-hover:text-primary transition-colors">
-                        {post.title}
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-muted-foreground text-sm line-clamp-3 mb-4">
-                        {post.excerpt}
-                      </p>
-                      <div className="flex items-center justify-between text-xs text-muted-foreground">
-                        <div className="flex items-center gap-4">
-                          <span className="flex items-center gap-1">
-                            <User className="h-3 w-3" />
-                            {post.author_name}
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <Calendar className="h-3 w-3" />
-                            {format(new Date(post.published_at), "dd 'de' MMM", { locale: ptBR })}
-                          </span>
+            <>
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredPosts.map((post) => (
+                  <Link key={post.id} to={`/blog/${post.slug}`}>
+                    <Card className="overflow-hidden h-full hover:border-primary/50 transition-all duration-300 group">
+                      {post.featured_image ? (
+                        <img
+                          src={post.featured_image}
+                          alt={post.title}
+                          className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                          loading="lazy"
+                        />
+                      ) : (
+                        <div className="w-full h-48 bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
+                          <span className="text-6xl opacity-50">📝</span>
                         </div>
-                        <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                      </div>
-                    </CardContent>
-                  </Card>
-                </Link>
-              ))}
-            </div>
+                      )}
+                      <CardHeader className="pb-2">
+                        <Badge className={`w-fit ${getCategoryColor(post.category)}`}>
+                          {getCategoryLabel(post.category)}
+                        </Badge>
+                        <CardTitle className="line-clamp-2 group-hover:text-primary transition-colors">
+                          {post.title}
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-muted-foreground text-sm line-clamp-3 mb-4">
+                          {post.excerpt}
+                        </p>
+                        <div className="flex items-center justify-between text-xs text-muted-foreground">
+                          <div className="flex items-center gap-4">
+                            <span className="flex items-center gap-1">
+                              <User className="h-3 w-3" />
+                              {post.author_name}
+                            </span>
+                            <span className="flex items-center gap-1">
+                              <Calendar className="h-3 w-3" />
+                              {format(new Date(post.published_at), "dd 'de' MMM", { locale: ptBR })}
+                            </span>
+                          </div>
+                          <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </Link>
+                ))}
+              </div>
+
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <nav className="mt-12 flex justify-center" aria-label="Paginação">
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={() => handlePageChange(currentPage - 1)}
+                      disabled={currentPage === 1}
+                      aria-label="Página anterior"
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                    </Button>
+
+                    <div className="flex items-center gap-1">
+                      {getPageNumbers().map((page, index) =>
+                        page === 'ellipsis' ? (
+                          <span key={`ellipsis-${index}`} className="px-2 text-muted-foreground">
+                            ...
+                          </span>
+                        ) : (
+                          <Button
+                            key={page}
+                            variant={currentPage === page ? 'default' : 'outline'}
+                            size="icon"
+                            onClick={() => handlePageChange(page)}
+                            aria-label={`Página ${page}`}
+                            aria-current={currentPage === page ? 'page' : undefined}
+                          >
+                            {page}
+                          </Button>
+                        )
+                      )}
+                    </div>
+
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={() => handlePageChange(currentPage + 1)}
+                      disabled={currentPage === totalPages}
+                      aria-label="Próxima página"
+                    >
+                      <ChevronRight className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </nav>
+              )}
+
+              {/* Posts count info */}
+              <div className="mt-4 text-center text-sm text-muted-foreground">
+                Mostrando {(currentPage - 1) * POSTS_PER_PAGE + 1} - {Math.min(currentPage * POSTS_PER_PAGE, totalPosts)} de {totalPosts} posts
+              </div>
+            </>
           )}
         </div>
       </main>
