@@ -51,24 +51,24 @@ export function FinalCTA() {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 max-w-5xl mx-auto">
           {options.map((option) => (
             <div
               key={option.title}
-              className={`glass-card rounded-3xl p-8 hover:shadow-2xl transition-all duration-500 flex flex-col group relative overflow-hidden`}
+              className={`glass-card rounded-2xl sm:rounded-3xl p-6 sm:p-8 hover:shadow-2xl transition-all duration-500 flex flex-col group relative overflow-hidden`}
             >
               {/* Hover Glow */}
               <div className={`absolute inset-0 bg-${option.color}/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
               
               <div className="relative">
-                <div className={`w-16 h-16 rounded-2xl bg-${option.color}/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
-                  <option.icon className={`h-8 w-8 text-${option.color}`} />
+                <div className={`w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl bg-${option.color}/10 flex items-center justify-center mb-4 sm:mb-6 group-hover:scale-110 transition-transform duration-300`}>
+                  <option.icon className={`h-6 w-6 sm:h-8 sm:w-8 text-${option.color}`} />
                 </div>
                 
-                <h3 className="text-2xl font-display font-bold mb-2">{option.title}</h3>
-                <p className="text-muted-foreground mb-8 flex-grow">{option.description}</p>
+                <h3 className="text-xl sm:text-2xl font-display font-bold mb-2">{option.title}</h3>
+                <p className="text-sm sm:text-base text-muted-foreground mb-6 sm:mb-8 flex-grow">{option.description}</p>
                 
-                <Button asChild className={`w-full h-12 bg-${option.color} hover:bg-${option.color}/90 shadow-lg shadow-${option.color}/25 hover:shadow-xl hover:shadow-${option.color}/30 transition-all`}>
+                <Button asChild className={`w-full h-10 sm:h-12 text-sm sm:text-base bg-${option.color} hover:bg-${option.color}/90 shadow-lg shadow-${option.color}/25 hover:shadow-xl hover:shadow-${option.color}/30 transition-all`}>
                   <Link to={`/auth?role=${option.role}`}>
                     {option.cta}
                     <ArrowRight className="ml-2 h-4 w-4" />
