@@ -169,6 +169,47 @@ export type Database = {
         }
         Relationships: []
       }
+      notifications: {
+        Row: {
+          created_at: string | null
+          data: Json | null
+          id: string
+          message: string
+          read: boolean | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          data?: Json | null
+          id?: string
+          message: string
+          read?: boolean | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          data?: Json | null
+          id?: string
+          message?: string
+          read?: boolean | null
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       offer_clicks: {
         Row: {
           affiliate_id: string | null
@@ -550,6 +591,7 @@ export type Database = {
       }
       increment_offer_clicks: { Args: { offer_id: string }; Returns: undefined }
       increment_offer_views: { Args: { offer_id: string }; Returns: undefined }
+      reset_weekly_clicks: { Args: never; Returns: undefined }
       update_affiliate_stats: {
         Args: { affiliate_profile_id: string; earnings: number }
         Returns: undefined
