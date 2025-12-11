@@ -230,7 +230,7 @@ export default function AffiliateLevel({ affiliateId }: AffiliateLevelProps) {
           {/* All Levels */}
           <div className="pt-2 border-t">
             <p className="text-xs sm:text-sm font-medium mb-2">Níveis e comissões:</p>
-            <div className="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1">
+            <div className="grid grid-cols-3 gap-2">
               {allLevels.map((level) => {
                 const isUnlocked = (stats?.total_clicks || 0) >= level.min_clicks;
                 const isCurrent = level.id === currentLevel?.id;
@@ -240,14 +240,13 @@ export default function AffiliateLevel({ affiliateId }: AffiliateLevelProps) {
                 return (
                   <div
                     key={level.id}
-                    className={`flex-shrink-0 p-2 rounded-lg text-center ${
+                    className={`p-2 rounded-lg text-center ${
                       isCurrent 
                         ? 'ring-2 ring-affiliate bg-affiliate/10' 
                         : isUnlocked 
                           ? 'bg-muted' 
                           : 'bg-muted/30 opacity-50'
                     }`}
-                    style={{ minWidth: '85px' }}
                   >
                     <div 
                       className="h-7 w-7 sm:h-8 sm:w-8 rounded-full mx-auto flex items-center justify-center text-white mb-1"
@@ -257,10 +256,10 @@ export default function AffiliateLevel({ affiliateId }: AffiliateLevelProps) {
                     </div>
                     <p className="text-xs font-medium">{level.name}</p>
                     <p className="text-[10px] text-muted-foreground">
-                      {level.min_clicks > 0 ? `${level.min_clicks}+ cliques` : 'Inicial'}
+                      {level.min_clicks > 0 ? `${level.min_clicks}+` : 'Inicial'}
                     </p>
                     <p className="text-[10px] font-semibold text-affiliate mt-0.5">
-                      {levelPercent}% · ~R$ {levelPerClick}
+                      {levelPercent}%
                     </p>
                   </div>
                 );
