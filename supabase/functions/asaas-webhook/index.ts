@@ -6,7 +6,7 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, asaas-access-token',
 };
 
-const CREDIT_VALUE_BRL = 0.10;
+// amount_credits agora são centavos
 
 interface AsaasWebhookPayload {
   event: string;
@@ -126,11 +126,11 @@ serve(async (req) => {
           user_id: paymentRecord.profile_id,
           type: 'PAYMENT_CONFIRMED',
           title: 'Pagamento confirmado! 💰',
-          message: `Seus ${paymentRecord.amount_credits} créditos (R$ ${paymentRecord.amount_brl.toFixed(2)}) foram adicionados à sua conta.`,
-          data: { payment_id: paymentRecord.id, amount_credits: paymentRecord.amount_credits }
+          message: `R$ ${paymentRecord.amount_brl.toFixed(2)} foram adicionados ao seu saldo.`,
+          data: { payment_id: paymentRecord.id, amount_cents: paymentRecord.amount_credits }
         });
 
-      console.log(`Payment ${payment.id} confirmed. Added ${paymentRecord.amount_credits} credits.`);
+      console.log(`Payment ${payment.id} confirmed. Added ${paymentRecord.amount_credits} cents.`);
 
       return new Response(JSON.stringify({ success: true }), { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' } 

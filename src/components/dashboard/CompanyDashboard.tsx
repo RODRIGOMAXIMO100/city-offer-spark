@@ -559,7 +559,7 @@ export default function CompanyDashboard() {
                             {/* CPC & Expiration */}
                             <div className="flex items-center gap-2 mt-1 flex-wrap">
                               <span className="text-[10px] sm:text-xs text-muted-foreground">
-                                CPC: R$ {((14 - offerScore) * CONFIG.CREDIT_VALUE_BRL).toFixed(2)}
+                                CPC: R$ {((14 - offerScore) / 10).toFixed(2)}
                               </span>
                               <span className="text-muted-foreground">•</span>
                               <div className={`flex items-center gap-1 text-[10px] sm:text-xs ${expInfo.color}`}>

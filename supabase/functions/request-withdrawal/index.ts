@@ -6,9 +6,8 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-// Business config
-const MIN_WITHDRAW_BRL = 100.00;
-const CREDIT_VALUE_BRL = 0.10;
+// Business config - valores em centavos
+const MIN_WITHDRAW_CENTS = 10000; // R$ 100 em centavos
 const MIN_ACCOUNT_AGE_DAYS = 3; // Minimum account age for withdrawals
 
 serve(async (req) => {
@@ -57,19 +56,18 @@ serve(async (req) => {
       );
     }
 
-    // Get request body
+    // Get request body - amount já em centavos
     const { amount } = await req.json();
 
-    // Validation: minimum withdrawal
-    const amountBrl = amount * CREDIT_VALUE_BRL;
-    if (amountBrl < MIN_WITHDRAW_BRL) {
+    // Validation: minimum withdrawal (amount já está em centavos)
+    if (amount < MIN_WITHDRAW_CENTS) {
       return new Response(
-        JSON.stringify({ error: `Mínimo para saque: R$ ${MIN_WITHDRAW_BRL.toFixed(2)}` }),
+        JSON.stringify({ error: `Mínimo para saque: R$ ${(MIN_WITHDRAW_CENTS / 100).toFixed(2)}` }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    // Validation: sufficient balance
+    // Validation: sufficient balance (ambos em centavos)
     if (profile.balance < amount) {
       return new Response(
         JSON.stringify({ error: "Saldo insuficiente" }),
@@ -99,6 +97,9 @@ serve(async (req) => {
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
+
+    // Converter centavos para reais para Asaas e exibição
+    const amountBrl = amount / 100;
 
     // ========== FRAUD SCORE CALCULATION ==========
     let fraudScore = 0;
@@ -210,7 +211,7 @@ serve(async (req) => {
 
     // ========== CREATE WITHDRAWAL REQUEST ==========
 
-    // Deduct balance immediately
+    // Deduct balance immediately (em centavos)
     const { error: balanceError } = await supabase
       .from("profiles")
       .update({ balance: profile.balance - amount })
@@ -221,7 +222,7 @@ serve(async (req) => {
       throw new Error("Erro ao processar saque");
     }
 
-    // Record withdrawal transaction
+    // Record withdrawal transaction (em centavos)
     await supabase.from("transactions").insert({
       user_id: profile.id,
       amount: -amount,
@@ -234,8 +235,8 @@ serve(async (req) => {
       .from("withdrawals")
       .insert({
         user_id: profile.id,
-        amount: amount,
-        amount_brl: amountBrl,
+        amount: amount, // em centavos
+        amount_brl: amountBrl, // em reais
         pix_key: profile.pix_key,
         pix_tipo: profile.pix_tipo || "CPF",
         cpf: profile.cpf,
