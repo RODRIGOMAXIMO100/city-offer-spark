@@ -5,6 +5,7 @@ import { Loader2 } from 'lucide-react';
 import CompanyDashboard from '@/components/dashboard/CompanyDashboard';
 import AffiliateDashboard from '@/components/dashboard/AffiliateDashboard';
 import ClientDashboard from '@/components/dashboard/ClientDashboard';
+import AdminDashboard from '@/components/dashboard/AdminDashboard';
 
 export default function DashboardPage() {
   const { role, loading, user } = useAuth();
@@ -32,6 +33,8 @@ export default function DashboardPage() {
   }
 
   switch (role) {
+    case 'ADMIN':
+      return <AdminDashboard />;
     case 'COMPANY':
       return <CompanyDashboard />;
     case 'AFFILIATE':
