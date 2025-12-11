@@ -6,8 +6,9 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Send, Bot, Loader2, MapPin, Instagram, Sparkles, UserPlus } from 'lucide-react';
+import { Send, Bot, Loader2, MapPin, Instagram, Sparkles, UserPlus, Share2, Copy, MessageCircle, ArrowLeft, CheckCircle } from 'lucide-react';
 import { BRAZIL_STATES, getCitiesByState } from '@/data/brazilLocations';
+import { toast } from 'sonner';
 
 interface SuggestedOffer {
   id: string;
@@ -31,13 +32,41 @@ export function PublicAIChat() {
   const [selectedState, setSelectedState] = useState('');
   const [selectedCity, setSelectedCity] = useState('');
   const [chatStarted, setChatStarted] = useState(false);
+  const [showNoOffersScreen, setShowNoOffersScreen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [citiesWithOffers, setCitiesWithOffers] = useState<string[]>([]);
+  const [loadingCities, setLoadingCities] = useState(true);
+  const [linkCopied, setLinkCopied] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const availableCities = selectedState ? getCitiesByState(selectedState).sort() : [];
   const formattedCity = selectedCity && selectedState ? `${selectedCity} - ${selectedState}` : '';
+
+  // Fetch cities that have active offers
+  useEffect(() => {
+    const fetchCitiesWithOffers = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('offers')
+          .select('city')
+          .eq('active', true)
+          .is('deleted_at', null);
+
+        if (error) throw error;
+
+        const uniqueCities = [...new Set(data?.map(o => o.city) || [])];
+        setCitiesWithOffers(uniqueCities);
+      } catch (err) {
+        console.error('Error fetching cities with offers:', err);
+      } finally {
+        setLoadingCities(false);
+      }
+    };
+
+    fetchCitiesWithOffers();
+  }, []);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -48,6 +77,13 @@ export function PublicAIChat() {
   const startChat = () => {
     if (!selectedCity || !selectedState) return;
     
+    const cityHasOffers = citiesWithOffers.includes(formattedCity);
+    
+    if (!cityHasOffers) {
+      setShowNoOffersScreen(true);
+      return;
+    }
+    
     setChatStarted(true);
     setMessages([
       {
@@ -56,6 +92,29 @@ export function PublicAIChat() {
         content: `Olá! 👋 Eu sou a Clilin AI. O que você está procurando hoje? Posso te ajudar a encontrar as melhores ofertas em ${selectedCity}!`,
       },
     ]);
+  };
+
+  const goBack = () => {
+    setShowNoOffersScreen(false);
+    setSelectedCity('');
+  };
+
+  const shareOnWhatsApp = () => {
+    const message = `Oi! Conhece a Clilin? É uma plataforma nova onde você pode divulgar ofertas do seu negócio e ganhar novos clientes! 🚀\n\nEu já estou esperando ofertas de ${formattedCity} por lá.\n\nPara empresas: ${window.location.origin}/auth?role=COMPANY\nPara clientes: ${window.location.origin}`;
+    const encodedMessage = encodeURIComponent(message);
+    window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');
+  };
+
+  const copyBusinessLink = async () => {
+    const link = `${window.location.origin}/auth?role=COMPANY`;
+    try {
+      await navigator.clipboard.writeText(link);
+      setLinkCopied(true);
+      toast.success('Link copiado!');
+      setTimeout(() => setLinkCopied(false), 3000);
+    } catch {
+      toast.error('Erro ao copiar link');
+    }
   };
 
   const sendMessage = async () => {
@@ -120,6 +179,89 @@ export function PublicAIChat() {
     window.open(url, '_blank');
   };
 
+  // No Offers Screen - "Traga a Clilin para sua cidade"
+  if (showNoOffersScreen) {
+    return (
+      <section className="py-16 px-4">
+        <div className="max-w-md mx-auto">
+          <Card className="glass-card border-primary/20 shadow-2xl overflow-hidden">
+            <CardContent className="p-8">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={goBack}
+                className="mb-4 -ml-2 text-muted-foreground hover:text-foreground"
+              >
+                <ArrowLeft className="h-4 w-4 mr-1" />
+                Voltar
+              </Button>
+
+              <div className="text-center mb-6">
+                <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-lg">
+                  <Share2 className="h-10 w-10 text-white" />
+                </div>
+                <h2 className="text-2xl font-display font-bold mb-2">
+                  A Clilin ainda não chegou em {selectedCity}! 😢
+                </h2>
+                <p className="text-muted-foreground">
+                  Mas você pode mudar isso!
+                </p>
+              </div>
+
+              <div className="bg-muted/50 rounded-xl p-4 mb-6">
+                <p className="text-sm text-center">
+                  Ajude a trazer ofertas incríveis para sua cidade compartilhando com os <strong>negócios locais</strong>. Quanto mais empresas conhecerem a Clilin, mais rápido você terá promoções exclusivas!
+                </p>
+              </div>
+
+              <div className="space-y-3">
+                <Button 
+                  onClick={shareOnWhatsApp}
+                  className="w-full h-12 bg-[#25D366] hover:bg-[#128C7E] text-white"
+                >
+                  <MessageCircle className="mr-2 h-5 w-5" />
+                  Compartilhar no WhatsApp
+                </Button>
+
+                <Button 
+                  onClick={copyBusinessLink}
+                  variant="outline"
+                  className="w-full h-12"
+                >
+                  {linkCopied ? (
+                    <>
+                      <CheckCircle className="mr-2 h-5 w-5 text-green-500" />
+                      Link Copiado!
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="mr-2 h-5 w-5" />
+                      Copiar Link para Empresas
+                    </>
+                  )}
+                </Button>
+              </div>
+
+              <div className="mt-6 pt-6 border-t border-border">
+                <p className="text-xs text-center text-muted-foreground mb-3">
+                  Você também pode ser um dos primeiros a cadastrar sua empresa!
+                </p>
+                <Button 
+                  onClick={() => navigate('/auth?role=COMPANY')}
+                  variant="secondary"
+                  className="w-full"
+                >
+                  <UserPlus className="mr-2 h-4 w-4" />
+                  Cadastrar minha Empresa
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+    );
+  }
+
   // City Selection Screen
   if (!chatStarted) {
     return (
@@ -180,9 +322,13 @@ export function PublicAIChat() {
                 <Button 
                   onClick={startChat} 
                   className="w-full h-12 text-lg bg-client hover:bg-client/90"
-                  disabled={!selectedCity}
+                  disabled={!selectedCity || loadingCities}
                 >
-                  <Bot className="mr-2 h-5 w-5" />
+                  {loadingCities ? (
+                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                  ) : (
+                    <Bot className="mr-2 h-5 w-5" />
+                  )}
                   Começar a Conversar
                 </Button>
               </div>
