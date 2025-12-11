@@ -6,6 +6,213 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+// Generate new themes dynamically when running low
+async function generateNewThemes(supabase: any, lovableApiKey: string, count: number = 5) {
+  console.log(`Generating ${count} new themes dynamically...`);
+  
+  const currentDate = new Date();
+  const currentYear = currentDate.getFullYear();
+  const nextYear = currentYear + 1;
+  const month = currentDate.toLocaleString('pt-BR', { month: 'long' });
+
+  const themePrompt = `Você é especialista em marketing digital e comércio local no Brasil.
+
+Gere ${count} temas ÚNICOS e ATUAIS para artigos de blog sobre:
+- Marketing local e digital para pequenos negócios
+- Programa de afiliados e criadores de conteúdo
+- Tendências de consumo e tecnologia
+
+CONTEXTO TEMPORAL: Estamos em ${month} de ${currentYear}, próximos de ${nextYear}.
+
+Foque em:
+- Retrospectivas de ${currentYear} e previsões para ${nextYear}
+- Tecnologias emergentes (IA, Pix, TikTok Shop, etc)
+- Comportamento do consumidor atual
+- Estratégias práticas e acionáveis
+
+Categorias disponíveis: "empresas", "afiliados", "tendencias"
+
+Use a função create_themes para retornar os temas.`;
+
+  const tools = [{
+    type: "function",
+    function: {
+      name: "create_themes",
+      description: "Create blog themes with keywords",
+      parameters: {
+        type: "object",
+        properties: {
+          themes: {
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                theme: { type: "string", description: "Título do tema para o artigo" },
+                keywords: { 
+                  type: "array", 
+                  items: { type: "string" },
+                  description: "5 keywords SEO relevantes"
+                },
+                category: { 
+                  type: "string", 
+                  enum: ["empresas", "afiliados", "tendencias"],
+                  description: "Categoria do tema"
+                }
+              },
+              required: ["theme", "keywords", "category"]
+            }
+          }
+        },
+        required: ["themes"]
+      }
+    }
+  }];
+
+  try {
+    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${lovableApiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: "google/gemini-2.5-flash",
+        messages: [{ role: "user", content: themePrompt }],
+        tools,
+        tool_choice: { type: "function", function: { name: "create_themes" } }
+      }),
+    });
+
+    if (!response.ok) {
+      console.error("Theme generation API error:", await response.text());
+      return [];
+    }
+
+    const data = await response.json();
+    const toolCall = data.choices?.[0]?.message?.tool_calls?.[0];
+    
+    if (!toolCall) {
+      console.error("No tool call in theme generation response");
+      return [];
+    }
+
+    const { themes } = JSON.parse(toolCall.function.arguments);
+    
+    // Insert new themes
+    const newThemes = themes.map((t: any) => ({
+      theme: t.theme,
+      keywords: t.keywords,
+      category: t.category,
+      active: true,
+      use_count: 0
+    }));
+
+    const { data: inserted, error } = await supabase
+      .from("blog_themes")
+      .insert(newThemes)
+      .select();
+
+    if (error) {
+      console.error("Error inserting new themes:", error);
+      return [];
+    }
+
+    console.log(`Successfully created ${inserted.length} new themes`);
+    return inserted;
+  } catch (error) {
+    console.error("Error generating themes:", error);
+    return [];
+  }
+}
+
+// Generate image with retry and fallback
+async function generateFeaturedImage(
+  lovableApiKey: string, 
+  supabase: any,
+  title: string, 
+  keywords: string[], 
+  slug: string
+): Promise<string> {
+  const maxAttempts = 2;
+  let featuredImageUrl: string | null = null;
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      console.log(`Image generation attempt ${attempt}/${maxAttempts}...`);
+      
+      const imagePrompt = `Create a professional, modern blog header image for an article about "${title}". 
+Style: Clean, minimalist, vibrant colors, marketing/business theme. 
+Include visual elements related to: ${keywords.slice(0, 3).join(", ")}.
+Aspect ratio: 16:9, suitable for web blog header.
+No text in the image. High quality.`;
+
+      const imageResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${lovableApiKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "google/gemini-2.5-flash-image-preview",
+          messages: [{ role: "user", content: imagePrompt }],
+          modalities: ["image", "text"]
+        }),
+      });
+
+      if (!imageResponse.ok) {
+        console.error(`Attempt ${attempt} - API error:`, await imageResponse.text());
+        continue;
+      }
+
+      const imageData = await imageResponse.json();
+      const imageBase64 = imageData.choices?.[0]?.message?.images?.[0]?.image_url?.url;
+      
+      if (!imageBase64) {
+        console.error(`Attempt ${attempt} - No image in response`);
+        continue;
+      }
+
+      // Extract base64 data
+      const base64Data = imageBase64.replace(/^data:image\/\w+;base64,/, "");
+      const imageBytes = Uint8Array.from(atob(base64Data), c => c.charCodeAt(0));
+      
+      // Upload to storage
+      const imagePath = `blog/${slug}.png`;
+      const { error: uploadError } = await supabase.storage
+        .from("offer-images")
+        .upload(imagePath, imageBytes, {
+          contentType: "image/png",
+          upsert: true
+        });
+
+      if (uploadError) {
+        console.error(`Attempt ${attempt} - Upload error:`, uploadError);
+        continue;
+      }
+
+      const { data: publicUrl } = supabase.storage
+        .from("offer-images")
+        .getPublicUrl(imagePath);
+      
+      featuredImageUrl = publicUrl.publicUrl;
+      console.log(`Image generated successfully on attempt ${attempt}:`, featuredImageUrl);
+      break;
+
+    } catch (error) {
+      console.error(`Attempt ${attempt} - Error:`, error);
+    }
+  }
+
+  // Fallback: Use placeholder if all attempts failed
+  if (!featuredImageUrl) {
+    const encodedTitle = encodeURIComponent(title.substring(0, 35));
+    featuredImageUrl = `https://placehold.co/1200x630/6366f1/ffffff/png?text=${encodedTitle}`;
+    console.log("Using placeholder image:", featuredImageUrl);
+  }
+
+  return featuredImageUrl;
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -22,6 +229,24 @@ serve(async (req) => {
 
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
+    // Check available themes (use_count < 3 means relatively fresh)
+    const { data: availableThemes, error: countError } = await supabase
+      .from("blog_themes")
+      .select("id")
+      .eq("active", true)
+      .lt("use_count", 3);
+
+    if (countError) {
+      console.error("Error checking themes:", countError);
+    }
+
+    // If running low on fresh themes, generate more
+    const MIN_FRESH_THEMES = 10;
+    if (!availableThemes || availableThemes.length < MIN_FRESH_THEMES) {
+      console.log(`Only ${availableThemes?.length || 0} fresh themes available, generating more...`);
+      await generateNewThemes(supabase, lovableApiKey, 10);
+    }
+
     // Get least used active theme
     const { data: themes, error: themeError } = await supabase
       .from("blog_themes")
@@ -36,9 +261,9 @@ serve(async (req) => {
     }
 
     const theme = themes[0];
-    console.log("Selected theme:", theme.theme);
+    console.log("Selected theme:", theme.theme, "| Use count:", theme.use_count);
 
-    // Generate blog post with AI using TOOL CALLING for reliable structured output
+    // Generate blog post with AI using TOOL CALLING
     const systemPrompt = `Você é um especialista em marketing de conteúdo e SEO para o mercado brasileiro. 
 Você escreve artigos EXTENSOS e COMPLETOS para o blog da Clilin, uma plataforma de ofertas locais e programa de afiliados.
 
@@ -86,7 +311,6 @@ IMPORTANTE: O conteúdo DEVE ter NO MÍNIMO 8000 caracteres. Desenvolva cada se�
 
 Use a função create_blog_post para retornar os dados estruturados.`;
 
-    // Define the tool for structured output extraction
     const tools = [
       {
         type: "function",
@@ -193,16 +417,16 @@ Use a função create_blog_post para retornar os dados estruturados.`;
       throw new Error("Missing required fields in generated content");
     }
 
-    // Log content length for debugging
+    // Log content length
     console.log("Generated content length:", postData.content.length, "characters");
 
-    // Validate minimum content length (1000-1500 words = ~5000-8000 characters)
+    // Validate minimum content length
     if (postData.content.length < 5000) {
       console.error("Content too short:", postData.content.length, "characters. Expected at least 5000.");
       throw new Error(`Generated content is too short (${postData.content.length} chars). May have been truncated.`);
     }
 
-    // Ensure FAQ exists - create default if missing
+    // Ensure FAQ exists
     if (!postData.faq || !Array.isArray(postData.faq) || postData.faq.length === 0) {
       console.log("FAQ missing, generating default FAQ");
       postData.faq = [
@@ -223,68 +447,14 @@ Use a função create_blog_post para retornar os dados estruturados.`;
     const timestamp = Date.now().toString(36);
     const uniqueSlug = `${baseSlug}-${timestamp}`;
 
-    // Generate featured image with AI
-    let featuredImageUrl = null;
-    try {
-      console.log("Generating featured image...");
-      
-      const imagePrompt = `Create a professional, modern blog header image for an article about "${postData.title}". 
-Style: Clean, minimalist, vibrant colors, marketing/business theme. 
-Include visual elements related to: ${theme.keywords.slice(0, 3).join(", ")}.
-Aspect ratio: 16:9, suitable for web blog header.
-No text in the image.`;
-
-      const imageResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${lovableApiKey}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          model: "google/gemini-2.5-flash-image-preview",
-          messages: [
-            { role: "user", content: imagePrompt }
-          ],
-          modalities: ["image", "text"]
-        }),
-      });
-
-      if (imageResponse.ok) {
-        const imageData = await imageResponse.json();
-        const imageBase64 = imageData.choices?.[0]?.message?.images?.[0]?.image_url?.url;
-        
-        if (imageBase64) {
-          // Extract base64 data (remove data:image/png;base64, prefix)
-          const base64Data = imageBase64.replace(/^data:image\/\w+;base64,/, "");
-          const imageBytes = Uint8Array.from(atob(base64Data), c => c.charCodeAt(0));
-          
-          // Upload to Supabase storage
-          const imagePath = `blog/${uniqueSlug}.png`;
-          const { error: uploadError } = await supabase.storage
-            .from("offer-images")
-            .upload(imagePath, imageBytes, {
-              contentType: "image/png",
-              upsert: true
-            });
-
-          if (!uploadError) {
-            const { data: publicUrl } = supabase.storage
-              .from("offer-images")
-              .getPublicUrl(imagePath);
-            
-            featuredImageUrl = publicUrl.publicUrl;
-            console.log("Image uploaded:", featuredImageUrl);
-          } else {
-            console.error("Image upload error:", uploadError);
-          }
-        }
-      } else {
-        console.error("Image generation failed:", await imageResponse.text());
-      }
-    } catch (imageError) {
-      console.error("Image generation error:", imageError);
-      // Continue without image
-    }
+    // Generate featured image with retry and fallback
+    const featuredImageUrl = await generateFeaturedImage(
+      lovableApiKey,
+      supabase,
+      postData.title,
+      theme.keywords,
+      uniqueSlug
+    );
 
     // Insert blog post
     const { data: newPost, error: insertError } = await supabase
@@ -321,7 +491,7 @@ No text in the image.`;
       })
       .eq("id", theme.id);
 
-    console.log("Post created:", newPost.id, newPost.title, "Image:", featuredImageUrl ? "Yes" : "No");
+    console.log("Post created:", newPost.id, newPost.title, "| Image:", featuredImageUrl ? "Yes" : "No");
 
     return new Response(
       JSON.stringify({
