@@ -136,32 +136,51 @@ export function OnboardingTour() {
         await new Promise(resolve => setTimeout(resolve, 150));
       }
       
-      // Aguardar elementos renderizarem
-      await new Promise(resolve => setTimeout(resolve, 200));
+      // Aguardar elementos renderizarem - mais tempo para garantir
+      await new Promise(resolve => setTimeout(resolve, 300));
 
       const element = currentStepData?.target 
         ? document.querySelector(currentStepData.target) 
         : null;
 
       if (element) {
-        // Calcular posição do elemento antes do scroll
-        const rect = element.getBoundingClientRect();
-        const isAboveViewport = rect.top < 100;
-        const isBelowViewport = rect.bottom > window.innerHeight - 100;
+        const viewportHeight = window.innerHeight;
+        const viewportCenter = viewportHeight / 2;
         
-        // Só fazer scroll se elemento não estiver bem visível
-        if (isAboveViewport || isBelowViewport) {
-          // Usar 'nearest' para scroll mais previsível
+        // Função para verificar se elemento está bem centralizado
+        const isWellPositioned = () => {
+          const r = element.getBoundingClientRect();
+          const elementCenter = r.top + r.height / 2;
+          const distanceFromCenter = Math.abs(elementCenter - viewportCenter);
+          // Considerar bem posicionado se estiver dentro de 30% do centro
+          return distanceFromCenter < viewportHeight * 0.3 && r.top > 80 && r.bottom < viewportHeight - 80;
+        };
+        
+        // Primeira verificação de posição
+        let rect = element.getBoundingClientRect();
+        const initialDistance = Math.abs(rect.top - viewportCenter);
+        
+        // Sempre fazer scroll se não estiver bem posicionado
+        if (!isWellPositioned()) {
+          // Primeiro scroll
           element.scrollIntoView({ 
             behavior: 'smooth', 
             block: 'center',
             inline: 'nearest'
           });
           
-          // Aguardar scroll completar - tempo proporcional à distância
-          const scrollDistance = Math.abs(rect.top - window.innerHeight / 2);
-          const scrollTime = Math.min(600, Math.max(300, scrollDistance / 2));
+          // Tempo de espera proporcional à distância - mínimo 500ms, máximo 900ms
+          const scrollTime = Math.min(900, Math.max(500, initialDistance));
           await new Promise(resolve => setTimeout(resolve, scrollTime));
+          
+          // Verificação pós-scroll - se ainda não está bem posicionado, tentar novamente
+          if (!isWellPositioned()) {
+            element.scrollIntoView({ 
+              behavior: 'smooth', 
+              block: 'center'
+            });
+            await new Promise(resolve => setTimeout(resolve, 400));
+          }
         } else {
           // Elemento já visível, só pequena pausa
           await new Promise(resolve => setTimeout(resolve, 100));
@@ -169,6 +188,7 @@ export function OnboardingTour() {
         
         // Usar requestAnimationFrame para garantir que o browser terminou de renderizar
         await new Promise(resolve => requestAnimationFrame(resolve));
+        await new Promise(resolve => setTimeout(resolve, 50));
       }
 
       // Liberar flag de scroll
