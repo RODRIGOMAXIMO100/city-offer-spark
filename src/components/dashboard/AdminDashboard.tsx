@@ -22,7 +22,8 @@ import {
   RefreshCw,
   BarChart3,
   Banknote,
-  FileText
+  FileText,
+  CreditCard
 } from 'lucide-react';
 import { AdminBlog } from './admin/AdminBlog';
 import { formatBalance, CONFIG } from '@/types/database';
@@ -34,6 +35,7 @@ import AdminSecurityAdvanced from './admin/AdminSecurityAdvanced';
 import AdminAlerts from './admin/AdminAlerts';
 import UserDetailModal from './admin/UserDetailModal';
 import { exportUsers, exportOffers, exportTransactions } from './admin/AdminExport';
+import AdminPayments from './admin/AdminPayments';
 
 interface Stats {
   totalCompanies: number;
@@ -375,7 +377,7 @@ export default function AdminDashboard() {
         {/* Tabs */}
         <Tabs defaultValue="users" className="space-y-4" onValueChange={resetFilters}>
           <div className="overflow-x-auto -mx-3 px-3 sm:mx-0 sm:px-0">
-            <TabsList className="inline-flex w-auto min-w-full sm:grid sm:w-full sm:grid-cols-7">
+            <TabsList className="inline-flex w-auto min-w-full sm:grid sm:w-full sm:grid-cols-8">
               <TabsTrigger value="users" className="flex-1 sm:flex-none text-xs sm:text-sm">
                 <Users className="h-4 w-4 sm:mr-2" />
                 <span className="hidden sm:inline">Usuários</span>
@@ -387,6 +389,10 @@ export default function AdminDashboard() {
               <TabsTrigger value="transactions" className="flex-1 sm:flex-none text-xs sm:text-sm">
                 <DollarSign className="h-4 w-4 sm:mr-2" />
                 <span className="hidden sm:inline">Transações</span>
+              </TabsTrigger>
+              <TabsTrigger value="payments" className="flex-1 sm:flex-none text-xs sm:text-sm">
+                <CreditCard className="h-4 w-4 sm:mr-2" />
+                <span className="hidden sm:inline">Pagamentos</span>
               </TabsTrigger>
               <TabsTrigger value="withdrawals" className="flex-1 sm:flex-none text-xs sm:text-sm">
                 <Banknote className="h-4 w-4 sm:mr-2" />
@@ -600,6 +606,11 @@ export default function AdminDashboard() {
                 />
               </CardContent>
             </Card>
+          </TabsContent>
+
+          {/* Payments Tab */}
+          <TabsContent value="payments">
+            <AdminPayments />
           </TabsContent>
 
           {/* Withdrawals Tab */}
