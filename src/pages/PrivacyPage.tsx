@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
-import { ArrowLeft, Sparkles } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import logo from '@/assets/logo.png';
 
 export default function PrivacyPage() {
   return (
@@ -13,13 +14,8 @@ export default function PrivacyPage() {
               <ArrowLeft className="h-5 w-5" />
             </Link>
           </Button>
-          <Link to="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary via-accent to-secondary flex items-center justify-center">
-              <Sparkles className="h-4 w-4 text-white" />
-            </div>
-            <span className="text-xl font-display font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              clilin
-            </span>
+          <Link to="/">
+            <img src={logo} alt="clilin" className="h-8" />
           </Link>
         </div>
       </header>
