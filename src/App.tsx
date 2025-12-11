@@ -39,6 +39,10 @@ function AdminRoute({ children }: { children: React.ReactNode }) {
   
   if (loading) return null;
   if (!user) return <Navigate to="/admin/login" replace />;
+  
+  // Wait for role to be fetched before redirecting
+  if (role === null) return null;
+  
   if (role !== 'ADMIN') return <Navigate to="/dashboard" replace />;
   
   return <>{children}</>;
