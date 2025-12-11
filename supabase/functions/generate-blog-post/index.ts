@@ -50,7 +50,7 @@ Seu objetivo é criar conteúdo que:
 5. Inclua subtítulos (H2, H3) estratégicos com keywords
 6. Tenha uma introdução envolvente com a keyword principal
 7. Inclua listas, dicas práticas e exemplos reais
-8. Termine com uma seção de FAQ com 3 perguntas frequentes
+8. OBRIGATÓRIO: Termine com uma seção de FAQ com exatamente 3 perguntas frequentes
 9. Seja formatado em HTML válido
 
 REGRAS DE FORMATAÇÃO HTML:
@@ -61,7 +61,7 @@ REGRAS DE FORMATAÇÃO HTML:
 - Use <strong> para destacar termos importantes
 - Use <blockquote> para citações ou dicas especiais
 - NÃO use <h1> (é reservado para o título da página)
-- Para a seção de FAQ, use este formato:
+- OBRIGATÓRIO: Inclua uma seção de FAQ no HTML assim:
   <h2>Perguntas Frequentes</h2>
   <h3>Pergunta 1?</h3>
   <p>Resposta 1...</p>
@@ -71,29 +71,33 @@ LINKS INTERNOS OBRIGATÓRIOS (inclua 2-3 no conteúdo):
 - <a href="/blog">mais artigos</a> ou <a href="/blog">nosso blog</a>
 - <a href="/">página inicial</a> ou <a href="/">Clilin</a>
 
-IMPORTANTE: Retorne APENAS um JSON válido, sem markdown, sem backticks.`;
+IMPORTANTE: Retorne APENAS um JSON válido, sem markdown, sem backticks.
+CRÍTICO: O campo "faq" é OBRIGATÓRIO e deve conter exatamente 3 perguntas.`;
 
     const userPrompt = `Crie um artigo de blog completo sobre: "${theme.theme}"
 
 Keywords OBRIGATÓRIAS para incluir naturalmente: ${theme.keywords.join(", ")}
 Categoria: ${theme.category}
 
-Retorne um JSON com exatamente esta estrutura:
+ATENÇÃO: Todos os campos são OBRIGATÓRIOS, especialmente o campo "faq" com 3 perguntas.
+
+Retorne um JSON com exatamente esta estrutura (TODOS OS CAMPOS SÃO OBRIGATÓRIOS):
 {
   "title": "Título atraente e otimizado para SEO (50-60 chars)",
   "slug": "url-do-post-em-kebab-case-sem-acentos",
   "excerpt": "Resumo envolvente de 150-160 caracteres para meta description com keyword principal",
-  "content": "Conteúdo HTML completo com H2, H3, parágrafos, listas, links internos e FAQ",
+  "content": "Conteúdo HTML completo com H2, H3, parágrafos, listas, links internos e seção FAQ",
   "meta_title": "Título SEO com keyword principal (max 60 chars)",
   "meta_description": "Meta description persuasiva com keyword (max 160 chars)",
   "keywords": ["keyword1", "keyword2", "keyword3", "keyword4", "keyword5"],
   "faq": [
-    {"question": "Pergunta 1?", "answer": "Resposta 1"},
-    {"question": "Pergunta 2?", "answer": "Resposta 2"},
-    {"question": "Pergunta 3?", "answer": "Resposta 3"}
+    {"question": "Pergunta relevante 1 sobre o tema?", "answer": "Resposta completa e útil de 2-3 frases"},
+    {"question": "Pergunta relevante 2 sobre o tema?", "answer": "Resposta completa e útil de 2-3 frases"},
+    {"question": "Pergunta relevante 3 sobre o tema?", "answer": "Resposta completa e útil de 2-3 frases"}
   ]
-}`;
+}
 
+LEMBRETE: O campo "faq" é OBRIGATÓRIO. Não omita este campo!`;
     const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -152,6 +156,16 @@ Retorne um JSON com exatamente esta estrutura:
     // Validate required fields
     if (!postData.title || !postData.content || !postData.excerpt) {
       throw new Error("Missing required fields in generated content");
+    }
+
+    // Ensure FAQ exists - create default if missing
+    if (!postData.faq || !Array.isArray(postData.faq) || postData.faq.length === 0) {
+      console.log("FAQ missing, generating default FAQ based on theme");
+      postData.faq = [
+        { question: `O que é ${theme.theme.split(' ').slice(0, 4).join(' ')}?`, answer: "Esta é uma estratégia importante para quem busca resultados no mercado local e digital. Confira o artigo completo para entender melhor." },
+        { question: "Como posso começar?", answer: "O primeiro passo é se cadastrar na plataforma Clilin e explorar as oportunidades disponíveis na sua cidade." },
+        { question: "Quanto tempo leva para ver resultados?", answer: "Os resultados variam de pessoa para pessoa, mas com dedicação é possível ver os primeiros resultados em poucas semanas." }
+      ];
     }
 
     // Generate unique slug
