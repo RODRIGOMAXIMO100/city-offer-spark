@@ -242,6 +242,34 @@ export default function AdminWithdrawals() {
     }
   };
 
+  const handleProcessPix = async (withdrawal: Withdrawal) => {
+    setProcessing(withdrawal.id);
+    try {
+      const { data, error } = await supabase.functions.invoke('process-withdrawal-pix', {
+        body: { withdrawal_id: withdrawal.id },
+      });
+
+      if (error) throw error;
+      if (data.error) throw new Error(data.error);
+
+      toast({
+        title: 'PIX enviado!',
+        description: 'A transferência foi iniciada via Asaas.',
+      });
+
+      fetchWithdrawals();
+    } catch (error: any) {
+      console.error('Error processing PIX:', error);
+      toast({
+        title: 'Erro ao processar PIX',
+        description: error.message || 'Tente novamente.',
+        variant: 'destructive',
+      });
+    } finally {
+      setProcessing(null);
+    }
+  };
+
   const getFraudScoreColor = (score: number) => {
     if (score >= 50) return 'text-destructive bg-destructive/10';
     if (score >= 25) return 'text-orange-500 bg-orange-500/10';
