@@ -378,7 +378,6 @@ export default function OfferPage() {
             >
               <Instagram className="mr-2 h-5 w-5" />
               Conheça no Instagram
-              <span className="ml-2 text-xs text-muted-foreground">(grátis)</span>
             </Button>
           )}
 
