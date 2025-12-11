@@ -12,6 +12,7 @@ import PaymentDataModal from './PaymentDataModal';
 import AffiliateLevel from './AffiliateLevel';
 import AffiliateRanking from './AffiliateRanking';
 import NotificationBell from './NotificationBell';
+import AffiliateTutorial from './AffiliateTutorial';
 import logo from '@/assets/logo.png';
 
 interface Withdrawal {
@@ -274,6 +275,7 @@ export default function AffiliateDashboard() {
               </div>
             </div>
             <div className="flex gap-2">
+              <AffiliateTutorial />
               {profile?.id && <NotificationBell userId={profile.id} />}
               <Button
                 size="sm"
