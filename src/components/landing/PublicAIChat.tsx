@@ -6,9 +6,12 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Send, Bot, Loader2, MapPin, Instagram, Sparkles, UserPlus, Share2, Copy, MessageCircle, ArrowLeft, CheckCircle } from 'lucide-react';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
+import { Send, Bot, Loader2, MapPin, Instagram, Sparkles, UserPlus, Share2, Copy, MessageCircle, ArrowLeft, CheckCircle, ChevronsUpDown, Check } from 'lucide-react';
 import { BRAZIL_STATES, getCitiesByState } from '@/data/brazilLocations';
 import { toast } from 'sonner';
+import { cn } from '@/lib/utils';
 
 interface SuggestedOffer {
   id: string;
@@ -39,6 +42,7 @@ export function PublicAIChat() {
   const [citiesWithOffers, setCitiesWithOffers] = useState<string[]>([]);
   const [loadingCities, setLoadingCities] = useState(true);
   const [linkCopied, setLinkCopied] = useState(false);
+  const [cityPopoverOpen, setCityPopoverOpen] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const availableCities = selectedState ? getCitiesByState(selectedState).sort() : [];
@@ -301,22 +305,48 @@ export function PublicAIChat() {
 
                 <div>
                   <label className="text-sm font-medium mb-2 block">Cidade</label>
-                  <Select 
-                    value={selectedCity} 
-                    onValueChange={setSelectedCity}
-                    disabled={!selectedState}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecione a cidade" />
-                    </SelectTrigger>
-                    <SelectContent className="max-h-64">
-                      {availableCities.map((city) => (
-                        <SelectItem key={city} value={city}>
-                          {city}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <Popover open={cityPopoverOpen} onOpenChange={setCityPopoverOpen}>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        aria-expanded={cityPopoverOpen}
+                        className="w-full justify-between font-normal"
+                        disabled={!selectedState}
+                      >
+                        {selectedCity || "Buscar cidade..."}
+                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" align="start">
+                      <Command>
+                        <CommandInput placeholder="Digite para buscar..." />
+                        <CommandList>
+                          <CommandEmpty>Nenhuma cidade encontrada.</CommandEmpty>
+                          <CommandGroup>
+                            {availableCities.map((city) => (
+                              <CommandItem
+                                key={city}
+                                value={city}
+                                onSelect={() => {
+                                  setSelectedCity(city);
+                                  setCityPopoverOpen(false);
+                                }}
+                              >
+                                <Check
+                                  className={cn(
+                                    "mr-2 h-4 w-4",
+                                    selectedCity === city ? "opacity-100" : "opacity-0"
+                                  )}
+                                />
+                                {city}
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
                 </div>
 
                 <Button 
