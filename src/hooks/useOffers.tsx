@@ -289,8 +289,11 @@ export function useOffers(city?: string) {
     }
   };
 
+  // Only fetch all offers when city is explicitly provided (for client/affiliate views)
   useEffect(() => {
-    fetchOffers();
+    if (city) {
+      fetchOffers();
+    }
   }, [city]);
 
   return {

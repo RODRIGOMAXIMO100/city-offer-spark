@@ -289,9 +289,14 @@ function CompanyDashboardContent() {
         <div className="max-w-2xl mx-auto px-3 sm:px-4 py-3 sm:py-4 flex justify-between items-center gap-2">
           <div className="flex items-center gap-2 min-w-0">
             <img src={logo} alt="clilin" className="h-6 sm:h-8 shrink-0" />
-            <Badge variant="outline" className="text-company border-company text-xs sm:text-sm shrink-0">
-              Empresa
-            </Badge>
+            <div className="flex flex-col min-w-0">
+              <span className="text-xs sm:text-sm font-medium text-foreground truncate max-w-[120px] sm:max-w-[200px]">
+                {profile?.name || 'Empresa'}
+              </span>
+              <Badge variant="outline" className="text-company border-company text-[10px] w-fit">
+                Empresa
+              </Badge>
+            </div>
           </div>
           <div className="flex items-center gap-2 sm:gap-3" data-tour="balance">
             <div className="text-right">
