@@ -92,7 +92,8 @@ export const CONFIG = {
   // Legacy: for backward compatibility in admin analytics
   CPC_PLATFORM_PROFIT: 3.5, // Average estimate (50% of average CPC 7)
   CPC_PAYOUT_AFFILIATE: 3.5, // Average estimate (50% of average CPC 7)
-  MIN_WITHDRAW_BRL: 30.00,
+  MIN_WITHDRAW_BRL: 100.00,
+  MIN_DEPOSIT_BRL: 100.00,
   TIME_TO_INTERACTIVE: 1500,
 } as const;
 

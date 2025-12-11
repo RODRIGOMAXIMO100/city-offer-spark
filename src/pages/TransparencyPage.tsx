@@ -544,7 +544,7 @@ export default function TransparencyPage() {
                       Saque Mínimo
                     </h4>
                     <p className="text-sm text-muted-foreground">
-                      O saque mínimo é de R$ 30,00. Após atingir, solicite via PIX e 
+                      O saque mínimo é de R$ 100,00. Após atingir, solicite via PIX e 
                       receba em até 24 horas úteis.
                     </p>
                   </CardContent>

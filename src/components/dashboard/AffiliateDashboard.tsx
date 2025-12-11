@@ -390,7 +390,7 @@ export default function AffiliateDashboard() {
                 <ul className="text-sm opacity-95 space-y-1">
                   <li>• <strong>R$ 0,20 a R$ 0,50 por clique</strong> - você recebe 50% do CPC!</li>
                   <li>• <strong>Bônus de nível até +50%</strong> - pode chegar a R$ 0,75/clique!</li>
-                  <li>• <strong>Saque mínimo: R$ 30,00</strong> via PIX instantâneo</li>
+                  <li>• <strong>Saque mínimo: R$ 100,00</strong> via PIX instantâneo</li>
                   <li>• <strong><a href="/transparencia" className="underline">Veja como funciona →</a></strong></li>
                 </ul>
               </div>
