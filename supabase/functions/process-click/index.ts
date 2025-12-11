@@ -20,6 +20,92 @@ function getClientIp(req: Request): string {
   );
 }
 
+// ========== TRACKING FUNCTIONS ==========
+
+function generateTrackedWhatsAppLink(
+  baseLink: string,
+  offerTitle: string,
+  offerId: string,
+  affiliateId?: string | null
+): string {
+  // Extract number from wa.me link
+  const waNumber = baseLink.replace('https://wa.me/', '').split('?')[0];
+  
+  // Generate short reference code
+  const refCode = offerId.substring(0, 8).toUpperCase();
+  
+  // Build message
+  let message = `Olá! 👋\nVi a oferta "${offerTitle}" no CliLin.`;
+  message += `\n\n📋 Ref: ${refCode}`;
+  
+  if (affiliateId) {
+    message += `\n👤 Indicação: ${affiliateId.substring(0, 6).toUpperCase()}`;
+  }
+  
+  const encodedMessage = encodeURIComponent(message);
+  return `https://wa.me/${waNumber}?text=${encodedMessage}`;
+}
+
+function generateTrackedSiteLink(
+  baseLink: string,
+  offerTitle: string,
+  offerId: string,
+  city: string,
+  affiliateId?: string | null
+): string {
+  try {
+    const url = new URL(baseLink);
+    
+    // Standard UTM parameters
+    url.searchParams.set('utm_source', 'clilin');
+    url.searchParams.set('utm_medium', 'offer');
+    
+    // Campaign = sanitized offer title
+    const campaign = offerTitle
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]+/g, '_')
+      .substring(0, 50);
+    url.searchParams.set('utm_campaign', campaign);
+    
+    // Term = city
+    const term = city
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]+/g, '_');
+    url.searchParams.set('utm_term', term);
+    
+    // Content = affiliate ID (if present)
+    if (affiliateId) {
+      url.searchParams.set('utm_content', `ref_${affiliateId.substring(0, 8)}`);
+    }
+    
+    // Internal tracking ref
+    url.searchParams.set('clilin_ref', offerId.substring(0, 8));
+    
+    return url.toString();
+  } catch {
+    // If URL parsing fails, return original
+    return baseLink;
+  }
+}
+
+function getTrackedRedirectUrl(
+  linkDestination: string,
+  linkType: string,
+  offerTitle: string,
+  offerId: string,
+  city: string,
+  affiliateId?: string | null
+): string {
+  if (linkType === 'WHATSAPP' || linkDestination.includes('wa.me')) {
+    return generateTrackedWhatsAppLink(linkDestination, offerTitle, offerId, affiliateId);
+  }
+  return generateTrackedSiteLink(linkDestination, offerTitle, offerId, city, affiliateId);
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -57,6 +143,8 @@ serve(async (req) => {
       .from("offers")
       .select(`
         id,
+        title,
+        link_type,
         company_id,
         link_destination,
         active,
@@ -233,10 +321,20 @@ serve(async (req) => {
         click_type: 'DUPLICATE',
       });
 
+      // Duplicate clicks still get tracking for UX
+      const duplicateRedirectUrl = getTrackedRedirectUrl(
+        offer.link_destination,
+        offer.link_type,
+        offer.title,
+        offerId,
+        offer.city,
+        null // No affiliate credit for duplicates
+      );
+
       return new Response(
         JSON.stringify({
           success: true,
-          redirectUrl: offer.link_destination,
+          redirectUrl: duplicateRedirectUrl,
           clickType: 'DUPLICATE',
           charged: false,
           reason: "already_clicked_today"
@@ -416,12 +514,22 @@ serve(async (req) => {
     // 6. Increment click count
     await supabase.rpc("increment_offer_clicks", { offer_id: offerId });
 
+    // Generate tracked redirect URL
+    const trackedRedirectUrl = getTrackedRedirectUrl(
+      offer.link_destination,
+      offer.link_type,
+      offer.title,
+      offerId,
+      offer.city,
+      validAffiliateId
+    );
+
     console.log(`Main click processed - Offer: ${offerId}, CPC: ${cpcCost}, Company: -${cpcCost}, Affiliate: ${validAffiliateId ? `+${actualAffiliatePayout}` : 'none'}`);
 
     return new Response(
       JSON.stringify({
         success: true,
-        redirectUrl: offer.link_destination,
+        redirectUrl: trackedRedirectUrl,
         clickType: 'MAIN',
         charged: true,
         cpc: cpcCost,
