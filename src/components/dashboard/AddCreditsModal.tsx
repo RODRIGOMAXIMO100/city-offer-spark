@@ -22,8 +22,93 @@ interface AddCreditsModalProps {
 
 type Step = 'amount' | 'method' | 'pix' | 'card' | 'success';
 type PaymentMethod = 'PIX' | 'CREDIT_CARD';
+type CardBrand = 'visa' | 'mastercard' | 'elo' | 'hipercard' | 'amex' | null;
 
 const PRESET_AMOUNTS = [100, 200, 500, 1000];
+
+// Detecta a bandeira do cartão baseado nos primeiros dígitos
+const detectCardBrand = (cardNumber: string): CardBrand => {
+  const num = cardNumber.replace(/\s/g, '');
+  if (!num) return null;
+  
+  // Amex: começa com 34 ou 37
+  if (/^3[47]/.test(num)) return 'amex';
+  
+  // Hipercard: começa com 606282 ou 3841
+  if (/^(606282|3841)/.test(num)) return 'hipercard';
+  
+  // Elo: vários ranges
+  if (/^(636368|438935|504175|451416|636297|5067|4576|4011|506699|509[0-9]{3})/.test(num)) return 'elo';
+  
+  // Mastercard: começa com 5 ou ranges 2221-2720
+  if (/^5[1-5]/.test(num) || /^(222[1-9]|22[3-9]|2[3-6]|27[01]|2720)/.test(num)) return 'mastercard';
+  
+  // Visa: começa com 4
+  if (/^4/.test(num)) return 'visa';
+  
+  return null;
+};
+
+// Componentes de ícones das bandeiras
+const CardBrandIcon = ({ brand, active = false, size = 'md' }: { brand: CardBrand; active?: boolean; size?: 'sm' | 'md' }) => {
+  const sizeClasses = size === 'sm' ? 'w-8 h-5' : 'w-10 h-6';
+  const opacityClass = active ? 'opacity-100' : 'opacity-40';
+  
+  const brands: Record<string, JSX.Element> = {
+    visa: (
+      <svg viewBox="0 0 48 32" className={`${sizeClasses} ${opacityClass} transition-opacity`}>
+        <rect fill="#1A1F71" width="48" height="32" rx="4"/>
+        <path fill="#fff" d="M19.5 21.5h-3l1.9-11h3l-1.9 11zm8.5-10.7c-.6-.2-1.5-.5-2.6-.5-2.9 0-4.9 1.5-4.9 3.6 0 1.6 1.5 2.5 2.6 3 1.1.5 1.5.9 1.5 1.4 0 .7-.9 1.1-1.7 1.1-1.1 0-1.7-.2-2.7-.6l-.4-.2-.4 2.4c.7.3 1.9.6 3.2.6 3 0 5-1.5 5-3.7 0-1.2-.8-2.2-2.4-3-.9-.5-1.5-.8-1.5-1.3 0-.4.5-.9 1.5-.9.9 0 1.5.2 2 .4l.2.1.6-2.4zm7.3-.3h-2.3c-.7 0-1.2.2-1.5.9l-4.3 10.1h3l.6-1.6h3.7l.3 1.6h2.7l-2.2-11zm-3.5 7.1l1.5-4.1.9 4.1h-2.4zM16.5 10.5l-2.8 7.5-.3-1.5c-.5-1.7-2.1-3.6-3.9-4.5l2.5 9.5h3l4.5-11h-3z"/>
+        <path fill="#F9A533" d="M11.5 10.5H6.8l-.1.3c3.6.9 6 3.1 7 5.7l-1-5.1c-.2-.6-.7-.9-1.2-.9z"/>
+      </svg>
+    ),
+    mastercard: (
+      <svg viewBox="0 0 48 32" className={`${sizeClasses} ${opacityClass} transition-opacity`}>
+        <rect fill="#000" width="48" height="32" rx="4"/>
+        <circle fill="#EB001B" cx="18" cy="16" r="8"/>
+        <circle fill="#F79E1B" cx="30" cy="16" r="8"/>
+        <path fill="#FF5F00" d="M24 9.8c1.9 1.5 3.1 3.8 3.1 6.2s-1.2 4.7-3.1 6.2c-1.9-1.5-3.1-3.8-3.1-6.2s1.2-4.7 3.1-6.2z"/>
+      </svg>
+    ),
+    elo: (
+      <svg viewBox="0 0 48 32" className={`${sizeClasses} ${opacityClass} transition-opacity`}>
+        <rect fill="#000" width="48" height="32" rx="4"/>
+        <path fill="#FFCB05" d="M14 12c-2.2 0-4 1.8-4 4s1.8 4 4 4c1.5 0 2.8-.8 3.5-2l-2.1-1.2c-.3.4-.8.7-1.4.7-1.1 0-2-.9-2-2s.9-2 2-2c.6 0 1.1.3 1.4.7l2.1-1.2c-.7-1.2-2-2-3.5-2z"/>
+        <path fill="#00A4E0" d="M24 12c-2.2 0-4 1.8-4 4s1.8 4 4 4 4-1.8 4-4-1.8-4-4-4zm0 6c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/>
+        <path fill="#EF4123" d="M34 12c-2.2 0-4 1.8-4 4s1.8 4 4 4 4-1.8 4-4-1.8-4-4-4zm0 6c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/>
+      </svg>
+    ),
+    hipercard: (
+      <svg viewBox="0 0 48 32" className={`${sizeClasses} ${opacityClass} transition-opacity`}>
+        <rect fill="#822124" width="48" height="32" rx="4"/>
+        <path fill="#fff" d="M12 10h3v12h-3zm6 0h3v5h4v-5h3v12h-3v-5h-4v5h-3zm14 0h3v12h-3zm-20 0h3v12h-3z"/>
+        <circle fill="#fff" cx="36" cy="16" r="3"/>
+      </svg>
+    ),
+    amex: (
+      <svg viewBox="0 0 48 32" className={`${sizeClasses} ${opacityClass} transition-opacity`}>
+        <rect fill="#006FCF" width="48" height="32" rx="4"/>
+        <path fill="#fff" d="M10 14l-2 4h1.5l.4-1h2.2l.4 1H14l-2-4h-2zm1 1.2l.6 1.3h-1.2l.6-1.3zM15 14v4h1.3v-1.5l1.2 1.5h1.7l-1.5-1.7 1.4-1.3h-1.6l-1.2 1.2V14H15zm5.5 0v4h1.3v-1.4h1.7v1.4h1.3v-4h-1.3v1.4h-1.7V14h-1.3zm5.5 0v4h3.5v-1h-2.2v-.6h2.1v-1h-2.1v-.4h2.2v-1H26zm4.5 0v4h1.3v-1.5l1.2 1.5h1.7l-1.5-1.7 1.4-1.3h-1.6l-1.2 1.2V14h-1.3z"/>
+      </svg>
+    ),
+  };
+
+  if (!brand) return null;
+  return brands[brand] || null;
+};
+
+const AllCardBrands = ({ activeBrand, size = 'sm' }: { activeBrand?: CardBrand; size?: 'sm' | 'md' }) => (
+  <div className="flex items-center gap-1">
+    {(['visa', 'mastercard', 'elo', 'hipercard', 'amex'] as const).map((brand) => (
+      <CardBrandIcon 
+        key={brand} 
+        brand={brand} 
+        active={!activeBrand || activeBrand === brand}
+        size={size}
+      />
+    ))}
+  </div>
+);
 
 export function AddCreditsModal({ 
   open, 
@@ -311,7 +396,8 @@ export function AddCreditsModal({
                 </div>
                 <div className="flex-1">
                   <h3 className="font-semibold">Cartão de Crédito</h3>
-                  <p className="text-sm text-muted-foreground">Até 12x sem juros</p>
+                  <p className="text-sm text-muted-foreground mb-2">Até 12x sem juros</p>
+                  <AllCardBrands size="sm" />
                 </div>
               </CardContent>
             </Card>
@@ -393,15 +479,29 @@ export function AddCreditsModal({
         {/* Step: Card */}
         {step === 'card' && (
           <div className="space-y-4">
+            {/* Bandeiras aceitas */}
+            <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50 border">
+              <span className="text-sm text-muted-foreground">Bandeiras aceitas:</span>
+              <AllCardBrands activeBrand={detectCardBrand(cardNumber)} size="sm" />
+            </div>
+
             <div>
               <Label htmlFor="card-number">Número do Cartão</Label>
-              <Input
-                id="card-number"
-                placeholder="0000 0000 0000 0000"
-                value={cardNumber}
-                onChange={(e) => setCardNumber(formatCardNumber(e.target.value))}
-                maxLength={19}
-              />
+              <div className="relative">
+                <Input
+                  id="card-number"
+                  placeholder="0000 0000 0000 0000"
+                  value={cardNumber}
+                  onChange={(e) => setCardNumber(formatCardNumber(e.target.value))}
+                  maxLength={19}
+                  className="pr-14"
+                />
+                {detectCardBrand(cardNumber) && (
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                    <CardBrandIcon brand={detectCardBrand(cardNumber)} active size="sm" />
+                  </div>
+                )}
+              </div>
             </div>
 
             <div>
