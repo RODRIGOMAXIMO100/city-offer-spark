@@ -352,7 +352,12 @@ export default function OfferPage() {
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => navigate('/#ai-chat')}
+            onClick={() => {
+              const cityParts = offer.city.split(' - ');
+              const cityName = cityParts[0];
+              const stateName = cityParts[1] || '';
+              navigate(`/?city=${encodeURIComponent(cityName)}&state=${encodeURIComponent(stateName)}#ai-chat`);
+            }}
             className="text-muted-foreground hover:text-foreground"
           >
             <ArrowLeft className="mr-1 h-4 w-4" />
@@ -529,7 +534,12 @@ export default function OfferPage() {
           <Button
             variant="outline"
             className="w-full"
-            onClick={() => navigate('/#ai-chat')}
+            onClick={() => {
+              const cityParts = offer.city.split(' - ');
+              const cityName = cityParts[0];
+              const stateName = cityParts[1] || '';
+              navigate(`/?city=${encodeURIComponent(cityName)}&state=${encodeURIComponent(stateName)}#ai-chat`);
+            }}
           >
             <Search className="mr-2 h-4 w-4" />
             Ver Mais Ofertas em {offer.city.split(' - ')[0]}

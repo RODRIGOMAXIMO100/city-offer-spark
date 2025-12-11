@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,6 +12,8 @@ import { Send, Bot, Loader2, MapPin, Instagram, Sparkles, UserPlus, Share2, Copy
 import { BRAZIL_STATES, getCitiesByState } from '@/data/brazilLocations';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+
+const CHAT_STORAGE_KEY = 'clilin_chat_state';
 
 interface SuggestedOffer {
   id: string;
@@ -32,6 +34,10 @@ interface Message {
 
 export function PublicAIChat() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const location = useLocation();
+  const sectionRef = useRef<HTMLElement>(null);
+  
   const [selectedState, setSelectedState] = useState('');
   const [selectedCity, setSelectedCity] = useState('');
   const [chatStarted, setChatStarted] = useState(false);
@@ -48,6 +54,85 @@ export function PublicAIChat() {
 
   const availableCities = selectedState ? getCitiesByState(selectedState).sort() : [];
   const formattedCity = selectedCity && selectedState ? `${selectedCity} - ${selectedState}` : '';
+
+  // Restore state from localStorage or URL params on mount
+  useEffect(() => {
+    const urlCity = searchParams.get('city');
+    const urlState = searchParams.get('state');
+    
+    if (urlCity && urlState) {
+      // Priority: URL params (coming from offer page)
+      setSelectedState(urlState);
+      setSelectedCity(urlCity);
+      setChatStarted(true);
+      
+      // Restore messages from localStorage if available
+      try {
+        const savedData = localStorage.getItem(CHAT_STORAGE_KEY);
+        if (savedData) {
+          const parsed = JSON.parse(savedData);
+          if (parsed.city === urlCity && parsed.state === urlState && parsed.messages?.length > 0) {
+            setMessages(parsed.messages);
+          } else {
+            // Start fresh chat for this city
+            setMessages([{
+              id: '1',
+              role: 'assistant',
+              content: `Olá! 👋 Eu sou a Clilin AI. O que você está procurando hoje? Posso te ajudar a encontrar as melhores ofertas em ${urlCity}!`,
+            }]);
+          }
+        } else {
+          setMessages([{
+            id: '1',
+            role: 'assistant',
+            content: `Olá! 👋 Eu sou a Clilin AI. O que você está procurando hoje? Posso te ajudar a encontrar as melhores ofertas em ${urlCity}!`,
+          }]);
+        }
+      } catch {
+        setMessages([{
+          id: '1',
+          role: 'assistant',
+          content: `Olá! 👋 Eu sou a Clilin AI. O que você está procurando hoje? Posso te ajudar a encontrar as melhores ofertas em ${urlCity}!`,
+        }]);
+      }
+    } else {
+      // Try to restore from localStorage
+      try {
+        const savedData = localStorage.getItem(CHAT_STORAGE_KEY);
+        if (savedData) {
+          const parsed = JSON.parse(savedData);
+          if (parsed.state) setSelectedState(parsed.state);
+          if (parsed.city) setSelectedCity(parsed.city);
+          if (parsed.chatStarted) setChatStarted(parsed.chatStarted);
+          if (parsed.messages?.length > 0) setMessages(parsed.messages);
+        }
+      } catch {
+        console.log('No saved chat state');
+      }
+    }
+  }, [searchParams]);
+
+  // Save state to localStorage when it changes
+  useEffect(() => {
+    if (selectedState || selectedCity || chatStarted || messages.length > 0) {
+      const dataToSave = {
+        state: selectedState,
+        city: selectedCity,
+        chatStarted,
+        messages,
+      };
+      localStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(dataToSave));
+    }
+  }, [selectedState, selectedCity, chatStarted, messages]);
+
+  // Auto-scroll to section when coming from another page with #ai-chat
+  useEffect(() => {
+    if (location.hash === '#ai-chat' && sectionRef.current) {
+      setTimeout(() => {
+        sectionRef.current?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    }
+  }, [location.hash, chatStarted]);
 
   // Fetch cities that have active offers
   useEffect(() => {
@@ -115,6 +200,7 @@ export function PublicAIChat() {
     setShowNoOffersScreen(false);
     setMessages([]);
     setInputText('');
+    localStorage.removeItem(CHAT_STORAGE_KEY);
   };
 
   const shareOnWhatsApp = () => {
@@ -200,7 +286,7 @@ export function PublicAIChat() {
   // No Offers Screen - "Traga a Clilin para sua cidade"
   if (showNoOffersScreen) {
     return (
-      <section className="py-16 px-4">
+      <section id="ai-chat" ref={sectionRef} className="py-16 px-4">
         <div className="max-w-md mx-auto">
           <Card className="glass-card border-primary/20 shadow-2xl overflow-hidden">
             <CardContent className="p-8">
@@ -283,7 +369,7 @@ export function PublicAIChat() {
   // City Selection Screen
   if (!chatStarted) {
     return (
-      <section className="py-16 px-4">
+      <section id="ai-chat" ref={sectionRef} className="py-16 px-4">
         <div className="max-w-md mx-auto">
           <Card className="glass-card border-primary/20 shadow-2xl">
             <CardContent className="p-8">
@@ -385,7 +471,7 @@ export function PublicAIChat() {
 
   // Chat Interface
   return (
-    <section className="py-8 px-4">
+    <section id="ai-chat" ref={sectionRef} className="py-8 px-4">
       <div className="max-w-2xl mx-auto">
         <Card className="glass-card border-primary/20 shadow-2xl overflow-hidden">
           {/* Chat Header */}
