@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -17,13 +17,17 @@ import {
   MousePointerClick,
   Shield,
   TrendingUp,
-  AlertTriangle,
   Ban,
   Eye,
-  Trash2,
-  RefreshCw
+  RefreshCw,
+  BarChart3
 } from 'lucide-react';
-import { formatCreditsToReal, formatCredits, CONFIG } from '@/types/database';
+import { formatCredits, CONFIG } from '@/types/database';
+import AdminFilters from './admin/AdminFilters';
+import AdminPagination, { usePagination } from './admin/AdminPagination';
+import AdminAnalytics from './admin/AdminAnalytics';
+import UserDetailModal from './admin/UserDetailModal';
+import { exportUsers, exportOffers, exportTransactions } from './admin/AdminExport';
 
 interface Stats {
   totalCompanies: number;
@@ -44,6 +48,14 @@ interface UserProfile {
   balance: number;
   created_at: string;
   role?: string;
+  telefone?: string;
+  instagram_url?: string;
+  cpf?: string;
+  cnpj?: string;
+  razao_social?: string;
+  endereco_fiscal?: string;
+  pix_key?: string;
+  pix_tipo?: string;
 }
 
 interface OfferData {
@@ -92,6 +104,16 @@ export default function AdminDashboard() {
   const [rateLimits, setRateLimits] = useState<RateLimitData[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // Filter states
+  const [searchTerm, setSearchTerm] = useState('');
+  const [roleFilter, setRoleFilter] = useState('all');
+  const [cityFilter, setCityFilter] = useState('all');
+  const [statusFilter, setStatusFilter] = useState('all');
+
+  // Modal state
+  const [selectedUser, setSelectedUser] = useState<UserProfile | null>(null);
+  const [userModalOpen, setUserModalOpen] = useState(false);
+
   useEffect(() => {
     fetchAllData();
   }, []);
@@ -110,33 +132,15 @@ export default function AdminDashboard() {
 
   const fetchStats = async () => {
     try {
-      // Buscar contagem de usuários por role
-      const { data: roles } = await supabase
-        .from('user_roles')
-        .select('role');
-
+      const { data: roles } = await supabase.from('user_roles').select('role');
       const companies = roles?.filter(r => r.role === 'COMPANY').length || 0;
       const affiliates = roles?.filter(r => r.role === 'AFFILIATE').length || 0;
       const clients = roles?.filter(r => r.role === 'CLIENT').length || 0;
 
-      // Buscar ofertas
-      const { count: offersCount } = await supabase
-        .from('offers')
-        .select('*', { count: 'exact', head: true });
-
-      // Buscar cliques
-      const { count: clicksCount } = await supabase
-        .from('offer_clicks')
-        .select('*', { count: 'exact', head: true });
-
-      // Calcular ganhos da plataforma (2 créditos por clique)
+      const { count: offersCount } = await supabase.from('offers').select('*', { count: 'exact', head: true });
+      const { count: clicksCount } = await supabase.from('offer_clicks').select('*', { count: 'exact', head: true });
       const platformEarnings = (clicksCount || 0) * CONFIG.CPC_PLATFORM_PROFIT;
-
-      // IPs bloqueados
-      const { count: blockedCount } = await supabase
-        .from('click_rate_limits')
-        .select('*', { count: 'exact', head: true })
-        .eq('blocked', true);
+      const { count: blockedCount } = await supabase.from('click_rate_limits').select('*', { count: 'exact', head: true }).eq('blocked', true);
 
       setStats({
         totalCompanies: companies,
@@ -154,14 +158,8 @@ export default function AdminDashboard() {
 
   const fetchUsers = async () => {
     try {
-      const { data: profiles } = await supabase
-        .from('profiles')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      const { data: roles } = await supabase
-        .from('user_roles')
-        .select('user_id, role');
+      const { data: profiles } = await supabase.from('profiles').select('*').order('created_at', { ascending: false });
+      const { data: roles } = await supabase.from('user_roles').select('user_id, role');
 
       const usersWithRoles = profiles?.map(p => ({
         ...p,
@@ -176,19 +174,8 @@ export default function AdminDashboard() {
 
   const fetchOffers = async () => {
     try {
-      const { data } = await supabase
-        .from('offers')
-        .select(`
-          *,
-          profiles:company_id (name)
-        `)
-        .order('created_at', { ascending: false });
-
-      const offersData = data?.map(o => ({
-        ...o,
-        company_name: o.profiles?.name || 'N/A'
-      })) || [];
-
+      const { data } = await supabase.from('offers').select(`*, profiles:company_id (name)`).order('created_at', { ascending: false });
+      const offersData = data?.map(o => ({ ...o, company_name: o.profiles?.name || 'N/A' })) || [];
       setOffers(offersData);
     } catch (error) {
       console.error('Error fetching offers:', error);
@@ -197,20 +184,8 @@ export default function AdminDashboard() {
 
   const fetchTransactions = async () => {
     try {
-      const { data } = await supabase
-        .from('transactions')
-        .select(`
-          *,
-          profiles:user_id (name)
-        `)
-        .order('created_at', { ascending: false })
-        .limit(100);
-
-      const transactionsData = data?.map(t => ({
-        ...t,
-        user_name: t.profiles?.name || 'N/A'
-      })) || [];
-
+      const { data } = await supabase.from('transactions').select(`*, profiles:user_id (name)`).order('created_at', { ascending: false }).limit(500);
+      const transactionsData = data?.map(t => ({ ...t, user_name: t.profiles?.name || 'N/A' })) || [];
       setTransactions(transactionsData);
     } catch (error) {
       console.error('Error fetching transactions:', error);
@@ -219,25 +194,59 @@ export default function AdminDashboard() {
 
   const fetchRateLimits = async () => {
     try {
-      const { data } = await supabase
-        .from('click_rate_limits')
-        .select('*')
-        .order('last_click_at', { ascending: false })
-        .limit(100);
-
+      const { data } = await supabase.from('click_rate_limits').select('*').order('last_click_at', { ascending: false }).limit(100);
       setRateLimits(data || []);
     } catch (error) {
       console.error('Error fetching rate limits:', error);
     }
   };
 
+  // Filtered data
+  const filteredUsers = useMemo(() => {
+    return users.filter(user => {
+      const matchesSearch = !searchTerm || 
+        user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.email?.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesRole = roleFilter === 'all' || user.role === roleFilter;
+      const matchesCity = cityFilter === 'all' || user.city === cityFilter;
+      return matchesSearch && matchesRole && matchesCity;
+    });
+  }, [users, searchTerm, roleFilter, cityFilter]);
+
+  const filteredOffers = useMemo(() => {
+    return offers.filter(offer => {
+      const matchesSearch = !searchTerm || 
+        offer.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        offer.company_name?.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesCity = cityFilter === 'all' || offer.city === cityFilter;
+      const matchesStatus = statusFilter === 'all' || 
+        (statusFilter === 'active' && offer.active) || 
+        (statusFilter === 'inactive' && !offer.active);
+      return matchesSearch && matchesCity && matchesStatus;
+    });
+  }, [offers, searchTerm, cityFilter, statusFilter]);
+
+  const filteredTransactions = useMemo(() => {
+    return transactions.filter(tx => {
+      const matchesSearch = !searchTerm || 
+        tx.user_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        tx.description?.toLowerCase().includes(searchTerm.toLowerCase());
+      return matchesSearch;
+    });
+  }, [transactions, searchTerm]);
+
+  // Pagination
+  const usersPagination = usePagination(filteredUsers, 15);
+  const offersPagination = usePagination(filteredOffers, 15);
+  const transactionsPagination = usePagination(filteredTransactions, 20);
+  const rateLimitsPagination = usePagination(rateLimits, 15);
+
+  // Get unique cities
+  const cities = useMemo(() => [...new Set(users.map(u => u.city))].sort(), [users]);
+
   const handleDeactivateOffer = async (offerId: string) => {
     try {
-      const { error } = await supabase
-        .from('offers')
-        .update({ active: false })
-        .eq('id', offerId);
-
+      const { error } = await supabase.from('offers').update({ active: false }).eq('id', offerId);
       if (error) throw error;
       toast.success('Oferta desativada');
       fetchOffers();
@@ -248,11 +257,7 @@ export default function AdminDashboard() {
 
   const handleBlockIP = async (id: string, blocked: boolean) => {
     try {
-      const { error } = await supabase
-        .from('click_rate_limits')
-        .update({ blocked: !blocked })
-        .eq('id', id);
-
+      const { error } = await supabase.from('click_rate_limits').update({ blocked: !blocked }).eq('id', id);
       if (error) throw error;
       toast.success(blocked ? 'IP desbloqueado' : 'IP bloqueado');
       fetchRateLimits();
@@ -260,6 +265,11 @@ export default function AdminDashboard() {
     } catch (error) {
       toast.error('Erro ao atualizar bloqueio');
     }
+  };
+
+  const handleViewUser = (user: UserProfile) => {
+    setSelectedUser(user);
+    setUserModalOpen(true);
   };
 
   const getRoleBadge = (role: string) => {
@@ -281,14 +291,21 @@ export default function AdminDashboard() {
       'WITHDRAW': { color: 'bg-orange-500', label: 'Saque' },
       'PLATFORM_FEE': { color: 'bg-purple-500', label: 'Taxa Plataforma' }
     };
-    const c = config[type] || { color: 'bg-gray-500', label: type };
+    const c = config[type] || { color: 'bg-muted', label: type };
     return <Badge className={`${c.color} text-white`}>{c.label}</Badge>;
+  };
+
+  const resetFilters = () => {
+    setSearchTerm('');
+    setRoleFilter('all');
+    setCityFilter('all');
+    setStatusFilter('all');
   };
 
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b border-border bg-card">
+      <header className="border-b border-border bg-card sticky top-0 z-10">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Shield className="h-8 w-8 text-destructive" />
@@ -313,49 +330,49 @@ export default function AdminDashboard() {
       <main className="container mx-auto px-4 py-6">
         {/* Stats Cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4 mb-6">
-          <Card>
+          <Card className="hover:shadow-lg transition-shadow">
             <CardContent className="p-4 text-center">
               <Building2 className="h-6 w-6 mx-auto mb-2 text-company" />
               <p className="text-2xl font-bold">{stats.totalCompanies}</p>
               <p className="text-xs text-muted-foreground">Empresas</p>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="hover:shadow-lg transition-shadow">
             <CardContent className="p-4 text-center">
               <UserCheck className="h-6 w-6 mx-auto mb-2 text-affiliate" />
               <p className="text-2xl font-bold">{stats.totalAffiliates}</p>
               <p className="text-xs text-muted-foreground">Afiliados</p>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="hover:shadow-lg transition-shadow">
             <CardContent className="p-4 text-center">
               <Users className="h-6 w-6 mx-auto mb-2 text-client" />
               <p className="text-2xl font-bold">{stats.totalClients}</p>
               <p className="text-xs text-muted-foreground">Clientes</p>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="hover:shadow-lg transition-shadow">
             <CardContent className="p-4 text-center">
               <Megaphone className="h-6 w-6 mx-auto mb-2 text-primary" />
               <p className="text-2xl font-bold">{stats.totalOffers}</p>
               <p className="text-xs text-muted-foreground">Ofertas</p>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="hover:shadow-lg transition-shadow">
             <CardContent className="p-4 text-center">
               <MousePointerClick className="h-6 w-6 mx-auto mb-2 text-accent-foreground" />
               <p className="text-2xl font-bold">{stats.totalClicks}</p>
               <p className="text-xs text-muted-foreground">Cliques</p>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="hover:shadow-lg transition-shadow">
             <CardContent className="p-4 text-center">
               <TrendingUp className="h-6 w-6 mx-auto mb-2 text-green-500" />
               <p className="text-2xl font-bold">{formatCredits(stats.platformEarnings)}</p>
               <p className="text-xs text-muted-foreground">Ganhos</p>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="hover:shadow-lg transition-shadow">
             <CardContent className="p-4 text-center">
               <Ban className="h-6 w-6 mx-auto mb-2 text-destructive" />
               <p className="text-2xl font-bold">{stats.blockedIPs}</p>
@@ -365,8 +382,8 @@ export default function AdminDashboard() {
         </div>
 
         {/* Tabs */}
-        <Tabs defaultValue="users" className="space-y-4">
-          <TabsList className="grid w-full grid-cols-4">
+        <Tabs defaultValue="users" className="space-y-4" onValueChange={resetFilters}>
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="users">
               <Users className="h-4 w-4 mr-2" />
               Usuários
@@ -383,15 +400,34 @@ export default function AdminDashboard() {
               <Shield className="h-4 w-4 mr-2" />
               Segurança
             </TabsTrigger>
+            <TabsTrigger value="analytics">
+              <BarChart3 className="h-4 w-4 mr-2" />
+              Analytics
+            </TabsTrigger>
           </TabsList>
 
           {/* Users Tab */}
           <TabsContent value="users">
             <Card>
               <CardHeader>
-                <CardTitle>Todos os Usuários ({users.length})</CardTitle>
+                <CardTitle>Usuários ({filteredUsers.length})</CardTitle>
               </CardHeader>
               <CardContent>
+                <AdminFilters
+                  searchTerm={searchTerm}
+                  onSearchChange={setSearchTerm}
+                  roleFilter={roleFilter}
+                  onRoleFilterChange={setRoleFilter}
+                  cityFilter={cityFilter}
+                  onCityFilterChange={setCityFilter}
+                  statusFilter={statusFilter}
+                  onStatusFilterChange={setStatusFilter}
+                  cities={cities}
+                  onExport={() => exportUsers(filteredUsers)}
+                  showRoleFilter={true}
+                  showStatusFilter={false}
+                  placeholder="Buscar por nome ou email..."
+                />
                 <Table>
                   <TableHeader>
                     <TableRow>
@@ -401,10 +437,11 @@ export default function AdminDashboard() {
                       <TableHead>Cidade</TableHead>
                       <TableHead>Saldo</TableHead>
                       <TableHead>Cadastro</TableHead>
+                      <TableHead>Ações</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {users.map((user) => (
+                    {usersPagination.paginatedItems.map((user) => (
                       <TableRow key={user.id}>
                         <TableCell className="font-medium">{user.name}</TableCell>
                         <TableCell className="text-muted-foreground">{user.email || '-'}</TableCell>
@@ -412,10 +449,22 @@ export default function AdminDashboard() {
                         <TableCell>{user.city}</TableCell>
                         <TableCell>{formatCredits(user.balance)}</TableCell>
                         <TableCell>{new Date(user.created_at).toLocaleDateString('pt-BR')}</TableCell>
+                        <TableCell>
+                          <Button variant="ghost" size="sm" onClick={() => handleViewUser(user)}>
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                        </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
                 </Table>
+                <AdminPagination
+                  currentPage={usersPagination.currentPage}
+                  totalPages={usersPagination.totalPages}
+                  totalItems={usersPagination.totalItems}
+                  itemsPerPage={usersPagination.itemsPerPage}
+                  onPageChange={usersPagination.setCurrentPage}
+                />
               </CardContent>
             </Card>
           </TabsContent>
@@ -424,9 +473,24 @@ export default function AdminDashboard() {
           <TabsContent value="offers">
             <Card>
               <CardHeader>
-                <CardTitle>Todas as Ofertas ({offers.length})</CardTitle>
+                <CardTitle>Ofertas ({filteredOffers.length})</CardTitle>
               </CardHeader>
               <CardContent>
+                <AdminFilters
+                  searchTerm={searchTerm}
+                  onSearchChange={setSearchTerm}
+                  roleFilter={roleFilter}
+                  onRoleFilterChange={setRoleFilter}
+                  cityFilter={cityFilter}
+                  onCityFilterChange={setCityFilter}
+                  statusFilter={statusFilter}
+                  onStatusFilterChange={setStatusFilter}
+                  cities={cities}
+                  onExport={() => exportOffers(filteredOffers)}
+                  showRoleFilter={false}
+                  showStatusFilter={true}
+                  placeholder="Buscar por título ou empresa..."
+                />
                 <Table>
                   <TableHeader>
                     <TableRow>
@@ -441,7 +505,7 @@ export default function AdminDashboard() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {offers.map((offer) => (
+                    {offersPagination.paginatedItems.map((offer) => (
                       <TableRow key={offer.id}>
                         <TableCell className="font-medium max-w-[200px] truncate">{offer.title}</TableCell>
                         <TableCell>{offer.company_name}</TableCell>
@@ -456,11 +520,7 @@ export default function AdminDashboard() {
                         <TableCell>{new Date(offer.expires_at).toLocaleDateString('pt-BR')}</TableCell>
                         <TableCell>
                           {offer.active && (
-                            <Button 
-                              variant="ghost" 
-                              size="sm"
-                              onClick={() => handleDeactivateOffer(offer.id)}
-                            >
+                            <Button variant="ghost" size="sm" onClick={() => handleDeactivateOffer(offer.id)}>
                               <Ban className="h-4 w-4" />
                             </Button>
                           )}
@@ -469,6 +529,13 @@ export default function AdminDashboard() {
                     ))}
                   </TableBody>
                 </Table>
+                <AdminPagination
+                  currentPage={offersPagination.currentPage}
+                  totalPages={offersPagination.totalPages}
+                  totalItems={offersPagination.totalItems}
+                  itemsPerPage={offersPagination.itemsPerPage}
+                  onPageChange={offersPagination.setCurrentPage}
+                />
               </CardContent>
             </Card>
           </TabsContent>
@@ -477,9 +544,24 @@ export default function AdminDashboard() {
           <TabsContent value="transactions">
             <Card>
               <CardHeader>
-                <CardTitle>Últimas Transações</CardTitle>
+                <CardTitle>Transações ({filteredTransactions.length})</CardTitle>
               </CardHeader>
               <CardContent>
+                <AdminFilters
+                  searchTerm={searchTerm}
+                  onSearchChange={setSearchTerm}
+                  roleFilter={roleFilter}
+                  onRoleFilterChange={setRoleFilter}
+                  cityFilter={cityFilter}
+                  onCityFilterChange={setCityFilter}
+                  statusFilter={statusFilter}
+                  onStatusFilterChange={setStatusFilter}
+                  cities={[]}
+                  onExport={() => exportTransactions(filteredTransactions)}
+                  showRoleFilter={false}
+                  showStatusFilter={false}
+                  placeholder="Buscar por usuário ou descrição..."
+                />
                 <Table>
                   <TableHeader>
                     <TableRow>
@@ -491,7 +573,7 @@ export default function AdminDashboard() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {transactions.map((tx) => (
+                    {transactionsPagination.paginatedItems.map((tx) => (
                       <TableRow key={tx.id}>
                         <TableCell className="font-medium">{tx.user_name}</TableCell>
                         <TableCell>{getTransactionBadge(tx.type)}</TableCell>
@@ -502,6 +584,13 @@ export default function AdminDashboard() {
                     ))}
                   </TableBody>
                 </Table>
+                <AdminPagination
+                  currentPage={transactionsPagination.currentPage}
+                  totalPages={transactionsPagination.totalPages}
+                  totalItems={transactionsPagination.totalItems}
+                  itemsPerPage={transactionsPagination.itemsPerPage}
+                  onPageChange={transactionsPagination.setCurrentPage}
+                />
               </CardContent>
             </Card>
           </TabsContent>
@@ -510,10 +599,7 @@ export default function AdminDashboard() {
           <TabsContent value="security">
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <AlertTriangle className="h-5 w-5 text-yellow-500" />
-                  Rate Limits & Anti-Fraude
-                </CardTitle>
+                <CardTitle>Rate Limits & IPs Suspeitos</CardTitle>
               </CardHeader>
               <CardContent>
                 <Table>
@@ -521,49 +607,65 @@ export default function AdminDashboard() {
                     <TableRow>
                       <TableHead>IP</TableHead>
                       <TableHead>Cliques</TableHead>
-                      <TableHead>Status</TableHead>
                       <TableHead>Primeiro Clique</TableHead>
                       <TableHead>Último Clique</TableHead>
+                      <TableHead>Status</TableHead>
                       <TableHead>Ações</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {rateLimits.map((rl) => (
-                      <TableRow key={rl.id} className={rl.blocked ? 'bg-destructive/10' : ''}>
-                        <TableCell className="font-mono">{rl.ip_address}</TableCell>
+                    {rateLimitsPagination.paginatedItems.map((rl) => (
+                      <TableRow key={rl.id}>
+                        <TableCell className="font-mono text-sm">{rl.ip_address}</TableCell>
                         <TableCell>{rl.click_count}</TableCell>
+                        <TableCell>{new Date(rl.first_click_at).toLocaleString('pt-BR')}</TableCell>
+                        <TableCell>{new Date(rl.last_click_at).toLocaleString('pt-BR')}</TableCell>
                         <TableCell>
                           <Badge variant={rl.blocked ? 'destructive' : 'outline'}>
                             {rl.blocked ? 'Bloqueado' : 'Normal'}
                           </Badge>
                         </TableCell>
-                        <TableCell>{new Date(rl.first_click_at || '').toLocaleString('pt-BR')}</TableCell>
-                        <TableCell>{new Date(rl.last_click_at || '').toLocaleString('pt-BR')}</TableCell>
                         <TableCell>
-                          <Button 
-                            variant={rl.blocked ? 'outline' : 'destructive'} 
+                          <Button
+                            variant={rl.blocked ? 'outline' : 'destructive'}
                             size="sm"
-                            onClick={() => handleBlockIP(rl.id, rl.blocked || false)}
+                            onClick={() => handleBlockIP(rl.id, rl.blocked)}
                           >
                             {rl.blocked ? 'Desbloquear' : 'Bloquear'}
                           </Button>
                         </TableCell>
                       </TableRow>
                     ))}
-                    {rateLimits.length === 0 && (
-                      <TableRow>
-                        <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
-                          Nenhum registro de rate limit encontrado
-                        </TableCell>
-                      </TableRow>
-                    )}
                   </TableBody>
                 </Table>
+                <AdminPagination
+                  currentPage={rateLimitsPagination.currentPage}
+                  totalPages={rateLimitsPagination.totalPages}
+                  totalItems={rateLimitsPagination.totalItems}
+                  itemsPerPage={rateLimitsPagination.itemsPerPage}
+                  onPageChange={rateLimitsPagination.setCurrentPage}
+                />
               </CardContent>
             </Card>
           </TabsContent>
+
+          {/* Analytics Tab */}
+          <TabsContent value="analytics">
+            <AdminAnalytics />
+          </TabsContent>
         </Tabs>
       </main>
+
+      {/* User Detail Modal */}
+      <UserDetailModal
+        user={selectedUser}
+        open={userModalOpen}
+        onOpenChange={setUserModalOpen}
+        onUserUpdated={() => {
+          fetchUsers();
+          fetchStats();
+        }}
+      />
     </div>
   );
 }
