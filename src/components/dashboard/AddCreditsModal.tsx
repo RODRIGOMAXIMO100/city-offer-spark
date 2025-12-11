@@ -540,13 +540,14 @@ export function AddCreditsModal({
             <div>
               <Label>Parcelas</Label>
               <div className="grid grid-cols-4 gap-2 mt-2">
-                {[1, 2, 3, 6, 12].map((n) => (
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((n) => (
                   <Button
                     key={n}
                     type="button"
                     variant={installments === n ? 'default' : 'outline'}
                     size="sm"
                     onClick={() => setInstallments(n)}
+                    className="text-xs"
                   >
                     {n}x
                   </Button>
