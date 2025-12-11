@@ -50,7 +50,7 @@ export default function AdminWithdrawals() {
   const [affiliateStats, setAffiliateStats] = useState<AffiliateStats | null>(null);
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [rejectionReason, setRejectionReason] = useState('');
-  const [filter, setFilter] = useState<'ALL' | 'PENDING' | 'APPROVED' | 'REJECTED'>('PENDING');
+  const [filter, setFilter] = useState<'ALL' | 'PENDING' | 'APPROVED' | 'PROCESSING' | 'COMPLETED' | 'REJECTED'>('PENDING');
 
   const fetchWithdrawals = async () => {
     setLoading(true);
@@ -282,6 +282,8 @@ export default function AdminWithdrawals() {
         return <Badge variant="outline" className="text-yellow-500 border-yellow-500"><Clock className="h-3 w-3 mr-1" />Pendente</Badge>;
       case 'APPROVED':
         return <Badge variant="outline" className="text-blue-500 border-blue-500"><CheckCircle className="h-3 w-3 mr-1" />Aprovado</Badge>;
+      case 'PROCESSING':
+        return <Badge variant="outline" className="text-purple-500 border-purple-500"><Loader2 className="h-3 w-3 mr-1 animate-spin" />Processando</Badge>;
       case 'REJECTED':
         return <Badge variant="destructive"><XCircle className="h-3 w-3 mr-1" />Rejeitado</Badge>;
       case 'COMPLETED':
@@ -319,14 +321,14 @@ export default function AdminWithdrawals() {
 
       {/* Filters */}
       <div className="flex gap-2 flex-wrap">
-        {(['ALL', 'PENDING', 'APPROVED', 'REJECTED'] as const).map((f) => (
+        {(['ALL', 'PENDING', 'APPROVED', 'PROCESSING', 'COMPLETED', 'REJECTED'] as const).map((f) => (
           <Button
             key={f}
             variant={filter === f ? 'default' : 'outline'}
             size="sm"
             onClick={() => setFilter(f)}
           >
-            {f === 'ALL' ? 'Todos' : f === 'PENDING' ? 'Pendentes' : f === 'APPROVED' ? 'Aprovados' : 'Rejeitados'}
+            {f === 'ALL' ? 'Todos' : f === 'PENDING' ? 'Pendentes' : f === 'APPROVED' ? 'Aprovados' : f === 'PROCESSING' ? 'Processando' : f === 'COMPLETED' ? 'Concluídos' : 'Rejeitados'}
           </Button>
         ))}
       </div>
@@ -420,14 +422,25 @@ export default function AdminWithdrawals() {
                             </>
                           )}
                           {w.status === 'APPROVED' && (
-                            <Button
-                              variant="default"
-                              size="sm"
-                              onClick={() => handleMarkCompleted(w)}
-                              disabled={processing === w.id}
-                            >
-                              {processing === w.id ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Concluir'}
-                            </Button>
+                            <>
+                              <Button
+                                variant="default"
+                                size="sm"
+                                onClick={() => handleProcessPix(w)}
+                                disabled={processing === w.id}
+                                className="bg-purple-500 hover:bg-purple-600"
+                              >
+                                {processing === w.id ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Pagar PIX'}
+                              </Button>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => handleMarkCompleted(w)}
+                                disabled={processing === w.id}
+                              >
+                                Manual
+                              </Button>
+                            </>
                           )}
                         </div>
                       </TableCell>
