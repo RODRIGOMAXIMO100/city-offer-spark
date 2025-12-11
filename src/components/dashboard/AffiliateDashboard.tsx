@@ -281,8 +281,7 @@ export default function AffiliateDashboard() {
               {withdrawing ? (
                 <Loader2 className="h-4 w-4 animate-spin sm:mr-2" />
               ) : null}
-              <span className="hidden sm:inline">Sacar PIX</span>
-              <span className="sm:hidden">PIX</span>
+              Sacar
             </Button>
           </div>
 
