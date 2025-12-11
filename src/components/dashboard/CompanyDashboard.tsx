@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useOffers } from '@/hooks/useOffers';
-import { formatCredits, CONFIG } from '@/types/database';
+import { formatCredits } from '@/types/database';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { Coins, PlusCircle, LogOut, Eye, MousePointer, TrendingUp, Loader2, Instagram, Check, Clock, Trash2, Info } from 'lucide-react';
+import { Coins, PlusCircle, LogOut, Eye, MousePointer, TrendingUp, Loader2, Instagram, Check, Clock, Trash2, Info, Star } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import CreateOfferModal from './CreateOfferModal';
 import PerformanceChart from './PerformanceChart';
@@ -24,6 +24,12 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 export default function CompanyDashboard() {
   const { profile, signOut, refreshProfile } = useAuth();
@@ -62,7 +68,7 @@ export default function CompanyDashboard() {
     setInstagramUrl(profile?.instagram_url || '');
   }, [profile?.instagram_url]);
 
-  const totalSpent = offers.reduce((acc, o) => acc + (o.clicks_count * CONFIG.CPC_COST_COMPANY), 0);
+  // Calculate total spent from actual offer data (dynamic CPC)
   const totalClicks = offers.reduce((acc, o) => acc + o.clicks_count, 0);
   const totalViews = offers.reduce((acc, o) => acc + o.views_count, 0);
 
@@ -76,15 +82,12 @@ export default function CompanyDashboard() {
     const trimmed = input.trim();
     if (!trimmed) return '';
     
-    // If starts with @, convert to full URL
     if (trimmed.startsWith('@')) {
       return `https://instagram.com/${trimmed.slice(1)}`;
     }
-    // If it's just a username without @
     if (!trimmed.includes('instagram.com') && !trimmed.startsWith('http')) {
       return `https://instagram.com/${trimmed}`;
     }
-    // If it's already a URL, ensure https
     if (trimmed.includes('instagram.com') && !trimmed.startsWith('http')) {
       return `https://${trimmed}`;
     }
@@ -129,6 +132,18 @@ export default function CompanyDashboard() {
     if (days <= 3) return { text: `${days}d restantes`, color: 'text-orange-500' };
     if (days <= 7) return { text: `${days}d restantes`, color: 'text-yellow-500' };
     return { text: `${days}d restantes`, color: 'text-muted-foreground' };
+  };
+
+  const getScoreColor = (score: number) => {
+    if (score >= 7) return 'text-green-500';
+    if (score >= 5) return 'text-yellow-500';
+    return 'text-orange-500';
+  };
+
+  const getScoreTip = (score: number) => {
+    if (score >= 7) return 'Excelente! Você paga menos por clique.';
+    if (score >= 5) return 'Bom! Melhore descrição e desconto para pagar menos.';
+    return 'Adicione descrição, Instagram e aumente o desconto!';
   };
 
   return (
@@ -222,8 +237,10 @@ export default function CompanyDashboard() {
           <Card>
             <CardContent className="p-4 text-center">
               <TrendingUp className="h-5 w-5 mx-auto mb-1 text-muted-foreground" />
-              <p className="text-2xl font-bold">{totalSpent}</p>
-              <p className="text-xs text-muted-foreground">C$ Gastos</p>
+              <p className="text-2xl font-bold">
+                {totalViews > 0 ? ((totalClicks / totalViews) * 100).toFixed(1) : 0}%
+              </p>
+              <p className="text-xs text-muted-foreground">CTR</p>
             </CardContent>
           </Card>
         </div>
@@ -239,11 +256,12 @@ export default function CompanyDashboard() {
                 <Info className="h-5 w-5 text-company" />
               </div>
               <div className="space-y-2">
-                <p className="font-bold text-foreground">Como funciona a cobrança?</p>
+                <p className="font-bold text-foreground">Sistema de Leilão Inteligente</p>
                 <ul className="text-sm text-muted-foreground space-y-1">
-                  <li>• <strong className="text-foreground">R$ 0,50 por clique</strong> - você só paga quando há interesse real</li>
-                  <li>• <strong className="text-foreground">Visualizações são gratuitas</strong> - sem custo extra</li>
-                  <li>• <strong className="text-foreground">Cada R$ 10 = 100 créditos</strong> (20 cliques garantidos)</li>
+                  <li>• <strong className="text-foreground">CPC dinâmico:</strong> pague entre 4-15 C$ por clique</li>
+                  <li>• <strong className="text-foreground">Offer Score alto = paga menos</strong></li>
+                  <li>• <strong className="text-foreground">Melhore:</strong> descrição, desconto, Instagram</li>
+                  <li>• <strong className="text-foreground">Cada R$ 10 = 100 créditos</strong></li>
                 </ul>
               </div>
             </div>
@@ -280,79 +298,105 @@ export default function CompanyDashboard() {
             </Card>
           ) : (
             <div className="space-y-3">
-              {offers.map((offer) => {
-                const expInfo = getExpirationInfo(offer.expires_at);
-                return (
-                  <Card key={offer.id} className={`${!offer.active ? 'opacity-60' : ''}`}>
-                    <CardContent className="p-4">
-                      <div className="flex justify-between items-start mb-2">
-                        <h3 className="font-bold text-foreground flex-1">{offer.title}</h3>
-                        <div className="flex items-center gap-2">
-                          <div className={`flex items-center gap-1 text-xs ${expInfo.color}`}>
-                            <Clock className="h-3 w-3" />
-                            {expInfo.text}
+              <TooltipProvider>
+                {offers.map((offer) => {
+                  const expInfo = getExpirationInfo(offer.expires_at);
+                  const offerScore = (offer as any).current_offer_score || 5;
+                  const maxBid = (offer as any).max_cpc_bid || 5;
+                  
+                  return (
+                    <Card key={offer.id} className={`${!offer.active ? 'opacity-60' : ''}`}>
+                      <CardContent className="p-4">
+                        <div className="flex justify-between items-start mb-2">
+                          <div className="flex-1">
+                            <h3 className="font-bold text-foreground">{offer.title}</h3>
+                            <div className="flex items-center gap-2 mt-1">
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <div className={`flex items-center gap-1 text-sm ${getScoreColor(offerScore)}`}>
+                                    <Star className="h-4 w-4 fill-current" />
+                                    <span className="font-bold">{offerScore.toFixed(1)}</span>
+                                  </div>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p className="font-medium">Offer Score</p>
+                                  <p className="text-xs">{getScoreTip(offerScore)}</p>
+                                </TooltipContent>
+                              </Tooltip>
+                              <span className="text-xs text-muted-foreground">
+                                Lance: {maxBid} C$
+                              </span>
+                            </div>
                           </div>
-                          <Badge variant={offer.active ? 'default' : 'secondary'}>
-                            {offer.active ? 'Ativa' : 'Pausada'}
-                          </Badge>
-                          <AlertDialog>
-                            <AlertDialogTrigger asChild>
-                              <Button 
-                                variant="ghost" 
-                                size="icon" 
-                                className="h-7 w-7 text-destructive hover:bg-destructive/10"
-                                disabled={deletingId === offer.id}
-                              >
-                                {deletingId === offer.id ? (
-                                  <Loader2 className="h-4 w-4 animate-spin" />
-                                ) : (
-                                  <Trash2 className="h-4 w-4" />
-                                )}
-                              </Button>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                              <AlertDialogHeader>
-                                <AlertDialogTitle>Deletar oferta?</AlertDialogTitle>
-                                <AlertDialogDescription>
-                                  Esta ação não pode ser desfeita. A oferta "{offer.title}" será permanentemente removida.
-                                </AlertDialogDescription>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                                <AlertDialogAction 
-                                  onClick={() => handleDeleteOffer(offer.id)}
-                                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                          <div className="flex items-center gap-2">
+                            <div className={`flex items-center gap-1 text-xs ${expInfo.color}`}>
+                              <Clock className="h-3 w-3" />
+                              {expInfo.text}
+                            </div>
+                            <Badge variant={offer.active ? 'default' : 'secondary'}>
+                              {offer.active ? 'Ativa' : 'Pausada'}
+                            </Badge>
+                            <AlertDialog>
+                              <AlertDialogTrigger asChild>
+                                <Button 
+                                  variant="ghost" 
+                                  size="icon" 
+                                  className="h-7 w-7 text-destructive hover:bg-destructive/10"
+                                  disabled={deletingId === offer.id}
                                 >
-                                  Deletar
-                                </AlertDialogAction>
-                              </AlertDialogFooter>
-                            </AlertDialogContent>
-                          </AlertDialog>
+                                  {deletingId === offer.id ? (
+                                    <Loader2 className="h-4 w-4 animate-spin" />
+                                  ) : (
+                                    <Trash2 className="h-4 w-4" />
+                                  )}
+                                </Button>
+                              </AlertDialogTrigger>
+                              <AlertDialogContent>
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle>Deletar oferta?</AlertDialogTitle>
+                                  <AlertDialogDescription>
+                                    Esta ação não pode ser desfeita. A oferta "{offer.title}" será permanentemente removida.
+                                  </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                                  <AlertDialogAction 
+                                    onClick={() => handleDeleteOffer(offer.id)}
+                                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                  >
+                                    Deletar
+                                  </AlertDialogAction>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
+                          </div>
                         </div>
-                      </div>
-                      <p className="text-sm text-muted-foreground mb-3">
-                        {offer.tags?.slice(0, 4).join(', ')}
-                      </p>
-                      <div className="grid grid-cols-3 gap-2 text-center text-sm">
-                        <div className="bg-muted rounded-lg p-2">
-                          <p className="font-bold">{offer.views_count}</p>
-                          <p className="text-xs text-muted-foreground">Views</p>
+                        <p className="text-sm text-muted-foreground mb-3">
+                          {offer.tags?.slice(0, 4).join(', ')}
+                        </p>
+                        <div className="grid grid-cols-3 gap-2 text-center text-sm">
+                          <div className="bg-muted rounded-lg p-2">
+                            <p className="font-bold">{offer.views_count}</p>
+                            <p className="text-xs text-muted-foreground">Views</p>
+                          </div>
+                          <div className="bg-muted rounded-lg p-2">
+                            <p className="font-bold">{offer.clicks_count}</p>
+                            <p className="text-xs text-muted-foreground">Cliques</p>
+                          </div>
+                          <div className="bg-muted rounded-lg p-2">
+                            <p className="font-bold">
+                              {offer.views_count > 0 
+                                ? ((offer.clicks_count / offer.views_count) * 100).toFixed(1) 
+                                : 0}%
+                            </p>
+                            <p className="text-xs text-muted-foreground">CTR</p>
+                          </div>
                         </div>
-                        <div className="bg-muted rounded-lg p-2">
-                          <p className="font-bold">{offer.clicks_count}</p>
-                          <p className="text-xs text-muted-foreground">Cliques</p>
-                        </div>
-                        <div className="bg-muted rounded-lg p-2">
-                          <p className="font-bold text-destructive">
-                            -{offer.clicks_count * CONFIG.CPC_COST_COMPANY}
-                          </p>
-                          <p className="text-xs text-muted-foreground">C$ Gastos</p>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                );
-              })}
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </TooltipProvider>
             </div>
           )}
         </div>

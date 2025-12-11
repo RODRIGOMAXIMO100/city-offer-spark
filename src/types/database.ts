@@ -50,6 +50,9 @@ export interface Offer {
   created_at: string;
   updated_at: string;
   deleted_at?: string | null;
+  // Dynamic pricing fields
+  max_cpc_bid: number;
+  current_offer_score: number;
   // Joined fields
   profiles?: {
     name: string;
@@ -80,9 +83,13 @@ export interface OfferClick {
 // Business constants
 export const CONFIG = {
   CREDIT_VALUE_BRL: 0.10,
-  CPC_COST_COMPANY: 5,
-  CPC_PAYOUT_AFFILIATE: 3,
-  CPC_PLATFORM_PROFIT: 2,
+  MIN_CPC: 4,
+  MAX_CPC: 15,
+  DEFAULT_CPC: 5,
+  AFFILIATE_SHARE: 0.60,
+  // Legacy: for backward compatibility in admin analytics
+  CPC_PLATFORM_PROFIT: 2, // Average estimate
+  CPC_PAYOUT_AFFILIATE: 3, // Average estimate
   MIN_WITHDRAW_BRL: 30.00,
   TIME_TO_INTERACTIVE: 1500,
 } as const;
