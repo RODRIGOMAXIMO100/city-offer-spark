@@ -5,7 +5,7 @@ import { Offer, CONFIG } from '@/types/database';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, Clock, MessageCircle, Globe, FileText, MapPin, Sparkles, Instagram } from 'lucide-react';
+import { Loader2, Clock, MessageCircle, Globe, FileText, MapPin, Sparkles, Instagram, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import logo from '@/assets/logo.png';
 
@@ -105,6 +105,7 @@ export default function OfferPage() {
   const [timeLeft, setTimeLeft] = useState<string>('');
   const [sessionToken, setSessionToken] = useState<string | null>(null);
   const [fingerprint, setFingerprint] = useState<object | null>(null);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const sessionStarted = useRef(false);
 
@@ -332,23 +333,82 @@ export default function OfferPage() {
 
   const discount = Math.round((1 - offer.price_new / offer.price_old) * 100);
   const urgency = getExpirationUrgency();
+  const offerImages = (offer as any).images || [];
+  const hasImages = offerImages.length > 0;
+
+  const nextImage = () => {
+    setCurrentImageIndex((prev) => (prev + 1) % offerImages.length);
+  };
+
+  const prevImage = () => {
+    setCurrentImageIndex((prev) => (prev - 1 + offerImages.length) % offerImages.length);
+  };
 
   return (
     <div className="min-h-screen bg-muted/30 flex flex-col">
       <div className="flex-1 flex items-center justify-center p-4">
       <Card className="w-full max-w-md shadow-xl border-0 overflow-hidden animate-fade-in">
-        {/* Header with discount badge */}
-        <div className="bg-gradient-to-r from-secondary to-secondary/80 p-4 text-secondary-foreground">
-          <div className="flex justify-between items-start">
-            <Badge variant="destructive" className="text-sm font-bold px-3 py-1">
+        {/* Image Gallery */}
+        {hasImages && (
+          <div className="relative aspect-video bg-muted">
+            <img
+              src={offerImages[currentImageIndex]}
+              alt={`${offer.title} - Imagem ${currentImageIndex + 1}`}
+              className="w-full h-full object-cover"
+            />
+            {offerImages.length > 1 && (
+              <>
+                <button
+                  onClick={prevImage}
+                  className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-2 transition-colors"
+                >
+                  <ChevronLeft className="h-5 w-5" />
+                </button>
+                <button
+                  onClick={nextImage}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-2 transition-colors"
+                >
+                  <ChevronRight className="h-5 w-5" />
+                </button>
+                <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5">
+                  {offerImages.map((_: string, index: number) => (
+                    <button
+                      key={index}
+                      onClick={() => setCurrentImageIndex(index)}
+                      className={`w-2 h-2 rounded-full transition-colors ${
+                        index === currentImageIndex ? 'bg-white' : 'bg-white/50'
+                      }`}
+                    />
+                  ))}
+                </div>
+              </>
+            )}
+            {/* Discount Badge on Image */}
+            <Badge variant="destructive" className="absolute top-3 left-3 text-sm font-bold px-3 py-1">
               -{discount}% OFF
             </Badge>
-            <div className={`flex items-center gap-1 text-sm ${urgency.color}`}>
+            {/* Timer on Image */}
+            <div className={`absolute top-3 right-3 bg-black/60 backdrop-blur-sm rounded-full px-3 py-1 flex items-center gap-1 text-sm text-white ${urgency.urgent ? 'animate-pulse' : ''}`}>
               <Clock className="h-4 w-4" />
               {timeLeft}
             </div>
           </div>
-        </div>
+        )}
+
+        {/* Header without image */}
+        {!hasImages && (
+          <div className="bg-gradient-to-r from-secondary to-secondary/80 p-4 text-secondary-foreground">
+            <div className="flex justify-between items-start">
+              <Badge variant="destructive" className="text-sm font-bold px-3 py-1">
+                -{discount}% OFF
+              </Badge>
+              <div className={`flex items-center gap-1 text-sm ${urgency.color}`}>
+                <Clock className="h-4 w-4" />
+                {timeLeft}
+              </div>
+            </div>
+          </div>
+        )}
 
         <CardContent className="p-6 space-y-6">
           {/* Company */}

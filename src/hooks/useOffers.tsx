@@ -65,6 +65,34 @@ export function useOffers(city?: string) {
     }
   };
 
+  const uploadImages = async (files: File[], offerId: string): Promise<string[]> => {
+    const urls: string[] = [];
+    
+    for (const file of files) {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${offerId}/${crypto.randomUUID()}.${fileExt}`;
+      
+      const { error: uploadError } = await supabase.storage
+        .from('offer-images')
+        .upload(fileName, file);
+
+      if (uploadError) {
+        console.error('Error uploading image:', uploadError);
+        continue;
+      }
+
+      const { data: urlData } = supabase.storage
+        .from('offer-images')
+        .getPublicUrl(fileName);
+
+      if (urlData?.publicUrl) {
+        urls.push(urlData.publicUrl);
+      }
+    }
+
+    return urls;
+  };
+
   const createOffer = async (offerData: {
     title: string;
     description?: string;
@@ -75,6 +103,7 @@ export function useOffers(city?: string) {
     city: string;
     expires_at: string;
     max_cpc_bid?: number;
+    images?: File[];
   }) => {
     if (!profile) {
       toast({
@@ -92,6 +121,7 @@ export function useOffers(city?: string) {
         .split(' ')
         .filter(word => word.length > 3);
 
+      // Create offer first to get ID
       const { data, error } = await supabase
         .from('offers')
         .insert({
@@ -106,11 +136,24 @@ export function useOffers(city?: string) {
           expires_at: offerData.expires_at,
           tags: [...autoTags, 'oferta', 'promoção'],
           max_cpc_bid: offerData.max_cpc_bid || 5,
+          images: [],
         })
         .select()
         .single();
 
       if (error) throw error;
+
+      // Upload images if any
+      if (offerData.images && offerData.images.length > 0) {
+        const imageUrls = await uploadImages(offerData.images, data.id);
+        
+        if (imageUrls.length > 0) {
+          await supabase
+            .from('offers')
+            .update({ images: imageUrls })
+            .eq('id', data.id);
+        }
+      }
 
       toast({
         title: "Oferta criada!",
@@ -122,6 +165,81 @@ export function useOffers(city?: string) {
       console.error('Error creating offer:', err);
       toast({
         title: "Erro ao criar oferta",
+        description: (err as Error).message,
+        variant: "destructive",
+      });
+      return null;
+    }
+  };
+
+  const updateOffer = async (offerId: string, offerData: {
+    title?: string;
+    description?: string;
+    price_old?: number;
+    price_new?: number;
+    link_destination?: string;
+    link_type?: LinkType;
+    expires_at?: string;
+    newImages?: File[];
+    existingImages?: string[];
+  }) => {
+    if (!profile) {
+      toast({
+        title: "Erro",
+        description: "Você precisa estar logado",
+        variant: "destructive",
+      });
+      return null;
+    }
+
+    try {
+      // Upload new images if any
+      let allImageUrls = offerData.existingImages || [];
+      
+      if (offerData.newImages && offerData.newImages.length > 0) {
+        const newImageUrls = await uploadImages(offerData.newImages, offerId);
+        allImageUrls = [...allImageUrls, ...newImageUrls];
+      }
+
+      // Update offer
+      const updateData: Record<string, any> = {};
+      if (offerData.title) updateData.title = offerData.title;
+      if (offerData.description !== undefined) updateData.description = offerData.description;
+      if (offerData.price_old) updateData.price_old = offerData.price_old;
+      if (offerData.price_new) updateData.price_new = offerData.price_new;
+      if (offerData.link_destination) updateData.link_destination = offerData.link_destination;
+      if (offerData.link_type) updateData.link_type = offerData.link_type;
+      if (offerData.expires_at) updateData.expires_at = offerData.expires_at;
+      updateData.images = allImageUrls;
+
+      // Regenerate tags if title changed
+      if (offerData.title) {
+        const autoTags = offerData.title
+          .toLowerCase()
+          .split(' ')
+          .filter(word => word.length > 3);
+        updateData.tags = [...autoTags, 'oferta', 'promoção'];
+      }
+
+      const { data, error } = await supabase
+        .from('offers')
+        .update(updateData)
+        .eq('id', offerId)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      toast({
+        title: "Oferta atualizada!",
+        description: "As alterações foram salvas com sucesso.",
+      });
+
+      return data;
+    } catch (err) {
+      console.error('Error updating offer:', err);
+      toast({
+        title: "Erro ao atualizar oferta",
         description: (err as Error).message,
         variant: "destructive",
       });
@@ -182,6 +300,7 @@ export function useOffers(city?: string) {
     fetchOffers,
     fetchMyOffers,
     createOffer,
+    updateOffer,
     incrementView,
     deleteOffer,
   };

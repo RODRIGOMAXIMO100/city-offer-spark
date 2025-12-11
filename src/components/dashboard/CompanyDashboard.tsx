@@ -2,13 +2,13 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useOffers } from '@/hooks/useOffers';
-import { formatBalance, CONFIG } from '@/types/database';
+import { formatBalance, CONFIG, Offer } from '@/types/database';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { Banknote, PlusCircle, LogOut, Eye, MousePointer, TrendingUp, Loader2, Instagram, Check, Clock, Trash2, Info, Star, ExternalLink, AlertTriangle } from 'lucide-react';
+import { Banknote, PlusCircle, LogOut, Eye, MousePointer, TrendingUp, Loader2, Instagram, Check, Clock, Trash2, Info, Star, ExternalLink, AlertTriangle, Pencil, Image } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import CreateOfferModal from './CreateOfferModal';
 import PerformanceChart from './PerformanceChart';
@@ -33,6 +33,8 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 
+const MAX_ACTIVE_OFFERS = 3;
+
 export default function CompanyDashboard() {
   const { profile, signOut, refreshProfile } = useAuth();
   const { offers, loading, fetchMyOffers, deleteOffer } = useOffers();
@@ -42,10 +44,12 @@ export default function CompanyDashboard() {
   const [instagramUrl, setInstagramUrl] = useState(profile?.instagram_url || '');
   const [savingInstagram, setSavingInstagram] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [editingOffer, setEditingOffer] = useState<Offer | null>(null);
 
-  // Check if company has an active offer
+  // Check active offers count
   const activeOffers = offers.filter(o => o.active && !o.deleted_at && new Date(o.expires_at) > new Date());
-  const hasActiveOffer = activeOffers.length > 0;
+  const activeOffersCount = activeOffers.length;
+  const canCreateMore = activeOffersCount < MAX_ACTIVE_OFFERS;
 
   const handleBuyCredits = () => {
     if (!profile?.cnpj || !profile?.razao_social) {
@@ -66,6 +70,11 @@ export default function CompanyDashboard() {
     setDeletingId(null);
   };
 
+  const handleEditOffer = (offer: Offer) => {
+    setEditingOffer(offer);
+    setShowCreateModal(true);
+  };
+
   useEffect(() => {
     fetchMyOffers();
   }, []);
@@ -74,14 +83,20 @@ export default function CompanyDashboard() {
     setInstagramUrl(profile?.instagram_url || '');
   }, [profile?.instagram_url]);
 
-  // Calculate total spent from actual offer data (dynamic CPC)
+  // Calculate totals
   const totalClicks = offers.reduce((acc, o) => acc + o.clicks_count, 0);
   const totalViews = offers.reduce((acc, o) => acc + o.views_count, 0);
 
   const handleOfferCreated = () => {
     setShowCreateModal(false);
+    setEditingOffer(null);
     fetchMyOffers();
     refreshProfile();
+  };
+
+  const handleModalClose = () => {
+    setShowCreateModal(false);
+    setEditingOffer(null);
   };
 
   const formatInstagramUrl = (input: string): string => {
@@ -153,14 +168,15 @@ export default function CompanyDashboard() {
   };
 
   const handleCreateOfferClick = () => {
-    if (hasActiveOffer) {
+    if (!canCreateMore) {
       toast({
         title: 'Limite atingido',
-        description: 'Você já possui 1 oferta ativa. Delete a atual para criar uma nova.',
+        description: `Você já possui ${MAX_ACTIVE_OFFERS} ofertas ativas. Delete uma para criar nova.`,
         variant: 'destructive',
       });
       return;
     }
+    setEditingOffer(null);
     setShowCreateModal(true);
   };
 
@@ -293,35 +309,49 @@ export default function CompanyDashboard() {
           </CardContent>
         </Card>
 
-        {/* Offer Limit Warning */}
-        {hasActiveOffer && (
-          <Card className="bg-orange-500/10 border-orange-500/30">
-            <CardContent className="p-3 sm:p-4">
+        {/* Offer Limit Info */}
+        <Card className={activeOffersCount >= MAX_ACTIVE_OFFERS ? "bg-orange-500/10 border-orange-500/30" : "bg-muted/50"}>
+          <CardContent className="p-3 sm:p-4">
+            <div className="flex items-center justify-between">
               <div className="flex items-center gap-2 sm:gap-3">
-                <AlertTriangle className="h-5 w-5 text-orange-500 shrink-0" />
+                {activeOffersCount >= MAX_ACTIVE_OFFERS ? (
+                  <AlertTriangle className="h-5 w-5 text-orange-500 shrink-0" />
+                ) : (
+                  <Info className="h-5 w-5 text-muted-foreground shrink-0" />
+                )}
                 <div>
-                  <p className="font-medium text-sm sm:text-base text-foreground">Limite de 1 oferta ativa</p>
+                  <p className="font-medium text-sm sm:text-base text-foreground">
+                    {activeOffersCount >= MAX_ACTIVE_OFFERS ? 'Limite atingido' : 'Ofertas ativas'}
+                  </p>
                   <p className="text-xs sm:text-sm text-muted-foreground">
-                    Delete sua oferta atual para criar uma nova.
+                    {activeOffersCount >= MAX_ACTIVE_OFFERS 
+                      ? 'Delete uma oferta para criar nova'
+                      : `Você pode ter até ${MAX_ACTIVE_OFFERS} ofertas ativas`}
                   </p>
                 </div>
               </div>
-            </CardContent>
-          </Card>
-        )}
+              <Badge 
+                variant={activeOffersCount >= MAX_ACTIVE_OFFERS ? "destructive" : "secondary"}
+                className="text-sm font-bold"
+              >
+                {activeOffersCount}/{MAX_ACTIVE_OFFERS}
+              </Badge>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Create Offer Button */}
         <Button
           onClick={handleCreateOfferClick}
-          disabled={hasActiveOffer}
+          disabled={!canCreateMore}
           className={`w-full py-5 sm:py-6 font-bold shadow-lg text-sm sm:text-base ${
-            hasActiveOffer 
+            !canCreateMore 
               ? 'bg-muted text-muted-foreground cursor-not-allowed' 
               : 'bg-company hover:bg-company/90 text-company-foreground'
           }`}
         >
           <PlusCircle className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
-          {hasActiveOffer ? 'LIMITE ATINGIDO (1 OFERTA)' : 'CRIAR NOVA OFERTA'}
+          {!canCreateMore ? `LIMITE ATINGIDO (${MAX_ACTIVE_OFFERS} OFERTAS)` : 'CRIAR NOVA OFERTA'}
         </Button>
 
         {/* My Offers */}
@@ -349,19 +379,35 @@ export default function CompanyDashboard() {
                 {offers.map((offer) => {
                   const expInfo = getExpirationInfo(offer.expires_at);
                   const offerScore = (offer as any).current_offer_score || 5;
+                  const offerImages = (offer as any).images || [];
                   const isExpired = new Date(offer.expires_at) <= new Date();
                   
                   return (
                     <Card key={offer.id} className={`${!offer.active || isExpired ? 'opacity-60' : ''}`}>
                       <CardContent className="p-3 sm:p-4">
-                        {/* Mobile-first layout */}
-                        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 sm:gap-0 mb-2">
+                        <div className="flex gap-3">
+                          {/* Thumbnail */}
+                          {offerImages.length > 0 ? (
+                            <img 
+                              src={offerImages[0]} 
+                              alt={offer.title}
+                              className="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded-lg shrink-0"
+                            />
+                          ) : (
+                            <div className="w-16 h-16 sm:w-20 sm:h-20 bg-muted rounded-lg flex items-center justify-center shrink-0">
+                              <Image className="h-6 w-6 text-muted-foreground" />
+                            </div>
+                          )}
+                          
                           <div className="flex-1 min-w-0">
-                            <h3 className="font-bold text-foreground text-sm sm:text-base truncate">{offer.title}</h3>
-                            <div className="flex items-center gap-2 mt-1 flex-wrap">
+                            {/* Title & Score */}
+                            <div className="flex items-start justify-between gap-2">
+                              <h3 className="font-bold text-foreground text-sm sm:text-base truncate flex-1">
+                                {offer.title}
+                              </h3>
                               <Tooltip>
                                 <TooltipTrigger asChild>
-                                  <div className={`flex items-center gap-1 text-xs sm:text-sm ${getScoreColor(offerScore)}`}>
+                                  <div className={`flex items-center gap-1 text-xs sm:text-sm ${getScoreColor(offerScore)} shrink-0`}>
                                     <Star className="h-3 w-3 sm:h-4 sm:w-4 fill-current" />
                                     <span className="font-bold">{offerScore.toFixed(1)}</span>
                                   </div>
@@ -371,73 +417,85 @@ export default function CompanyDashboard() {
                                   <p className="text-xs">{getScoreTip(offerScore)}</p>
                                 </TooltipContent>
                               </Tooltip>
+                            </div>
+
+                            {/* CPC & Expiration */}
+                            <div className="flex items-center gap-2 mt-1 flex-wrap">
                               <span className="text-[10px] sm:text-xs text-muted-foreground">
                                 CPC: R$ {((14 - offerScore) * CONFIG.CREDIT_VALUE_BRL).toFixed(2)}
                               </span>
+                              <span className="text-muted-foreground">•</span>
+                              <div className={`flex items-center gap-1 text-[10px] sm:text-xs ${expInfo.color}`}>
+                                <Clock className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
+                                {expInfo.text}
+                              </div>
                             </div>
-                          </div>
-                          <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
-                            <div className={`flex items-center gap-1 text-[10px] sm:text-xs ${expInfo.color}`}>
-                              <Clock className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
-                              {expInfo.text}
-                            </div>
-                            <Badge variant={offer.active && !isExpired ? 'default' : 'secondary'} className="text-[10px] sm:text-xs">
-                              {isExpired ? 'Expirada' : offer.active ? 'Ativa' : 'Pausada'}
-                            </Badge>
-                            <AlertDialog>
-                              <AlertDialogTrigger asChild>
-                                <Button 
-                                  variant="ghost" 
-                                  size="icon" 
-                                  className="h-6 w-6 sm:h-7 sm:w-7 text-destructive hover:bg-destructive/10"
-                                  disabled={deletingId === offer.id}
-                                >
-                                  {deletingId === offer.id ? (
-                                    <Loader2 className="h-3 w-3 sm:h-4 sm:w-4 animate-spin" />
-                                  ) : (
-                                    <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
-                                  )}
-                                </Button>
-                              </AlertDialogTrigger>
-                              <AlertDialogContent className="max-w-[90vw] sm:max-w-lg">
-                                <AlertDialogHeader>
-                                  <AlertDialogTitle className="text-base sm:text-lg">Deletar oferta?</AlertDialogTitle>
-                                  <AlertDialogDescription className="text-sm">
-                                    Esta ação não pode ser desfeita. A oferta "{offer.title}" será permanentemente removida.
-                                  </AlertDialogDescription>
-                                </AlertDialogHeader>
-                                <AlertDialogFooter className="flex-col sm:flex-row gap-2">
-                                  <AlertDialogCancel className="mt-0">Cancelar</AlertDialogCancel>
-                                  <AlertDialogAction 
-                                    onClick={() => handleDeleteOffer(offer.id)}
-                                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+
+                            {/* Stats & Actions */}
+                            <div className="flex items-center justify-between mt-2">
+                              <div className="flex items-center gap-3 text-[10px] sm:text-xs text-muted-foreground">
+                                <span className="flex items-center gap-1">
+                                  <Eye className="h-3 w-3" />
+                                  {offer.views_count}
+                                </span>
+                                <span className="flex items-center gap-1">
+                                  <MousePointer className="h-3 w-3" />
+                                  {offer.clicks_count}
+                                </span>
+                                <Badge variant={offer.active && !isExpired ? 'default' : 'secondary'} className="text-[10px]">
+                                  {isExpired ? 'Expirada' : offer.active ? 'Ativa' : 'Pausada'}
+                                </Badge>
+                              </div>
+                              
+                              <div className="flex items-center gap-1">
+                                {/* Edit Button */}
+                                {offer.active && !isExpired && (
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-7 w-7 sm:h-8 sm:w-8 text-muted-foreground hover:text-foreground"
+                                    onClick={() => handleEditOffer(offer)}
                                   >
-                                    Deletar
-                                  </AlertDialogAction>
-                                </AlertDialogFooter>
-                              </AlertDialogContent>
-                            </AlertDialog>
-                          </div>
-                        </div>
-                        <p className="text-xs sm:text-sm text-muted-foreground mb-2 sm:mb-3 truncate">
-                          {offer.tags?.slice(0, 4).join(', ')}
-                        </p>
-                        <div className="grid grid-cols-3 gap-1.5 sm:gap-2 text-center text-xs sm:text-sm">
-                          <div className="bg-muted rounded-lg p-1.5 sm:p-2">
-                            <p className="font-bold text-sm sm:text-base">{offer.views_count}</p>
-                            <p className="text-[10px] sm:text-xs text-muted-foreground">Views</p>
-                          </div>
-                          <div className="bg-muted rounded-lg p-1.5 sm:p-2">
-                            <p className="font-bold text-sm sm:text-base">{offer.clicks_count}</p>
-                            <p className="text-[10px] sm:text-xs text-muted-foreground">Cliques</p>
-                          </div>
-                          <div className="bg-muted rounded-lg p-1.5 sm:p-2">
-                            <p className="font-bold text-sm sm:text-base">
-                              {offer.views_count > 0 
-                                ? ((offer.clicks_count / offer.views_count) * 100).toFixed(1) 
-                                : 0}%
-                            </p>
-                            <p className="text-[10px] sm:text-xs text-muted-foreground">CTR</p>
+                                    <Pencil className="h-3 w-3 sm:h-4 sm:w-4" />
+                                  </Button>
+                                )}
+                                
+                                {/* Delete Button */}
+                                <AlertDialog>
+                                  <AlertDialogTrigger asChild>
+                                    <Button 
+                                      variant="ghost" 
+                                      size="icon" 
+                                      className="h-7 w-7 sm:h-8 sm:w-8 text-destructive hover:bg-destructive/10"
+                                      disabled={deletingId === offer.id}
+                                    >
+                                      {deletingId === offer.id ? (
+                                        <Loader2 className="h-3 w-3 sm:h-4 sm:w-4 animate-spin" />
+                                      ) : (
+                                        <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
+                                      )}
+                                    </Button>
+                                  </AlertDialogTrigger>
+                                  <AlertDialogContent className="max-w-[90vw] sm:max-w-lg">
+                                    <AlertDialogHeader>
+                                      <AlertDialogTitle className="text-base sm:text-lg">Deletar oferta?</AlertDialogTitle>
+                                      <AlertDialogDescription className="text-sm">
+                                        Esta ação não pode ser desfeita. A oferta "{offer.title}" será permanentemente removida.
+                                      </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter className="flex-col sm:flex-row gap-2">
+                                      <AlertDialogCancel className="mt-0">Cancelar</AlertDialogCancel>
+                                      <AlertDialogAction
+                                        onClick={() => handleDeleteOffer(offer.id)}
+                                        className="bg-destructive hover:bg-destructive/90"
+                                      >
+                                        Deletar
+                                      </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                  </AlertDialogContent>
+                                </AlertDialog>
+                              </div>
+                            </div>
                           </div>
                         </div>
                       </CardContent>
@@ -450,22 +508,22 @@ export default function CompanyDashboard() {
         </div>
       </div>
 
-      {/* Create Offer Modal */}
+      <Footer />
+
       <CreateOfferModal
         open={showCreateModal}
-        onClose={() => setShowCreateModal(false)}
+        onClose={handleModalClose}
         onSuccess={handleOfferCreated}
-        hasActiveOffer={hasActiveOffer}
+        activeOffersCount={activeOffersCount}
+        maxOffers={MAX_ACTIVE_OFFERS}
+        editOffer={editingOffer}
       />
 
-      {/* Fiscal Data Modal */}
       <FiscalDataModal
         open={showFiscalModal}
         onClose={() => setShowFiscalModal(false)}
         onSuccess={handleFiscalDataSaved}
       />
-
-      <Footer />
     </div>
   );
 }
