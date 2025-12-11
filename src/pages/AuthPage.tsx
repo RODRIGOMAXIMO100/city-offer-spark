@@ -60,6 +60,7 @@ export default function AuthPage() {
   const [signupCity, setSignupCity] = useState('');
   const [signupRole, setSignupRole] = useState<AppRole>('CLIENT');
   const [signupCnpj, setSignupCnpj] = useState('');
+  const [signupTelefone, setSignupTelefone] = useState('');
   const [openCityCombobox, setOpenCityCombobox] = useState(false);
 
   const formatCnpj = (value: string) => {
@@ -71,8 +72,24 @@ export default function AuthPage() {
       .replace(/(\d{4})(\d)/, '$1-$2');
   };
 
+  const formatTelefone = (value: string) => {
+    const numbers = value.replace(/\D/g, '').slice(0, 11);
+    if (numbers.length <= 10) {
+      return numbers
+        .replace(/(\d{2})(\d)/, '($1) $2')
+        .replace(/(\d{4})(\d)/, '$1-$2');
+    }
+    return numbers
+      .replace(/(\d{2})(\d)/, '($1) $2')
+      .replace(/(\d{5})(\d)/, '$1-$2');
+  };
+
   const handleCnpjChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSignupCnpj(formatCnpj(e.target.value));
+  };
+
+  const handleTelefoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSignupTelefone(formatTelefone(e.target.value));
   };
 
   const cnpjNumbers = signupCnpj.replace(/\D/g, '');
@@ -139,7 +156,16 @@ export default function AuthPage() {
       }
     }
 
-    const { error } = await signUp(signupEmail, signupPassword, signupName, formattedCity, signupRole, signupRole === 'COMPANY' ? cnpjNumbers : undefined);
+    const telefoneNumbers = signupTelefone.replace(/\D/g, '');
+    const { error } = await signUp(
+      signupEmail, 
+      signupPassword, 
+      signupName, 
+      signupRole === 'CLIENT' ? '' : formattedCity, // Clients don't need city
+      signupRole, 
+      signupRole === 'COMPANY' ? cnpjNumbers : undefined,
+      signupRole === 'CLIENT' ? telefoneNumbers : undefined
+    );
 
     if (error) {
       let message = error.message;
@@ -283,68 +309,88 @@ export default function AuthPage() {
                     </div>
                   )}
 
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-state">Estado (UF)</Label>
-                    <Select value={signupState} onValueChange={(value) => {
-                      setSignupState(value);
-                      setSignupCity('');
-                    }}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecione o estado" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {BRAZIL_STATES.map((state) => (
-                          <SelectItem key={state.code} value={state.code}>
-                            {state.code} - {state.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
+                  {/* Telefone Field - Only for Clients */}
+                  {signupRole === 'CLIENT' && (
+                    <div className="space-y-2">
+                      <Label htmlFor="signup-telefone">Telefone</Label>
+                      <Input
+                        id="signup-telefone"
+                        type="tel"
+                        placeholder="(00) 00000-0000"
+                        value={signupTelefone}
+                        onChange={handleTelefoneChange}
+                        required
+                      />
+                    </div>
+                  )}
 
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-city">Cidade</Label>
-                    <Popover open={openCityCombobox} onOpenChange={setOpenCityCombobox}>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant="outline"
-                          role="combobox"
-                          aria-expanded={openCityCombobox}
-                          className="w-full justify-between"
-                          disabled={!signupState}
-                        >
-                          {signupCity || "Selecione a cidade..."}
-                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-full p-0">
-                        <Command>
-                          <CommandInput placeholder="Digite para buscar..." />
-                          <CommandEmpty>Nenhuma cidade encontrada.</CommandEmpty>
-                          <CommandGroup className="max-h-64 overflow-auto">
-                            {availableCities.map((city) => (
-                              <CommandItem
-                                key={city}
-                                value={city}
-                                onSelect={(currentValue) => {
-                                  setSignupCity(currentValue === signupCity ? "" : currentValue);
-                                  setOpenCityCombobox(false);
-                                }}
-                              >
-                                <Check
-                                  className={cn(
-                                    "mr-2 h-4 w-4",
-                                    signupCity === city ? "opacity-100" : "opacity-0"
-                                  )}
-                                />
-                                {city}
-                              </CommandItem>
+                  {/* State/City Fields - Only for Companies and Affiliates */}
+                  {signupRole !== 'CLIENT' && (
+                    <>
+                      <div className="space-y-2">
+                        <Label htmlFor="signup-state">Estado (UF)</Label>
+                        <Select value={signupState} onValueChange={(value) => {
+                          setSignupState(value);
+                          setSignupCity('');
+                        }}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Selecione o estado" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {BRAZIL_STATES.map((state) => (
+                              <SelectItem key={state.code} value={state.code}>
+                                {state.code} - {state.name}
+                              </SelectItem>
                             ))}
-                          </CommandGroup>
-                        </Command>
-                      </PopoverContent>
-                    </Popover>
-                  </div>
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="signup-city">Cidade</Label>
+                        <Popover open={openCityCombobox} onOpenChange={setOpenCityCombobox}>
+                          <PopoverTrigger asChild>
+                            <Button
+                              variant="outline"
+                              role="combobox"
+                              aria-expanded={openCityCombobox}
+                              className="w-full justify-between"
+                              disabled={!signupState}
+                            >
+                              {signupCity || "Selecione a cidade..."}
+                              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-full p-0">
+                            <Command>
+                              <CommandInput placeholder="Digite para buscar..." />
+                              <CommandEmpty>Nenhuma cidade encontrada.</CommandEmpty>
+                              <CommandGroup className="max-h-64 overflow-auto">
+                                {availableCities.map((city) => (
+                                  <CommandItem
+                                    key={city}
+                                    value={city}
+                                    onSelect={(currentValue) => {
+                                      setSignupCity(currentValue === signupCity ? "" : currentValue);
+                                      setOpenCityCombobox(false);
+                                    }}
+                                  >
+                                    <Check
+                                      className={cn(
+                                        "mr-2 h-4 w-4",
+                                        signupCity === city ? "opacity-100" : "opacity-0"
+                                      )}
+                                    />
+                                    {city}
+                                  </CommandItem>
+                                ))}
+                              </CommandGroup>
+                            </Command>
+                          </PopoverContent>
+                        </Popover>
+                      </div>
+                    </>
+                  )}
 
                   <div className="space-y-2">
                     <Label htmlFor="signup-email">Email</Label>

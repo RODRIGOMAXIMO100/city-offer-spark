@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { Navbar } from "@/components/landing/Navbar";
 import { HeroSection } from "@/components/landing/HeroSection";
+import { PublicAIChat } from "@/components/landing/PublicAIChat";
 import { HowItWorks } from "@/components/landing/HowItWorks";
 import { ForCompanies } from "@/components/landing/ForCompanies";
 import { ForAffiliates } from "@/components/landing/ForAffiliates";
@@ -34,6 +35,7 @@ export default function LandingPage() {
       <Navbar />
       <main>
         <HeroSection />
+        <PublicAIChat />
         <HowItWorks />
         <ForCompanies />
         <ForAffiliates />
