@@ -40,39 +40,49 @@ serve(async (req) => {
 
     // Generate blog post with AI using TOOL CALLING for reliable structured output
     const systemPrompt = `Você é um especialista em marketing de conteúdo e SEO para o mercado brasileiro. 
-Você escreve artigos para o blog da Clilin, uma plataforma de ofertas locais e programa de afiliados.
+Você escreve artigos EXTENSOS e COMPLETOS para o blog da Clilin, uma plataforma de ofertas locais e programa de afiliados.
+
+REQUISITO CRÍTICO DE TAMANHO:
+- O artigo DEVE ter NO MÍNIMO 1500 palavras (aproximadamente 8000-10000 caracteres)
+- Desenvolva CADA seção com pelo menos 3-4 parágrafos detalhados
+- Inclua exemplos práticos e explicações aprofundadas
+- NÃO ENCURTE o conteúdo de forma alguma
 
 Seu objetivo é criar conteúdo que:
-1. Seja ALTAMENTE otimizado para SEO com as keywords fornecidas (use-as 3-5 vezes)
-2. Seja útil, prático e ORIGINAL para o leitor
-3. Tenha entre 1000-1500 palavras
+1. Seja ALTAMENTE otimizado para SEO com as keywords fornecidas (use-as 5-8 vezes no texto)
+2. Seja útil, prático, DETALHADO e ORIGINAL para o leitor
+3. Tenha OBRIGATORIAMENTE entre 1500-2000 palavras (8000-12000 caracteres)
 4. Use linguagem acessível em português brasileiro
-5. Inclua subtítulos (H2, H3) estratégicos com keywords
-6. Inclua listas, dicas práticas e exemplos reais
-7. Termine com seção FAQ com 3 perguntas
+5. Inclua pelo menos 5-6 subtítulos (H2, H3) estratégicos com keywords
+6. Inclua listas com 5+ itens, dicas práticas numeradas e exemplos reais detalhados
+7. Termine com seção FAQ com 3-4 perguntas bem desenvolvidas
+8. Cada seção deve ter conteúdo SUBSTANCIAL, não apenas 1-2 frases
 
 REGRAS DE FORMATAÇÃO HTML:
-- Use <h2> para títulos principais de seção
-- Use <h3> para subtítulos
-- Use <p> para parágrafos
-- Use <ul> e <li> para listas
+- Use <h2> para títulos principais de seção (mínimo 4 seções H2)
+- Use <h3> para subtítulos (mínimo 2-3 por seção)
+- Use <p> para parágrafos (cada parágrafo com 3-5 frases completas)
+- Use <ul> e <li> para listas (listas com 5+ itens)
 - Use <strong> para termos importantes
-- Use <blockquote> para citações
+- Use <blockquote> para citações inspiracionais
 - NÃO use <h1> (reservado para título)
-- Inclua seção FAQ:
+- Inclua seção FAQ detalhada:
   <h2>Perguntas Frequentes</h2>
   <h3>Pergunta?</h3>
-  <p>Resposta...</p>
+  <p>Resposta completa com 3-4 frases...</p>
 
-LINKS INTERNOS (inclua 2-3):
+LINKS INTERNOS (inclua 3-4):
 - <a href="/auth">cadastre-se grátis</a>
 - <a href="/blog">mais artigos</a>
-- <a href="/">Clilin</a>`;
+- <a href="/">Clilin</a>
+- <a href="/">plataforma Clilin</a>`;
 
-    const userPrompt = `Crie um artigo de blog completo sobre: "${theme.theme}"
+    const userPrompt = `Crie um artigo de blog EXTENSO e COMPLETO sobre: "${theme.theme}"
 
-Keywords OBRIGATÓRIAS: ${theme.keywords.join(", ")}
+Keywords OBRIGATÓRIAS (use cada uma 2-3 vezes): ${theme.keywords.join(", ")}
 Categoria: ${theme.category}
+
+IMPORTANTE: O conteúdo DEVE ter NO MÍNIMO 8000 caracteres. Desenvolva cada seção detalhadamente com exemplos práticos, explicações aprofundadas e dicas acionáveis. NÃO RESUMA, escreva um artigo COMPLETO e EXTENSO.
 
 Use a função create_blog_post para retornar os dados estruturados.`;
 
@@ -100,7 +110,7 @@ Use a função create_blog_post para retornar os dados estruturados.`;
               },
               content: {
                 type: "string",
-                description: "Conteúdo HTML completo com H2, H3, parágrafos, listas, links internos e seção FAQ"
+                description: "Conteúdo HTML EXTENSO e COMPLETO com mínimo 8000 caracteres. Inclua: 4+ seções H2, múltiplos H3, parágrafos detalhados de 3-5 frases cada, listas com 5+ itens, links internos e seção FAQ com 3-4 perguntas. Desenvolva cada seção com profundidade."
               },
               meta_title: {
                 type: "string",
@@ -141,7 +151,7 @@ Use a função create_blog_post para retornar os dados estruturados.`;
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
+        model: "google/gemini-2.5-pro",
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: userPrompt },
