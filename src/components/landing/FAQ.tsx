@@ -17,7 +17,7 @@ const faqs = [
   },
   {
     question: "Preciso ter CNPJ para cadastrar minha empresa?",
-    answer: "Não é obrigatório ter CNPJ. MEIs, autônomos e empresas de qualquer porte podem cadastrar ofertas. Basta ter uma conta ativa e saldo disponível.",
+    answer: "Sim, o CNPJ é obrigatório para cadastrar ofertas. MEIs, microempresas e empresas de qualquer porte podem participar, desde que tenham CNPJ ativo.",
   },
   {
     question: "Como funciona o custo por clique (CPC)?",
