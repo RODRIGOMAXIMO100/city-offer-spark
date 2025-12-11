@@ -8,7 +8,7 @@ export interface Profile {
   name: string;
   email?: string;
   city: string;
-  balance: number;
+  balance: number; // Em centavos
   pix_key?: string;
   preferences?: string[];
   instagram_url?: string;
@@ -65,7 +65,7 @@ export interface Offer {
 export interface Transaction {
   id: string;
   user_id: string;
-  amount: number;
+  amount: number; // Em centavos
   type: TransactionType;
   description?: string;
   offer_id?: string;
@@ -82,35 +82,29 @@ export interface OfferClick {
   created_at: string;
 }
 
-// Business constants
+// Business constants - TODOS OS VALORES MONETÁRIOS EM CENTAVOS
 export const CONFIG = {
-  CREDIT_VALUE_BRL: 0.10,
-  MIN_CPC: 4,
-  MAX_CPC: 10, // CPC automático: 14 - Nota (range 4-10)
-  DEFAULT_CPC: 7, // CPC para nota inicial 7
+  MIN_CPC: 40,           // R$ 0,40 em centavos
+  MAX_CPC: 100,          // R$ 1,00 em centavos
+  DEFAULT_CPC: 70,       // R$ 0,70 em centavos
   AFFILIATE_SHARE: 0.50, // 50% para divulgador, 50% para plataforma
-  // Legacy: for backward compatibility in admin analytics
-  CPC_PLATFORM_PROFIT: 3.5, // Average estimate (50% of average CPC 7)
-  CPC_PAYOUT_AFFILIATE: 3.5, // Average estimate (50% of average CPC 7)
-  MIN_WITHDRAW_BRL: 100.00,
-  MIN_DEPOSIT_BRL: 100.00,
+  // Para analytics admin - estimativas médias em centavos
+  CPC_PLATFORM_PROFIT: 35,  // ~50% do CPC médio (70/2)
+  CPC_PAYOUT_AFFILIATE: 35, // ~50% do CPC médio (70/2)
+  MIN_WITHDRAW_BRL: 100.00, // R$ 100 (valor em reais para comparação)
+  MIN_DEPOSIT_BRL: 100.00,  // R$ 100 (valor em reais para comparação)
+  MIN_WITHDRAW_CENTS: 10000, // R$ 100 em centavos
+  MIN_DEPOSIT_CENTS: 10000,  // R$ 100 em centavos
   TIME_TO_INTERACTIVE: 1500,
 } as const;
 
-// Helper to format credits to BRL
-export const formatCreditsToReal = (credits: number): string => {
-  const value = credits * CONFIG.CREDIT_VALUE_BRL;
+// Helper para formatar centavos para R$
+export const formatCentsToBRL = (cents: number): string => {
+  const value = cents / 100;
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
 };
 
-// Helper to format balance (credits) as R$ - Main display function
-export const formatBalance = (credits: number): string => {
-  const value = credits * CONFIG.CREDIT_VALUE_BRL;
-  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
-};
-
-// Legacy: kept for compatibility, use formatBalance instead
-export const formatCredits = (credits: number): string => {
-  const value = credits * CONFIG.CREDIT_VALUE_BRL;
-  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
-};
+// Alias para compatibilidade - TODOS USAM A MESMA LÓGICA AGORA
+export const formatBalance = formatCentsToBRL;
+export const formatCredits = formatCentsToBRL;
+export const formatCreditsToReal = formatCentsToBRL;

@@ -10,7 +10,7 @@ const ASAAS_API_URL = Deno.env.get('ASAAS_SANDBOX') === 'true'
   ? 'https://sandbox.asaas.com/api/v3'
   : 'https://api.asaas.com/api/v3';
 
-const CREDIT_VALUE_BRL = 0.10;
+// amount_credits agora são centavos diretamente (R$ 100 = 10000 centavos)
 
 interface PaymentRequest {
   amount_brl: number;
@@ -152,8 +152,8 @@ serve(async (req) => {
         .eq('id', profile.id);
     }
 
-    // Calcular créditos
-    const amount_credits = Math.floor(amount_brl / CREDIT_VALUE_BRL);
+    // Calcular centavos (R$ para centavos)
+    const amount_cents = Math.floor(amount_brl * 100);
 
     // Criar cobrança no Asaas
     const dueDate = new Date();
@@ -164,7 +164,7 @@ serve(async (req) => {
       billingType: payment_method === 'PIX' ? 'PIX' : 'CREDIT_CARD',
       value: amount_brl,
       dueDate: dueDate.toISOString().split('T')[0],
-      description: `Créditos Clilin - ${amount_credits} créditos`,
+      description: `Saldo Clilin - R$ ${amount_brl.toFixed(2)}`,
     };
 
     // Se for cartão de crédito, adicionar dados do cartão
@@ -256,7 +256,7 @@ serve(async (req) => {
         profile_id: profile.id,
         asaas_payment_id: paymentResult.id,
         amount_brl,
-        amount_credits,
+        amount_credits: amount_cents, // agora armazena centavos
         payment_method,
         status: payment_method === 'CREDIT_CARD' && paymentResult.status === 'CONFIRMED' ? 'CONFIRMED' : 'PENDING',
         pix_qr_code: pixQrCode,
@@ -280,14 +280,14 @@ serve(async (req) => {
     if (payment_method === 'CREDIT_CARD' && paymentResult.status === 'CONFIRMED') {
       await supabaseAdmin
         .from('profiles')
-        .update({ balance: profile.balance + amount_credits })
+        .update({ balance: profile.balance + amount_cents })
         .eq('id', profile.id);
 
       await supabaseAdmin
         .from('transactions')
         .insert({
           user_id: profile.id,
-          amount: amount_credits,
+          amount: amount_cents,
           type: 'DEPOSIT',
           description: `Depósito via Cartão de Crédito - R$ ${amount_brl.toFixed(2)}`,
         });
@@ -300,7 +300,7 @@ serve(async (req) => {
         asaas_payment_id: paymentResult.id,
         status: payment.status,
         amount_brl,
-        amount_credits,
+        amount_cents,
         payment_method,
         pix_qr_code: pixQrCode,
         pix_code: pixCode,

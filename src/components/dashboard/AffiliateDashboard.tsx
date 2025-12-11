@@ -90,10 +90,9 @@ export default function AffiliateDashboard() {
   }, [profile?.id]);
 
   const handleWithdraw = async () => {
-    const balance = profile?.balance || 0;
-    const balanceBrl = balance * CONFIG.CREDIT_VALUE_BRL;
+    const balance = profile?.balance || 0; // já em centavos
 
-    if (balanceBrl < CONFIG.MIN_WITHDRAW_BRL) {
+    if (balance < CONFIG.MIN_WITHDRAW_CENTS) {
       toast({
         title: 'Saldo insuficiente',
         description: `Mínimo para saque: R$ ${CONFIG.MIN_WITHDRAW_BRL.toFixed(2)}`,

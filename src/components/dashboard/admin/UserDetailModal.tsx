@@ -9,7 +9,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { formatCredits, formatCreditsToReal } from '@/types/database';
+import { formatCentsToBRL } from '@/types/database';
 import { User, History, Megaphone, Plus, Minus, AlertTriangle } from 'lucide-react';
 
 interface UserProfile {
@@ -132,7 +132,7 @@ export default function UserDetailModal({ user, open, onOpenChange, onUserUpdate
           user_id: user.id,
           amount: Math.abs(finalAmount),
           type: balanceAction === 'add' ? 'DEPOSIT' : 'WITHDRAW',
-          description: `Ajuste manual pelo admin: ${balanceAction === 'add' ? 'adição' : 'remoção'} de ${formatCredits(Math.abs(finalAmount))}`
+          description: `Ajuste manual pelo admin: ${balanceAction === 'add' ? 'adição' : 'remoção'} de ${formatCentsToBRL(Math.abs(finalAmount))}`
         });
 
       if (txError) throw txError;
@@ -267,12 +267,11 @@ export default function UserDetailModal({ user, open, onOpenChange, onUserUpdate
               <CardContent className="pt-4 sm:pt-6">
                 <div className="mb-4">
                   <Label className="text-muted-foreground text-xs sm:text-sm">Saldo Atual</Label>
-                  <p className="text-xl sm:text-2xl font-bold">{formatCredits(user.balance)}</p>
-                  <p className="text-xs sm:text-sm text-muted-foreground">{formatCreditsToReal(user.balance)}</p>
+                  <p className="text-xl sm:text-2xl font-bold">{formatCentsToBRL(user.balance)}</p>
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-xs sm:text-sm">Ajustar Saldo (créditos)</Label>
+                  <Label className="text-xs sm:text-sm">Ajustar Saldo (centavos)</Label>
                   <div className="flex flex-col sm:flex-row gap-2">
                     <Input
                       type="number"
@@ -331,7 +330,7 @@ export default function UserDetailModal({ user, open, onOpenChange, onUserUpdate
                         {transactions.map((tx) => (
                           <TableRow key={tx.id}>
                             <TableCell>{getTransactionBadge(tx.type)}</TableCell>
-                            <TableCell className="text-sm">{formatCredits(tx.amount)}</TableCell>
+                            <TableCell className="text-sm">{formatCentsToBRL(tx.amount)}</TableCell>
                             <TableCell className="max-w-[150px] truncate text-sm hidden sm:table-cell">{tx.description || '-'}</TableCell>
                             <TableCell className="text-xs hidden md:table-cell">{new Date(tx.created_at).toLocaleDateString('pt-BR')}</TableCell>
                           </TableRow>

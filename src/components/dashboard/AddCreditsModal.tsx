@@ -75,7 +75,8 @@ export function AddCreditsModal({
     }
   }, [open]);
 
-  const credits = Math.floor(amount / CONFIG.CREDIT_VALUE_BRL);
+  // amount em reais, convertemos para centavos
+  const amountCents = Math.floor(amount * 100);
 
   const handleAmountSelect = (value: number) => {
     setAmount(value);
@@ -240,8 +241,8 @@ export function AddCreditsModal({
             <Card className="bg-muted/50">
               <CardContent className="p-4">
                 <div className="flex justify-between items-center">
-                  <span className="text-muted-foreground">Você receberá</span>
-                  <span className="text-xl font-bold">{credits.toLocaleString()} créditos</span>
+                  <span className="text-muted-foreground">Saldo a adicionar</span>
+                  <span className="text-xl font-bold">R$ {amount.toFixed(2)}</span>
                 </div>
               </CardContent>
             </Card>
@@ -474,7 +475,7 @@ export function AddCreditsModal({
             </div>
             <h3 className="text-xl font-semibold">Pagamento Confirmado!</h3>
             <p className="text-muted-foreground">
-              {credits.toLocaleString()} créditos foram adicionados à sua conta.
+              R$ {amount.toFixed(2)} foram adicionados ao seu saldo.
             </p>
             <Button className="w-full" onClick={() => onOpenChange(false)}>
               Fechar

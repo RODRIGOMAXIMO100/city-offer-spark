@@ -1,4 +1,4 @@
-import { CONFIG } from '@/types/database';
+import { formatCentsToBRL } from '@/types/database';
 
 interface ExportableUser {
   name: string;
@@ -89,7 +89,7 @@ export const exportUsers = (users: ExportableUser[]) => {
     user.email || '',
     translateRole(user.role),
     user.city,
-    (user.balance * CONFIG.CREDIT_VALUE_BRL).toFixed(2),
+    (user.balance / 100).toFixed(2), // centavos para reais
     formatDate(user.created_at)
   ]);
   
@@ -116,7 +116,7 @@ export const exportTransactions = (transactions: ExportableTransaction[]) => {
   const rows = transactions.map(tx => [
     tx.user_name || '',
     translateTransactionType(tx.type),
-    (tx.amount * CONFIG.CREDIT_VALUE_BRL).toFixed(2),
+    (tx.amount / 100).toFixed(2), // centavos para reais
     tx.description || '',
     formatDateTime(tx.created_at)
   ]);
