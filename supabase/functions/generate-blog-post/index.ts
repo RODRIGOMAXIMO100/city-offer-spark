@@ -149,7 +149,8 @@ Retorne um JSON com exatamente esta estrutura:
         meta_description: (postData.meta_description || postData.excerpt).substring(0, 160),
         keywords: postData.keywords || theme.keywords,
         category: theme.category,
-        status: "draft",
+        status: "published",
+        published_at: new Date().toISOString(),
         author_name: "Equipe Clilin",
       })
       .select()
