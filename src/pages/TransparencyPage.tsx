@@ -62,9 +62,8 @@ const earningsExamples = [
 
 const levelMultipliers = [
   { name: "Bronze", multiplier: "1.0x", clicks: "0+", color: "bg-amber-600" },
-  { name: "Prata", multiplier: "1.1x", clicks: "100+", color: "bg-gray-400" },
-  { name: "Ouro", multiplier: "1.2x", clicks: "500+", color: "bg-yellow-500" },
-  { name: "Diamante", multiplier: "1.3x", clicks: "1000+", color: "bg-blue-400" },
+  { name: "Prata", multiplier: "1.25x", clicks: "100+", color: "bg-gray-400" },
+  { name: "Ouro", multiplier: "1.5x", clicks: "500+", color: "bg-yellow-500" },
 ];
 
 export default function TransparencyPage() {

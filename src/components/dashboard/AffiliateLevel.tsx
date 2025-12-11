@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Trophy, Star, Zap, Crown, Diamond } from 'lucide-react';
+import { Trophy, Star, Zap } from 'lucide-react';
 
 interface AffiliateLevel {
   id: number;
@@ -106,10 +106,6 @@ export default function AffiliateLevel({ affiliateId }: AffiliateLevelProps) {
         return <Zap className="h-5 w-5" />;
       case 'Ouro':
         return <Trophy className="h-5 w-5" />;
-      case 'Platina':
-        return <Crown className="h-5 w-5" />;
-      case 'Elite':
-        return <Diamond className="h-5 w-5" />;
       default:
         return <Star className="h-5 w-5" />;
     }
