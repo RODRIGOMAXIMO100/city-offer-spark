@@ -15,8 +15,8 @@ interface FAQSchemaProps {
   faqs: Array<{ question: string; answer: string }>;
 }
 
-interface ArticleSchemaProps {
-  type: 'Article';
+interface BlogPostingSchemaProps {
+  type: 'BlogPosting';
   title: string;
   description: string;
   image?: string;
@@ -24,6 +24,9 @@ interface ArticleSchemaProps {
   dateModified?: string;
   author: string;
   url: string;
+  wordCount?: number;
+  articleSection?: string;
+  keywords?: string[];
 }
 
 interface BreadcrumbSchemaProps {
@@ -41,7 +44,7 @@ type StructuredDataProps =
   | OrganizationSchemaProps
   | WebSiteSchemaProps
   | FAQSchemaProps
-  | ArticleSchemaProps
+  | BlogPostingSchemaProps
   | BreadcrumbSchemaProps
   | LocalBusinessSchemaProps;
 
@@ -106,10 +109,10 @@ function generateFAQSchema(faqs: Array<{ question: string; answer: string }>) {
   };
 }
 
-function generateArticleSchema(props: ArticleSchemaProps) {
-  return {
+function generateBlogPostingSchema(props: BlogPostingSchemaProps) {
+  const schema: Record<string, unknown> = {
     '@context': 'https://schema.org',
-    '@type': 'Article',
+    '@type': 'BlogPosting',
     headline: props.title,
     description: props.description,
     image: props.image || `${BASE_URL}/og-image.png`,
@@ -118,6 +121,7 @@ function generateArticleSchema(props: ArticleSchemaProps) {
     author: {
       '@type': 'Person',
       name: props.author,
+      url: `${BASE_URL}/sobre`,
     },
     publisher: {
       '@type': 'Organization',
@@ -125,13 +129,32 @@ function generateArticleSchema(props: ArticleSchemaProps) {
       logo: {
         '@type': 'ImageObject',
         url: `${BASE_URL}/logo.png`,
+        width: 200,
+        height: 60,
       },
     },
     mainEntityOfPage: {
       '@type': 'WebPage',
       '@id': `${BASE_URL}${props.url}`,
     },
+    inLanguage: 'pt-BR',
   };
+
+  if (props.wordCount) {
+    schema.wordCount = props.wordCount;
+    const readTime = Math.ceil(props.wordCount / 200);
+    schema.timeRequired = `PT${readTime}M`;
+  }
+
+  if (props.articleSection) {
+    schema.articleSection = props.articleSection;
+  }
+
+  if (props.keywords && props.keywords.length > 0) {
+    schema.keywords = props.keywords.join(', ');
+  }
+
+  return schema;
 }
 
 function generateBreadcrumbSchema(items: Array<{ name: string; url: string }>) {
@@ -176,8 +199,8 @@ export function StructuredData(props: StructuredDataProps) {
       case 'FAQPage':
         schema = generateFAQSchema(props.faqs);
         break;
-      case 'Article':
-        schema = generateArticleSchema(props);
+      case 'BlogPosting':
+        schema = generateBlogPostingSchema(props);
         break;
       case 'BreadcrumbList':
         schema = generateBreadcrumbSchema(props.items);

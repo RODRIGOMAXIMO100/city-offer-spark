@@ -167,7 +167,7 @@ export default function BlogPostPage() {
         articleAuthor={post.author_name}
       />
       <StructuredData
-        type="Article"
+        type="BlogPosting"
         title={post.title}
         description={post.excerpt}
         image={post.featured_image || undefined}
@@ -175,6 +175,9 @@ export default function BlogPostPage() {
         dateModified={post.updated_at}
         author={post.author_name}
         url={`/blog/${post.slug}`}
+        wordCount={post.content.split(/\s+/).length}
+        articleSection={getCategoryLabel(post.category)}
+        keywords={post.keywords}
       />
       <StructuredData
         type="BreadcrumbList"
@@ -225,6 +228,14 @@ export default function BlogPostPage() {
               <Calendar className="h-4 w-4" />
               {format(new Date(post.published_at), "dd MMM yyyy", { locale: ptBR })}
             </span>
+            {post.updated_at && post.updated_at !== post.published_at && (
+              <>
+                <div className="h-8 w-px bg-border" />
+                <span className="flex items-center gap-1.5 text-xs">
+                  Atualizado: {format(new Date(post.updated_at), "dd MMM yyyy", { locale: ptBR })}
+                </span>
+              </>
+            )}
             <div className="h-8 w-px bg-border" />
             <span className="flex items-center gap-1.5">
               <Clock className="h-4 w-4" />
@@ -301,15 +312,20 @@ export default function BlogPostPage() {
             {/* Author Card */}
             <div className="mt-12 p-6 bg-card border border-border rounded-2xl">
               <div className="flex items-start gap-4">
-                <div className="h-16 w-16 rounded-full bg-gradient-to-br from-primary to-affiliate flex items-center justify-center text-white font-bold text-xl">
+                <div className="h-16 w-16 rounded-full bg-gradient-to-br from-primary to-affiliate flex items-center justify-center text-white font-bold text-xl shrink-0">
                   {post.author_name.charAt(0)}
                 </div>
-                <div>
-                  <p className="font-semibold text-foreground">{post.author_name}</p>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Especialista em marketing digital e estratégias de afiliados. 
-                    Compartilhando conhecimento para ajudar você a crescer.
+                <div className="flex-1">
+                  <p className="font-semibold text-foreground text-lg">{post.author_name}</p>
+                  <p className="text-sm text-muted-foreground mt-1 leading-relaxed">
+                    Especialista em marketing digital, ofertas locais e estratégias de afiliados. 
+                    Compartilhando conhecimento prático para ajudar você a economizar e ganhar dinheiro na sua cidade.
                   </p>
+                  <div className="flex gap-3 mt-3">
+                    <Link to="/blog" className="text-sm text-primary hover:underline">
+                      Ver todos os artigos →
+                    </Link>
+                  </div>
                 </div>
               </div>
             </div>
