@@ -464,6 +464,24 @@ export default function AffiliateDashboard() {
                         </Badge>
                       </div>
 
+                      {/* Instagram Button - ALWAYS VISIBLE */}
+                      {offer.profiles?.instagram_url ? (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="w-full mb-3 text-pink-500 border-pink-500 hover:bg-pink-500 hover:text-white h-10 font-medium"
+                          onClick={() => openInstagram(offer.profiles!.instagram_url!)}
+                        >
+                          <Instagram className="h-5 w-5 shrink-0 mr-2" />
+                          <span>Ver Instagram da Empresa</span>
+                        </Button>
+                      ) : (
+                        <div className="w-full mb-3 text-xs text-center text-muted-foreground bg-muted/50 rounded-lg py-2">
+                          <Instagram className="h-4 w-4 inline mr-1 opacity-50" />
+                          Instagram não cadastrado
+                        </div>
+                      )}
+
                       {/* Prices */}
                       <div className="flex items-center gap-3 text-sm mb-3">
                         <span className="line-through text-muted-foreground text-xs sm:text-sm">
@@ -473,19 +491,6 @@ export default function AffiliateDashboard() {
                           R$ {offer.price_new.toFixed(2)}
                         </span>
                       </div>
-
-                      {/* Instagram Button - Always visible when available */}
-                      {offer.profiles?.instagram_url && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="w-full mb-3 text-pink-500 border-pink-500/30 hover:bg-pink-500/10 h-9"
-                          onClick={() => openInstagram(offer.profiles!.instagram_url!)}
-                        >
-                          <Instagram className="h-4 w-4 shrink-0 mr-1.5" />
-                          <span className="truncate">Ver Instagram da Empresa</span>
-                        </Button>
-                      )}
 
                       {/* Stats */}
                       <div className="grid grid-cols-3 gap-1.5 sm:gap-2 mb-3 text-center">
