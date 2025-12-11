@@ -36,7 +36,7 @@ import {
 const MAX_ACTIVE_OFFERS = 3;
 
 export default function CompanyDashboard() {
-  const { profile, signOut, refreshProfile } = useAuth();
+  const { profile, signOut, refreshProfile, user } = useAuth();
   const { offers, loading, fetchMyOffers, deleteOffer } = useOffers();
   const { toast } = useToast();
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -45,6 +45,8 @@ export default function CompanyDashboard() {
   const [savingInstagram, setSavingInstagram] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [editingOffer, setEditingOffer] = useState<Offer | null>(null);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(profile?.avatar_url || null);
 
   // Check active offers count
   const activeOffers = offers.filter(o => o.active && !o.deleted_at && new Date(o.expires_at) > new Date());
@@ -81,7 +83,79 @@ export default function CompanyDashboard() {
 
   useEffect(() => {
     setInstagramUrl(profile?.instagram_url || '');
-  }, [profile?.instagram_url]);
+    setAvatarPreview(profile?.avatar_url || null);
+  }, [profile?.instagram_url, profile?.avatar_url]);
+
+  const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !profile || !user) return;
+
+    // Validate file
+    if (!file.type.startsWith('image/')) {
+      toast({
+        title: 'Arquivo inválido',
+        description: 'Por favor, envie apenas imagens.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    if (file.size > 2 * 1024 * 1024) {
+      toast({
+        title: 'Arquivo muito grande',
+        description: 'O tamanho máximo é 2MB.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    setUploadingAvatar(true);
+
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${user.id}/avatar.${fileExt}`;
+
+      // Upload to storage
+      const { error: uploadError } = await supabase.storage
+        .from('company-avatars')
+        .upload(fileName, file, { upsert: true });
+
+      if (uploadError) throw uploadError;
+
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('company-avatars')
+        .getPublicUrl(fileName);
+
+      // Add cache buster to URL
+      const avatarUrl = `${publicUrl}?t=${Date.now()}`;
+
+      // Update profile
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({ avatar_url: avatarUrl })
+        .eq('id', profile.id);
+
+      if (updateError) throw updateError;
+
+      setAvatarPreview(avatarUrl);
+      refreshProfile();
+      
+      toast({
+        title: 'Logo atualizada!',
+        description: 'Sua logo será exibida nas suas ofertas.',
+      });
+    } catch (err: any) {
+      console.error('Error uploading avatar:', err);
+      toast({
+        title: 'Erro no upload',
+        description: err.message || 'Tente novamente.',
+        variant: 'destructive',
+      });
+    } finally {
+      setUploadingAvatar(false);
+    }
+  };
 
   // Calculate totals
   const totalClicks = offers.reduce((acc, o) => acc + o.clicks_count, 0);
@@ -220,6 +294,63 @@ export default function CompanyDashboard() {
       </header>
 
       <div className="max-w-2xl mx-auto px-3 sm:px-4 py-4 sm:py-6 space-y-4 sm:space-y-6">
+        {/* Company Logo Section */}
+        <Card>
+          <CardHeader className="pb-2 sm:pb-3 px-3 sm:px-6 pt-3 sm:pt-6">
+            <CardTitle className="text-xs sm:text-sm flex items-center gap-2">
+              <Image className="h-3 w-3 sm:h-4 sm:w-4" />
+              Logo da Empresa
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2 sm:space-y-3 px-3 sm:px-6 pb-3 sm:pb-6">
+            <div className="flex items-center gap-4">
+              <div className="relative">
+                {avatarPreview ? (
+                  <img 
+                    src={avatarPreview} 
+                    alt="Logo da empresa" 
+                    className="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover border-2 border-border"
+                  />
+                ) : (
+                  <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-muted flex items-center justify-center border-2 border-dashed border-border">
+                    <Image className="h-6 w-6 text-muted-foreground" />
+                  </div>
+                )}
+                {uploadingAvatar && (
+                  <div className="absolute inset-0 rounded-full bg-background/80 flex items-center justify-center">
+                    <Loader2 className="h-5 w-5 animate-spin text-primary" />
+                  </div>
+                )}
+              </div>
+              <div className="flex-1">
+                <label htmlFor="avatar-upload" className="cursor-pointer">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="w-full"
+                    disabled={uploadingAvatar}
+                    asChild
+                  >
+                    <span>
+                      {uploadingAvatar ? 'Enviando...' : avatarPreview ? 'Trocar logo' : 'Adicionar logo'}
+                    </span>
+                  </Button>
+                </label>
+                <input 
+                  id="avatar-upload"
+                  type="file" 
+                  accept="image/*"
+                  onChange={handleAvatarChange}
+                  className="hidden"
+                />
+                <p className="text-[10px] sm:text-xs text-muted-foreground mt-1">
+                  JPG, PNG até 2MB. Aparecerá nas ofertas.
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Instagram Profile Section */}
         <Card>
           <CardHeader className="pb-2 sm:pb-3 px-3 sm:px-6 pt-3 sm:pt-6">

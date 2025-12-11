@@ -12,6 +12,7 @@ export interface Profile {
   pix_key?: string;
   preferences?: string[];
   instagram_url?: string;
+  avatar_url?: string;
   // Dados fiscais (empresa)
   cnpj?: string;
   razao_social?: string;
@@ -57,6 +58,7 @@ export interface Offer {
   profiles?: {
     name: string;
     instagram_url?: string;
+    avatar_url?: string;
   };
 }
 
