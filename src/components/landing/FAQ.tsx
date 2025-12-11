@@ -6,7 +6,8 @@ import {
 } from "@/components/ui/accordion";
 import { HelpCircle } from "lucide-react";
 
-const faqs = [
+// Export FAQs for use in structured data
+export const faqs = [
   {
     question: "Quanto custa para empresas?",
     answer: "Não há mensalidade ou taxa fixa. Você só paga quando alguém clica na sua oferta. O custo por clique varia de R$ 0,40 a R$ 1,00, calculado automaticamente pela qualidade da sua oferta. Quanto melhor sua nota, menos você paga!",

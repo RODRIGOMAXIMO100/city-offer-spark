@@ -102,6 +102,99 @@ export type Database = {
           },
         ]
       }
+      blog_posts: {
+        Row: {
+          author_name: string | null
+          category: string
+          content: string
+          created_at: string | null
+          excerpt: string
+          featured_image: string | null
+          id: string
+          keywords: string[] | null
+          meta_description: string | null
+          meta_title: string | null
+          published_at: string | null
+          scheduled_for: string | null
+          slug: string
+          status: string
+          title: string
+          updated_at: string | null
+          views: number | null
+        }
+        Insert: {
+          author_name?: string | null
+          category?: string
+          content: string
+          created_at?: string | null
+          excerpt: string
+          featured_image?: string | null
+          id?: string
+          keywords?: string[] | null
+          meta_description?: string | null
+          meta_title?: string | null
+          published_at?: string | null
+          scheduled_for?: string | null
+          slug: string
+          status?: string
+          title: string
+          updated_at?: string | null
+          views?: number | null
+        }
+        Update: {
+          author_name?: string | null
+          category?: string
+          content?: string
+          created_at?: string | null
+          excerpt?: string
+          featured_image?: string | null
+          id?: string
+          keywords?: string[] | null
+          meta_description?: string | null
+          meta_title?: string | null
+          published_at?: string | null
+          scheduled_for?: string | null
+          slug?: string
+          status?: string
+          title?: string
+          updated_at?: string | null
+          views?: number | null
+        }
+        Relationships: []
+      }
+      blog_themes: {
+        Row: {
+          active: boolean | null
+          category: string
+          created_at: string | null
+          id: string
+          keywords: string[]
+          last_used_at: string | null
+          theme: string
+          use_count: number | null
+        }
+        Insert: {
+          active?: boolean | null
+          category: string
+          created_at?: string | null
+          id?: string
+          keywords: string[]
+          last_used_at?: string | null
+          theme: string
+          use_count?: number | null
+        }
+        Update: {
+          active?: boolean | null
+          category?: string
+          created_at?: string | null
+          id?: string
+          keywords?: string[]
+          last_used_at?: string | null
+          theme?: string
+          use_count?: number | null
+        }
+        Relationships: []
+      }
       click_rate_limits: {
         Row: {
           blocked: boolean | null

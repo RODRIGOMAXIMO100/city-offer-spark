@@ -8,9 +8,11 @@ import { HowItWorks } from "@/components/landing/HowItWorks";
 import { ForCompanies } from "@/components/landing/ForCompanies";
 import { ForAffiliates } from "@/components/landing/ForAffiliates";
 import { ForClients } from "@/components/landing/ForClients";
-import { FAQ } from "@/components/landing/FAQ";
+import { FAQ, faqs } from "@/components/landing/FAQ";
 import { FinalCTA } from "@/components/landing/FinalCTA";
 import { Footer } from "@/components/landing/Footer";
+import { SEOHead } from "@/components/seo/SEOHead";
+import { StructuredData } from "@/components/seo/StructuredData";
 
 export default function LandingPage() {
   const { user, loading } = useAuth();
@@ -32,6 +34,11 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead canonicalUrl="/" />
+      <StructuredData type="Organization" />
+      <StructuredData type="WebSite" />
+      <StructuredData type="FAQPage" faqs={faqs} />
+      
       <Navbar />
       <main>
         <HeroSection />

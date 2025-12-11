@@ -13,6 +13,8 @@ import OfferPage from "./pages/OfferPage";
 import TermsPage from "./pages/TermsPage";
 import PrivacyPage from "./pages/PrivacyPage";
 import TransparencyPage from "./pages/TransparencyPage";
+import BlogPage from "./pages/BlogPage";
+import BlogPostPage from "./pages/BlogPostPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -60,6 +62,8 @@ const AppRoutes = () => (
     <Route path="/termos" element={<TermsPage />} />
     <Route path="/privacidade" element={<PrivacyPage />} />
     <Route path="/transparencia" element={<TransparencyPage />} />
+    <Route path="/blog" element={<BlogPage />} />
+    <Route path="/blog/:slug" element={<BlogPostPage />} />
     <Route path="*" element={<NotFound />} />
   </Routes>
 );
