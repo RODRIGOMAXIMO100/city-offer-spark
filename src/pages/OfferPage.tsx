@@ -160,8 +160,24 @@ export default function OfferPage() {
     }
   };
 
-  const handleInstagramClick = () => {
+  const handleInstagramClick = async () => {
     if (!offer?.profiles?.instagram_url) return;
+    
+    // Record Instagram click (free, just for tracking)
+    try {
+      await supabase.functions.invoke('process-click', {
+        body: {
+          offerId: offer.id,
+          affiliateId,
+          fingerprint: generateFingerprint(),
+          userAgent: navigator.userAgent,
+          clickType: 'INSTAGRAM',
+        },
+      });
+    } catch (err) {
+      console.error('Error tracking Instagram click:', err);
+    }
+    
     window.open(offer.profiles.instagram_url, '_blank');
   };
 

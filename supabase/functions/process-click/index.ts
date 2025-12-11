@@ -265,7 +265,18 @@ serve(async (req) => {
       }
     }
 
-    // 5. Record click
+    // 5. Record platform fee (Clilin profit)
+    // Use a fixed platform account ID for tracking revenue
+    const PLATFORM_ACCOUNT_ID = '00000000-0000-0000-0000-000000000001';
+    await supabase.from("transactions").insert({
+      user_id: PLATFORM_ACCOUNT_ID,
+      amount: CPC_PLATFORM_FEE,
+      type: "PLATFORM_FEE",
+      description: `Taxa de plataforma - clique`,
+      offer_id: offerId,
+    });
+
+    // 6. Record click
     await supabase.from("offer_clicks").insert({
       offer_id: offerId,
       affiliate_id: validAffiliateId || null,
@@ -274,10 +285,10 @@ serve(async (req) => {
       click_type: 'MAIN',
     });
 
-    // 6. Increment click count
+    // 7. Increment click count
     await supabase.rpc("increment_offer_clicks", { offer_id: offerId });
 
-    console.log(`Main click processed for offer ${offerId} - Company charged ${CPC_COST_COMPANY} credits, Affiliate: ${validAffiliateId ? 'paid' : 'none/blocked'}`);
+    console.log(`Main click processed for offer ${offerId} - Company charged ${CPC_COST_COMPANY} credits, Affiliate: ${validAffiliateId ? 'paid' : 'none/blocked'}, Platform fee: ${CPC_PLATFORM_FEE}`);
 
     return new Response(
       JSON.stringify({
