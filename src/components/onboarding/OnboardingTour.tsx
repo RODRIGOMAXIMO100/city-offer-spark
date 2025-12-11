@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { useOnboarding } from '@/contexts/OnboardingContext';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, X } from 'lucide-react';
+import { ChevronLeft, ChevronRight, X, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface HighlightPosition {
@@ -23,7 +23,10 @@ export function OnboardingTour() {
   } = useOnboarding();
 
   const [highlightPos, setHighlightPos] = useState<HighlightPosition | null>(null);
-  const [tooltipPos, setTooltipPos] = useState({ top: 0, left: 0 });
+  const [tooltipPos, setTooltipPos] = useState(() => ({
+    top: typeof window !== 'undefined' ? window.innerHeight / 2 - 90 : 300,
+    left: typeof window !== 'undefined' ? window.innerWidth / 2 - 160 : 300,
+  }));
   const [isReady, setIsReady] = useState(false);
   const [elementNotFound, setElementNotFound] = useState(false);
   const retryCountRef = useRef(0);
@@ -140,7 +143,20 @@ export function OnboardingTour() {
     }
   }, [showTour, tourCurrentStep, currentStepData?.target, updatePositions, isReady]);
 
-  if (!showTour || !currentStepData || !isReady) return null;
+  if (!showTour || !currentStepData) return null;
+
+  // Mostrar loading enquanto prepara o tour
+  if (!isReady) {
+    return (
+      <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60">
+        <div className="bg-card p-6 rounded-lg shadow-2xl text-center border border-border">
+          <Loader2 className="h-6 w-6 animate-spin mx-auto mb-3 text-primary" />
+          <p className="text-sm text-foreground font-medium">Preparando tour...</p>
+          <p className="text-xs text-muted-foreground mt-1">Aguarde um momento</p>
+        </div>
+      </div>
+    );
+  }
 
   const handleNext = () => {
     if (isLastStep) {
