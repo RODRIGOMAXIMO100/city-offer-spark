@@ -166,7 +166,7 @@ export default function AdminDashboard() {
       const usersWithRoles = profiles?.map(p => ({
         ...p,
         role: roles?.find(r => r.user_id === p.user_id)?.role || 'N/A'
-      })) || [];
+      })).filter(u => u.role !== 'ADMIN') || [];
 
       setUsers(usersWithRoles);
     } catch (error) {
