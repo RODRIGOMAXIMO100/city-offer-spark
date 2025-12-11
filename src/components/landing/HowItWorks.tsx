@@ -5,7 +5,7 @@ const steps = [
     step: "01",
     icon: Building2,
     title: "Empresa cadastra oferta",
-    description: "Crie ofertas com descontos reais. Defina o valor por clique e deixe a plataforma trabalhar.",
+    description: "Crie ofertas com descontos reais. O custo por clique é calculado automaticamente pela qualidade da oferta.",
     color: "company",
   },
   {
