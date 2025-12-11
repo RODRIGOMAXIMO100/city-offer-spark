@@ -81,15 +81,15 @@ export const TOUR_STEPS: Record<string, TourStep[]> = {
       position: 'bottom',
     },
     {
-      target: '[data-tour="create-offer"]',
-      title: 'Criar Oferta',
-      content: 'Crie ofertas com descontos atrativos. Quanto melhor a oferta, mais cliques você recebe!',
-      position: 'top',
-    },
-    {
       target: '[data-tour="performance"]',
       title: 'Desempenho',
       content: 'Acompanhe views, cliques e CTR das suas ofertas em tempo real.',
+      position: 'bottom',
+    },
+    {
+      target: '[data-tour="create-offer"]',
+      title: 'Criar Oferta',
+      content: 'Crie ofertas com descontos atrativos. Quanto melhor a oferta, mais cliques você recebe!',
       position: 'top',
     },
   ],
