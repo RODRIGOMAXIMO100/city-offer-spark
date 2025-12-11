@@ -705,6 +705,11 @@ export type Database = {
       }
       increment_offer_clicks: { Args: { offer_id: string }; Returns: undefined }
       increment_offer_views: { Args: { offer_id: string }; Returns: undefined }
+      recalculate_affiliate_stats: {
+        Args: { affiliate_profile_id: string }
+        Returns: undefined
+      }
+      recalculate_all_affiliate_stats: { Args: never; Returns: undefined }
       recalculate_all_offer_scores: { Args: never; Returns: undefined }
       reset_weekly_clicks: { Args: never; Returns: undefined }
       update_affiliate_stats: {
