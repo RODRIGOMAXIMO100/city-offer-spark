@@ -7,15 +7,16 @@ const corsHeaders = {
 };
 
 // Business config
-const CPC_COST_COMPANY = 5; // Créditos que a empresa paga
-const CPC_PAYOUT_AFFILIATE = 3; // Créditos que o afiliado recebe
-const CPC_PLATFORM_FEE = 2; // Lucro da plataforma
+const CPC_COST_COMPANY = 5; // Credits company pays
+const CPC_PAYOUT_AFFILIATE_BASE = 3; // Base credits affiliate receives
+const CPC_PLATFORM_FEE = 2; // Platform profit
 
 // Anti-fraud config
-const COOLDOWN_HOURS = 24; // Cooldown entre cliques do mesmo IP/oferta
-const GLOBAL_RATE_LIMIT_PER_HOUR = 50; // Máximo de cliques por IP por hora (anti-bot)
+const COOLDOWN_HOURS = 24; // Cooldown between clicks from same IP/offer
+const GLOBAL_RATE_LIMIT_PER_HOUR = 50; // Max clicks per IP per hour (anti-bot)
+const MIN_SESSION_AGE_MS = 1500; // Minimum time on page before click is valid (1.5 seconds)
 
-// Extrai IP real do request
+// Extract real client IP
 function getClientIp(req: Request): string {
   return (
     req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
@@ -31,12 +32,20 @@ serve(async (req) => {
   }
 
   try {
-    const { offerId, affiliateId, fingerprint, userAgent, clickType = 'MAIN' } = await req.json();
+    const { 
+      offerId, 
+      affiliateId, 
+      fingerprint, 
+      userAgent, 
+      clickType = 'MAIN',
+      sessionToken,
+      deviceId,
+      advancedFingerprint
+    } = await req.json();
 
-    // Captura IP do servidor (mais confiável que do cliente)
     const clientIp = getClientIp(req);
 
-    console.log(`Processing click - Offer: ${offerId}, IP: ${clientIp}, Type: ${clickType}`);
+    console.log(`Processing click - Offer: ${offerId}, IP: ${clientIp}, Type: ${clickType}, Session: ${sessionToken?.substring(0, 8) || 'none'}`);
 
     if (!offerId) {
       return new Response(
@@ -79,7 +88,7 @@ serve(async (req) => {
 
     const companyProfile = offer.profiles as any;
 
-    // If it's an Instagram click, it's FREE - just record the click and return
+    // If it's an Instagram click, it's FREE - just record and return
     if (clickType === 'INSTAGRAM') {
       await supabase.from("offer_clicks").insert({
         offer_id: offerId,
@@ -89,7 +98,7 @@ serve(async (req) => {
         click_type: 'INSTAGRAM',
       });
 
-      console.log(`Instagram click recorded for offer ${offerId} - FREE (no credits charged)`);
+      console.log(`Instagram click recorded for offer ${offerId} - FREE`);
 
       return new Response(
         JSON.stringify({
@@ -104,7 +113,86 @@ serve(async (req) => {
 
     // ========== ANTI-FRAUD CHECKS FOR MAIN CLICKS ==========
 
-    // 1. Global rate limit check (anti-bot): max 50 clicks per IP per hour
+    // 1. Session validation (server-side time check)
+    if (sessionToken) {
+      const { data: session, error: sessionError } = await supabase
+        .from("page_sessions")
+        .select("*")
+        .eq("session_token", sessionToken)
+        .eq("offer_id", offerId)
+        .maybeSingle();
+
+      if (session && !session.validated) {
+        const sessionAge = Date.now() - new Date(session.started_at).getTime();
+        
+        if (sessionAge < MIN_SESSION_AGE_MS) {
+          console.log(`Session too young - Age: ${sessionAge}ms, Required: ${MIN_SESSION_AGE_MS}ms`);
+          return new Response(
+            JSON.stringify({ 
+              error: "Clique muito rápido. Aguarde um momento.",
+              blocked: true,
+              reason: "session_too_young"
+            }),
+            { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
+        }
+
+        // Mark session as validated
+        await supabase
+          .from("page_sessions")
+          .update({ validated: true })
+          .eq("id", session.id);
+      }
+    }
+
+    // 2. Advanced fingerprint check
+    if (deviceId && advancedFingerprint) {
+      // Check if this device is blocked
+      const { data: existingDevice } = await supabase
+        .from("device_fingerprints")
+        .select("*")
+        .eq("device_id", deviceId)
+        .maybeSingle();
+
+      if (existingDevice?.blocked) {
+        console.log(`Blocked device detected - DeviceId: ${deviceId}`);
+        return new Response(
+          JSON.stringify({ 
+            error: "Dispositivo bloqueado por atividade suspeita.",
+            blocked: true,
+            reason: "device_blocked"
+          }),
+          { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
+      // Check if same deviceId was used from different IP recently (suspicious)
+      if (existingDevice && existingDevice.ip_address !== clientIp) {
+        const timeSinceLastSeen = Date.now() - new Date(existingDevice.last_seen_at).getTime();
+        const hoursAgo = timeSinceLastSeen / (1000 * 60 * 60);
+
+        if (hoursAgo < 1) {
+          console.log(`Suspicious: same deviceId from different IP within 1 hour`);
+          // Mark as suspicious but don't block
+          await supabase
+            .from("device_fingerprints")
+            .update({ is_suspicious: true })
+            .eq("id", existingDevice.id);
+        }
+      }
+
+      // Upsert device fingerprint
+      await supabase
+        .from("device_fingerprints")
+        .upsert({
+          device_id: deviceId,
+          ip_address: clientIp,
+          fingerprint_data: advancedFingerprint,
+          last_seen_at: new Date().toISOString(),
+        }, { onConflict: 'device_id,ip_address' });
+    }
+
+    // 3. Global rate limit check (anti-bot): max 50 clicks per IP per hour
     const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
     const { count: recentClickCount } = await supabase
       .from("offer_clicks")
@@ -124,7 +212,7 @@ serve(async (req) => {
       );
     }
 
-    // 2. Check 24h cooldown per IP/offer
+    // 4. Check 24h cooldown per IP/offer
     const cooldownTime = new Date(Date.now() - COOLDOWN_HOURS * 60 * 60 * 1000).toISOString();
     const { data: existingRateLimit } = await supabase
       .from("click_rate_limits")
@@ -135,10 +223,8 @@ serve(async (req) => {
       .maybeSingle();
 
     if (existingRateLimit) {
-      // Duplicate click within 24h - redirect but don't charge
       console.log(`Duplicate click detected - IP: ${clientIp}, Offer: ${offerId}`);
       
-      // Update click count for tracking
       await supabase
         .from("click_rate_limits")
         .update({ 
@@ -147,10 +233,9 @@ serve(async (req) => {
         })
         .eq("id", existingRateLimit.id);
 
-      // Record click but mark as duplicate
       await supabase.from("offer_clicks").insert({
         offer_id: offerId,
-        affiliate_id: null, // No commission for duplicates
+        affiliate_id: null,
         client_ip: clientIp,
         user_agent: userAgent,
         click_type: 'DUPLICATE',
@@ -168,10 +253,9 @@ serve(async (req) => {
       );
     }
 
-    // 3. Check for affiliate self-click fraud
+    // 5. Check for affiliate self-click fraud
     let validAffiliateId = affiliateId;
     if (affiliateId) {
-      // Get affiliate's previous click IPs to detect self-clicking pattern
       const { data: affiliateProfile } = await supabase
         .from("profiles")
         .select("id, user_id")
@@ -179,7 +263,6 @@ serve(async (req) => {
         .maybeSingle();
 
       if (affiliateProfile) {
-        // Check if this IP has been used by this affiliate before
         const { data: affiliateClicks } = await supabase
           .from("offer_clicks")
           .select("client_ip")
@@ -188,10 +271,9 @@ serve(async (req) => {
 
         const affiliateIps = new Set(affiliateClicks?.map(c => c.client_ip));
         
-        // If the current IP matches affiliate's known IPs, it's likely self-clicking
         if (affiliateIps.has(clientIp)) {
           console.log(`Self-click detected - Affiliate: ${affiliateId}, IP: ${clientIp}`);
-          validAffiliateId = null; // Remove affiliate commission
+          validAffiliateId = null;
         }
       }
     }
@@ -211,7 +293,7 @@ serve(async (req) => {
       );
     }
 
-    // 1. Record rate limit entry for this IP/offer
+    // 1. Record rate limit entry
     await supabase.from("click_rate_limits").upsert({
       offer_id: offerId,
       ip_address: clientIp,
@@ -241,7 +323,8 @@ serve(async (req) => {
       offer_id: offerId,
     });
 
-    // 4. Credit affiliate if valid (not self-click)
+    // 4. Credit affiliate if valid (with level multiplier)
+    let actualAffiliatePayout = 0;
     if (validAffiliateId) {
       const { data: affiliateProfile } = await supabase
         .from("profiles")
@@ -250,25 +333,35 @@ serve(async (req) => {
         .single();
 
       if (affiliateProfile) {
+        // Get commission multiplier from affiliate level
+        const { data: multiplierResult } = await supabase
+          .rpc("get_commission_multiplier", { affiliate_profile_id: validAffiliateId });
+
+        const multiplier = multiplierResult || 1.0;
+        actualAffiliatePayout = Math.floor(CPC_PAYOUT_AFFILIATE_BASE * multiplier);
+
         await supabase
           .from("profiles")
-          .update({ balance: affiliateProfile.balance + CPC_PAYOUT_AFFILIATE })
+          .update({ balance: affiliateProfile.balance + actualAffiliatePayout })
           .eq("id", affiliateProfile.id);
 
         await supabase.from("transactions").insert({
           user_id: affiliateProfile.id,
-          amount: CPC_PAYOUT_AFFILIATE,
+          amount: actualAffiliatePayout,
           type: "CLICK_EARNING",
-          description: `Comissão por clique`,
+          description: `Comissão por clique (${multiplier}x)`,
           offer_id: offerId,
+        });
+
+        // Update affiliate stats
+        await supabase.rpc("update_affiliate_stats", { 
+          affiliate_profile_id: validAffiliateId, 
+          earnings: actualAffiliatePayout 
         });
       }
     }
 
-    // 5. Platform fee is calculated automatically: CPC_COST_COMPANY - CPC_PAYOUT_AFFILIATE = CPC_PLATFORM_FEE
-    // No need to record separately - admin dashboard calculates from CLICK_COST - CLICK_EARNING
-
-    // 6. Record click
+    // 5. Record click
     await supabase.from("offer_clicks").insert({
       offer_id: offerId,
       affiliate_id: validAffiliateId || null,
@@ -277,10 +370,10 @@ serve(async (req) => {
       click_type: 'MAIN',
     });
 
-    // 7. Increment click count
+    // 6. Increment click count
     await supabase.rpc("increment_offer_clicks", { offer_id: offerId });
 
-    console.log(`Main click processed for offer ${offerId} - Company charged ${CPC_COST_COMPANY} credits, Affiliate: ${validAffiliateId ? 'paid' : 'none/blocked'}, Platform fee: ${CPC_PLATFORM_FEE}`);
+    console.log(`Main click processed - Offer: ${offerId}, Company: -${CPC_COST_COMPANY}, Affiliate: ${validAffiliateId ? `+${actualAffiliatePayout}` : 'none'}`);
 
     return new Response(
       JSON.stringify({

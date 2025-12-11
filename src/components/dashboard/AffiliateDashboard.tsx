@@ -1,23 +1,59 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useOffers } from '@/hooks/useOffers';
 import { formatCreditsToReal, CONFIG } from '@/types/database';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Banknote, LogOut, Share2, Copy, Check, TrendingUp, Loader2, MapPin, Instagram, Clock } from 'lucide-react';
+import { Banknote, LogOut, Share2, Copy, Check, TrendingUp, Loader2, MapPin, Instagram, Clock, History } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 import PaymentDataModal from './PaymentDataModal';
+import AffiliateLevel from './AffiliateLevel';
+
+interface Withdrawal {
+  id: string;
+  amount_brl: number;
+  status: string;
+  requested_at: string;
+  rejection_reason: string | null;
+}
 
 export default function AffiliateDashboard() {
-  const { profile, signOut } = useAuth();
+  const { profile, signOut, refreshProfile } = useAuth();
   const { offers, loading } = useOffers(profile?.city);
   const { toast } = useToast();
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [withdrawing, setWithdrawing] = useState(false);
+  const [withdrawals, setWithdrawals] = useState<Withdrawal[]>([]);
+  const [showWithdrawals, setShowWithdrawals] = useState(false);
 
-  const handleWithdraw = () => {
-    if ((profile?.balance || 0) * CONFIG.CREDIT_VALUE_BRL < CONFIG.MIN_WITHDRAW_BRL) {
+  // Fetch withdrawal history
+  useEffect(() => {
+    const fetchWithdrawals = async () => {
+      if (!profile?.id) return;
+      
+      const { data } = await supabase
+        .from('withdrawals')
+        .select('id, amount_brl, status, requested_at, rejection_reason')
+        .eq('user_id', profile.id)
+        .order('requested_at', { ascending: false })
+        .limit(10);
+
+      if (data) {
+        setWithdrawals(data);
+      }
+    };
+
+    fetchWithdrawals();
+  }, [profile?.id]);
+
+  const handleWithdraw = async () => {
+    const balance = profile?.balance || 0;
+    const balanceBrl = balance * CONFIG.CREDIT_VALUE_BRL;
+
+    if (balanceBrl < CONFIG.MIN_WITHDRAW_BRL) {
       toast({
         title: 'Saldo insuficiente',
         description: `Mínimo para saque: R$ ${CONFIG.MIN_WITHDRAW_BRL.toFixed(2)}`,
@@ -26,16 +62,75 @@ export default function AffiliateDashboard() {
       return;
     }
     
-    if (!profile?.cpf || !profile?.pix_key) {
+    if (!profile?.cpf || !profile?.pix_key || !profile?.nome_completo) {
       setShowPaymentModal(true);
-    } else {
-      alert('Funcionalidade de saque PIX em breve!');
+      return;
+    }
+
+    // Check for pending withdrawals
+    const pendingWithdrawal = withdrawals.find(w => w.status === 'PENDING' || w.status === 'PROCESSING');
+    if (pendingWithdrawal) {
+      toast({
+        title: 'Saque pendente',
+        description: 'Você já tem um saque aguardando aprovação.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    setWithdrawing(true);
+
+    try {
+      const { data, error } = await supabase.functions.invoke('request-withdrawal', {
+        body: { amount: balance },
+      });
+
+      if (error) throw error;
+
+      if (data.error) {
+        toast({
+          title: 'Erro',
+          description: data.error,
+          variant: 'destructive',
+        });
+        return;
+      }
+
+      toast({
+        title: 'Saque solicitado!',
+        description: data.message,
+      });
+
+      // Refresh profile to update balance
+      await refreshProfile();
+
+      // Add to local withdrawals list
+      setWithdrawals(prev => [{
+        id: data.withdrawal.id,
+        amount_brl: data.withdrawal.amount_brl,
+        status: 'PENDING',
+        requested_at: new Date().toISOString(),
+        rejection_reason: null,
+      }, ...prev]);
+
+    } catch (err) {
+      console.error('Error requesting withdrawal:', err);
+      toast({
+        title: 'Erro',
+        description: 'Não foi possível solicitar o saque. Tente novamente.',
+        variant: 'destructive',
+      });
+    } finally {
+      setWithdrawing(false);
     }
   };
 
   const handlePaymentDataSaved = () => {
     setShowPaymentModal(false);
-    alert('Funcionalidade de saque PIX em breve!');
+    toast({
+      title: 'Dados salvos!',
+      description: 'Agora você pode solicitar o saque.',
+    });
   };
 
   const sortedOffers = [...offers].sort((a, b) => {
@@ -87,6 +182,30 @@ export default function AffiliateDashboard() {
     return { text: `${days}d restantes`, color: 'bg-muted', urgent: false };
   };
 
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case 'PENDING':
+        return <Badge variant="outline" className="text-yellow-500 border-yellow-500">Pendente</Badge>;
+      case 'APPROVED':
+        return <Badge variant="outline" className="text-blue-500 border-blue-500">Aprovado</Badge>;
+      case 'COMPLETED':
+        return <Badge className="bg-green-500">Pago</Badge>;
+      case 'REJECTED':
+        return <Badge variant="destructive">Rejeitado</Badge>;
+      default:
+        return <Badge variant="secondary">{status}</Badge>;
+    }
+  };
+
+  const formatDate = (dateStr: string) => {
+    return new Date(dateStr).toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  };
+
   return (
     <div className="min-h-screen bg-affiliate-muted pb-20">
       {/* Header */}
@@ -116,18 +235,59 @@ export default function AffiliateDashboard() {
                 </p>
               </div>
             </div>
-            <Button
-              size="sm"
-              className="bg-affiliate hover:bg-affiliate/90 text-affiliate-foreground"
-              onClick={handleWithdraw}
-            >
-              Sacar PIX
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => setShowWithdrawals(!showWithdrawals)}
+              >
+                <History className="h-4 w-4" />
+              </Button>
+              <Button
+                size="sm"
+                className="bg-affiliate hover:bg-affiliate/90 text-affiliate-foreground"
+                onClick={handleWithdraw}
+                disabled={withdrawing}
+              >
+                {withdrawing ? (
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                ) : null}
+                Sacar PIX
+              </Button>
+            </div>
           </div>
+
+          {/* Withdrawal History */}
+          {showWithdrawals && withdrawals.length > 0 && (
+            <div className="mt-3 bg-muted/30 rounded-lg p-3">
+              <p className="text-sm font-medium mb-2">Histórico de Saques</p>
+              <div className="space-y-2 max-h-40 overflow-y-auto">
+                {withdrawals.map((w) => (
+                  <div key={w.id} className="flex justify-between items-center text-sm bg-background rounded p-2">
+                    <div>
+                      <p className="font-medium">R$ {w.amount_brl.toFixed(2)}</p>
+                      <p className="text-xs text-muted-foreground">{formatDate(w.requested_at)}</p>
+                    </div>
+                    <div className="text-right">
+                      {getStatusBadge(w.status)}
+                      {w.rejection_reason && (
+                        <p className="text-xs text-destructive mt-1">{w.rejection_reason}</p>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </header>
 
       <div className="max-w-2xl mx-auto px-4 py-6 space-y-6">
+        {/* Affiliate Level Card */}
+        {profile?.id && (
+          <AffiliateLevel affiliateId={profile.id} />
+        )}
+
         {/* Info Card */}
         <Card className="bg-gradient-to-r from-affiliate to-affiliate/80 text-affiliate-foreground border-0">
           <CardContent className="p-4">
