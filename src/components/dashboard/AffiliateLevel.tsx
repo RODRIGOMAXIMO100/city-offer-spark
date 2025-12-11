@@ -149,7 +149,7 @@ export default function AffiliateLevel({ affiliateId }: AffiliateLevelProps) {
   const commission = getRealCommission();
 
   return (
-    <Card className="overflow-hidden">
+    <Card className="overflow-hidden" data-tour="level">
       <CardContent className="p-0">
         {/* Current Level Banner */}
         <div 
