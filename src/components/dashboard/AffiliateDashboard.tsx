@@ -5,7 +5,7 @@ import { formatCreditsToReal, CONFIG } from '@/types/database';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Banknote, LogOut, Share2, Copy, Check, TrendingUp, Loader2, MapPin, Instagram, Clock, History } from 'lucide-react';
+import { Banknote, LogOut, Share2, Copy, Check, TrendingUp, Loader2, MapPin, Instagram, Clock, History, Coins } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import PaymentDataModal from './PaymentDataModal';
@@ -22,6 +22,13 @@ interface Withdrawal {
   rejection_reason: string | null;
 }
 
+interface Earning {
+  id: string;
+  amount: number;
+  created_at: string;
+  offer_title: string | null;
+}
+
 export default function AffiliateDashboard() {
   const { profile, signOut, refreshProfile } = useAuth();
   const { offers, loading } = useOffers(profile?.city);
@@ -31,6 +38,8 @@ export default function AffiliateDashboard() {
   const [withdrawing, setWithdrawing] = useState(false);
   const [withdrawals, setWithdrawals] = useState<Withdrawal[]>([]);
   const [showWithdrawals, setShowWithdrawals] = useState(false);
+  const [earnings, setEarnings] = useState<Earning[]>([]);
+  const [showEarnings, setShowEarnings] = useState(false);
 
   // Fetch withdrawal history
   useEffect(() => {
@@ -50,6 +59,32 @@ export default function AffiliateDashboard() {
     };
 
     fetchWithdrawals();
+  }, [profile?.id]);
+
+  // Fetch earnings history
+  useEffect(() => {
+    const fetchEarnings = async () => {
+      if (!profile?.id) return;
+      
+      const { data } = await supabase
+        .from('transactions')
+        .select('id, amount, created_at, offer_id, offers(title)')
+        .eq('user_id', profile.id)
+        .eq('type', 'CLICK_EARNING')
+        .order('created_at', { ascending: false })
+        .limit(50);
+
+      if (data) {
+        setEarnings(data.map(t => ({
+          id: t.id,
+          amount: t.amount,
+          created_at: t.created_at,
+          offer_title: t.offers?.title || null,
+        })));
+      }
+    };
+
+    fetchEarnings();
   }, [profile?.id]);
 
   const handleWithdraw = async () => {
@@ -243,7 +278,16 @@ export default function AffiliateDashboard() {
               <Button
                 size="sm"
                 variant="outline"
-                onClick={() => setShowWithdrawals(!showWithdrawals)}
+                onClick={() => { setShowEarnings(!showEarnings); setShowWithdrawals(false); }}
+                title="Histórico de Ganhos"
+              >
+                <Coins className="h-4 w-4" />
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => { setShowWithdrawals(!showWithdrawals); setShowEarnings(false); }}
+                title="Histórico de Saques"
               >
                 <History className="h-4 w-4" />
               </Button>
@@ -260,6 +304,38 @@ export default function AffiliateDashboard() {
               </Button>
             </div>
           </div>
+
+          {/* Earnings History */}
+          {showEarnings && (
+            <div className="mt-3 bg-affiliate/10 rounded-lg p-3">
+              <div className="flex justify-between items-center mb-2">
+                <p className="text-sm font-medium flex items-center gap-2">
+                  <Coins className="h-4 w-4 text-affiliate" />
+                  Histórico de Ganhos
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  Total: <strong className="text-affiliate">{formatCreditsToReal(earnings.reduce((sum, e) => sum + e.amount, 0))}</strong>
+                </p>
+              </div>
+              {earnings.length === 0 ? (
+                <p className="text-sm text-muted-foreground text-center py-4">Nenhum ganho registrado ainda.</p>
+              ) : (
+                <div className="space-y-2 max-h-48 overflow-y-auto">
+                  {earnings.map((e) => (
+                    <div key={e.id} className="flex justify-between items-center text-sm bg-background rounded p-2">
+                      <div>
+                        <p className="font-medium text-affiliate">{formatCreditsToReal(e.amount)}</p>
+                        <p className="text-xs text-muted-foreground truncate max-w-[180px]">
+                          {e.offer_title || 'Oferta'}
+                        </p>
+                      </div>
+                      <p className="text-xs text-muted-foreground">{formatDate(e.created_at)}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Withdrawal History */}
           {showWithdrawals && withdrawals.length > 0 && (
