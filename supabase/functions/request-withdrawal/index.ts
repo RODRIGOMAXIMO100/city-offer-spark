@@ -7,7 +7,7 @@ const corsHeaders = {
 };
 
 // Business config
-const MIN_WITHDRAW_BRL = 30.00;
+const MIN_WITHDRAW_BRL = 100.00;
 const CREDIT_VALUE_BRL = 0.10;
 const MIN_ACCOUNT_AGE_DAYS = 3; // Minimum account age for withdrawals
 

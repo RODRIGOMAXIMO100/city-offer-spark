@@ -111,7 +111,7 @@ export function WhyDifferent() {
         {/* CTA */}
         <div className="text-center">
           <p className="text-muted-foreground mb-4">
-            Sem mensalidade. Sem mínimo. Sem surpresas.
+            Sem mensalidade. Sem taxas escondidas. Sem surpresas.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button asChild size="lg" className="text-lg px-8">
