@@ -430,12 +430,12 @@ export default function AffiliateDashboard() {
                 
                 return (
                   <Card key={offer.id} className="overflow-hidden">
-                    <CardContent className="p-4">
+                    <CardContent className="p-3 sm:p-4">
                       {/* Rank Badge & Expiration */}
-                      <div className="flex justify-between items-center mb-2">
-                        {index < 3 && (
+                      <div className="flex justify-between items-center mb-2 gap-2">
+                        {index < 3 ? (
                           <Badge 
-                            className={`${
+                            className={`shrink-0 text-[10px] sm:text-xs ${
                               index === 0 ? 'bg-yellow-500' : 
                               index === 1 ? 'bg-gray-400' : 
                               'bg-amber-600'
@@ -443,72 +443,73 @@ export default function AffiliateDashboard() {
                           >
                             #{index + 1} Top
                           </Badge>
-                        )}
+                        ) : <div />}
                         <Badge 
                           variant="outline" 
-                          className={`ml-auto flex items-center gap-1 ${expInfo.urgent ? 'border-destructive text-destructive' : ''}`}
+                          className={`flex items-center gap-1 text-[10px] sm:text-xs ${expInfo.urgent ? 'border-destructive text-destructive' : ''}`}
                         >
-                          <Clock className="h-3 w-3" />
-                          {expInfo.text}
+                          <Clock className="h-3 w-3 shrink-0" />
+                          <span className="whitespace-nowrap">{expInfo.text}</span>
                         </Badge>
                       </div>
 
-                      <div className="flex justify-between items-start mb-2">
-                        <div>
-                          <h3 className="font-bold text-foreground">{offer.title}</h3>
-                          <p className="text-sm text-muted-foreground">{offer.profiles?.name}</p>
+                      {/* Title + Company + Discount */}
+                      <div className="flex justify-between items-start mb-2 gap-2">
+                        <div className="min-w-0 flex-1">
+                          <h3 className="font-bold text-foreground text-sm sm:text-base line-clamp-2">{offer.title}</h3>
+                          <p className="text-xs sm:text-sm text-muted-foreground truncate">{offer.profiles?.name}</p>
                         </div>
-                        <Badge variant="destructive" className="shrink-0">
+                        <Badge variant="destructive" className="shrink-0 text-xs sm:text-sm">
                           -{discount}%
                         </Badge>
                       </div>
 
-                      {/* Instagram Button */}
-                      {offer.profiles?.instagram_url && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="w-full mb-3 text-pink-500 border-pink-500/30 hover:bg-pink-500/10"
-                          onClick={() => openInstagram(offer.profiles!.instagram_url!)}
-                        >
-                          <Instagram className="mr-2 h-4 w-4" />
-                          Conhecer no Instagram
-                          <span className="ml-2 text-xs text-muted-foreground">(grátis)</span>
-                        </Button>
-                      )}
-
-                      <div className="flex items-center gap-4 text-sm mb-3">
-                        <span className="line-through text-muted-foreground">
+                      {/* Prices */}
+                      <div className="flex items-center gap-3 text-sm mb-3">
+                        <span className="line-through text-muted-foreground text-xs sm:text-sm">
                           R$ {offer.price_old.toFixed(2)}
                         </span>
-                        <span className="font-bold text-secondary text-lg">
+                        <span className="font-bold text-secondary text-base sm:text-lg">
                           R$ {offer.price_new.toFixed(2)}
                         </span>
                       </div>
 
+                      {/* Instagram Button - Always visible when available */}
+                      {offer.profiles?.instagram_url && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="w-full mb-3 text-pink-500 border-pink-500/30 hover:bg-pink-500/10 h-9"
+                          onClick={() => openInstagram(offer.profiles!.instagram_url!)}
+                        >
+                          <Instagram className="h-4 w-4 shrink-0 mr-1.5" />
+                          <span className="truncate">Ver Instagram da Empresa</span>
+                        </Button>
+                      )}
+
                       {/* Stats */}
-                      <div className="grid grid-cols-3 gap-1.5 sm:gap-2 mb-3 text-center text-[10px] sm:text-xs">
+                      <div className="grid grid-cols-3 gap-1.5 sm:gap-2 mb-3 text-center">
                         <div className="bg-muted rounded-lg py-1.5 sm:py-2 px-1">
-                          <p className="font-bold text-sm sm:text-base">{offer.views_count}</p>
-                          <p className="text-muted-foreground">Views</p>
+                          <p className="font-bold text-xs sm:text-sm">{offer.views_count}</p>
+                          <p className="text-[9px] sm:text-xs text-muted-foreground">Views</p>
                         </div>
                         <div className="bg-muted rounded-lg py-1.5 sm:py-2 px-1">
-                          <p className="font-bold text-sm sm:text-base">{offer.clicks_count}</p>
-                          <p className="text-muted-foreground">Cliques</p>
+                          <p className="font-bold text-xs sm:text-sm">{offer.clicks_count}</p>
+                          <p className="text-[9px] sm:text-xs text-muted-foreground">Cliques</p>
                         </div>
                         <div className="bg-affiliate/10 rounded-lg py-1.5 sm:py-2 px-1">
                           <div className="flex items-center justify-center gap-0.5">
-                            <TrendingUp className="h-3 w-3 text-affiliate" />
-                            <p className="font-bold text-sm sm:text-base text-affiliate">{getScore(offer)}%</p>
+                            <TrendingUp className="h-3 w-3 text-affiliate shrink-0" />
+                            <p className="font-bold text-xs sm:text-sm text-affiliate">{getScore(offer)}%</p>
                           </div>
-                          <p className="text-muted-foreground">CTR</p>
+                          <p className="text-[9px] sm:text-xs text-muted-foreground">CTR</p>
                         </div>
                       </div>
 
-                      {/* Commission - Dynamic based on offer */}
-                      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center bg-affiliate/10 rounded-lg p-2 mb-3 gap-0.5 sm:gap-2">
-                        <span className="text-xs sm:text-sm text-muted-foreground">Sua comissão base (50%)</span>
-                        <span className="font-bold text-affiliate text-sm sm:text-base">
+                      {/* Commission */}
+                      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center bg-affiliate/10 rounded-lg p-2 mb-3 gap-0.5">
+                        <span className="text-[10px] sm:text-xs text-muted-foreground">Comissão base (50%)</span>
+                        <span className="font-bold text-affiliate text-xs sm:text-sm">
                           R$ 0,20 - R$ 0,50/clique
                         </span>
                       </div>
@@ -516,17 +517,17 @@ export default function AffiliateDashboard() {
                       {/* Copy Button */}
                       <Button
                         onClick={() => copyLink(offer.id)}
-                        className="w-full bg-foreground hover:bg-foreground/90"
+                        className="w-full bg-foreground hover:bg-foreground/90 h-10 sm:h-11 text-xs sm:text-sm"
                       >
                         {copiedId === offer.id ? (
                           <>
-                            <Check className="mr-2 h-4 w-4" />
-                            Link Copiado!
+                            <Check className="mr-1.5 h-4 w-4 shrink-0" />
+                            <span>Link Copiado!</span>
                           </>
                         ) : (
                           <>
-                            <Copy className="mr-2 h-4 w-4" />
-                            COPIAR LINK DE DIVULGAÇÃO
+                            <Copy className="mr-1.5 h-4 w-4 shrink-0" />
+                            <span className="truncate">COPIAR LINK DE DIVULGAÇÃO</span>
                           </>
                         )}
                       </Button>
