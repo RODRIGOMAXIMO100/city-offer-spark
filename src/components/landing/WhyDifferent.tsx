@@ -1,13 +1,14 @@
-import { TrendingDown, MessageSquare, Users, BarChart3, Info } from "lucide-react";
+import { TrendingDown, MessageSquare, Users, BarChart3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { PRICING_DISCLAIMER } from "@/types/database";
+import logo from "@/assets/logo.png";
 
 const comparisonData = [
-  { type: "Marketplaces de Delivery*", cpc: "~R$ 15 - R$ 30", highlight: false, isMarketplace: true },
-  { type: "Anúncios de Busca", cpc: "~R$ 25,00", highlight: false, isMarketplace: false },
-  { type: "Redes Sociais", cpc: "~R$ 3,00", highlight: false, isMarketplace: false },
-  { type: "Clilin", cpc: "R$ 0,40 - R$ 1,00**", highlight: true, isMarketplace: false },
+  { type: "Marketplaces de Delivery*", cost: "15% - 30%", metric: "por venda", highlight: false, isMarketplace: true, isLogo: false },
+  { type: "Anúncios de Busca", cost: "~R$ 25,00", metric: "por clique", highlight: false, isMarketplace: false, isLogo: false },
+  { type: "Redes Sociais", cost: "~R$ 3,00", metric: "por clique", highlight: false, isMarketplace: false, isLogo: false },
+  { type: "Clilin", cost: "R$ 0,40 - R$ 1,00**", metric: "por clique", highlight: true, isMarketplace: false, isLogo: true },
 ];
 
 const differentials = [
@@ -67,7 +68,7 @@ export function WhyDifferent() {
           <div className="bg-card rounded-2xl border border-border overflow-hidden shadow-lg">
             <div className="grid grid-cols-2 gap-4 p-4 bg-muted/50 font-semibold text-sm">
               <span>Plataforma</span>
-              <span className="text-right">Custo por Clique</span>
+              <span className="text-right">Custo</span>
             </div>
             {comparisonData.map((item, index) => (
               <div
@@ -76,12 +77,17 @@ export function WhyDifferent() {
                   item.highlight ? "bg-primary/5" : ""
                 }`}
               >
-                <span className={`font-medium ${item.highlight ? "text-primary font-bold" : "text-foreground"}`}>
-                  {item.type}
-                </span>
-                <span className={`text-right ${item.highlight ? "text-primary font-bold text-lg" : "text-muted-foreground"}`}>
-                  {item.cpc}
-                </span>
+                {item.isLogo ? (
+                  <img src={logo} alt="Clilin" className="h-6 object-contain" />
+                ) : (
+                  <span className={`font-medium ${item.highlight ? "text-primary font-bold" : "text-foreground"}`}>
+                    {item.type}
+                  </span>
+                )}
+                <div className={`text-right ${item.highlight ? "text-primary font-bold" : "text-muted-foreground"}`}>
+                  <span className={item.highlight ? "text-lg" : ""}>{item.cost}</span>
+                  <span className="text-xs opacity-70 ml-1">{item.metric}</span>
+                </div>
               </div>
             ))}
           </div>
