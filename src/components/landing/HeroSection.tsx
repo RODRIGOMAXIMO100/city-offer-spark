@@ -34,17 +34,17 @@ export function HeroSection() {
           </p>
 
           {/* CTAs */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16 animate-fade-in-up" style={{ animationDelay: "0.3s" }}>
-            <Button size="lg" asChild className="text-lg px-8 h-14 shadow-xl shadow-primary/25 hover:shadow-2xl hover:shadow-primary/30 transition-all">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center mb-16 animate-fade-in-up px-4 sm:px-0" style={{ animationDelay: "0.3s" }}>
+            <Button size="lg" asChild className="text-sm sm:text-lg px-6 sm:px-8 h-12 sm:h-14 shadow-xl shadow-primary/25 hover:shadow-2xl hover:shadow-primary/30 transition-all">
               <Link to="/auth?role=COMPANY">
-                <Building2 className="mr-2 h-5 w-5" />
+                <Building2 className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
                 Sou Empresa
-                <ArrowRight className="ml-2 h-5 w-5" />
+                <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
               </Link>
             </Button>
-            <Button size="lg" variant="outline" asChild className="text-lg px-8 h-14 border-2 hover:bg-affiliate/10 hover:border-affiliate hover:text-affiliate transition-all">
+            <Button size="lg" variant="outline" asChild className="text-sm sm:text-lg px-6 sm:px-8 h-12 sm:h-14 border-2 hover:bg-affiliate/10 hover:border-affiliate hover:text-affiliate transition-all">
               <Link to="/auth?role=AFFILIATE">
-                <TrendingUp className="mr-2 h-5 w-5" />
+                <TrendingUp className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
                 Quero Divulgar
               </Link>
             </Button>

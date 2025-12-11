@@ -117,10 +117,10 @@ export function ForAffiliates() {
               ))}
             </div>
 
-            <Button size="lg" asChild className="bg-affiliate hover:bg-affiliate/90 shadow-xl shadow-affiliate/25 hover:shadow-2xl hover:shadow-affiliate/30 transition-all h-14 px-8">
+            <Button size="lg" asChild className="bg-affiliate hover:bg-affiliate/90 shadow-xl shadow-affiliate/25 hover:shadow-2xl hover:shadow-affiliate/30 transition-all h-12 sm:h-14 px-6 sm:px-8 text-sm sm:text-base">
               <Link to="/auth?role=AFFILIATE">
                 Começar a Ganhar
-                <ArrowRight className="ml-2 h-5 w-5" />
+                <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
               </Link>
             </Button>
           </div>
