@@ -43,6 +43,7 @@ export function PublicAIChat() {
   const [loadingCities, setLoadingCities] = useState(true);
   const [linkCopied, setLinkCopied] = useState(false);
   const [cityPopoverOpen, setCityPopoverOpen] = useState(false);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const availableCities = selectedState ? getCitiesByState(selectedState).sort() : [];
@@ -73,10 +74,16 @@ export function PublicAIChat() {
   }, []);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+    }
   };
 
-  useEffect(scrollToBottom, [messages]);
+  useEffect(() => {
+    // Small delay to ensure DOM is updated before scrolling
+    const timeoutId = setTimeout(scrollToBottom, 100);
+    return () => clearTimeout(timeoutId);
+  }, [messages]);
 
   const startChat = () => {
     if (!selectedCity || !selectedState) return;
@@ -418,7 +425,10 @@ export function PublicAIChat() {
           </div>
 
           {/* Messages Area */}
-          <div className="h-[400px] overflow-y-auto p-4 space-y-4 bg-background/50">
+          <div 
+            ref={messagesContainerRef}
+            className="h-[400px] overflow-y-auto p-4 space-y-4 bg-background/50"
+          >
             {messages.map((msg) => (
               <div
                 key={msg.id}
