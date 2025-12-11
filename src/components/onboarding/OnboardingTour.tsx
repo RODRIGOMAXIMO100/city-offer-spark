@@ -104,7 +104,7 @@ export function OnboardingTour() {
     setTooltipPos({ top: tooltipTop, left: tooltipLeft });
   }, [currentStepData]);
 
-  // Reset estados quando muda de step
+  // Reset estados e faz scroll ANTES de calcular posições
   useEffect(() => {
     if (!showTour) {
       setIsReady(false);
@@ -115,33 +115,42 @@ export function OnboardingTour() {
     retryCountRef.current = 0;
     setElementNotFound(false);
     setIsReady(false);
+    setHighlightPos(null);
 
-    // Delay inicial para elementos renderizarem
-    const timer = setTimeout(() => {
-      setIsReady(true);
+    // Função para processar o step
+    const processStep = async () => {
+      // Aguardar elementos renderizarem
+      await new Promise(resolve => setTimeout(resolve, 300));
+
+      const element = currentStepData?.target 
+        ? document.querySelector(currentStepData.target) 
+        : null;
+
+      if (element) {
+        // Fazer scroll PRIMEIRO
+        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        
+        // Aguardar scroll completar (600ms para smooth scroll)
+        await new Promise(resolve => setTimeout(resolve, 600));
+      }
+
+      // Agora calcular posições
       updatePositions();
-    }, 400);
+      
+      // Marcar como pronto
+      setIsReady(true);
+    };
+
+    processStep();
 
     window.addEventListener('resize', updatePositions);
     window.addEventListener('scroll', updatePositions);
 
     return () => {
-      clearTimeout(timer);
       window.removeEventListener('resize', updatePositions);
       window.removeEventListener('scroll', updatePositions);
     };
-  }, [showTour, tourCurrentStep, updatePositions]);
-
-  // Scroll para o elemento em destaque apenas quando estiver pronto
-  useEffect(() => {
-    if (!showTour || !currentStepData?.target || !isReady) return;
-
-    const element = document.querySelector(currentStepData.target);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      setTimeout(updatePositions, 300);
-    }
-  }, [showTour, tourCurrentStep, currentStepData?.target, updatePositions, isReady]);
+  }, [showTour, tourCurrentStep, currentStepData?.target, updatePositions]);
 
   if (!showTour || !currentStepData) return null;
 
