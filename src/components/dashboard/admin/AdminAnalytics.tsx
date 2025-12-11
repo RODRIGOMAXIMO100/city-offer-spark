@@ -26,12 +26,16 @@ interface AnalyticsData {
   usersByRole: { name: string; value: number; color: string }[];
   earningsByDay: { date: string; earnings: number }[];
   offersByDay: { date: string; offers: number }[];
+  clicksByType: { name: string; value: number; color: string }[];
 }
 
 const COLORS = {
   company: 'hsl(221, 83%, 53%)',
   affiliate: 'hsl(152, 69%, 40%)',
-  client: 'hsl(258, 90%, 66%)'
+  client: 'hsl(258, 90%, 66%)',
+  main: 'hsl(152, 69%, 40%)',
+  instagram: 'hsl(330, 80%, 60%)',
+  duplicate: 'hsl(0, 72%, 51%)'
 };
 
 export default function AdminAnalytics() {
@@ -40,7 +44,8 @@ export default function AdminAnalytics() {
     clicksByDay: [],
     usersByRole: [],
     earningsByDay: [],
-    offersByDay: []
+    offersByDay: [],
+    clicksByType: []
   });
   const [loading, setLoading] = useState(true);
   const [comparison, setComparison] = useState({
@@ -62,16 +67,26 @@ export default function AdminAnalytics() {
     const previousStartDate = new Date(startDate.getTime() - days * 24 * 60 * 60 * 1000);
 
     try {
-      // Fetch clicks by day (only MAIN clicks for revenue calculation)
+      // Fetch ALL clicks (not just MAIN)
       const { data: clicks } = await supabase
         .from('offer_clicks')
         .select('created_at, click_type')
         .gte('created_at', startDate.toISOString());
 
-      // Filter only MAIN clicks (paid clicks)
-      const paidClicks = clicks?.filter(c => c.click_type === 'MAIN') || [];
+      // Filter by type
+      const allClicks = clicks || [];
+      const mainClicks = allClicks.filter(c => c.click_type === 'MAIN');
+      const instagramClicks = allClicks.filter(c => c.click_type === 'INSTAGRAM');
+      const duplicateClicks = allClicks.filter(c => c.click_type === 'DUPLICATE');
 
-      const clicksByDay = groupByDay(paidClicks, 'created_at', days);
+      // Click type distribution
+      const clicksByType = [
+        { name: 'Pagos (MAIN)', value: mainClicks.length, color: COLORS.main },
+        { name: 'Instagram', value: instagramClicks.length, color: COLORS.instagram },
+        { name: 'Duplicados', value: duplicateClicks.length, color: COLORS.duplicate }
+      ].filter(c => c.value > 0);
+
+      const clicksByDay = groupByDay(mainClicks, 'created_at', days);
 
       // Fetch previous period clicks for comparison
       const { data: prevClicks } = await supabase
@@ -124,7 +139,7 @@ export default function AdminAnalytics() {
       const offersByDay = groupByDay(offers || [], 'created_at', days);
 
       // Calculate earnings (platform fee per MAIN click only)
-      const currentPaidClicks = paidClicks.length;
+      const currentPaidClicks = mainClicks.length;
       const previousPaidClicks = prevPaidClicks.length;
       const currentEarnings = currentPaidClicks * CONFIG.CPC_PLATFORM_PROFIT;
       const previousEarnings = previousPaidClicks * CONFIG.CPC_PLATFORM_PROFIT;
@@ -138,7 +153,8 @@ export default function AdminAnalytics() {
         clicksByDay,
         usersByRole,
         earningsByDay,
-        offersByDay
+        offersByDay,
+        clicksByType
       });
 
       setComparison({
@@ -399,6 +415,54 @@ export default function AdminAnalytics() {
             </ResponsiveContainer>
           </CardContent>
         </Card>
+
+        {/* Click Type Distribution */}
+        {data.clicksByType.length > 0 && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">Distribuição por Tipo de Clique</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={250}>
+                <PieChart>
+                  <Pie
+                    data={data.clicksByType}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={60}
+                    outerRadius={90}
+                    paddingAngle={5}
+                    dataKey="value"
+                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                  >
+                    {data.clicksByType.map((entry, index) => (
+                      <Cell key={`cell-type-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: 'hsl(var(--card))', 
+                      border: '1px solid hsl(var(--border))',
+                      borderRadius: '8px'
+                    }}
+                    formatter={(value: number) => [value, 'Cliques']}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+              <div className="flex justify-center gap-4 mt-4">
+                {data.clicksByType.map((type) => (
+                  <div key={type.name} className="flex items-center gap-2 text-sm">
+                    <div 
+                      className="w-3 h-3 rounded-full" 
+                      style={{ backgroundColor: type.color }}
+                    />
+                    <span>{type.name}: {type.value}</span>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
       </div>
     </div>
   );
