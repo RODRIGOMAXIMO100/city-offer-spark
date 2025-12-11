@@ -9,27 +9,27 @@ import { HelpCircle } from "lucide-react";
 const faqs = [
   {
     question: "Quanto custa para empresas?",
-    answer: "Não há mensalidade ou taxa fixa. Você só paga quando alguém clica na sua oferta. O valor por clique varia de R$ 0,40 a R$ 1,00, calculado automaticamente pela sua Nota da Oferta. Quanto melhor sua nota, menos você paga!",
+    answer: "Não há mensalidade ou taxa fixa. Você só paga quando alguém clica na sua oferta. O custo por clique varia de R$ 0,40 a R$ 1,00, calculado automaticamente pela qualidade da sua oferta. Quanto melhor sua nota, menos você paga!",
   },
   {
     question: "Como recebo minha comissão como divulgador?",
-    answer: "Cada clique válido no seu link gera saldo na sua conta. Você recebe 50% do CPC pago pela empresa, variando de R$ 0,20 a R$ 0,50 por clique base. Com bônus de nível (até 1.3x), pode chegar a R$ 0,65 por clique! Saque mínimo: R$ 30,00 via PIX.",
+    answer: "Cada clique válido no seu link gera saldo na sua conta. Você recebe 50% do valor pago pela empresa, variando de R$ 0,20 a R$ 0,50 por clique. Com bônus de nível (até 1.3x), pode chegar a R$ 0,65 por clique! Saque mínimo: R$ 30,00 via PIX.",
   },
   {
     question: "Preciso ter CNPJ para cadastrar minha empresa?",
     answer: "Não é obrigatório ter CNPJ. MEIs, autônomos e empresas de qualquer porte podem cadastrar ofertas. Basta ter uma conta ativa e saldo disponível.",
   },
   {
-    question: "Como funciona o sistema de precificação?",
-    answer: "O CPC é calculado automaticamente pela fórmula: CPC = R$ 1,40 - (Nota × R$ 0,10). Sua Nota da Oferta (4 a 10) determina quanto você paga. Nota 10 = R$ 0,40/clique. Nota 4 = R$ 1,00/clique. Melhore sua nota para pagar menos!",
+    question: "Como funciona o custo por clique (CPC)?",
+    answer: "O CPC é automático! Ofertas novas começam com nota 7 e pagam R$ 0,70 por clique. Melhore a qualidade da oferta (bons descontos, descrição completa, Instagram vinculado) para aumentar sua nota e pagar menos. Nota 10 = R$ 0,40. Nota 4 = R$ 1,00.",
   },
   {
     question: "O que é a Nota da Oferta?",
-    answer: "É sua nota de 4 a 10 que considera: CTR (40%), Qualidade da Oferta (35%) e Reputação (25%). Quanto maior sua nota, menor o CPC que você paga. Vincule seu Instagram e ofereça bons descontos para aumentar!",
+    answer: "É uma pontuação de 0 a 10 que avalia sua oferta. Considera: CTR/engajamento (40%), qualidade da oferta (35%) e reputação da empresa (25%). Ofertas novas começam com nota 7. Quanto maior sua nota, menor o custo por clique!",
   },
   {
     question: "Como funciona a divisão de valores?",
-    answer: "Transparência total: do valor pago pela empresa, 50% vai para o divulgador e 50% para a plataforma. Por exemplo, se a empresa paga R$ 0,80, o divulgador recebe R$ 0,40. Simples assim!",
+    answer: "100% transparente: do valor pago pela empresa, 50% vai para o divulgador (pessoas reais da sua cidade) e 50% para a plataforma. Por exemplo, se a empresa paga R$ 0,80, o divulgador recebe R$ 0,40.",
   },
 ];
 
