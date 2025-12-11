@@ -28,9 +28,11 @@ export function OnboardingTour() {
     left: typeof window !== 'undefined' ? window.innerWidth / 2 - 160 : 300,
   }));
   const [isReady, setIsReady] = useState(false);
+  const [isTransitioning, setIsTransitioning] = useState(false);
   const [elementNotFound, setElementNotFound] = useState(false);
   const retryCountRef = useRef(0);
   const isScrollingRef = useRef(false);
+  const prevStepRef = useRef(tourCurrentStep);
   const maxRetries = 5;
   
   const steps = getTourSteps();
@@ -107,19 +109,33 @@ export function OnboardingTour() {
   useEffect(() => {
     if (!showTour) {
       setIsReady(false);
+      setIsTransitioning(false);
       isScrollingRef.current = false;
       return;
+    }
+
+    // Detectar se é transição entre steps
+    const isStepChange = prevStepRef.current !== tourCurrentStep;
+    prevStepRef.current = tourCurrentStep;
+
+    // Iniciar transição suave
+    if (isStepChange && isReady) {
+      setIsTransitioning(true);
     }
 
     // Reset para novo step
     retryCountRef.current = 0;
     setElementNotFound(false);
     setIsReady(false);
-    setHighlightPos(null);
-    isScrollingRef.current = true; // Marcar que está scrollando
+    isScrollingRef.current = true;
 
     // Função para processar o step
     const processStep = async () => {
+      // Aguardar fade out da transição
+      if (isStepChange) {
+        await new Promise(resolve => setTimeout(resolve, 200));
+      }
+      
       // Aguardar elementos renderizarem
       await new Promise(resolve => setTimeout(resolve, 300));
 
@@ -145,7 +161,8 @@ export function OnboardingTour() {
       // Agora calcular posições
       updatePositions();
       
-      // Marcar como pronto
+      // Finalizar transição e marcar como pronto
+      setIsTransitioning(false);
       setIsReady(true);
     };
 
@@ -193,13 +210,20 @@ export function OnboardingTour() {
 
   return (
     <div className="fixed inset-0 z-[100]">
-      {/* Overlay escuro */}
-      <div className="absolute inset-0 bg-black/60" onClick={skipTour} />
+      {/* Overlay escuro com transição */}
+      <div 
+        className="absolute inset-0 bg-black/60 transition-opacity duration-300" 
+        onClick={skipTour} 
+      />
 
-      {/* Highlight do elemento */}
+      {/* Highlight do elemento com animação suave */}
       {highlightPos && (
         <div
-          className="absolute bg-transparent rounded-lg ring-4 ring-primary ring-offset-2 ring-offset-transparent transition-all duration-300 pointer-events-none"
+          className={cn(
+            "absolute bg-transparent rounded-lg ring-4 ring-primary ring-offset-2 ring-offset-transparent pointer-events-none",
+            "transition-all duration-500 ease-out",
+            isTransitioning && "opacity-0 scale-95"
+          )}
           style={{
             top: highlightPos.top,
             left: highlightPos.left,
@@ -210,9 +234,15 @@ export function OnboardingTour() {
         />
       )}
 
-      {/* Tooltip */}
+      {/* Tooltip com animação de transição */}
       <div
-        className="absolute w-80 bg-card border border-border rounded-lg shadow-2xl p-4 animate-fade-in"
+        className={cn(
+          "absolute w-80 bg-card border border-border rounded-lg shadow-2xl p-4",
+          "transition-all duration-300 ease-out",
+          isTransitioning 
+            ? "opacity-0 translate-y-2 scale-95" 
+            : "opacity-100 translate-y-0 scale-100"
+        )}
         style={{
           top: tooltipPos.top,
           left: tooltipPos.left,
