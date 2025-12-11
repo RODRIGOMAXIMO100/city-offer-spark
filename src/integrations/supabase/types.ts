@@ -337,6 +337,7 @@ export type Database = {
           description: string | null
           expires_at: string
           id: string
+          images: string[] | null
           link_destination: string
           link_type: Database["public"]["Enums"]["link_type"]
           max_cpc_bid: number
@@ -358,6 +359,7 @@ export type Database = {
           description?: string | null
           expires_at?: string
           id?: string
+          images?: string[] | null
           link_destination: string
           link_type?: Database["public"]["Enums"]["link_type"]
           max_cpc_bid?: number
@@ -379,6 +381,7 @@ export type Database = {
           description?: string | null
           expires_at?: string
           id?: string
+          images?: string[] | null
           link_destination?: string
           link_type?: Database["public"]["Enums"]["link_type"]
           max_cpc_bid?: number

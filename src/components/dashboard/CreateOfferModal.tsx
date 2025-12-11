@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { format, addDays } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { useAuth } from '@/hooks/useAuth';
 import { useOffers } from '@/hooks/useOffers';
-import { LinkType } from '@/types/database';
+import { LinkType, Offer } from '@/types/database';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -12,7 +12,6 @@ import { Calendar } from '@/components/ui/calendar';
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
@@ -21,15 +20,18 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { MessageCircle, FileText, Globe, Loader2, CalendarIcon, Star, ExternalLink, AlertTriangle } from 'lucide-react';
+import { MessageCircle, FileText, Globe, Loader2, CalendarIcon, Star, ExternalLink, AlertTriangle, ImagePlus, X, MapPin, Tag } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Link } from 'react-router-dom';
+import { Badge } from '@/components/ui/badge';
 
 interface CreateOfferModalProps {
   open: boolean;
   onClose: () => void;
   onSuccess: () => void;
-  hasActiveOffer?: boolean;
+  activeOffersCount?: number;
+  maxOffers?: number;
+  editOffer?: Offer | null;
 }
 
 const LINK_TYPES: { value: LinkType; label: string; icon: React.ReactNode; color: string }[] = [
@@ -38,9 +40,25 @@ const LINK_TYPES: { value: LinkType; label: string; icon: React.ReactNode; color
   { value: 'SITE', label: 'Site', icon: <Globe className="h-4 w-4" />, color: 'bg-blue-500' },
 ];
 
-export default function CreateOfferModal({ open, onClose, onSuccess, hasActiveOffer = false }: CreateOfferModalProps) {
+const MAX_TITLE_LENGTH = 60;
+const MAX_DESCRIPTION_LENGTH = 200;
+const MAX_IMAGES = 3;
+const MAX_IMAGE_SIZE = 2 * 1024 * 1024; // 2MB
+
+export default function CreateOfferModal({ 
+  open, 
+  onClose, 
+  onSuccess, 
+  activeOffersCount = 0,
+  maxOffers = 3,
+  editOffer = null
+}: CreateOfferModalProps) {
   const { profile } = useAuth();
-  const { createOffer } = useOffers();
+  const { createOffer, updateOffer } = useOffers();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const isEditing = !!editOffer;
+  const canCreate = activeOffersCount < maxOffers || isEditing;
 
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -52,28 +70,27 @@ export default function CreateOfferModal({ open, onClose, onSuccess, hasActiveOf
     link_type: 'WHATSAPP' as LinkType,
     expires_at: addDays(new Date(), 7),
   });
+  const [newImages, setNewImages] = useState<File[]>([]);
+  const [existingImages, setExistingImages] = useState<string[]>([]);
+  const [previewUrls, setPreviewUrls] = useState<string[]>([]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!profile || hasActiveOffer) return;
-
-    setLoading(true);
-
-    const result = await createOffer({
-      title: formData.title,
-      description: formData.description || undefined,
-      price_old: parseFloat(formData.price_old),
-      price_new: parseFloat(formData.price_new),
-      link_destination: formData.link_destination,
-      link_type: formData.link_type,
-      city: profile.city,
-      expires_at: formData.expires_at.toISOString(),
-      max_cpc_bid: 7, // Valor padrão - CPC agora é automático baseado na nota
-    });
-
-    setLoading(false);
-
-    if (result) {
+  // Populate form when editing
+  useEffect(() => {
+    if (editOffer && open) {
+      setFormData({
+        title: editOffer.title,
+        description: editOffer.description || '',
+        price_old: editOffer.price_old.toString(),
+        price_new: editOffer.price_new.toString(),
+        link_destination: editOffer.link_destination,
+        link_type: editOffer.link_type,
+        expires_at: new Date(editOffer.expires_at),
+      });
+      setExistingImages((editOffer as any).images || []);
+      setNewImages([]);
+      setPreviewUrls([]);
+    } else if (!editOffer && open) {
+      // Reset form for new offer
       setFormData({
         title: '',
         description: '',
@@ -83,6 +100,91 @@ export default function CreateOfferModal({ open, onClose, onSuccess, hasActiveOf
         link_type: 'WHATSAPP',
         expires_at: addDays(new Date(), 7),
       });
+      setExistingImages([]);
+      setNewImages([]);
+      setPreviewUrls([]);
+    }
+  }, [editOffer, open]);
+
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    const totalImages = existingImages.length + newImages.length + files.length;
+    
+    if (totalImages > MAX_IMAGES) {
+      alert(`Máximo de ${MAX_IMAGES} imagens permitidas`);
+      return;
+    }
+
+    const validFiles = files.filter(file => {
+      if (file.size > MAX_IMAGE_SIZE) {
+        alert(`${file.name} excede 2MB`);
+        return false;
+      }
+      if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+        alert(`${file.name} não é um formato válido (JPG, PNG, WebP)`);
+        return false;
+      }
+      return true;
+    });
+
+    setNewImages(prev => [...prev, ...validFiles]);
+    
+    // Create preview URLs
+    validFiles.forEach(file => {
+      const url = URL.createObjectURL(file);
+      setPreviewUrls(prev => [...prev, url]);
+    });
+  };
+
+  const removeExistingImage = (index: number) => {
+    setExistingImages(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const removeNewImage = (index: number) => {
+    URL.revokeObjectURL(previewUrls[index]);
+    setNewImages(prev => prev.filter((_, i) => i !== index));
+    setPreviewUrls(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!profile || (!canCreate && !isEditing)) return;
+
+    setLoading(true);
+
+    let result;
+    if (isEditing && editOffer) {
+      result = await updateOffer(editOffer.id, {
+        title: formData.title,
+        description: formData.description || undefined,
+        price_old: parseFloat(formData.price_old),
+        price_new: parseFloat(formData.price_new),
+        link_destination: formData.link_destination,
+        link_type: formData.link_type,
+        expires_at: formData.expires_at.toISOString(),
+        newImages: newImages,
+        existingImages: existingImages,
+      });
+    } else {
+      result = await createOffer({
+        title: formData.title,
+        description: formData.description || undefined,
+        price_old: parseFloat(formData.price_old),
+        price_new: parseFloat(formData.price_new),
+        link_destination: formData.link_destination,
+        link_type: formData.link_type,
+        city: profile.city,
+        expires_at: formData.expires_at.toISOString(),
+        max_cpc_bid: 7,
+        images: newImages,
+      });
+    }
+
+    setLoading(false);
+
+    if (result) {
+      // Cleanup preview URLs
+      previewUrls.forEach(url => URL.revokeObjectURL(url));
       onSuccess();
     }
   };
@@ -90,8 +192,13 @@ export default function CreateOfferModal({ open, onClose, onSuccess, hasActiveOf
   const minDate = addDays(new Date(), 1);
   const maxDate = addDays(new Date(), 30);
 
-  // If has active offer, show warning instead of form
-  if (hasActiveOffer) {
+  // Calculate discount percentage
+  const discount = formData.price_old && formData.price_new
+    ? Math.round((1 - parseFloat(formData.price_new) / parseFloat(formData.price_old)) * 100)
+    : 0;
+
+  // Show warning if limit reached and not editing
+  if (!canCreate && !isEditing) {
     return (
       <Dialog open={open} onOpenChange={onClose}>
         <DialogContent className="max-w-md">
@@ -104,11 +211,11 @@ export default function CreateOfferModal({ open, onClose, onSuccess, hasActiveOf
           <div className="py-6 text-center space-y-4">
             <div className="bg-orange-500/10 border border-orange-500/30 rounded-lg p-4">
               <p className="text-sm text-foreground font-medium mb-2">
-                Você já possui 1 oferta ativa!
+                Você já possui {activeOffersCount} ofertas ativas!
               </p>
               <p className="text-xs text-muted-foreground">
-                Cada empresa pode ter apenas 1 oferta ativa por vez. 
-                Delete sua oferta atual para criar uma nova.
+                Cada empresa pode ter até {maxOffers} ofertas ativas por vez. 
+                Delete uma oferta existente para criar uma nova.
               </p>
             </div>
             <Button onClick={onClose} variant="outline" className="w-full">
@@ -120,48 +227,179 @@ export default function CreateOfferModal({ open, onClose, onSuccess, hasActiveOf
     );
   }
 
+  const totalImages = existingImages.length + newImages.length;
+
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="text-base sm:text-lg">Nova Oferta</DialogTitle>
-          <DialogDescription className="text-xs sm:text-sm">
-            Crie uma oferta para divulgar seu negócio. Você paga apenas por clique.
-          </DialogDescription>
+      <DialogContent className="max-w-2xl max-h-[95vh] overflow-y-auto p-4 sm:p-6">
+        <DialogHeader className="pb-2">
+          <DialogTitle className="text-lg sm:text-xl">
+            {isEditing ? 'Editar Oferta' : 'Criar Nova Oferta'}
+          </DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
-          <div className="space-y-1.5 sm:space-y-2">
-            <Label htmlFor="title" className="text-xs sm:text-sm">Título da Oferta *</Label>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Images Section */}
+          <div className="space-y-2">
+            <Label className="text-sm flex items-center gap-2">
+              <ImagePlus className="h-4 w-4" />
+              Imagens (opcional, até 3)
+            </Label>
+            <div className="flex flex-wrap gap-2">
+              {/* Existing Images */}
+              {existingImages.map((url, index) => (
+                <div key={`existing-${index}`} className="relative group">
+                  <img 
+                    src={url} 
+                    alt={`Imagem ${index + 1}`} 
+                    className="w-20 h-20 sm:w-24 sm:h-24 object-cover rounded-lg border"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => removeExistingImage(index)}
+                    className="absolute -top-2 -right-2 bg-destructive text-destructive-foreground rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </div>
+              ))}
+              {/* New Images */}
+              {previewUrls.map((url, index) => (
+                <div key={`new-${index}`} className="relative group">
+                  <img 
+                    src={url} 
+                    alt={`Nova imagem ${index + 1}`} 
+                    className="w-20 h-20 sm:w-24 sm:h-24 object-cover rounded-lg border"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => removeNewImage(index)}
+                    className="absolute -top-2 -right-2 bg-destructive text-destructive-foreground rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </div>
+              ))}
+              {/* Add Button */}
+              {totalImages < MAX_IMAGES && (
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="w-20 h-20 sm:w-24 sm:h-24 border-2 border-dashed border-muted-foreground/30 rounded-lg flex flex-col items-center justify-center gap-1 hover:border-primary/50 transition-colors"
+                >
+                  <ImagePlus className="h-5 w-5 text-muted-foreground" />
+                  <span className="text-[10px] text-muted-foreground">Adicionar</span>
+                </button>
+              )}
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                multiple
+                onChange={handleImageSelect}
+                className="hidden"
+              />
+            </div>
+            <p className="text-[10px] text-muted-foreground">
+              JPG, PNG ou WebP • Máx 2MB cada • {totalImages}/{MAX_IMAGES} imagens
+            </p>
+          </div>
+
+          {/* Title */}
+          <div className="space-y-1.5">
+            <Label htmlFor="title" className="text-sm">
+              Título do Anúncio *
+            </Label>
             <Input
               id="title"
               placeholder="Ex: Combo Família - 2 Pizzas + Refri"
               value={formData.title}
-              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+              onChange={(e) => setFormData({ ...formData, title: e.target.value.slice(0, MAX_TITLE_LENGTH) })}
               required
               className="text-sm"
             />
+            <div className="flex justify-end">
+              <span className={cn(
+                "text-[10px]",
+                formData.title.length > MAX_TITLE_LENGTH * 0.9 ? "text-orange-500" : "text-muted-foreground"
+              )}>
+                {formData.title.length}/{MAX_TITLE_LENGTH}
+              </span>
+            </div>
           </div>
 
-          <div className="space-y-1.5 sm:space-y-2">
-            <Label htmlFor="description" className="text-xs sm:text-sm">Descrição (opcional)</Label>
+          {/* Description */}
+          <div className="space-y-1.5">
+            <Label htmlFor="description" className="text-sm">
+              Descrição (opcional)
+            </Label>
             <Textarea
               id="description"
-              placeholder="Detalhes da oferta..."
+              placeholder="Detalhes da oferta que ajudam a convencer o cliente..."
               value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value.slice(0, MAX_DESCRIPTION_LENGTH) })}
               rows={2}
-              className="text-sm"
+              className="text-sm resize-none"
             />
+            <div className="flex justify-end">
+              <span className={cn(
+                "text-[10px]",
+                formData.description.length > MAX_DESCRIPTION_LENGTH * 0.9 ? "text-orange-500" : "text-muted-foreground"
+              )}>
+                {formData.description.length}/{MAX_DESCRIPTION_LENGTH}
+              </span>
+            </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-2 sm:gap-3">
-            <div className="space-y-1.5 sm:space-y-2">
-              <Label htmlFor="price_old" className="text-xs sm:text-sm">Preço Original *</Label>
+          {/* Preview */}
+          {formData.title && (
+            <div className="border rounded-lg p-3 bg-muted/30">
+              <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-2 font-medium">
+                Preview do Anúncio
+              </p>
+              <div className="flex gap-3">
+                {(existingImages[0] || previewUrls[0]) && (
+                  <img 
+                    src={existingImages[0] || previewUrls[0]} 
+                    alt="Preview" 
+                    className="w-16 h-16 object-cover rounded"
+                  />
+                )}
+                <div className="flex-1 min-w-0">
+                  <h4 className="font-bold text-sm truncate">{formData.title}</h4>
+                  {formData.price_old && formData.price_new && (
+                    <div className="flex items-center gap-2 mt-1">
+                      <span className="text-xs text-muted-foreground line-through">
+                        R$ {parseFloat(formData.price_old).toFixed(2)}
+                      </span>
+                      <span className="text-sm font-bold text-secondary">
+                        R$ {parseFloat(formData.price_new).toFixed(2)}
+                      </span>
+                      {discount > 0 && (
+                        <Badge variant="destructive" className="text-[10px] px-1.5 py-0">
+                          -{discount}%
+                        </Badge>
+                      )}
+                    </div>
+                  )}
+                  <div className="flex items-center gap-1 mt-1 text-[10px] text-muted-foreground">
+                    <MapPin className="h-3 w-3" />
+                    {profile?.city}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Prices */}
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label htmlFor="price_old" className="text-sm">Preço Original *</Label>
               <Input
                 id="price_old"
                 type="number"
                 step="0.01"
+                min="0"
                 placeholder="120.00"
                 value={formData.price_old}
                 onChange={(e) => setFormData({ ...formData, price_old: e.target.value })}
@@ -169,12 +407,13 @@ export default function CreateOfferModal({ open, onClose, onSuccess, hasActiveOf
                 className="text-sm"
               />
             </div>
-            <div className="space-y-1.5 sm:space-y-2">
-              <Label htmlFor="price_new" className="text-xs sm:text-sm">Preço Promocional *</Label>
+            <div className="space-y-1.5">
+              <Label htmlFor="price_new" className="text-sm">Preço Promocional *</Label>
               <Input
                 id="price_new"
                 type="number"
                 step="0.01"
+                min="0"
                 placeholder="89.90"
                 className="border-secondary bg-secondary/5 text-sm"
                 value={formData.price_new}
@@ -184,33 +423,64 @@ export default function CreateOfferModal({ open, onClose, onSuccess, hasActiveOf
             </div>
           </div>
 
-          {/* CPC Automático Info */}
-          <div className="p-3 sm:p-4 bg-company/5 border border-company/20 rounded-lg">
-            <div className="flex items-center gap-2 mb-1.5 sm:mb-2">
-              <Star className="h-3 w-3 sm:h-4 sm:w-4 text-company" />
-              <span className="font-medium text-xs sm:text-sm">CPC Automático</span>
+          {/* Discount Feedback */}
+          {discount > 0 && (
+            <div className={cn(
+              "p-2 rounded-lg text-xs text-center font-medium",
+              discount >= 30 ? "bg-green-500/10 text-green-600" :
+              discount >= 20 ? "bg-yellow-500/10 text-yellow-600" :
+              "bg-orange-500/10 text-orange-600"
+            )}>
+              {discount >= 30 ? '🔥 Desconto excelente! Sua oferta terá mais destaque.' :
+               discount >= 20 ? '👍 Bom desconto! Continue assim.' :
+               '💡 Dica: Descontos de 30%+ melhoram sua nota e reduzem o CPC.'}
             </div>
-            <p className="text-[10px] sm:text-xs text-muted-foreground mb-2">
-              Seu custo por clique é calculado automaticamente com base na <strong>Nota da Oferta</strong>. 
-              Quanto melhor a nota, menos você paga!
-            </p>
-            <div className="flex items-center justify-between text-[10px] sm:text-xs bg-background rounded p-1.5 sm:p-2">
-              <span className="text-muted-foreground">Range de CPC:</span>
-              <span className="font-bold text-company">R$ 0,40 - R$ 1,00</span>
+          )}
+
+          {/* Link Type */}
+          <div className="space-y-1.5">
+            <Label className="text-sm">Destino do Clique *</Label>
+            <div className="grid grid-cols-3 gap-2">
+              {LINK_TYPES.map((type) => (
+                <button
+                  key={type.value}
+                  type="button"
+                  onClick={() => setFormData({ ...formData, link_type: type.value })}
+                  className={cn(
+                    "p-2.5 rounded-lg border-2 transition-all flex flex-col items-center gap-1",
+                    formData.link_type === type.value
+                      ? `border-primary ${type.color} text-white`
+                      : 'border-border hover:border-primary/50'
+                  )}
+                >
+                  {type.icon}
+                  <span className="text-[10px] sm:text-xs font-medium">{type.label}</span>
+                </button>
+              ))}
             </div>
-            <Link 
-              to="/transparencia" 
-              target="_blank"
-              className="flex items-center gap-1 text-[10px] sm:text-xs text-primary hover:underline mt-2"
-            >
-              <ExternalLink className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
-              Entenda como funciona
-            </Link>
           </div>
 
-          {/* Expiration Date Picker */}
-          <div className="space-y-1.5 sm:space-y-2">
-            <Label className="text-xs sm:text-sm">Data de Expiração *</Label>
+          {/* Link URL */}
+          <div className="space-y-1.5">
+            <Label htmlFor="link" className="text-sm">Link *</Label>
+            <Input
+              id="link"
+              type="url"
+              placeholder={
+                formData.link_type === 'WHATSAPP'
+                  ? 'https://wa.me/5531999999999'
+                  : 'https://seu-site.com'
+              }
+              value={formData.link_destination}
+              onChange={(e) => setFormData({ ...formData, link_destination: e.target.value })}
+              required
+              className="text-sm"
+            />
+          </div>
+
+          {/* Expiration Date */}
+          <div className="space-y-1.5">
+            <Label className="text-sm">Data de Expiração *</Label>
             <Popover>
               <PopoverTrigger asChild>
                 <Button
@@ -220,7 +490,7 @@ export default function CreateOfferModal({ open, onClose, onSuccess, hasActiveOf
                     !formData.expires_at && "text-muted-foreground"
                   )}
                 >
-                  <CalendarIcon className="mr-2 h-3 w-3 sm:h-4 sm:w-4" />
+                  <CalendarIcon className="mr-2 h-4 w-4" />
                   {formData.expires_at ? (
                     format(formData.expires_at, "PPP", { locale: ptBR })
                   ) : (
@@ -239,68 +509,43 @@ export default function CreateOfferModal({ open, onClose, onSuccess, hasActiveOf
                 />
               </PopoverContent>
             </Popover>
-            <p className="text-[10px] sm:text-xs text-muted-foreground">
+            <p className="text-[10px] text-muted-foreground">
               Mínimo: amanhã • Máximo: 30 dias
             </p>
           </div>
 
-          <div className="space-y-1.5 sm:space-y-2">
-            <Label className="text-xs sm:text-sm">Destino do Clique *</Label>
-            <div className="grid grid-cols-3 gap-1.5 sm:gap-2">
-              {LINK_TYPES.map((type) => (
-                <button
-                  key={type.value}
-                  type="button"
-                  onClick={() => setFormData({ ...formData, link_type: type.value })}
-                  className={`p-2 sm:p-3 rounded-lg border-2 transition-all flex flex-col items-center gap-0.5 sm:gap-1 ${
-                    formData.link_type === type.value
-                      ? `border-primary ${type.color} text-white`
-                      : 'border-border hover:border-primary/50'
-                  }`}
-                >
-                  {type.icon}
-                  <span className="text-[10px] sm:text-xs font-medium">{type.label}</span>
-                </button>
-              ))}
+          {/* CPC Info */}
+          <div className="p-3 bg-company/5 border border-company/20 rounded-lg">
+            <div className="flex items-center gap-2 mb-1">
+              <Star className="h-4 w-4 text-company" />
+              <span className="font-medium text-xs">CPC Automático</span>
             </div>
-          </div>
-
-          <div className="space-y-1.5 sm:space-y-2">
-            <Label htmlFor="link" className="text-xs sm:text-sm">Link *</Label>
-            <Input
-              id="link"
-              type="url"
-              placeholder={
-                formData.link_type === 'WHATSAPP'
-                  ? 'https://wa.me/5531999999999'
-                  : 'https://seu-site.com'
-              }
-              value={formData.link_destination}
-              onChange={(e) => setFormData({ ...formData, link_destination: e.target.value })}
-              required
-              className="text-sm"
-            />
-          </div>
-
-          <div className="bg-muted rounded-lg p-2.5 sm:p-3 text-xs sm:text-sm">
-            <p className="font-medium">💡 Sistema de Leilão Inteligente</p>
-            <p className="text-muted-foreground text-[10px] sm:text-xs mt-1">
-              Ofertas com melhor desempenho pagam menos por clique. Seu CPC real depende da sua Nota da Oferta!
+            <p className="text-[10px] text-muted-foreground">
+              Seu custo por clique (R$ 0,40 - R$ 1,00) é calculado automaticamente com base na <strong>Nota da Oferta</strong>.
             </p>
+            <Link 
+              to="/transparencia" 
+              target="_blank"
+              className="flex items-center gap-1 text-[10px] text-primary hover:underline mt-1.5"
+            >
+              <ExternalLink className="h-3 w-3" />
+              Entenda como funciona
+            </Link>
           </div>
 
-          <div className="flex gap-2 sm:gap-3 pt-2">
-            <Button type="button" variant="outline" onClick={onClose} className="flex-1 text-sm">
+          {/* Actions */}
+          <div className="flex gap-3 pt-2">
+            <Button type="button" variant="outline" onClick={onClose} className="flex-1">
               Cancelar
             </Button>
-            <Button type="submit" disabled={loading} className="flex-1 text-sm">
+            <Button type="submit" disabled={loading} className="flex-1 bg-company hover:bg-company/90">
               {loading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Criando...
+                  {isEditing ? 'Salvando...' : 'Criando...'}
                 </>
               ) : (
-                'Publicar Oferta'
+                isEditing ? 'Salvar Alterações' : 'Publicar Oferta'
               )}
             </Button>
           </div>
