@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useOffers } from '@/hooks/useOffers';
@@ -33,13 +33,16 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { OnboardingProvider, useOnboarding } from '@/contexts/OnboardingContext';
+import { WelcomeModal, OnboardingTour, OnboardingChecklist } from '@/components/onboarding';
 
 const MAX_ACTIVE_OFFERS = 3;
 
-export default function CompanyDashboard() {
+function CompanyDashboardContent() {
   const { profile, signOut, refreshProfile, user } = useAuth();
   const { offers, loading, fetchMyOffers, deleteOffer } = useOffers();
   const { toast } = useToast();
+  const { claimBonus, hasClaimedBonus } = useOnboarding();
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showFiscalModal, setShowFiscalModal] = useState(false);
   const [instagramUrl, setInstagramUrl] = useState(profile?.instagram_url || '');
@@ -49,6 +52,9 @@ export default function CompanyDashboard() {
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(profile?.avatar_url || null);
   const [showCreditsModal, setShowCreditsModal] = useState(false);
+  
+  // Track bonuses already claimed to avoid duplicate calls
+  const bonusClaimedRef = useRef<Record<string, boolean>>({});
 
   // Check active offers count
   const activeOffers = offers.filter(o => o.active && !o.deleted_at && new Date(o.expires_at) > new Date());
@@ -147,6 +153,12 @@ export default function CompanyDashboard() {
       setAvatarPreview(avatarUrl);
       refreshProfile();
       
+      // Claim logo bonus
+      if (!hasClaimedBonus('logo_added') && !bonusClaimedRef.current['logo_added']) {
+        bonusClaimedRef.current['logo_added'] = true;
+        claimBonus('logo_added');
+      }
+      
       toast({
         title: 'Logo atualizada!',
         description: 'Sua logo será exibida nas suas ofertas.',
@@ -162,16 +174,21 @@ export default function CompanyDashboard() {
       setUploadingAvatar(false);
     }
   };
-
   // Calculate totals
   const totalClicks = offers.reduce((acc, o) => acc + o.clicks_count, 0);
   const totalViews = offers.reduce((acc, o) => acc + o.views_count, 0);
 
-  const handleOfferCreated = () => {
+  const handleOfferCreated = async () => {
     setShowCreateModal(false);
     setEditingOffer(null);
-    fetchMyOffers();
+    await fetchMyOffers();
     refreshProfile();
+    
+    // Claim first offer bonus (check if this was their first offer)
+    if (!hasClaimedBonus('first_offer') && !bonusClaimedRef.current['first_offer']) {
+      bonusClaimedRef.current['first_offer'] = true;
+      claimBonus('first_offer');
+    }
   };
 
   const handleModalClose = () => {
@@ -213,6 +230,12 @@ export default function CompanyDashboard() {
         variant: 'destructive',
       });
     } else {
+      // Claim Instagram bonus if URL was added
+      if (formattedUrl && !hasClaimedBonus('instagram_connected') && !bonusClaimedRef.current['instagram_connected']) {
+        bonusClaimedRef.current['instagram_connected'] = true;
+        claimBonus('instagram_connected');
+      }
+      
       toast({
         title: 'Instagram salvo!',
         description: 'Os clientes poderão conhecer seu estabelecimento.',
@@ -221,7 +244,6 @@ export default function CompanyDashboard() {
     }
     setSavingInstagram(false);
   };
-
   const getExpirationInfo = (expiresAt: string) => {
     const now = new Date();
     const expires = new Date(expiresAt);
@@ -271,7 +293,7 @@ export default function CompanyDashboard() {
               Empresa
             </Badge>
           </div>
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-2 sm:gap-3" data-tour="balance">
             <div className="text-right">
               <p className="text-[10px] sm:text-xs text-muted-foreground">Saldo</p>
               <div className="flex items-center gap-1 text-company font-bold text-sm sm:text-base">
@@ -301,7 +323,7 @@ export default function CompanyDashboard() {
 
       <div className="max-w-2xl mx-auto px-3 sm:px-4 py-4 sm:py-6 space-y-4 sm:space-y-6">
         {/* Company Logo Section */}
-        <Card>
+        <Card data-tour="fiscal-data">
           <CardHeader className="pb-2 sm:pb-3 px-3 sm:px-6 pt-3 sm:pt-6">
             <CardTitle className="text-xs sm:text-sm flex items-center gap-2">
               <Image className="h-3 w-3 sm:h-4 sm:w-4" />
@@ -393,7 +415,7 @@ export default function CompanyDashboard() {
         </Card>
 
         {/* Stats */}
-        <div className="grid grid-cols-3 gap-2 sm:gap-3">
+        <div className="grid grid-cols-3 gap-2 sm:gap-3" data-tour="performance">
           <Card>
             <CardContent className="p-2 sm:p-4 text-center">
               <Eye className="h-4 w-4 sm:h-5 sm:w-5 mx-auto mb-1 text-muted-foreground" />
@@ -481,6 +503,7 @@ export default function CompanyDashboard() {
         <Button
           onClick={handleCreateOfferClick}
           disabled={!canCreateMore}
+          data-tour="create-offer"
           className={`w-full py-5 sm:py-6 font-bold shadow-lg text-sm sm:text-base ${
             !canCreateMore 
               ? 'bg-muted text-muted-foreground cursor-not-allowed' 
@@ -670,6 +693,18 @@ export default function CompanyDashboard() {
         userName={profile?.name}
         userEmail={profile?.email}
       />
+      
+      <WelcomeModal />
+      <OnboardingTour />
+      <OnboardingChecklist />
     </div>
+  );
+}
+
+export default function CompanyDashboard() {
+  return (
+    <OnboardingProvider>
+      <CompanyDashboardContent />
+    </OnboardingProvider>
   );
 }
