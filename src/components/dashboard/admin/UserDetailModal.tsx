@@ -173,28 +173,28 @@ export default function UserDetailModal({ user, open, onOpenChange, onUserUpdate
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto p-4 sm:p-6">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <User className="h-5 w-5" />
+          <DialogTitle className="flex items-center gap-2 text-base sm:text-lg">
+            <User className="h-4 w-4 sm:h-5 sm:w-5" />
             Detalhes do Usuário
           </DialogTitle>
         </DialogHeader>
 
-        <Tabs defaultValue="profile" className="mt-4">
+        <Tabs defaultValue="profile" className="mt-2 sm:mt-4">
           <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="profile">
-              <User className="h-4 w-4 mr-2" />
-              Perfil
+            <TabsTrigger value="profile" className="text-xs sm:text-sm px-2 sm:px-4">
+              <User className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-2" />
+              <span className="hidden sm:inline">Perfil</span>
             </TabsTrigger>
-            <TabsTrigger value="transactions">
-              <History className="h-4 w-4 mr-2" />
-              Transações
+            <TabsTrigger value="transactions" className="text-xs sm:text-sm px-2 sm:px-4">
+              <History className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-2" />
+              <span className="hidden sm:inline">Transações</span>
             </TabsTrigger>
             {user.role === 'COMPANY' && (
-              <TabsTrigger value="offers">
-                <Megaphone className="h-4 w-4 mr-2" />
-                Ofertas
+              <TabsTrigger value="offers" className="text-xs sm:text-sm px-2 sm:px-4">
+                <Megaphone className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-2" />
+                <span className="hidden sm:inline">Ofertas</span>
               </TabsTrigger>
             )}
           </TabsList>
@@ -202,60 +202,60 @@ export default function UserDetailModal({ user, open, onOpenChange, onUserUpdate
           {/* Profile Tab */}
           <TabsContent value="profile" className="space-y-4">
             <Card>
-              <CardContent className="pt-6">
-                <div className="grid grid-cols-2 gap-4">
+              <CardContent className="pt-4 sm:pt-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                   <div>
-                    <Label className="text-muted-foreground">Nome</Label>
-                    <p className="font-medium">{user.name}</p>
+                    <Label className="text-muted-foreground text-xs sm:text-sm">Nome</Label>
+                    <p className="font-medium text-sm sm:text-base">{user.name}</p>
                   </div>
                   <div>
-                    <Label className="text-muted-foreground">Tipo</Label>
+                    <Label className="text-muted-foreground text-xs sm:text-sm">Tipo</Label>
                     <p>{getRoleBadge(user.role)}</p>
                   </div>
                   <div>
-                    <Label className="text-muted-foreground">Email</Label>
-                    <p className="font-medium">{user.email || '-'}</p>
+                    <Label className="text-muted-foreground text-xs sm:text-sm">Email</Label>
+                    <p className="font-medium text-sm sm:text-base break-all">{user.email || '-'}</p>
                   </div>
                   <div>
-                    <Label className="text-muted-foreground">Telefone</Label>
-                    <p className="font-medium">{user.telefone || '-'}</p>
+                    <Label className="text-muted-foreground text-xs sm:text-sm">Telefone</Label>
+                    <p className="font-medium text-sm sm:text-base">{user.telefone || '-'}</p>
                   </div>
                   <div>
-                    <Label className="text-muted-foreground">Cidade</Label>
-                    <p className="font-medium">{user.city}</p>
+                    <Label className="text-muted-foreground text-xs sm:text-sm">Cidade</Label>
+                    <p className="font-medium text-sm sm:text-base">{user.city}</p>
                   </div>
                   <div>
-                    <Label className="text-muted-foreground">Cadastro</Label>
-                    <p className="font-medium">{new Date(user.created_at).toLocaleDateString('pt-BR')}</p>
+                    <Label className="text-muted-foreground text-xs sm:text-sm">Cadastro</Label>
+                    <p className="font-medium text-sm sm:text-base">{new Date(user.created_at).toLocaleDateString('pt-BR')}</p>
                   </div>
                   {user.instagram_url && (
-                    <div className="col-span-2">
-                      <Label className="text-muted-foreground">Instagram</Label>
-                      <p className="font-medium">{user.instagram_url}</p>
+                    <div className="col-span-1 sm:col-span-2">
+                      <Label className="text-muted-foreground text-xs sm:text-sm">Instagram</Label>
+                      <p className="font-medium text-sm sm:text-base break-all">{user.instagram_url}</p>
                     </div>
                   )}
                   {user.cpf && (
                     <div>
-                      <Label className="text-muted-foreground">CPF</Label>
-                      <p className="font-medium">{user.cpf}</p>
+                      <Label className="text-muted-foreground text-xs sm:text-sm">CPF</Label>
+                      <p className="font-medium text-sm sm:text-base">{user.cpf}</p>
                     </div>
                   )}
                   {user.cnpj && (
                     <div>
-                      <Label className="text-muted-foreground">CNPJ</Label>
-                      <p className="font-medium">{user.cnpj}</p>
+                      <Label className="text-muted-foreground text-xs sm:text-sm">CNPJ</Label>
+                      <p className="font-medium text-sm sm:text-base">{user.cnpj}</p>
                     </div>
                   )}
                   {user.razao_social && (
-                    <div className="col-span-2">
-                      <Label className="text-muted-foreground">Razão Social</Label>
-                      <p className="font-medium">{user.razao_social}</p>
+                    <div className="col-span-1 sm:col-span-2">
+                      <Label className="text-muted-foreground text-xs sm:text-sm">Razão Social</Label>
+                      <p className="font-medium text-sm sm:text-base">{user.razao_social}</p>
                     </div>
                   )}
                   {user.pix_key && (
-                    <div className="col-span-2">
-                      <Label className="text-muted-foreground">Chave Pix ({user.pix_tipo})</Label>
-                      <p className="font-medium">{user.pix_key}</p>
+                    <div className="col-span-1 sm:col-span-2">
+                      <Label className="text-muted-foreground text-xs sm:text-sm">Chave Pix ({user.pix_tipo})</Label>
+                      <p className="font-medium text-sm sm:text-base break-all">{user.pix_key}</p>
                     </div>
                   )}
                 </div>
@@ -264,44 +264,45 @@ export default function UserDetailModal({ user, open, onOpenChange, onUserUpdate
 
             {/* Balance Management */}
             <Card>
-              <CardContent className="pt-6">
-                <div className="flex items-center justify-between mb-4">
-                  <div>
-                    <Label className="text-muted-foreground">Saldo Atual</Label>
-                    <p className="text-2xl font-bold">{formatCredits(user.balance)}</p>
-                    <p className="text-sm text-muted-foreground">{formatCreditsToReal(user.balance)}</p>
-                  </div>
+              <CardContent className="pt-4 sm:pt-6">
+                <div className="mb-4">
+                  <Label className="text-muted-foreground text-xs sm:text-sm">Saldo Atual</Label>
+                  <p className="text-xl sm:text-2xl font-bold">{formatCredits(user.balance)}</p>
+                  <p className="text-xs sm:text-sm text-muted-foreground">{formatCreditsToReal(user.balance)}</p>
                 </div>
 
-                <div className="flex items-end gap-2">
-                  <div className="flex-1">
-                    <Label>Ajustar Saldo (créditos)</Label>
+                <div className="space-y-2">
+                  <Label className="text-xs sm:text-sm">Ajustar Saldo (créditos)</Label>
+                  <div className="flex flex-col sm:flex-row gap-2">
                     <Input
                       type="number"
                       placeholder="Ex: 100"
                       value={balanceAmount}
                       onChange={(e) => setBalanceAmount(e.target.value)}
+                      className="flex-1"
                     />
+                    <div className="flex gap-2">
+                      <Button 
+                        variant="outline" 
+                        size="icon"
+                        onClick={() => setBalanceAction('add')}
+                        className={balanceAction === 'add' ? 'bg-green-100 border-green-500' : ''}
+                      >
+                        <Plus className="h-4 w-4" />
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        size="icon"
+                        onClick={() => setBalanceAction('remove')}
+                        className={balanceAction === 'remove' ? 'bg-red-100 border-red-500' : ''}
+                      >
+                        <Minus className="h-4 w-4" />
+                      </Button>
+                      <Button onClick={handleBalanceChange} disabled={!balanceAmount} className="flex-1 sm:flex-none">
+                        {balanceAction === 'add' ? 'Adicionar' : 'Remover'}
+                      </Button>
+                    </div>
                   </div>
-                  <Button 
-                    variant="outline" 
-                    size="icon"
-                    onClick={() => setBalanceAction('add')}
-                    className={balanceAction === 'add' ? 'bg-green-100 border-green-500' : ''}
-                  >
-                    <Plus className="h-4 w-4" />
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    size="icon"
-                    onClick={() => setBalanceAction('remove')}
-                    className={balanceAction === 'remove' ? 'bg-red-100 border-red-500' : ''}
-                  >
-                    <Minus className="h-4 w-4" />
-                  </Button>
-                  <Button onClick={handleBalanceChange} disabled={!balanceAmount}>
-                    {balanceAction === 'add' ? 'Adicionar' : 'Remover'}
-                  </Button>
                 </div>
               </CardContent>
             </Card>
@@ -310,32 +311,34 @@ export default function UserDetailModal({ user, open, onOpenChange, onUserUpdate
           {/* Transactions Tab */}
           <TabsContent value="transactions">
             <Card>
-              <CardContent className="pt-6">
+              <CardContent className="pt-4 sm:pt-6">
                 {loading ? (
-                  <p className="text-center text-muted-foreground py-4">Carregando...</p>
+                  <p className="text-center text-muted-foreground py-4 text-sm">Carregando...</p>
                 ) : transactions.length === 0 ? (
-                  <p className="text-center text-muted-foreground py-4">Nenhuma transação encontrada</p>
+                  <p className="text-center text-muted-foreground py-4 text-sm">Nenhuma transação encontrada</p>
                 ) : (
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Tipo</TableHead>
-                        <TableHead>Valor</TableHead>
-                        <TableHead>Descrição</TableHead>
-                        <TableHead>Data</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {transactions.map((tx) => (
-                        <TableRow key={tx.id}>
-                          <TableCell>{getTransactionBadge(tx.type)}</TableCell>
-                          <TableCell>{formatCredits(tx.amount)}</TableCell>
-                          <TableCell className="max-w-[200px] truncate">{tx.description || '-'}</TableCell>
-                          <TableCell>{new Date(tx.created_at).toLocaleString('pt-BR')}</TableCell>
+                  <div className="overflow-x-auto -mx-4 sm:mx-0">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Tipo</TableHead>
+                          <TableHead>Valor</TableHead>
+                          <TableHead className="hidden sm:table-cell">Descrição</TableHead>
+                          <TableHead className="hidden md:table-cell">Data</TableHead>
                         </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
+                      </TableHeader>
+                      <TableBody>
+                        {transactions.map((tx) => (
+                          <TableRow key={tx.id}>
+                            <TableCell>{getTransactionBadge(tx.type)}</TableCell>
+                            <TableCell className="text-sm">{formatCredits(tx.amount)}</TableCell>
+                            <TableCell className="max-w-[150px] truncate text-sm hidden sm:table-cell">{tx.description || '-'}</TableCell>
+                            <TableCell className="text-xs hidden md:table-cell">{new Date(tx.created_at).toLocaleDateString('pt-BR')}</TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
                 )}
               </CardContent>
             </Card>
@@ -345,38 +348,40 @@ export default function UserDetailModal({ user, open, onOpenChange, onUserUpdate
           {user.role === 'COMPANY' && (
             <TabsContent value="offers">
               <Card>
-                <CardContent className="pt-6">
+                <CardContent className="pt-4 sm:pt-6">
                   {loading ? (
-                    <p className="text-center text-muted-foreground py-4">Carregando...</p>
+                    <p className="text-center text-muted-foreground py-4 text-sm">Carregando...</p>
                   ) : offers.length === 0 ? (
-                    <p className="text-center text-muted-foreground py-4">Nenhuma oferta encontrada</p>
+                    <p className="text-center text-muted-foreground py-4 text-sm">Nenhuma oferta encontrada</p>
                   ) : (
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>Título</TableHead>
-                          <TableHead>Cliques</TableHead>
-                          <TableHead>Views</TableHead>
-                          <TableHead>Status</TableHead>
-                          <TableHead>Criada</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {offers.map((offer) => (
-                          <TableRow key={offer.id}>
-                            <TableCell className="font-medium max-w-[200px] truncate">{offer.title}</TableCell>
-                            <TableCell>{offer.clicks_count}</TableCell>
-                            <TableCell>{offer.views_count}</TableCell>
-                            <TableCell>
-                              <Badge variant={offer.active ? 'default' : 'secondary'}>
-                                {offer.active ? 'Ativa' : 'Inativa'}
-                              </Badge>
-                            </TableCell>
-                            <TableCell>{new Date(offer.created_at).toLocaleDateString('pt-BR')}</TableCell>
+                    <div className="overflow-x-auto -mx-4 sm:mx-0">
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead className="min-w-[120px]">Título</TableHead>
+                            <TableHead>Cliques</TableHead>
+                            <TableHead className="hidden sm:table-cell">Views</TableHead>
+                            <TableHead>Status</TableHead>
+                            <TableHead className="hidden md:table-cell">Criada</TableHead>
                           </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
+                        </TableHeader>
+                        <TableBody>
+                          {offers.map((offer) => (
+                            <TableRow key={offer.id}>
+                              <TableCell className="font-medium max-w-[120px] sm:max-w-[200px] truncate text-sm">{offer.title}</TableCell>
+                              <TableCell className="text-sm">{offer.clicks_count}</TableCell>
+                              <TableCell className="text-sm hidden sm:table-cell">{offer.views_count}</TableCell>
+                              <TableCell>
+                                <Badge variant={offer.active ? 'default' : 'secondary'} className="text-xs">
+                                  {offer.active ? 'Ativa' : 'Inativa'}
+                                </Badge>
+                              </TableCell>
+                              <TableCell className="text-xs hidden md:table-cell">{new Date(offer.created_at).toLocaleDateString('pt-BR')}</TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </div>
                   )}
                 </CardContent>
               </Card>
