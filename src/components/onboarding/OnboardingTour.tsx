@@ -133,25 +133,41 @@ export function OnboardingTour() {
     const processStep = async () => {
       // Aguardar fade out da transição
       if (isStepChange) {
-        await new Promise(resolve => setTimeout(resolve, 200));
+        await new Promise(resolve => setTimeout(resolve, 150));
       }
       
       // Aguardar elementos renderizarem
-      await new Promise(resolve => setTimeout(resolve, 300));
+      await new Promise(resolve => setTimeout(resolve, 200));
 
       const element = currentStepData?.target 
         ? document.querySelector(currentStepData.target) 
         : null;
 
       if (element) {
-        // Fazer scroll PRIMEIRO
-        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // Calcular posição do elemento antes do scroll
+        const rect = element.getBoundingClientRect();
+        const isAboveViewport = rect.top < 100;
+        const isBelowViewport = rect.bottom > window.innerHeight - 100;
         
-        // Aguardar scroll completar (800ms para smooth scroll)
-        await new Promise(resolve => setTimeout(resolve, 800));
+        // Só fazer scroll se elemento não estiver bem visível
+        if (isAboveViewport || isBelowViewport) {
+          // Usar 'nearest' para scroll mais previsível
+          element.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'center',
+            inline: 'nearest'
+          });
+          
+          // Aguardar scroll completar - tempo proporcional à distância
+          const scrollDistance = Math.abs(rect.top - window.innerHeight / 2);
+          const scrollTime = Math.min(600, Math.max(300, scrollDistance / 2));
+          await new Promise(resolve => setTimeout(resolve, scrollTime));
+        } else {
+          // Elemento já visível, só pequena pausa
+          await new Promise(resolve => setTimeout(resolve, 100));
+        }
         
         // Usar requestAnimationFrame para garantir que o browser terminou de renderizar
-        await new Promise(resolve => requestAnimationFrame(resolve));
         await new Promise(resolve => requestAnimationFrame(resolve));
       }
 
