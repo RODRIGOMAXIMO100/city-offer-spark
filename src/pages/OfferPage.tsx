@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Offer, CONFIG } from '@/types/database';
@@ -7,21 +7,86 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Loader2, Clock, MessageCircle, Globe, FileText, MapPin, Sparkles, Instagram } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-// Gera fingerprint do navegador para anti-fraude
-const generateFingerprint = (): string => {
-  const data = [
-    navigator.userAgent,
-    navigator.language,
-    screen.width,
-    screen.height,
-    screen.colorDepth,
-    new Date().getTimezoneOffset(),
-    navigator.hardwareConcurrency || 0,
-    navigator.maxTouchPoints || 0,
-  ].join('|');
-  
-  // Hash simples usando btoa
-  return btoa(data).substring(0, 32);
+
+// Generate persistent device ID
+const getDeviceId = (): string => {
+  let deviceId = localStorage.getItem('clilin_device_id');
+  if (!deviceId) {
+    deviceId = crypto.randomUUID();
+    localStorage.setItem('clilin_device_id', deviceId);
+  }
+  return deviceId;
+};
+
+// Generate advanced fingerprint for anti-fraud
+const generateAdvancedFingerprint = async (): Promise<object> => {
+  const fingerprint: Record<string, any> = {
+    deviceId: getDeviceId(),
+    userAgent: navigator.userAgent,
+    language: navigator.language,
+    languages: navigator.languages?.join(','),
+    screen: `${screen.width}x${screen.height}x${screen.colorDepth}`,
+    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    timezoneOffset: new Date().getTimezoneOffset(),
+    hardwareConcurrency: navigator.hardwareConcurrency || 0,
+    maxTouchPoints: navigator.maxTouchPoints || 0,
+    platform: navigator.platform,
+    cookieEnabled: navigator.cookieEnabled,
+    doNotTrack: navigator.doNotTrack,
+    plugins: navigator.plugins?.length || 0,
+  };
+
+  // Canvas fingerprint
+  try {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    if (ctx) {
+      ctx.textBaseline = 'top';
+      ctx.font = '14px Arial';
+      ctx.fillText('clilin-fp-2024', 2, 2);
+      fingerprint.canvasHash = canvas.toDataURL().slice(-50);
+    }
+  } catch (e) {
+    fingerprint.canvasHash = 'error';
+  }
+
+  // WebGL fingerprint
+  try {
+    const canvas = document.createElement('canvas');
+    const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+    if (gl && gl instanceof WebGLRenderingContext) {
+      const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+      if (debugInfo) {
+        fingerprint.webglVendor = gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL);
+        fingerprint.webglRenderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
+      }
+    }
+  } catch (e) {
+    fingerprint.webglVendor = 'error';
+  }
+
+  // Audio fingerprint
+  try {
+    const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+    fingerprint.audioSampleRate = audioCtx.sampleRate;
+    audioCtx.close();
+  } catch (e) {
+    fingerprint.audioSampleRate = 'error';
+  }
+
+  return fingerprint;
+};
+
+// Generate simple hash from fingerprint
+const hashFingerprint = (fp: object): string => {
+  const str = JSON.stringify(fp);
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash;
+  }
+  return Math.abs(hash).toString(36);
 };
 
 export default function OfferPage() {
@@ -37,6 +102,10 @@ export default function OfferPage() {
   const [buttonReady, setButtonReady] = useState(false);
   const [processing, setProcessing] = useState(false);
   const [timeLeft, setTimeLeft] = useState<string>('');
+  const [sessionToken, setSessionToken] = useState<string | null>(null);
+  const [fingerprint, setFingerprint] = useState<object | null>(null);
+
+  const sessionStarted = useRef(false);
 
   useEffect(() => {
     const fetchOffer = async () => {
@@ -78,7 +147,32 @@ export default function OfferPage() {
       // Increment view using SECURITY DEFINER function
       await supabase.rpc('increment_offer_views', { offer_id: id });
 
-      // Anti-fraud delay
+      // Generate advanced fingerprint
+      const fp = await generateAdvancedFingerprint();
+      setFingerprint(fp);
+
+      // Start session for server-side time validation
+      if (!sessionStarted.current) {
+        sessionStarted.current = true;
+        try {
+          const { data: sessionData, error: sessionError } = await supabase.functions.invoke('start-session', {
+            body: {
+              offerId: id,
+              deviceId: getDeviceId(),
+              fingerprintHash: hashFingerprint(fp),
+            },
+          });
+
+          if (!sessionError && sessionData?.sessionToken) {
+            setSessionToken(sessionData.sessionToken);
+            console.log('Session started:', sessionData.sessionToken.substring(0, 8));
+          }
+        } catch (err) {
+          console.error('Error starting session:', err);
+        }
+      }
+
+      // Anti-fraud delay (now also validated server-side)
       setTimeout(() => setButtonReady(true), CONFIG.TIME_TO_INTERACTIVE);
     };
 
@@ -127,9 +221,12 @@ export default function OfferPage() {
         body: {
           offerId: offer.id,
           affiliateId,
-          fingerprint: generateFingerprint(),
+          fingerprint: fingerprint ? hashFingerprint(fingerprint) : null,
           userAgent: navigator.userAgent,
           clickType: 'MAIN',
+          sessionToken,
+          deviceId: getDeviceId(),
+          advancedFingerprint: fingerprint,
         },
       });
 
@@ -169,7 +266,7 @@ export default function OfferPage() {
         body: {
           offerId: offer.id,
           affiliateId,
-          fingerprint: generateFingerprint(),
+          fingerprint: fingerprint ? hashFingerprint(fingerprint) : null,
           userAgent: navigator.userAgent,
           clickType: 'INSTAGRAM',
         },
