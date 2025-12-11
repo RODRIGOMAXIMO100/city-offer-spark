@@ -286,110 +286,120 @@ export default function AdminDashboard() {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b border-border bg-card sticky top-0 z-10">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Shield className="h-8 w-8 text-destructive" />
-            <div>
-              <h1 className="text-xl font-bold text-foreground">Painel Admin</h1>
-              <p className="text-sm text-muted-foreground">{profile?.name}</p>
+        <div className="container mx-auto px-4 py-3 sm:py-4">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+              <Shield className="h-6 w-6 sm:h-8 sm:w-8 text-destructive shrink-0" />
+              <div className="min-w-0">
+                <h1 className="text-lg sm:text-xl font-bold text-foreground truncate">Painel Admin</h1>
+                <p className="text-xs sm:text-sm text-muted-foreground truncate">{profile?.name}</p>
+              </div>
             </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <AdminAlerts />
-            <Button variant="ghost" size="sm" onClick={fetchAllData} disabled={loading}>
-              <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
-              Atualizar
-            </Button>
-            <Button variant="ghost" size="sm" onClick={signOut}>
-              <LogOut className="h-4 w-4 mr-2" />
-              Sair
-            </Button>
+            <div className="flex items-center gap-1 sm:gap-2">
+              <AdminAlerts />
+              <Button variant="ghost" size="sm" onClick={fetchAllData} disabled={loading} className="hidden sm:flex">
+                <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+                Atualizar
+              </Button>
+              <Button variant="ghost" size="icon" onClick={fetchAllData} disabled={loading} className="sm:hidden">
+                <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+              </Button>
+              <Button variant="ghost" size="sm" onClick={signOut} className="hidden sm:flex">
+                <LogOut className="h-4 w-4 mr-2" />
+                Sair
+              </Button>
+              <Button variant="ghost" size="icon" onClick={signOut} className="sm:hidden">
+                <LogOut className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-6">
+      <main className="container mx-auto px-3 sm:px-4 py-4 sm:py-6">
         {/* Stats Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4 mb-6">
+        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2 sm:gap-4 mb-4 sm:mb-6">
           <Card className="hover:shadow-lg transition-shadow">
-            <CardContent className="p-4 text-center">
-              <Building2 className="h-6 w-6 mx-auto mb-2 text-company" />
-              <p className="text-2xl font-bold">{stats.totalCompanies}</p>
-              <p className="text-xs text-muted-foreground">Empresas</p>
+            <CardContent className="p-3 sm:p-4 text-center">
+              <Building2 className="h-5 w-5 sm:h-6 sm:w-6 mx-auto mb-1 sm:mb-2 text-company" />
+              <p className="text-xl sm:text-2xl font-bold">{stats.totalCompanies}</p>
+              <p className="text-[10px] sm:text-xs text-muted-foreground">Empresas</p>
             </CardContent>
           </Card>
           <Card className="hover:shadow-lg transition-shadow">
-            <CardContent className="p-4 text-center">
-              <UserCheck className="h-6 w-6 mx-auto mb-2 text-affiliate" />
-              <p className="text-2xl font-bold">{stats.totalAffiliates}</p>
-              <p className="text-xs text-muted-foreground">Afiliados</p>
+            <CardContent className="p-3 sm:p-4 text-center">
+              <UserCheck className="h-5 w-5 sm:h-6 sm:w-6 mx-auto mb-1 sm:mb-2 text-affiliate" />
+              <p className="text-xl sm:text-2xl font-bold">{stats.totalAffiliates}</p>
+              <p className="text-[10px] sm:text-xs text-muted-foreground">Afiliados</p>
             </CardContent>
           </Card>
           <Card className="hover:shadow-lg transition-shadow">
-            <CardContent className="p-4 text-center">
-              <Users className="h-6 w-6 mx-auto mb-2 text-client" />
-              <p className="text-2xl font-bold">{stats.totalClients}</p>
-              <p className="text-xs text-muted-foreground">Clientes</p>
+            <CardContent className="p-3 sm:p-4 text-center">
+              <Users className="h-5 w-5 sm:h-6 sm:w-6 mx-auto mb-1 sm:mb-2 text-client" />
+              <p className="text-xl sm:text-2xl font-bold">{stats.totalClients}</p>
+              <p className="text-[10px] sm:text-xs text-muted-foreground">Clientes</p>
             </CardContent>
           </Card>
           <Card className="hover:shadow-lg transition-shadow">
-            <CardContent className="p-4 text-center">
-              <Megaphone className="h-6 w-6 mx-auto mb-2 text-primary" />
-              <p className="text-2xl font-bold">{stats.totalOffers}</p>
-              <p className="text-xs text-muted-foreground">Ofertas</p>
+            <CardContent className="p-3 sm:p-4 text-center">
+              <Megaphone className="h-5 w-5 sm:h-6 sm:w-6 mx-auto mb-1 sm:mb-2 text-primary" />
+              <p className="text-xl sm:text-2xl font-bold">{stats.totalOffers}</p>
+              <p className="text-[10px] sm:text-xs text-muted-foreground">Ofertas</p>
             </CardContent>
           </Card>
           <Card className="hover:shadow-lg transition-shadow">
-            <CardContent className="p-4 text-center">
-              <MousePointerClick className="h-6 w-6 mx-auto mb-2 text-accent-foreground" />
-              <p className="text-2xl font-bold">{stats.totalClicks}</p>
-              <p className="text-xs text-muted-foreground">Cliques</p>
+            <CardContent className="p-3 sm:p-4 text-center">
+              <MousePointerClick className="h-5 w-5 sm:h-6 sm:w-6 mx-auto mb-1 sm:mb-2 text-accent-foreground" />
+              <p className="text-xl sm:text-2xl font-bold">{stats.totalClicks}</p>
+              <p className="text-[10px] sm:text-xs text-muted-foreground">Cliques</p>
             </CardContent>
           </Card>
           <Card className="hover:shadow-lg transition-shadow">
-            <CardContent className="p-4 text-center">
-              <TrendingUp className="h-6 w-6 mx-auto mb-2 text-green-500" />
-              <p className="text-2xl font-bold">{formatBalance(stats.platformEarnings)}</p>
-              <p className="text-xs text-muted-foreground">Ganhos</p>
+            <CardContent className="p-3 sm:p-4 text-center">
+              <TrendingUp className="h-5 w-5 sm:h-6 sm:w-6 mx-auto mb-1 sm:mb-2 text-green-500" />
+              <p className="text-xl sm:text-2xl font-bold">{formatBalance(stats.platformEarnings)}</p>
+              <p className="text-[10px] sm:text-xs text-muted-foreground">Ganhos</p>
             </CardContent>
           </Card>
-          <Card className="hover:shadow-lg transition-shadow">
-            <CardContent className="p-4 text-center">
-              <Ban className="h-6 w-6 mx-auto mb-2 text-destructive" />
-              <p className="text-2xl font-bold">{stats.blockedIPs}</p>
-              <p className="text-xs text-muted-foreground">IPs Bloqueados</p>
+          <Card className="hover:shadow-lg transition-shadow col-span-2 sm:col-span-1">
+            <CardContent className="p-3 sm:p-4 text-center">
+              <Ban className="h-5 w-5 sm:h-6 sm:w-6 mx-auto mb-1 sm:mb-2 text-destructive" />
+              <p className="text-xl sm:text-2xl font-bold">{stats.blockedIPs}</p>
+              <p className="text-[10px] sm:text-xs text-muted-foreground">IPs Bloqueados</p>
             </CardContent>
           </Card>
         </div>
 
         {/* Tabs */}
         <Tabs defaultValue="users" className="space-y-4" onValueChange={resetFilters}>
-          <TabsList className="grid w-full grid-cols-6">
-            <TabsTrigger value="users">
-              <Users className="h-4 w-4 mr-2" />
-              Usuários
-            </TabsTrigger>
-            <TabsTrigger value="offers">
-              <Megaphone className="h-4 w-4 mr-2" />
-              Ofertas
-            </TabsTrigger>
-            <TabsTrigger value="transactions">
-              <DollarSign className="h-4 w-4 mr-2" />
-              Transações
-            </TabsTrigger>
-            <TabsTrigger value="withdrawals">
-              <Banknote className="h-4 w-4 mr-2" />
-              Saques
-            </TabsTrigger>
-            <TabsTrigger value="security">
-              <Shield className="h-4 w-4 mr-2" />
-              Segurança
-            </TabsTrigger>
-            <TabsTrigger value="analytics">
-              <BarChart3 className="h-4 w-4 mr-2" />
-              Analytics
-            </TabsTrigger>
-          </TabsList>
+          <div className="overflow-x-auto -mx-3 px-3 sm:mx-0 sm:px-0">
+            <TabsList className="inline-flex w-auto min-w-full sm:grid sm:w-full sm:grid-cols-6">
+              <TabsTrigger value="users" className="flex-1 sm:flex-none text-xs sm:text-sm">
+                <Users className="h-4 w-4 sm:mr-2" />
+                <span className="hidden sm:inline">Usuários</span>
+              </TabsTrigger>
+              <TabsTrigger value="offers" className="flex-1 sm:flex-none text-xs sm:text-sm">
+                <Megaphone className="h-4 w-4 sm:mr-2" />
+                <span className="hidden sm:inline">Ofertas</span>
+              </TabsTrigger>
+              <TabsTrigger value="transactions" className="flex-1 sm:flex-none text-xs sm:text-sm">
+                <DollarSign className="h-4 w-4 sm:mr-2" />
+                <span className="hidden sm:inline">Transações</span>
+              </TabsTrigger>
+              <TabsTrigger value="withdrawals" className="flex-1 sm:flex-none text-xs sm:text-sm">
+                <Banknote className="h-4 w-4 sm:mr-2" />
+                <span className="hidden sm:inline">Saques</span>
+              </TabsTrigger>
+              <TabsTrigger value="security" className="flex-1 sm:flex-none text-xs sm:text-sm">
+                <Shield className="h-4 w-4 sm:mr-2" />
+                <span className="hidden sm:inline">Segurança</span>
+              </TabsTrigger>
+              <TabsTrigger value="analytics" className="flex-1 sm:flex-none text-xs sm:text-sm">
+                <BarChart3 className="h-4 w-4 sm:mr-2" />
+                <span className="hidden sm:inline">Analytics</span>
+              </TabsTrigger>
+            </TabsList>
+          </div>
 
           {/* Users Tab */}
           <TabsContent value="users">
@@ -413,36 +423,38 @@ export default function AdminDashboard() {
                   showStatusFilter={false}
                   placeholder="Buscar por nome ou email..."
                 />
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Nome</TableHead>
-                      <TableHead>Email</TableHead>
-                      <TableHead>Tipo</TableHead>
-                      <TableHead>Cidade</TableHead>
-                      <TableHead>Saldo</TableHead>
-                      <TableHead>Cadastro</TableHead>
-                      <TableHead>Ações</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {usersPagination.paginatedItems.map((user) => (
-                      <TableRow key={user.id}>
-                        <TableCell className="font-medium">{user.name}</TableCell>
-                        <TableCell className="text-muted-foreground">{user.email || '-'}</TableCell>
-                        <TableCell>{getRoleBadge(user.role || 'N/A')}</TableCell>
-                        <TableCell>{user.city}</TableCell>
-                        <TableCell>{formatBalance(user.balance)}</TableCell>
-                        <TableCell>{new Date(user.created_at).toLocaleDateString('pt-BR')}</TableCell>
-                        <TableCell>
-                          <Button variant="ghost" size="sm" onClick={() => handleViewUser(user)}>
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                        </TableCell>
+                <div className="overflow-x-auto -mx-4 sm:mx-0">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="min-w-[120px]">Nome</TableHead>
+                        <TableHead className="hidden md:table-cell">Email</TableHead>
+                        <TableHead>Tipo</TableHead>
+                        <TableHead className="hidden sm:table-cell">Cidade</TableHead>
+                        <TableHead>Saldo</TableHead>
+                        <TableHead className="hidden lg:table-cell">Cadastro</TableHead>
+                        <TableHead>Ações</TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                    </TableHeader>
+                    <TableBody>
+                      {usersPagination.paginatedItems.map((user) => (
+                        <TableRow key={user.id}>
+                          <TableCell className="font-medium">{user.name}</TableCell>
+                          <TableCell className="text-muted-foreground hidden md:table-cell">{user.email || '-'}</TableCell>
+                          <TableCell>{getRoleBadge(user.role || 'N/A')}</TableCell>
+                          <TableCell className="hidden sm:table-cell">{user.city}</TableCell>
+                          <TableCell>{formatBalance(user.balance)}</TableCell>
+                          <TableCell className="hidden lg:table-cell">{new Date(user.created_at).toLocaleDateString('pt-BR')}</TableCell>
+                          <TableCell>
+                            <Button variant="ghost" size="sm" onClick={() => handleViewUser(user)}>
+                              <Eye className="h-4 w-4" />
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
                 <AdminPagination
                   currentPage={usersPagination.currentPage}
                   totalPages={usersPagination.totalPages}
@@ -476,44 +488,46 @@ export default function AdminDashboard() {
                   showStatusFilter={true}
                   placeholder="Buscar por título ou empresa..."
                 />
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Título</TableHead>
-                      <TableHead>Empresa</TableHead>
-                      <TableHead>Cidade</TableHead>
-                      <TableHead>Cliques</TableHead>
-                      <TableHead>Views</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Expira</TableHead>
-                      <TableHead>Ações</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {offersPagination.paginatedItems.map((offer) => (
-                      <TableRow key={offer.id}>
-                        <TableCell className="font-medium max-w-[200px] truncate">{offer.title}</TableCell>
-                        <TableCell>{offer.company_name}</TableCell>
-                        <TableCell>{offer.city}</TableCell>
-                        <TableCell>{offer.clicks_count}</TableCell>
-                        <TableCell>{offer.views_count}</TableCell>
-                        <TableCell>
-                          <Badge variant={offer.active ? 'default' : 'secondary'}>
-                            {offer.active ? 'Ativa' : 'Inativa'}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>{new Date(offer.expires_at).toLocaleDateString('pt-BR')}</TableCell>
-                        <TableCell>
-                          {offer.active && (
-                            <Button variant="ghost" size="sm" onClick={() => handleDeactivateOffer(offer.id)}>
-                              <Ban className="h-4 w-4" />
-                            </Button>
-                          )}
-                        </TableCell>
+                <div className="overflow-x-auto -mx-4 sm:mx-0">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="min-w-[150px]">Título</TableHead>
+                        <TableHead className="hidden sm:table-cell">Empresa</TableHead>
+                        <TableHead className="hidden md:table-cell">Cidade</TableHead>
+                        <TableHead>Cliques</TableHead>
+                        <TableHead className="hidden lg:table-cell">Views</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead className="hidden md:table-cell">Expira</TableHead>
+                        <TableHead>Ações</TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                    </TableHeader>
+                    <TableBody>
+                      {offersPagination.paginatedItems.map((offer) => (
+                        <TableRow key={offer.id}>
+                          <TableCell className="font-medium max-w-[150px] sm:max-w-[200px] truncate">{offer.title}</TableCell>
+                          <TableCell className="hidden sm:table-cell">{offer.company_name}</TableCell>
+                          <TableCell className="hidden md:table-cell">{offer.city}</TableCell>
+                          <TableCell>{offer.clicks_count}</TableCell>
+                          <TableCell className="hidden lg:table-cell">{offer.views_count}</TableCell>
+                          <TableCell>
+                            <Badge variant={offer.active ? 'default' : 'secondary'}>
+                              {offer.active ? 'Ativa' : 'Inativa'}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="hidden md:table-cell">{new Date(offer.expires_at).toLocaleDateString('pt-BR')}</TableCell>
+                          <TableCell>
+                            {offer.active && (
+                              <Button variant="ghost" size="sm" onClick={() => handleDeactivateOffer(offer.id)}>
+                                <Ban className="h-4 w-4" />
+                              </Button>
+                            )}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
                 <AdminPagination
                   currentPage={offersPagination.currentPage}
                   totalPages={offersPagination.totalPages}
@@ -547,28 +561,30 @@ export default function AdminDashboard() {
                   showStatusFilter={false}
                   placeholder="Buscar por usuário ou descrição..."
                 />
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Usuário</TableHead>
-                      <TableHead>Tipo</TableHead>
-                      <TableHead>Valor</TableHead>
-                      <TableHead>Descrição</TableHead>
-                      <TableHead>Data</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {transactionsPagination.paginatedItems.map((tx) => (
-                      <TableRow key={tx.id}>
-                        <TableCell className="font-medium">{tx.user_name}</TableCell>
-                        <TableCell>{getTransactionBadge(tx.type)}</TableCell>
-                        <TableCell>{formatBalance(tx.amount)}</TableCell>
-                        <TableCell className="max-w-[200px] truncate">{tx.description || '-'}</TableCell>
-                        <TableCell>{new Date(tx.created_at).toLocaleString('pt-BR')}</TableCell>
+                <div className="overflow-x-auto -mx-4 sm:mx-0">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="min-w-[100px]">Usuário</TableHead>
+                        <TableHead>Tipo</TableHead>
+                        <TableHead>Valor</TableHead>
+                        <TableHead className="hidden sm:table-cell">Descrição</TableHead>
+                        <TableHead className="hidden md:table-cell">Data</TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                    </TableHeader>
+                    <TableBody>
+                      {transactionsPagination.paginatedItems.map((tx) => (
+                        <TableRow key={tx.id}>
+                          <TableCell className="font-medium">{tx.user_name}</TableCell>
+                          <TableCell>{getTransactionBadge(tx.type)}</TableCell>
+                          <TableCell>{formatBalance(tx.amount)}</TableCell>
+                          <TableCell className="max-w-[200px] truncate hidden sm:table-cell">{tx.description || '-'}</TableCell>
+                          <TableCell className="hidden md:table-cell">{new Date(tx.created_at).toLocaleString('pt-BR')}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
                 <AdminPagination
                   currentPage={transactionsPagination.currentPage}
                   totalPages={transactionsPagination.totalPages}

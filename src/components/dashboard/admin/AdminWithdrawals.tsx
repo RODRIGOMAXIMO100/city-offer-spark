@@ -315,104 +315,106 @@ export default function AdminWithdrawals() {
               Nenhuma solicitação de saque encontrada.
             </div>
           ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Afiliado</TableHead>
-                  <TableHead>Valor</TableHead>
-                  <TableHead>PIX</TableHead>
-                  <TableHead>Fraud Score</TableHead>
-                  <TableHead>Data</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Ações</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {withdrawals.map((w) => (
-                  <TableRow key={w.id}>
-                    <TableCell>
-                      <div>
-                        <p className="font-medium">{w.nome_completo}</p>
-                        <p className="text-xs text-muted-foreground">{w.profiles?.email}</p>
-                      </div>
-                    </TableCell>
-                    <TableCell className="font-bold">
-                      R$ {w.amount_brl.toFixed(2)}
-                    </TableCell>
-                    <TableCell>
-                      <div className="text-sm">
-                        <p>{w.pix_tipo}</p>
-                        <p className="text-xs text-muted-foreground truncate max-w-[150px]">{w.pix_key}</p>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge className={getFraudScoreColor(w.fraud_score)}>
-                        <Shield className="h-3 w-3 mr-1" />
-                        {w.fraud_score}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-sm">
-                      {formatDate(w.requested_at)}
-                    </TableCell>
-                    <TableCell>
-                      {getStatusBadge(w.status)}
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex gap-1">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleViewDetails(w)}
-                        >
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                        {w.status === 'PENDING' && (
-                          <>
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="min-w-[120px]">Afiliado</TableHead>
+                    <TableHead>Valor</TableHead>
+                    <TableHead className="hidden sm:table-cell">PIX</TableHead>
+                    <TableHead className="hidden md:table-cell">Fraud Score</TableHead>
+                    <TableHead className="hidden lg:table-cell">Data</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Ações</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {withdrawals.map((w) => (
+                    <TableRow key={w.id}>
+                      <TableCell>
+                        <div>
+                          <p className="font-medium text-sm">{w.nome_completo}</p>
+                          <p className="text-xs text-muted-foreground hidden sm:block">{w.profiles?.email}</p>
+                        </div>
+                      </TableCell>
+                      <TableCell className="font-bold text-sm">
+                        R$ {w.amount_brl.toFixed(2)}
+                      </TableCell>
+                      <TableCell className="hidden sm:table-cell">
+                        <div className="text-sm">
+                          <p>{w.pix_tipo}</p>
+                          <p className="text-xs text-muted-foreground truncate max-w-[100px] md:max-w-[150px]">{w.pix_key}</p>
+                        </div>
+                      </TableCell>
+                      <TableCell className="hidden md:table-cell">
+                        <Badge className={getFraudScoreColor(w.fraud_score)}>
+                          <Shield className="h-3 w-3 mr-1" />
+                          {w.fraud_score}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-sm hidden lg:table-cell">
+                        {formatDate(w.requested_at)}
+                      </TableCell>
+                      <TableCell>
+                        {getStatusBadge(w.status)}
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex gap-1 flex-wrap">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleViewDetails(w)}
+                          >
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                          {w.status === 'PENDING' && (
+                            <>
+                              <Button
+                                variant="default"
+                                size="sm"
+                                onClick={() => handleApprove(w)}
+                                disabled={processing === w.id}
+                                className="bg-green-500 hover:bg-green-600"
+                              >
+                                {processing === w.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle className="h-4 w-4" />}
+                              </Button>
+                              <Button
+                                variant="destructive"
+                                size="sm"
+                                onClick={() => {
+                                  setSelectedWithdrawal(w);
+                                  setShowRejectModal(true);
+                                }}
+                                disabled={processing === w.id}
+                              >
+                                <XCircle className="h-4 w-4" />
+                              </Button>
+                            </>
+                          )}
+                          {w.status === 'APPROVED' && (
                             <Button
                               variant="default"
                               size="sm"
-                              onClick={() => handleApprove(w)}
-                              disabled={processing === w.id}
-                              className="bg-green-500 hover:bg-green-600"
-                            >
-                              {processing === w.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle className="h-4 w-4" />}
-                            </Button>
-                            <Button
-                              variant="destructive"
-                              size="sm"
-                              onClick={() => {
-                                setSelectedWithdrawal(w);
-                                setShowRejectModal(true);
-                              }}
+                              onClick={() => handleMarkCompleted(w)}
                               disabled={processing === w.id}
                             >
-                              <XCircle className="h-4 w-4" />
+                              {processing === w.id ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Concluir'}
                             </Button>
-                          </>
-                        )}
-                        {w.status === 'APPROVED' && (
-                          <Button
-                            variant="default"
-                            size="sm"
-                            onClick={() => handleMarkCompleted(w)}
-                            disabled={processing === w.id}
-                          >
-                            {processing === w.id ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Concluir'}
-                          </Button>
-                        )}
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                          )}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           )}
         </CardContent>
       </Card>
 
       {/* Details Modal */}
       <Dialog open={!!selectedWithdrawal && !showRejectModal} onOpenChange={() => setSelectedWithdrawal(null)}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Detalhes do Saque</DialogTitle>
             <DialogDescription>
@@ -438,7 +440,7 @@ export default function AdminWithdrawals() {
               )}
 
               {/* User Info */}
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <h4 className="font-semibold mb-2">Dados do Afiliado</h4>
                   <div className="space-y-1 text-sm">
@@ -465,7 +467,7 @@ export default function AdminWithdrawals() {
               {affiliateStats && (
                 <div>
                   <h4 className="font-semibold mb-2">Estatísticas do Afiliado</h4>
-                  <div className="grid grid-cols-4 gap-2">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                     <div className="bg-muted p-3 rounded-lg text-center">
                       <p className="text-lg font-bold">{affiliateStats.totalClicks}</p>
                       <p className="text-xs text-muted-foreground">Cliques Totais</p>
