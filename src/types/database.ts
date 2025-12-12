@@ -106,6 +106,18 @@ export const PRICING_DISCLAIMER = {
   searchAdsNote: "Custo médio por clique em anúncios de busca pagos",
 } as const;
 
+// Terminologia de Lead Qualificado centralizada
+export const LEAD_TERMINOLOGY = {
+  name: "Lead Qualificado",
+  shortDescription: "Cliente local com interesse demonstrado",
+  channels: {
+    ai: "Via Assistente IA — cliente pediu ativamente",
+    affiliate: "Via Divulgador — indicação local de confiança"
+  },
+  differentiator: "Você não paga por impressões ou cliques genéricos. Cada lead é local, segmentado e demonstrou interesse real.",
+  comparisonNote: "Diferente de anúncios tradicionais, na Clilin você paga apenas quando alguém demonstra interesse real na sua oferta."
+} as const;
+
 // Helper para formatar centavos para R$
 export const formatCentsToBRL = (cents: number): string => {
   const value = cents / 100;

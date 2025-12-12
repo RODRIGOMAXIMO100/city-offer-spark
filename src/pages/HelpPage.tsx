@@ -77,29 +77,51 @@ const HelpPage = () => {
                 <AccordionTrigger className="hover:no-underline">
                   <div className="flex items-center gap-3">
                     <Calculator className="h-5 w-5 text-primary" />
-                    <span>Como funciona o CPC (Custo Por Clique)</span>
+                    <span>Como funciona o Custo por Lead Qualificado</span>
                   </div>
                 </AccordionTrigger>
                 <AccordionContent className="space-y-4 pt-2">
+                  <div className="p-3 rounded-lg bg-primary/10 border border-primary/20 mb-4">
+                    <p className="text-sm font-medium text-primary mb-2">
+                      💡 O que é um Lead Qualificado?
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      Na Clilin, você paga apenas quando um cliente <strong>demonstra interesse real</strong> na sua oferta. 
+                      Isso acontece de duas formas:
+                    </p>
+                    <ul className="mt-2 space-y-1 text-sm text-muted-foreground">
+                      <li className="flex items-start gap-2">
+                        <span>🤖</span>
+                        <span><strong>Via Assistente IA:</strong> O cliente pede ativamente por ofertas como a sua</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span>👥</span>
+                        <span><strong>Via Divulgadores:</strong> Uma pessoa da sua cidade indica sua oferta</span>
+                      </li>
+                    </ul>
+                    <p className="text-xs text-muted-foreground mt-2 italic">
+                      Em ambos os casos, é um lead LOCAL, SEGMENTADO e com INTERESSE DEMONSTRADO.
+                    </p>
+                  </div>
                   <p className="text-muted-foreground">
-                    O CPC é calculado com base na nota da sua oferta. Quanto melhor a nota, menor o custo:
+                    O custo por lead é calculado com base na nota da sua oferta. Quanto melhor a nota, menor o custo:
                   </p>
                   <div className="grid gap-3">
                     <div className="flex items-center justify-between p-3 rounded-lg bg-green-500/10 border border-green-500/20">
                       <span className="font-medium text-green-600">Nota 10 (Excelente)</span>
-                      <span className="font-bold text-green-600">R$ 0,40 por clique</span>
+                      <span className="font-bold text-green-600">R$ 0,40 por lead</span>
                     </div>
                     <div className="flex items-center justify-between p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
                       <span className="font-medium text-yellow-600">Nota 7 (Inicial)</span>
-                      <span className="font-bold text-yellow-600">R$ 0,70 por clique</span>
+                      <span className="font-bold text-yellow-600">R$ 0,70 por lead</span>
                     </div>
                     <div className="flex items-center justify-between p-3 rounded-lg bg-red-500/10 border border-red-500/20">
                       <span className="font-medium text-red-600">Nota 4 (Mínima)</span>
-                      <span className="font-bold text-red-600">R$ 1,00 por clique</span>
+                      <span className="font-bold text-red-600">R$ 1,00 por lead</span>
                     </div>
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    <strong>Fórmula:</strong> CPC = 14 centavos × (14 - Nota da Oferta)
+                    <strong>Fórmula:</strong> Custo por Lead = 14 centavos × (14 - Nota da Oferta)
                   </p>
                 </AccordionContent>
               </AccordionItem>

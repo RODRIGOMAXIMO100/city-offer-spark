@@ -135,8 +135,35 @@ export default function TransparencyPage() {
             {/* Tab 1: CPC Automático */}
             <TabsContent value="auction" className="space-y-8">
               <div className="text-center mb-8">
-                <h2 className="text-3xl font-display font-bold mb-2">CPC 100% Automático</h2>
-                <p className="text-muted-foreground">Sem lances manuais: sua Nota da Oferta define o custo</p>
+                <h2 className="text-3xl font-display font-bold mb-2">Custo por Lead Qualificado</h2>
+                <p className="text-muted-foreground">Sem lances manuais: sua Nota da Oferta define o custo por lead</p>
+                
+                {/* Lead Qualificado Explanation */}
+                <div className="max-w-2xl mx-auto mt-6 p-4 bg-primary/5 border border-primary/20 rounded-xl text-left">
+                  <p className="text-sm font-medium text-primary mb-2">
+                    💡 O que é um Lead Qualificado na Clilin?
+                  </p>
+                  <p className="text-sm text-muted-foreground mb-3">
+                    Diferente de plataformas que cobram por impressões ou cliques genéricos, na Clilin você paga apenas 
+                    quando um cliente <strong>demonstra interesse real</strong> na sua oferta:
+                  </p>
+                  <div className="grid sm:grid-cols-2 gap-3">
+                    <div className="flex items-start gap-2 p-2 bg-background rounded-lg">
+                      <span className="text-lg">🤖</span>
+                      <div>
+                        <p className="text-xs font-medium">Via Assistente IA</p>
+                        <p className="text-xs text-muted-foreground">Cliente pediu ativamente por ofertas como a sua</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-2 p-2 bg-background rounded-lg">
+                      <span className="text-lg">👥</span>
+                      <div>
+                        <p className="text-xs font-medium">Via Divulgadores</p>
+                        <p className="text-xs text-muted-foreground">Indicação de confiança por alguém da sua cidade</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
                 
                 {/* Disclaimer Badge */}
                 <div className="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-amber-500/10 border border-amber-500/20 rounded-full">
@@ -175,23 +202,23 @@ export default function TransparencyPage() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Calculator className="h-5 w-5 text-primary" />
-                    CPC = 14 − Nota da Oferta
+                    Custo por Lead = 14 − Nota da Oferta
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <p className="text-muted-foreground">
-                    O CPC é calculado automaticamente. Não há lances manuais! 
-                    Sua única tarefa é <strong>melhorar a qualidade da oferta</strong> para pagar menos.
+                    O custo por lead é calculado automaticamente. Não há lances manuais! 
+                    Sua única tarefa é <strong>melhorar a qualidade da oferta</strong> para pagar menos por cada lead qualificado.
                   </p>
                   
                   <div className="bg-muted/50 rounded-xl p-4">
-                    <p className="text-sm font-medium mb-3">Tabela de CPC por Nota:</p>
+                    <p className="text-sm font-medium mb-3">Tabela de Custo por Nota:</p>
                     <div className="overflow-x-auto">
                       <table className="w-full text-sm">
                         <thead>
                         <tr className="border-b border-border">
                             <th className="text-center py-2 px-3">Nota</th>
-                            <th className="text-center py-2 px-3">Custo por Clique</th>
+                            <th className="text-center py-2 px-3">Custo por Lead</th>
                             <th className="text-left py-2 px-3">Significado</th>
                           </tr>
                         </thead>
@@ -220,7 +247,7 @@ export default function TransparencyPage() {
                     <Zap className="h-8 w-8 text-secondary mx-auto mb-3" />
                     <h4 className="font-bold mb-1">Nota 10</h4>
                     <p className="text-2xl font-bold text-secondary">R$ 0,40</p>
-                    <p className="text-xs text-muted-foreground mt-1">CPC mínimo</p>
+                    <p className="text-xs text-muted-foreground mt-1">por lead qualificado</p>
                   </CardContent>
                 </Card>
                 <Card className="bg-primary/5 border-primary/20">
@@ -228,7 +255,7 @@ export default function TransparencyPage() {
                     <Target className="h-8 w-8 text-primary mx-auto mb-3" />
                     <h4 className="font-bold mb-1">Nota 7</h4>
                     <p className="text-2xl font-bold text-primary">R$ 0,70</p>
-                    <p className="text-xs text-muted-foreground mt-1">CPC inicial</p>
+                    <p className="text-xs text-muted-foreground mt-1">por lead qualificado</p>
                   </CardContent>
                 </Card>
                 <Card className="bg-destructive/5 border-destructive/20">
@@ -236,10 +263,36 @@ export default function TransparencyPage() {
                     <Award className="h-8 w-8 text-destructive mx-auto mb-3" />
                     <h4 className="font-bold mb-1">Nota 4</h4>
                     <p className="text-2xl font-bold text-destructive">R$ 1,00</p>
-                    <p className="text-xs text-muted-foreground mt-1">CPC máximo</p>
+                    <p className="text-xs text-muted-foreground mt-1">por lead qualificado</p>
                   </CardContent>
                 </Card>
               </div>
+              
+              {/* Comparison Section */}
+              <Card className="bg-gradient-to-r from-muted/50 to-muted/30 border-border">
+                <CardHeader>
+                  <CardTitle className="text-lg">Comparativo: Lead Qualificado vs Clique Genérico</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid sm:grid-cols-3 gap-4">
+                    <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-center">
+                      <p className="text-xs text-muted-foreground mb-1">Redes Sociais</p>
+                      <p className="font-bold text-red-500">Impressão</p>
+                      <p className="text-xs text-muted-foreground mt-2">Alguém viu = Zero garantia de interesse</p>
+                    </div>
+                    <div className="p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-xl text-center">
+                      <p className="text-xs text-muted-foreground mb-1">Google Ads</p>
+                      <p className="font-bold text-yellow-600">Clique Genérico</p>
+                      <p className="text-xs text-muted-foreground mt-2">Alguém clicou = Pode ser curiosidade</p>
+                    </div>
+                    <div className="p-4 bg-secondary/10 border border-secondary/20 rounded-xl text-center">
+                      <p className="text-xs text-muted-foreground mb-1">Clilin</p>
+                      <p className="font-bold text-secondary">Lead Qualificado</p>
+                      <p className="text-xs text-muted-foreground mt-2">Alguém local pediu OU foi indicado = Interesse real</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             </TabsContent>
 
             {/* Tab 2: Nota da Oferta */}
