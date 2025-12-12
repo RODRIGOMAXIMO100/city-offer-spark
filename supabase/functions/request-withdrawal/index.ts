@@ -57,6 +57,48 @@ serve(async (req) => {
       );
     }
 
+    // ========== CHECK IF USER IS BANNED OR FROZEN ==========
+    if (profile.banned) {
+      console.log(`Banned user attempted withdrawal: ${profile.id}`);
+      return new Response(
+        JSON.stringify({ error: "Sua conta foi suspensa. Entre em contato com o suporte." }),
+        { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    if (profile.balance_frozen) {
+      console.log(`Frozen balance user attempted withdrawal: ${profile.id}`);
+      return new Response(
+        JSON.stringify({ error: "Seu saldo está congelado para análise. Aguarde liberação." }),
+        { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // ========== CHECK BLACKLIST ==========
+    const { data: blacklistEntries } = await supabase
+      .from("fraud_blacklist")
+      .select("type, value")
+      .or(`value.eq.${profile.cpf},value.eq.${profile.email},value.eq.${profile.pix_key}`);
+
+    if (blacklistEntries && blacklistEntries.length > 0) {
+      console.log(`Blacklisted user attempted withdrawal: ${profile.id}, matches: ${blacklistEntries.map(b => b.type).join(', ')}`);
+      
+      // Create fraud alert
+      await supabase.from("fraud_alerts").insert({
+        user_id: profile.id,
+        alert_type: "BLACKLIST_WITHDRAWAL_ATTEMPT",
+        severity: "CRITICAL",
+        title: "Usuário na blacklist tentou sacar",
+        description: `Usuário ${profile.nome_completo || profile.name} (${profile.cpf}) tentou sacar R$ ${(profile.balance / 100).toFixed(2)}`,
+        data: { blacklist_matches: blacklistEntries }
+      });
+
+      return new Response(
+        JSON.stringify({ error: "Sua conta está em análise. Entre em contato com o suporte." }),
+        { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     // Get request body - amount já em centavos
     const { amount } = await req.json();
 

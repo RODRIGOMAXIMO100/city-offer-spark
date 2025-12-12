@@ -10,7 +10,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { formatCentsToBRL } from '@/types/database';
-import { User, History, Megaphone, Plus, Minus, AlertTriangle } from 'lucide-react';
+import { User, History, Megaphone, Plus, Minus, AlertTriangle, Ban, Snowflake } from 'lucide-react';
+import BanUserModal from './BanUserModal';
 
 interface UserProfile {
   id: string;
@@ -29,6 +30,10 @@ interface UserProfile {
   endereco_fiscal?: string;
   pix_key?: string;
   pix_tipo?: string;
+  banned?: boolean;
+  banned_at?: string;
+  banned_reason?: string;
+  balance_frozen?: boolean;
 }
 
 interface Transaction {
@@ -61,6 +66,7 @@ export default function UserDetailModal({ user, open, onOpenChange, onUserUpdate
   const [loading, setLoading] = useState(false);
   const [balanceAmount, setBalanceAmount] = useState('');
   const [balanceAction, setBalanceAction] = useState<'add' | 'remove'>('add');
+  const [banModalOpen, setBanModalOpen] = useState(false);
 
   useEffect(() => {
     if (user && open) {
@@ -262,6 +268,44 @@ export default function UserDetailModal({ user, open, onOpenChange, onUserUpdate
               </CardContent>
             </Card>
 
+            {/* Ban Status */}
+            {(user.banned || user.balance_frozen) && (
+              <Card className="border-red-200 dark:border-red-900 bg-red-50 dark:bg-red-950/20">
+                <CardContent className="pt-4 sm:pt-6">
+                  <div className="flex items-center gap-2 mb-3">
+                    <AlertTriangle className="h-5 w-5 text-red-500" />
+                    <h3 className="font-semibold text-red-600">Status de Restrição</h3>
+                  </div>
+                  <div className="space-y-2">
+                    {user.banned && (
+                      <div className="flex items-center gap-2">
+                        <Badge variant="destructive">
+                          <Ban className="h-3 w-3 mr-1" />
+                          Conta Banida
+                        </Badge>
+                        {user.banned_at && (
+                          <span className="text-xs text-muted-foreground">
+                            em {new Date(user.banned_at).toLocaleDateString('pt-BR')}
+                          </span>
+                        )}
+                      </div>
+                    )}
+                    {user.balance_frozen && (
+                      <Badge variant="secondary">
+                        <Snowflake className="h-3 w-3 mr-1" />
+                        Saldo Congelado
+                      </Badge>
+                    )}
+                    {user.banned_reason && (
+                      <p className="text-sm text-muted-foreground mt-2">
+                        <strong>Motivo:</strong> {user.banned_reason}
+                      </p>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
             {/* Balance Management */}
             <Card>
               <CardContent className="pt-4 sm:pt-6">
@@ -303,6 +347,20 @@ export default function UserDetailModal({ user, open, onOpenChange, onUserUpdate
                     </div>
                   </div>
                 </div>
+
+                {/* Ban Button */}
+                {!user.banned && (
+                  <div className="pt-4 border-t">
+                    <Button
+                      variant="destructive"
+                      className="w-full"
+                      onClick={() => setBanModalOpen(true)}
+                    >
+                      <Ban className="h-4 w-4 mr-2" />
+                      Banir Usuário
+                    </Button>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
@@ -387,6 +445,14 @@ export default function UserDetailModal({ user, open, onOpenChange, onUserUpdate
             </TabsContent>
           )}
         </Tabs>
+
+        {/* Ban User Modal */}
+        <BanUserModal
+          user={user}
+          open={banModalOpen}
+          onOpenChange={setBanModalOpen}
+          onUserBanned={onUserUpdated}
+        />
       </DialogContent>
     </Dialog>
   );
