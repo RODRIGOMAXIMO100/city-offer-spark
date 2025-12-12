@@ -8,7 +8,7 @@ const corsHeaders = {
 
 const ASAAS_API_URL = Deno.env.get('ASAAS_SANDBOX') === 'true' 
   ? 'https://sandbox.asaas.com/api/v3'
-  : 'https://api.asaas.com/api/v3';
+  : 'https://www.asaas.com/api/v3';
 
 // amount_credits agora são centavos diretamente (R$ 100 = 10000 centavos)
 
