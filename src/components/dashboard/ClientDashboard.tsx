@@ -44,10 +44,21 @@ export default function ClientDashboard() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    // Usar scrollTop ao invés de scrollIntoView para evitar saltos
+    const chatArea = messagesEndRef.current?.parentElement;
+    if (chatArea) {
+      chatArea.scrollTo({
+        top: chatArea.scrollHeight,
+        behavior: 'smooth'
+      });
+    }
   };
 
-  useEffect(scrollToBottom, [messages]);
+  useEffect(() => {
+    // Pequeno delay para garantir que o DOM foi atualizado
+    const timer = setTimeout(scrollToBottom, 50);
+    return () => clearTimeout(timer);
+  }, [messages]);
 
   const sendMessage = async () => {
     if (!inputText.trim() || isTyping) return;
