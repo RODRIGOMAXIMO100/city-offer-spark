@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useOnboarding } from '@/contexts/OnboardingContext';
+import { OnboardingTour } from '@/components/onboarding/OnboardingTour';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -252,6 +253,7 @@ export default function ClientDashboard() {
       </div>
 
       <Footer />
+      <OnboardingTour />
     </div>
   );
 }
