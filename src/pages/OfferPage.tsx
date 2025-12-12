@@ -350,15 +350,21 @@ export default function OfferPage() {
             variant="ghost"
             size="sm"
             onClick={() => {
-              const cityParts = offer.city.split(' - ');
-              const cityName = cityParts[0];
-              const stateName = cityParts[1] || '';
-              navigate(`/?city=${encodeURIComponent(cityName)}&state=${encodeURIComponent(stateName)}#ai-chat`);
+              // Check if there's history to go back to
+              if (window.history.length > 1) {
+                navigate(-1);
+              } else {
+                // Fallback to chat page with city params
+                const cityParts = offer.city.split(' - ');
+                const cityName = cityParts[0];
+                const stateName = cityParts[1] || '';
+                navigate(`/chat?city=${encodeURIComponent(cityName)}&state=${encodeURIComponent(stateName)}`);
+              }
             }}
             className="text-muted-foreground hover:text-foreground"
           >
             <ArrowLeft className="mr-1 h-4 w-4" />
-            Buscar Ofertas
+            Voltar
           </Button>
           <img src={logo} alt="Clilin" className="h-6" />
         </div>
