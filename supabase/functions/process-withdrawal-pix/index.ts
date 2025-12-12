@@ -115,10 +115,13 @@ serve(async (req) => {
 
     console.log('Processing withdrawal:', withdrawal_id, 'Amount:', withdrawal.amount_brl);
 
+    // Normalizar chave PIX antes de enviar
+    const normalizedPixKey = normalizePixKey(withdrawal.pix_key, withdrawal.pix_tipo);
+
     // Criar transferência PIX no Asaas
     const transferData = {
       value: withdrawal.amount_brl,
-      pixAddressKey: withdrawal.pix_key,
+      pixAddressKey: normalizedPixKey,
       pixAddressKeyType: mapPixType(withdrawal.pix_tipo),
       description: `Saque Clilin - ${withdrawal.nome_completo}`,
     };
@@ -213,4 +216,20 @@ function mapPixType(pixTipo: string): string {
     'chave_aleatoria': 'EVP',
   };
   return mapping[pixTipo?.toLowerCase()] || 'EVP';
+}
+
+function normalizePixKey(pixKey: string, pixTipo: string): string {
+  const tipo = pixTipo?.toLowerCase();
+  
+  // Remove pontuação de CPF e CNPJ
+  if (tipo === 'cpf' || tipo === 'cnpj') {
+    return pixKey.replace(/[.\-\/]/g, '');
+  }
+  
+  // Remove formatação de telefone (deixa só números com +)
+  if (tipo === 'telefone' || tipo === 'celular') {
+    return pixKey.replace(/[^\d+]/g, '');
+  }
+  
+  return pixKey;
 }
