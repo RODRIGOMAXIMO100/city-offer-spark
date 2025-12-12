@@ -4,6 +4,7 @@ import { useOffers } from '@/hooks/useOffers';
 import { formatCreditsToReal, CONFIG } from '@/types/database';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip';
 import { Badge } from '@/components/ui/badge';
 import { Banknote, LogOut, Share2, Copy, Check, TrendingUp, Loader2, MapPin, Instagram, Clock, History, Coins, HelpCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
@@ -267,15 +268,23 @@ function AffiliateDashboardContent() {
               </Badge>
             </div>
             <div className="flex gap-1.5">
-              <Button 
-                size="icon" 
-                variant="outline" 
-                onClick={startTour} 
-                className="shrink-0"
-                title="Ver tour guiado"
-              >
-                <HelpCircle className="h-4 w-4" />
-              </Button>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button 
+                      size="icon" 
+                      variant="outline" 
+                      onClick={startTour} 
+                      className="shrink-0"
+                    >
+                      <HelpCircle className="h-4 w-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Ver tour guiado</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
               <Button size="icon" variant="outline" onClick={signOut} className="shrink-0">
                 <LogOut className="h-4 w-4" />
               </Button>
