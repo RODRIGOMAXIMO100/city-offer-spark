@@ -68,7 +68,7 @@ const AppRoutes = () => (
     <Route path="/blog" element={<BlogPage />} />
     <Route path="/blog/:slug" element={<BlogPostPage />} />
     <Route path="/autor/:slug" element={<AuthorPage />} />
-    <Route path="/ajuda" element={<ProtectedRoute><HelpPage /></ProtectedRoute>} />
+    <Route path="/ajuda" element={<HelpPage />} />
     <Route path="*" element={<NotFound />} />
   </Routes>
 );
