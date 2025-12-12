@@ -261,7 +261,7 @@ function AffiliateDashboardContent() {
     <div className="min-h-screen bg-affiliate-muted pb-20">
       {/* Header */}
       <header className="bg-card border-b border-border sticky top-0 z-10">
-        <div className="max-w-2xl mx-auto px-4 py-3">
+        <div className="max-w-4xl mx-auto px-4 py-3">
           {/* Top row: Logo + Name + Actions */}
           <div className="flex justify-between items-center mb-2">
             <div className="flex items-center gap-2 min-w-0">
@@ -416,7 +416,7 @@ function AffiliateDashboardContent() {
         </div>
       </header>
 
-      <div className="max-w-2xl mx-auto px-4 py-6 space-y-6">
+      <div className="max-w-4xl mx-auto px-4 py-6 space-y-6">
         {/* Affiliate Level Card */}
         {profile?.id && (
           <AffiliateLevel affiliateId={profile.id} />
@@ -435,10 +435,10 @@ function AffiliateDashboardContent() {
                 <Share2 className="h-6 w-6" />
               </div>
               <div className="space-y-2">
-                <p className="font-bold text-lg">Divisão 50/50 - Transparência Total!</p>
+                <p className="font-bold text-lg">Comissão de 30% a 50%!</p>
                 <ul className="text-sm opacity-95 space-y-1">
-                  <li>• <strong>R$ 0,20 a R$ 0,50 por lead</strong> - você recebe 50% do custo!</li>
-                  <li>• <strong>Bônus de nível até +50%</strong> - pode chegar a R$ 0,75/lead!</li>
+                  <li>• <strong>Comece com 30%</strong> do custo por clique</li>
+                  <li>• <strong>Suba de nível</strong> e alcance até 50% de comissão!</li>
                   <li>• <strong>Saque mínimo: R$ 100,00</strong> via PIX instantâneo</li>
                   <li>• <strong><a href="/transparencia" className="underline">Veja como funciona →</a></strong></li>
                 </ul>
@@ -472,7 +472,7 @@ function AffiliateDashboardContent() {
               </CardContent>
             </Card>
           ) : (
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-4 grid-cols-1 sm:grid-cols-2">
               {sortedOffers.map((offer, index) => (
                 <AffiliateOfferCard
                   key={offer.id}
