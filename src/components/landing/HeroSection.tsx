@@ -21,16 +21,16 @@ export function HeroSection() {
 
           {/* Headline */}
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-display font-bold tracking-tight mb-6 animate-fade-in-up" style={{ animationDelay: "0.1s" }}>
-            Conecte ofertas a{" "}
+            Sua empresa na{" "}
             <span className="bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
-              quem realmente importa
+              conversa da cidade
             </span>
           </h1>
 
           {/* Subtitle */}
           <p className="text-lg sm:text-xl text-muted-foreground mb-10 max-w-2xl mx-auto leading-relaxed animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
-            Empresas pagam por resultados reais. Divulgadores monetizam sua audiência. 
-            Clientes encontram as melhores ofertas com IA.
+            Seja encontrado quando alguém perguntar "o que fazer hoje?" — por IA ou por indicação de pessoas reais da sua cidade. 
+            Cliente vai direto pro seu WhatsApp.
           </p>
 
           {/* CTAs */}
@@ -53,9 +53,9 @@ export function HeroSection() {
           {/* Trust Badges */}
           <div className="flex flex-wrap justify-center gap-4 sm:gap-6 lg:gap-10 text-sm animate-fade-in-up" style={{ animationDelay: "0.4s" }}>
             {[
-              { icon: CheckCircle2, text: "Sem mensalidade" },
-              { icon: CheckCircle2, text: "Pague por resultado" },
-              { icon: CheckCircle2, text: "Saque via PIX" },
+              { icon: CheckCircle2, text: "Visibilidade local garantida" },
+              { icon: CheckCircle2, text: "Branding na comunidade" },
+              { icon: CheckCircle2, text: "Cliente no SEU WhatsApp" },
             ].map((item) => (
               <div key={item.text} className="flex items-center gap-2 text-muted-foreground">
                 <item.icon className="h-4 w-4 sm:h-5 sm:w-5 text-secondary shrink-0" />
@@ -65,7 +65,7 @@ export function HeroSection() {
           </div>
           <p className="text-xs sm:text-sm text-muted-foreground mt-4 flex items-center justify-center gap-2 animate-fade-in-up" style={{ animationDelay: "0.45s" }}>
             <Users className="h-4 w-4 text-secondary shrink-0" />
-            <span>Ganhos compartilhados com pessoas reais da sua cidade</span>
+            <span>Sem taxa por venda • Sem dependência de marketplace</span>
           </p>
         </div>
 
@@ -74,22 +74,22 @@ export function HeroSection() {
           {[
             {
               icon: Building2,
-              title: "Empresa",
-              desc: "Cadastra ofertas com desconto",
+              title: "Apareça",
+              desc: "Sua marca visível para toda a cidade",
               color: "company",
               gradient: "from-company to-company/70",
             },
             {
               icon: Users,
-              title: "Divulgador",
-              desc: "Compartilha e ganha comissão",
+              title: "Seja indicado",
+              desc: "Pessoas reais falam de você",
               color: "affiliate",
               gradient: "from-affiliate to-affiliate/70",
             },
             {
               icon: Sparkles,
-              title: "Cliente",
-              desc: "Encontra ofertas com IA",
+              title: "Conecte direto",
+              desc: "Cliente vai pro seu WhatsApp",
               color: "client",
               gradient: "from-client to-client/70",
             },

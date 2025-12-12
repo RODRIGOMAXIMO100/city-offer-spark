@@ -4,22 +4,22 @@ const steps = [
   {
     step: "01",
     icon: Building2,
-    title: "Empresa cadastra oferta",
-    description: "Crie ofertas com descontos reais. O custo por clique é calculado automaticamente pela qualidade da oferta.",
+    title: "Sua marca fica visível",
+    description: "Cadastre sua oferta e ela fica disponível para toda a cidade — via IA e divulgadores locais.",
     color: "company",
   },
   {
     step: "02",
     icon: Share2,
-    title: "Divulgadores compartilham",
-    description: "Influenciadores locais compartilham ofertas em suas redes e ganham comissão por clique.",
+    title: "Pessoas indicam você",
+    description: "Moradores da sua cidade compartilham sua oferta. Marketing de confiança, não anúncio frio.",
     color: "affiliate",
   },
   {
     step: "03",
     icon: Sparkles,
-    title: "Clientes encontram via IA",
-    description: "Nossa IA conecta clientes às ofertas mais relevantes baseado em preferências e localização.",
+    title: "Cliente conecta direto",
+    description: "Quando perguntarem 'onde comer?' ou 'qual salão?', você aparece. E o cliente vai pro SEU WhatsApp.",
     color: "client",
   },
 ];

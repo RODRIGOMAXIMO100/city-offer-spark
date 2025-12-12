@@ -1,46 +1,87 @@
-import { TrendingDown, MessageSquare, Users, BarChart3 } from "lucide-react";
+import { MessageSquare, Users, Heart, ShieldCheck, TrendingUp, Smartphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { PRICING_DISCLAIMER } from "@/types/database";
 import logo from "@/assets/logo.png";
 
-const comparisonData = [
-  { type: "Marketplaces de Delivery*", cost: "15% - 30%", metric: "por venda", highlight: false, isMarketplace: true, isLogo: false },
-  { type: "Anúncios de Busca", cost: "~R$ 25,00", metric: "por clique genérico", highlight: false, isMarketplace: false, isLogo: false },
-  { type: "Redes Sociais", cost: "~R$ 3,00", metric: "por clique genérico", highlight: false, isMarketplace: false, isLogo: false },
-  { type: "Clilin", cost: "R$ 0,40 - R$ 1,00**", metric: "custo por lead qualificado", highlight: true, isMarketplace: false, isLogo: true },
+const strategicComparison = [
+  {
+    feature: "Cliente vai pra onde?",
+    ifood: "Pro iFood",
+    ifoodNote: "(você perde o contato)",
+    google: "Pro site genérico",
+    googleNote: "",
+    clilin: "Pro SEU WhatsApp",
+    clilinNote: "✓",
+  },
+  {
+    feature: "Quem indica você?",
+    ifood: "Algoritmo",
+    ifoodNote: "",
+    google: "Algoritmo",
+    googleNote: "",
+    clilin: "Pessoas reais + IA",
+    clilinNote: "✓",
+  },
+  {
+    feature: "Você fideliza?",
+    ifood: "Não",
+    ifoodNote: "(cliente é do iFood)",
+    google: "Difícil",
+    googleNote: "",
+    clilin: "Sim, você controla",
+    clilinNote: "✓",
+  },
+  {
+    feature: "Taxa por venda?",
+    ifood: "15-30%",
+    ifoodNote: "sempre",
+    google: "Não",
+    googleNote: "",
+    clilin: "Não",
+    clilinNote: "✓",
+  },
+  {
+    feature: "Branding local?",
+    ifood: "Mínimo",
+    ifoodNote: "(marca iFood)",
+    google: "Não",
+    googleNote: "",
+    clilin: "Sim, sua marca",
+    clilinNote: "✓",
+  },
 ];
 
 const differentials = [
   {
-    icon: TrendingDown,
-    title: "Leads até 60x mais baratos",
-    description: "Enquanto plataformas tradicionais cobram de R$ 3 a R$ 25 por clique genérico, na Clilin você paga de R$ 0,40 a R$ 1,00 por um lead qualificado e local.",
-    highlight: "Economia de até 97% por lead",
-    color: "text-emerald-500",
-    bgColor: "bg-emerald-500/10",
-  },
-  {
     icon: MessageSquare,
-    title: "Clientes encontram você conversando",
-    description: "O cliente diz para nossa IA o que precisa e ela sugere sua oferta. É demanda real, não impressões vazias.",
-    highlight: "Lead com intenção de compra",
+    title: "Descoberta por IA",
+    description: "Quando alguém perguntar 'onde comer?' ou 'qual salão?' para nossa IA, sua oferta aparece. Demanda real, não anúncio frio.",
+    highlight: "Seja encontrado naturalmente",
     color: "text-primary",
     bgColor: "bg-primary/10",
   },
   {
     icon: Users,
-    title: "Divulgado por gente da sua cidade",
-    description: "Pessoas reais da sua comunidade indicam suas ofertas. Cada lead é local, segmentado e com interesse demonstrado.",
-    highlight: "Leads locais de confiança",
+    title: "Marketing de confiança",
+    description: "Pessoas reais da sua cidade indicam você. É como boca a boca, só que digital e mensurável.",
+    highlight: "Indicação vale mais que anúncio",
     color: "text-orange-500",
     bgColor: "bg-orange-500/10",
   },
   {
-    icon: BarChart3,
-    title: "100% transparente",
-    description: "Você sabe exatamente para onde vai cada centavo: 50% divulgadores, 50% plataforma. Dashboard em tempo real.",
-    highlight: "Zero custos ocultos",
+    icon: Smartphone,
+    title: "Cliente no SEU canal",
+    description: "Diferente de marketplaces, o cliente vai direto pro seu WhatsApp. Você conversa, fideliza e não paga taxa por venda.",
+    highlight: "Relacionamento direto",
+    color: "text-emerald-500",
+    bgColor: "bg-emerald-500/10",
+  },
+  {
+    icon: ShieldCheck,
+    title: "Independência total",
+    description: "Construa SUA base de clientes, não a de uma plataforma. Sem ficar refém de algoritmos ou taxas abusivas.",
+    highlight: "Sua empresa, suas regras",
     color: "text-blue-500",
     bgColor: "bg-blue-500/10",
   },
@@ -53,56 +94,55 @@ export function WhyDifferent() {
         {/* Header */}
         <div className="text-center mb-12">
           <span className="inline-block px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
-            Compare e economize
+            Compare e decida
           </span>
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-            Por que gastar mais se você pode pagar menos?
+            O que você REALMENTE ganha com cada plataforma
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Veja como a Clilin revoluciona o custo de aquisição de clientes para negócios locais
+            Não é só sobre custo — é sobre construir SEU negócio, não o de uma plataforma
           </p>
         </div>
 
-        {/* Comparison Table */}
-        <div className="max-w-xl mx-auto mb-16">
-          <div className="bg-card rounded-2xl border border-border overflow-hidden shadow-lg">
-            <div className="grid grid-cols-2 gap-4 p-4 bg-muted/50 font-semibold text-sm">
-              <span>Plataforma</span>
-              <span className="text-right">Clique por Lead Qualificado</span>
+        {/* Strategic Comparison Table */}
+        <div className="max-w-4xl mx-auto mb-16 overflow-x-auto">
+          <div className="bg-card rounded-2xl border border-border overflow-hidden shadow-lg min-w-[600px]">
+            {/* Header */}
+            <div className="grid grid-cols-4 gap-2 p-4 bg-muted/50 font-semibold text-sm">
+              <span></span>
+              <span className="text-center text-muted-foreground">iFood / Marketplaces</span>
+              <span className="text-center text-muted-foreground">Google Ads</span>
+              <span className="text-center">
+                <img src={logo} alt="Clilin" className="h-5 mx-auto object-contain" />
+              </span>
             </div>
-            {comparisonData.map((item, index) => (
+            {/* Rows */}
+            {strategicComparison.map((row, index) => (
               <div
                 key={index}
-                className={`grid grid-cols-2 gap-4 p-4 border-t border-border ${
-                  item.highlight ? "bg-primary/5" : ""
-                }`}
+                className="grid grid-cols-4 gap-2 p-4 border-t border-border items-center"
               >
-                {item.isLogo ? (
-                  <img src={logo} alt="Clilin" className="h-6 object-contain" />
-                ) : (
-                  <span className={`font-medium ${item.highlight ? "text-primary font-bold" : "text-foreground"}`}>
-                    {item.type}
-                  </span>
-                )}
-                <div className={`text-right ${item.highlight ? "text-primary font-bold" : "text-muted-foreground"}`}>
-                  <span className={item.highlight ? "text-lg" : ""}>{item.cost}</span>
-                  <span className="text-xs opacity-70 ml-1">{item.metric}</span>
+                <span className="font-medium text-sm">{row.feature}</span>
+                <div className="text-center text-sm text-muted-foreground">
+                  <span>{row.ifood}</span>
+                  {row.ifoodNote && <span className="block text-xs opacity-70">{row.ifoodNote}</span>}
+                </div>
+                <div className="text-center text-sm text-muted-foreground">
+                  <span>{row.google}</span>
+                  {row.googleNote && <span className="block text-xs opacity-70">{row.googleNote}</span>}
+                </div>
+                <div className="text-center text-sm font-medium text-primary">
+                  <span>{row.clilin}</span>
+                  {row.clilinNote === "✓" && <span className="ml-1 text-secondary">✓</span>}
                 </div>
               </div>
             ))}
           </div>
           
-          {/* Footnotes */}
-          <div className="mt-4 space-y-1 text-xs text-muted-foreground">
-            <p className="flex items-start gap-1">
-              <span className="font-medium">*</span>
-              <span>{PRICING_DISCLAIMER.marketplaceNote}</span>
-            </p>
-            <p className="flex items-start gap-1">
-              <span className="font-medium">**</span>
-              <span>{PRICING_DISCLAIMER.full}</span>
-            </p>
-          </div>
+          {/* Footnote */}
+          <p className="mt-4 text-xs text-muted-foreground text-center">
+            {PRICING_DISCLAIMER.full}
+          </p>
         </div>
 
         {/* 4 Pillars Grid */}
