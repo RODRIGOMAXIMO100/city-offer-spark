@@ -12,6 +12,7 @@ import AdminLoginPage from "./pages/AdminLoginPage";
 import DashboardPage from "./pages/DashboardPage";
 import AdminDashboard from "./components/dashboard/AdminDashboard";
 import OfferPage from "./pages/OfferPage";
+import ShortLinkRedirect from "./pages/ShortLinkRedirect";
 import TermsPage from "./pages/TermsPage";
 import PrivacyPage from "./pages/PrivacyPage";
 import TransparencyPage from "./pages/TransparencyPage";
@@ -64,7 +65,9 @@ const AppRoutes = () => (
     <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
     <Route path="/admin/login" element={<AdminLoginPage />} />
     <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+    <Route path="/oferta/:id" element={<OfferPage />} />
     <Route path="/offer/:id" element={<OfferPage />} />
+    <Route path="/o/:code" element={<ShortLinkRedirect />} />
     <Route path="/termos" element={<TermsPage />} />
     <Route path="/privacidade" element={<PrivacyPage />} />
     <Route path="/transparencia" element={<TransparencyPage />} />

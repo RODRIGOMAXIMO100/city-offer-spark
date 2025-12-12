@@ -3,8 +3,19 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Copy, Check, Clock, Instagram, TrendingUp, DollarSign, Flame, ExternalLink } from "lucide-react";
+import { Copy, Check, Clock, Instagram, TrendingUp, DollarSign, Flame, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+
+// Generate a random 6-character code
+const generateShortCode = (): string => {
+  const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+  let code = '';
+  for (let i = 0; i < 6; i++) {
+    code += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return code;
+};
 
 interface Offer {
   id: string;
@@ -34,6 +45,7 @@ interface AffiliateOfferCardProps {
 
 export function AffiliateOfferCard({ offer, profileId, index }: AffiliateOfferCardProps) {
   const [copied, setCopied] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const discount = Math.round((1 - offer.price_new / offer.price_old) * 100);
   const offerScore = offer.current_offer_score || 5;
@@ -57,11 +69,61 @@ export function AffiliateOfferCard({ offer, profileId, index }: AffiliateOfferCa
   const expInfo = getExpirationInfo();
 
   const copyLink = async () => {
-    const affiliateLink = `${window.location.origin}/oferta/${offer.id}?ref=${profileId}`;
-    await navigator.clipboard.writeText(affiliateLink);
-    setCopied(true);
-    toast.success("Link copiado!");
-    setTimeout(() => setCopied(false), 2000);
+    setLoading(true);
+    try {
+      // First check if short link already exists
+      const { data: existingLink } = await supabase
+        .from('short_links')
+        .select('code')
+        .eq('offer_id', offer.id)
+        .eq('affiliate_id', profileId)
+        .maybeSingle();
+
+      let code = existingLink?.code;
+
+      // If no existing link, create one
+      if (!code) {
+        let attempts = 0;
+        while (attempts < 5) {
+          code = generateShortCode();
+          const { error } = await supabase
+            .from('short_links')
+            .insert({
+              code,
+              offer_id: offer.id,
+              affiliate_id: profileId
+            });
+          
+          if (!error) break;
+          attempts++;
+        }
+      }
+
+      if (code) {
+        const shortLink = `${window.location.origin}/o/${code}`;
+        await navigator.clipboard.writeText(shortLink);
+        setCopied(true);
+        toast.success("Link curto copiado!", {
+          description: shortLink
+        });
+      } else {
+        // Fallback to long link
+        const longLink = `${window.location.origin}/oferta/${offer.id}?ref=${profileId}`;
+        await navigator.clipboard.writeText(longLink);
+        setCopied(true);
+        toast.success("Link copiado!");
+      }
+    } catch (err) {
+      console.error('Error generating short link:', err);
+      // Fallback to long link
+      const longLink = `${window.location.origin}/oferta/${offer.id}?ref=${profileId}`;
+      await navigator.clipboard.writeText(longLink);
+      setCopied(true);
+      toast.success("Link copiado!");
+    } finally {
+      setLoading(false);
+      setTimeout(() => setCopied(false), 2000);
+    }
   };
 
   const openInstagram = () => {
@@ -203,9 +265,15 @@ export function AffiliateOfferCard({ offer, profileId, index }: AffiliateOfferCa
         <div className="flex gap-2">
           <Button
             onClick={copyLink}
+            disabled={loading}
             className="flex-1 bg-foreground hover:bg-foreground/90 h-11 font-semibold"
           >
-            {copied ? (
+            {loading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Gerando...
+              </>
+            ) : copied ? (
               <>
                 <Check className="mr-2 h-4 w-4" />
                 Copiado!

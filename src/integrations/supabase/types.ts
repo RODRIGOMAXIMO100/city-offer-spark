@@ -732,6 +732,55 @@ export type Database = {
         }
         Relationships: []
       }
+      short_links: {
+        Row: {
+          affiliate_id: string
+          clicks: number | null
+          code: string
+          created_at: string | null
+          id: string
+          offer_id: string
+        }
+        Insert: {
+          affiliate_id: string
+          clicks?: number | null
+          code: string
+          created_at?: string | null
+          id?: string
+          offer_id: string
+        }
+        Update: {
+          affiliate_id?: string
+          clicks?: number | null
+          code?: string
+          created_at?: string | null
+          id?: string
+          offer_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "short_links_affiliate_id_fkey"
+            columns: ["affiliate_id"]
+            isOneToOne: false
+            referencedRelation: "company_public_info"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "short_links_affiliate_id_fkey"
+            columns: ["affiliate_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "short_links_offer_id_fkey"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "offers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       transactions: {
         Row: {
           amount: number
