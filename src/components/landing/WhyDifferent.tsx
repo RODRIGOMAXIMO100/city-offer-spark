@@ -68,7 +68,7 @@ export function WhyDifferent() {
           <div className="bg-card rounded-2xl border border-border overflow-hidden shadow-lg">
             <div className="grid grid-cols-2 gap-4 p-4 bg-muted/50 font-semibold text-sm">
               <span>Plataforma</span>
-              <span className="text-right">Custo por Lead</span>
+              <span className="text-right">Clique por Lead Qualificado</span>
             </div>
             {comparisonData.map((item, index) => (
               <div
