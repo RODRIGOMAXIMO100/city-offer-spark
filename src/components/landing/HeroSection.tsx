@@ -2,18 +2,44 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Building2, Users, Sparkles, Zap, TrendingUp, CheckCircle2 } from "lucide-react";
 import { FloatingParticles } from "./FloatingParticles";
+import { useEffect, useState } from "react";
 
 export function HeroSection() {
+  const [scrollY, setScrollY] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrollY(window.scrollY);
+    };
+    
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
     <section className="relative min-h-screen flex items-center pt-20 overflow-hidden">
-      {/* Background Elements */}
-      <div className="absolute inset-0 bg-grid-pattern opacity-40" />
-      <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-3xl" />
-      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-accent/20 rounded-full blur-3xl" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-radial from-secondary/10 via-transparent to-transparent" />
+      {/* Background Elements with Parallax */}
+      <div 
+        className="absolute inset-0 bg-grid-pattern opacity-40"
+        style={{ transform: `translateY(${scrollY * 0.1}px)` }}
+      />
+      <div 
+        className="absolute top-0 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-3xl transition-transform duration-100"
+        style={{ transform: `translateY(${scrollY * 0.3}px) translateX(${scrollY * 0.05}px)` }}
+      />
+      <div 
+        className="absolute bottom-0 right-1/4 w-96 h-96 bg-accent/20 rounded-full blur-3xl transition-transform duration-100"
+        style={{ transform: `translateY(${scrollY * 0.2}px) translateX(${-scrollY * 0.08}px)` }}
+      />
+      <div 
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-radial from-secondary/10 via-transparent to-transparent transition-transform duration-100"
+        style={{ transform: `translate(-50%, calc(-50% + ${scrollY * 0.15}px)) scale(${1 + scrollY * 0.0002})` }}
+      />
       
-      {/* Floating Particles */}
-      <FloatingParticles />
+      {/* Floating Particles with Parallax */}
+      <div style={{ transform: `translateY(${scrollY * 0.05}px)` }}>
+        <FloatingParticles />
+      </div>
       
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <div className="text-center max-w-4xl mx-auto">
