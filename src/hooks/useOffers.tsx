@@ -49,14 +49,26 @@ export function useOffers(city?: string) {
       setLoading(true);
       const { data, error: fetchError } = await supabase
         .from('offers')
-        .select('*')
+        .select(`
+          *,
+          offer_scores(ctr_score, quality_score, reputation_score, relevance_score, total_score)
+        `)
         .eq('company_id', profile.id)
         .is('deleted_at', null)
         .order('created_at', { ascending: false });
 
       if (fetchError) throw fetchError;
       
-      setOffers(data as Offer[] || []);
+      // Map scores to offer object for easier access
+      const offersWithScores = (data || []).map((offer: any) => ({
+        ...offer,
+        ctr_score: offer.offer_scores?.[0]?.ctr_score || 5,
+        quality_score: offer.offer_scores?.[0]?.quality_score || 5,
+        reputation_score: offer.offer_scores?.[0]?.reputation_score || 5,
+        relevance_score: offer.offer_scores?.[0]?.relevance_score || 5,
+      }));
+      
+      setOffers(offersWithScores as Offer[]);
     } catch (err) {
       setError(err as Error);
       console.error('Error fetching my offers:', err);

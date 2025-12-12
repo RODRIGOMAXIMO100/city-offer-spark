@@ -559,13 +559,37 @@ function AffiliateDashboardContent() {
                         </div>
                       </div>
 
-                      {/* Commission */}
-                      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center bg-affiliate/10 rounded-lg p-2 mb-3 gap-0.5">
-                        <span className="text-[10px] sm:text-xs text-muted-foreground">Comissão base (50%)</span>
-                        <span className="font-bold text-affiliate text-xs sm:text-sm">
-                          R$ 0,20 - R$ 0,50/clique
-                        </span>
-                      </div>
+                      {/* Commission - Dynamic based on offer score */}
+                      {(() => {
+                        const offerScore = (offer as any).current_offer_score || 5;
+                        const cpcCents = (14 - offerScore) * 10; // CPC em centavos
+                        const affiliateEarning = (cpcCents * 0.5) / 100; // 50% para afiliado em reais
+                        return (
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center bg-affiliate/10 rounded-lg p-2 mb-3 gap-0.5 cursor-help">
+                                  <span className="text-[10px] sm:text-xs text-muted-foreground">Ganho estimado (50%)</span>
+                                  <span className="font-bold text-affiliate text-xs sm:text-sm">
+                                    ~R$ {affiliateEarning.toFixed(2)}/clique
+                                  </span>
+                                </div>
+                              </TooltipTrigger>
+                              <TooltipContent className="max-w-[220px]">
+                                <p className="font-bold mb-1">Cálculo do ganho</p>
+                                <div className="space-y-1 text-xs">
+                                  <p>Nota da oferta: {offerScore.toFixed(1)}</p>
+                                  <p>CPC total: R$ {(cpcCents / 100).toFixed(2)}</p>
+                                  <p>Sua parte (50%): <strong className="text-affiliate">R$ {affiliateEarning.toFixed(2)}</strong></p>
+                                </div>
+                                <p className="text-[10px] mt-1 text-muted-foreground">
+                                  +Bônus de nível pode aumentar até 50%!
+                                </p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        );
+                      })()}
 
                       {/* Copy Button */}
                       <Button
