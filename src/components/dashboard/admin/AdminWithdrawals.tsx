@@ -442,6 +442,17 @@ export default function AdminWithdrawals() {
                               </Button>
                             </>
                           )}
+                          {w.status === 'PROCESSING' && (
+                            <Button
+                              variant="default"
+                              size="sm"
+                              onClick={() => handleMarkCompleted(w)}
+                              disabled={processing === w.id}
+                              className="bg-green-500 hover:bg-green-600"
+                            >
+                              {processing === w.id ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Concluir'}
+                            </Button>
+                          )}
                         </div>
                       </TableCell>
                     </TableRow>
