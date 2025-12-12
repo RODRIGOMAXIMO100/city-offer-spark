@@ -4,16 +4,16 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { RefreshCw, Globe, Server, Shield, AlertTriangle, Ban } from 'lucide-react';
+import { RefreshCw, Globe, Server, Shield, AlertTriangle, Ban, Eye } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface BlockedStats {
-  byClickType: { click_type: string; count: number }[];
   byCountry: { ip_country: string; count: number }[];
   byASN: { ip_org: string; count: number }[];
   totalBlocked: number;
   totalVPN: number;
-  totalGeoBlocked: number;
+  totalProxy: number;
+  totalGeoMismatch: number;
   totalDuplicate: number;
 }
 
@@ -29,55 +29,47 @@ export default function AdminBlockedStats() {
   const fetchStats = async () => {
     setLoading(true);
     try {
-      // Fetch blocked clicks by type
-      const { data: byType } = await supabase
+      // Fetch all clicks with flags for analysis
+      const { data: allClicks } = await supabase
         .from('offer_clicks')
-        .select('click_type')
-        .in('click_type', ['VPN_BLOCKED', 'GEO_BLOCKED', 'DUPLICATE']);
-      
-      const clickTypeCount = byType?.reduce((acc, { click_type }) => {
-        acc[click_type] = (acc[click_type] || 0) + 1;
-        return acc;
-      }, {} as Record<string, number>) || {};
+        .select('is_vpn, is_proxy, geo_mismatch, ip_country, ip_org, click_type');
 
-      // Fetch by country
-      const { data: byCountry } = await supabase
-        .from('offer_clicks')
-        .select('ip_country')
-        .in('click_type', ['VPN_BLOCKED', 'GEO_BLOCKED'])
-        .not('ip_country', 'is', null);
-      
-      const countryCount = byCountry?.reduce((acc, { ip_country }) => {
-        if (ip_country) {
-          acc[ip_country] = (acc[ip_country] || 0) + 1;
+      // Count based on boolean flags
+      let totalVPN = 0;
+      let totalProxy = 0;
+      let totalGeoMismatch = 0;
+      let totalDuplicate = 0;
+      const countryCount: Record<string, number> = {};
+      const orgCount: Record<string, number> = {};
+
+      allClicks?.forEach(click => {
+        if (click.is_vpn) totalVPN++;
+        if (click.is_proxy) totalProxy++;
+        if (click.geo_mismatch) totalGeoMismatch++;
+        if (click.click_type === 'DUPLICATE') totalDuplicate++;
+
+        // Count suspicious clicks by country (VPN, proxy, or geo_mismatch)
+        if ((click.is_vpn || click.is_proxy || click.geo_mismatch) && click.ip_country) {
+          countryCount[click.ip_country] = (countryCount[click.ip_country] || 0) + 1;
         }
-        return acc;
-      }, {} as Record<string, number>) || {};
 
-      // Fetch by ASN/Org
-      const { data: byOrg } = await supabase
-        .from('offer_clicks')
-        .select('ip_org')
-        .eq('click_type', 'VPN_BLOCKED')
-        .not('ip_org', 'is', null);
-      
-      const orgCount = byOrg?.reduce((acc, { ip_org }) => {
-        if (ip_org) {
-          acc[ip_org] = (acc[ip_org] || 0) + 1;
+        // Count VPN/proxy clicks by ASN
+        if ((click.is_vpn || click.is_proxy) && click.ip_org) {
+          orgCount[click.ip_org] = (orgCount[click.ip_org] || 0) + 1;
         }
-        return acc;
-      }, {} as Record<string, number>) || {};
+      });
 
-      // Fetch recent blocked clicks
+      const totalBlocked = totalVPN + totalProxy + totalGeoMismatch + totalDuplicate;
+
+      // Fetch recent suspicious clicks
       const { data: recent } = await supabase
         .from('offer_clicks')
-        .select('id, client_ip, ip_country, ip_org, click_type, created_at')
-        .in('click_type', ['VPN_BLOCKED', 'GEO_BLOCKED'])
+        .select('id, client_ip, ip_country, ip_org, click_type, is_vpn, is_proxy, geo_mismatch, created_at')
+        .or('is_vpn.eq.true,is_proxy.eq.true,geo_mismatch.eq.true,click_type.eq.DUPLICATE')
         .order('created_at', { ascending: false })
-        .limit(20);
+        .limit(30);
 
       setStats({
-        byClickType: Object.entries(clickTypeCount).map(([click_type, count]) => ({ click_type, count })),
         byCountry: Object.entries(countryCount)
           .map(([ip_country, count]) => ({ ip_country, count }))
           .sort((a, b) => b.count - a.count)
@@ -86,10 +78,11 @@ export default function AdminBlockedStats() {
           .map(([ip_org, count]) => ({ ip_org, count }))
           .sort((a, b) => b.count - a.count)
           .slice(0, 20),
-        totalBlocked: Object.values(clickTypeCount).reduce((a, b) => a + b, 0),
-        totalVPN: clickTypeCount['VPN_BLOCKED'] || 0,
-        totalGeoBlocked: clickTypeCount['GEO_BLOCKED'] || 0,
-        totalDuplicate: clickTypeCount['DUPLICATE'] || 0,
+        totalBlocked,
+        totalVPN,
+        totalProxy,
+        totalGeoMismatch,
+        totalDuplicate,
       });
 
       setRecentBlocked(recent || []);
@@ -101,17 +94,13 @@ export default function AdminBlockedStats() {
     }
   };
 
-  const getClickTypeBadge = (type: string) => {
-    switch (type) {
-      case 'VPN_BLOCKED':
-        return <Badge variant="destructive">VPN/Hosting</Badge>;
-      case 'GEO_BLOCKED':
-        return <Badge className="bg-orange-500">Geo Bloqueado</Badge>;
-      case 'DUPLICATE':
-        return <Badge variant="secondary">Duplicado</Badge>;
-      default:
-        return <Badge variant="outline">{type}</Badge>;
-    }
+  const getClickBadges = (click: any) => {
+    const badges = [];
+    if (click.is_vpn) badges.push(<Badge key="vpn" variant="destructive" className="text-xs">VPN</Badge>);
+    if (click.is_proxy) badges.push(<Badge key="proxy" className="bg-purple-500 text-xs">Proxy</Badge>);
+    if (click.geo_mismatch) badges.push(<Badge key="geo" className="bg-orange-500 text-xs">Geo</Badge>);
+    if (click.click_type === 'DUPLICATE') badges.push(<Badge key="dup" variant="secondary" className="text-xs">Duplicado</Badge>);
+    return badges.length > 0 ? badges : <Badge variant="outline" className="text-xs">-</Badge>;
   };
 
   const getCountryFlag = (code: string) => {
@@ -131,26 +120,33 @@ export default function AdminBlockedStats() {
   return (
     <div className="space-y-6">
       {/* Summary Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
         <Card>
           <CardContent className="p-4 text-center">
             <Ban className="h-6 w-6 mx-auto mb-2 text-destructive" />
             <p className="text-2xl font-bold">{stats?.totalBlocked || 0}</p>
-            <p className="text-xs text-muted-foreground">Total Bloqueados</p>
+            <p className="text-xs text-muted-foreground">Total Suspeitos</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
-            <Server className="h-6 w-6 mx-auto mb-2 text-purple-500" />
+            <Server className="h-6 w-6 mx-auto mb-2 text-destructive" />
             <p className="text-2xl font-bold">{stats?.totalVPN || 0}</p>
-            <p className="text-xs text-muted-foreground">VPN/Hosting</p>
+            <p className="text-xs text-muted-foreground">VPN Detectado</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4 text-center">
+            <Eye className="h-6 w-6 mx-auto mb-2 text-purple-500" />
+            <p className="text-2xl font-bold">{stats?.totalProxy || 0}</p>
+            <p className="text-xs text-muted-foreground">Proxy Detectado</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
             <Globe className="h-6 w-6 mx-auto mb-2 text-orange-500" />
-            <p className="text-2xl font-bold">{stats?.totalGeoBlocked || 0}</p>
-            <p className="text-xs text-muted-foreground">Fora do Brasil</p>
+            <p className="text-2xl font-bold">{stats?.totalGeoMismatch || 0}</p>
+            <p className="text-xs text-muted-foreground">Geo Mismatch</p>
           </CardContent>
         </Card>
         <Card>
@@ -168,7 +164,7 @@ export default function AdminBlockedStats() {
           <CardHeader className="pb-3">
             <CardTitle className="text-base flex items-center gap-2">
               <Globe className="h-4 w-4" />
-              Bloqueados por País
+              Cliques Suspeitos por País
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -186,7 +182,7 @@ export default function AdminBlockedStats() {
               </div>
             ) : (
               <p className="text-sm text-muted-foreground text-center py-4">
-                Nenhum bloqueio por país registrado
+                Nenhum clique suspeito registrado
               </p>
             )}
           </CardContent>
@@ -197,7 +193,7 @@ export default function AdminBlockedStats() {
           <CardHeader className="pb-3">
             <CardTitle className="text-base flex items-center gap-2">
               <Server className="h-4 w-4" />
-              Top ASNs Bloqueados
+              Top ASNs com VPN/Proxy
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -214,19 +210,19 @@ export default function AdminBlockedStats() {
               </div>
             ) : (
               <p className="text-sm text-muted-foreground text-center py-4">
-                Nenhum ASN bloqueado ainda
+                Nenhum ASN com VPN/Proxy ainda
               </p>
             )}
           </CardContent>
         </Card>
       </div>
 
-      {/* Recent Blocked Clicks */}
+      {/* Recent Suspicious Clicks */}
       <Card>
         <CardHeader className="pb-3 flex flex-row items-center justify-between">
           <CardTitle className="text-base flex items-center gap-2">
             <Shield className="h-4 w-4" />
-            Cliques Bloqueados Recentes
+            Cliques Suspeitos Recentes
           </CardTitle>
           <Button variant="ghost" size="sm" onClick={fetchStats} disabled={loading}>
             <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
@@ -242,7 +238,7 @@ export default function AdminBlockedStats() {
                     <TableHead>IP</TableHead>
                     <TableHead>País</TableHead>
                     <TableHead>ASN/Org</TableHead>
-                    <TableHead>Tipo</TableHead>
+                    <TableHead>Flags</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -259,7 +255,9 @@ export default function AdminBlockedStats() {
                       <TableCell className="text-xs max-w-[150px] truncate" title={click.ip_org}>
                         {click.ip_org || '-'}
                       </TableCell>
-                      <TableCell>{getClickTypeBadge(click.click_type)}</TableCell>
+                      <TableCell>
+                        <div className="flex gap-1 flex-wrap">{getClickBadges(click)}</div>
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -267,7 +265,7 @@ export default function AdminBlockedStats() {
             </div>
           ) : (
             <p className="text-sm text-muted-foreground text-center py-8">
-              Nenhum clique bloqueado registrado ainda
+              Nenhum clique suspeito registrado ainda
             </p>
           )}
         </CardContent>
