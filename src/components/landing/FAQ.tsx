@@ -15,7 +15,7 @@ export const faqs = [
   },
   {
     question: "Como recebo minha comissão como divulgador?",
-    answer: `Cada clique válido no seu link gera saldo na sua conta. Você ganha de R$ 0,20 a R$ 0,75 por clique, dependendo do valor da oferta e do seu nível de divulgador (Bronze, Prata +25%, Ouro +50%). Saque mínimo: R$ 100,00 via PIX. ${PRICING_DISCLAIMER.short}`,
+    answer: `Cada clique válido no seu link gera saldo na sua conta. Você começa ganhando 30% e pode chegar até 50% conforme sobe de nível (Bronze 30%, Prata 40%, Ouro 50%). Por exemplo, em uma oferta de R$ 0,70, você ganha de R$ 0,21 a R$ 0,35 por clique! Saque mínimo: R$ 100,00 via PIX. ${PRICING_DISCLAIMER.short}`,
   },
   {
     question: "Preciso ter CNPJ para cadastrar minha empresa?",
@@ -31,7 +31,7 @@ export const faqs = [
   },
   {
     question: "Como funciona a divisão de valores?",
-    answer: `100% transparente: do valor pago pela empresa, 50% vai para o divulgador (pessoas reais da sua cidade) e 50% para a plataforma. Por exemplo, se a empresa paga R$ 0,80, o divulgador recebe R$ 0,40. ${PRICING_DISCLAIMER.short}`,
+    answer: `Você começa ganhando 30% do valor pago pela empresa e pode chegar até 50% no nível Ouro! Por exemplo, se a empresa paga R$ 0,70 e você está no Bronze, ganha R$ 0,21. No Ouro, ganha R$ 0,35. Quanto mais você divulga, mais você ganha! ${PRICING_DISCLAIMER.short}`,
   },
 ];
 

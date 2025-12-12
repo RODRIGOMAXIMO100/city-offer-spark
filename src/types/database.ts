@@ -87,10 +87,11 @@ export const CONFIG = {
   MIN_CPC: 40,           // R$ 0,40 em centavos
   MAX_CPC: 100,          // R$ 1,00 em centavos
   DEFAULT_CPC: 70,       // R$ 0,70 em centavos
-  AFFILIATE_SHARE: 0.50, // 50% para divulgador, 50% para plataforma
+  AFFILIATE_SHARE: 0.30, // 30% base para divulgador (pode chegar a 50% com níveis)
+  MAX_AFFILIATE_SHARE: 0.50, // 50% máximo no nível Ouro
   // Para analytics admin - estimativas médias em centavos
-  CPC_PLATFORM_PROFIT: 35,  // ~50% do CPC médio (70/2)
-  CPC_PAYOUT_AFFILIATE: 35, // ~50% do CPC médio (70/2)
+  CPC_PLATFORM_PROFIT: 49,  // ~70% do CPC médio (base 30% para afiliado)
+  CPC_PAYOUT_AFFILIATE: 21, // ~30% do CPC médio (base)
   MIN_WITHDRAW_BRL: 100.00, // R$ 100 (valor em reais para comparação)
   MIN_DEPOSIT_BRL: 100.00,  // R$ 100 (valor em reais para comparação)
   MIN_WITHDRAW_CENTS: 10000, // R$ 100 em centavos
