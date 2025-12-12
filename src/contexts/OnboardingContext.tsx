@@ -20,23 +20,23 @@ export type BonusMap = Record<string, BonusItem>;
 
 export const ONBOARDING_BONUSES: Record<string, BonusMap> = {
   AFFILIATE: {
-    tour_completed: { amount: 500, label: 'Completar o tour' }, // R$5,00
-    first_link_copied: { amount: 500, label: 'Copiar primeiro link' }, // R$5,00
-    first_click: { amount: 1000, label: 'Primeiro clique válido' }, // R$10,00
-    payment_data_filled: { amount: 1000, label: 'Preencher dados PIX' }, // R$10,00
-    ten_clicks: { amount: 2000, label: 'Atingir 10 cliques' }, // R$20,00
-  }, // Total: R$50,00
+    tour_completed: { amount: 100, label: 'Completar o tour' }, // R$1,00
+    first_link_copied: { amount: 100, label: 'Copiar primeiro link' }, // R$1,00
+    first_click: { amount: 100, label: 'Primeiro clique válido' }, // R$1,00
+    payment_data_filled: { amount: 100, label: 'Preencher dados PIX' }, // R$1,00
+    ten_clicks: { amount: 100, label: 'Atingir 10 cliques' }, // R$1,00
+  }, // Total: R$5,00
   COMPANY: {
-    tour_completed: { amount: 500, label: 'Completar o tour' }, // R$5,00
-    logo_added: { amount: 500, label: 'Adicionar logo' }, // R$5,00
-    instagram_connected: { amount: 500, label: 'Conectar Instagram' }, // R$5,00
-    first_offer: { amount: 1500, label: 'Criar primeira oferta' }, // R$15,00
-    first_click: { amount: 2000, label: 'Receber primeiro clique' }, // R$20,00
-  }, // Total: R$50,00
+    tour_completed: { amount: 100, label: 'Completar o tour' }, // R$1,00
+    logo_added: { amount: 100, label: 'Adicionar logo' }, // R$1,00
+    instagram_connected: { amount: 100, label: 'Conectar Instagram' }, // R$1,00
+    first_offer: { amount: 100, label: 'Criar primeira oferta' }, // R$1,00
+    first_click: { amount: 100, label: 'Receber primeiro clique' }, // R$1,00
+  }, // Total: R$5,00
   CLIENT: {
-    tour_completed: { amount: 500, label: 'Completar o tour' }, // R$5,00
-    first_search: { amount: 500, label: 'Fazer primeira busca' }, // R$5,00
-  }, // Total: R$10,00
+    tour_completed: { amount: 250, label: 'Completar o tour' }, // R$2,50
+    first_search: { amount: 250, label: 'Fazer primeira busca' }, // R$2,50
+  }, // Total: R$5,00
 };
 
 // Steps do tour por tipo de usuário
