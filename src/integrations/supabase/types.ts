@@ -252,6 +252,8 @@ export type Database = {
           ip_address: string
           is_suspicious: boolean | null
           last_seen_at: string | null
+          last_vpn_check_at: string | null
+          vpn_detected_count: number | null
         }
         Insert: {
           blocked?: boolean | null
@@ -265,6 +267,8 @@ export type Database = {
           ip_address: string
           is_suspicious?: boolean | null
           last_seen_at?: string | null
+          last_vpn_check_at?: string | null
+          vpn_detected_count?: number | null
         }
         Update: {
           blocked?: boolean | null
@@ -278,6 +282,8 @@ export type Database = {
           ip_address?: string
           is_suspicious?: boolean | null
           last_seen_at?: string | null
+          last_vpn_check_at?: string | null
+          vpn_detected_count?: number | null
         }
         Relationships: []
       }
@@ -338,6 +344,11 @@ export type Database = {
           expected_timezone: string | null
           geo_mismatch: boolean | null
           id: string
+          ip_city: string | null
+          ip_country: string | null
+          ip_org: string | null
+          is_proxy: boolean | null
+          is_vpn: boolean | null
           offer_id: string | null
           timezone_offset: number | null
           user_agent: string | null
@@ -350,6 +361,11 @@ export type Database = {
           expected_timezone?: string | null
           geo_mismatch?: boolean | null
           id?: string
+          ip_city?: string | null
+          ip_country?: string | null
+          ip_org?: string | null
+          is_proxy?: boolean | null
+          is_vpn?: boolean | null
           offer_id?: string | null
           timezone_offset?: number | null
           user_agent?: string | null
@@ -362,6 +378,11 @@ export type Database = {
           expected_timezone?: string | null
           geo_mismatch?: boolean | null
           id?: string
+          ip_city?: string | null
+          ip_country?: string | null
+          ip_org?: string | null
+          is_proxy?: boolean | null
+          is_vpn?: boolean | null
           offer_id?: string | null
           timezone_offset?: number | null
           user_agent?: string | null
