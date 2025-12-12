@@ -43,7 +43,7 @@ export default function TermsPage() {
             </p>
             <ul className="list-disc pl-6 mt-4 space-y-2 text-muted-foreground">
               <li><strong>Empresas:</strong> Criam e publicam ofertas de seus produtos e serviços.</li>
-              <li><strong>Divulgadores (Afiliados):</strong> Compartilham ofertas e recebem comissões por cliques válidos.</li>
+              <li><strong>Divulgadores (Afiliados):</strong> Compartilham ofertas e recebem comissões por leads qualificados.</li>
               <li><strong>Clientes:</strong> Encontram e aproveitam ofertas locais.</li>
             </ul>
           </section>
