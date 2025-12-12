@@ -77,13 +77,13 @@ const HelpPage = () => {
                 <AccordionTrigger className="hover:no-underline">
                   <div className="flex items-center gap-3">
                     <Calculator className="h-5 w-5 text-primary" />
-                    <span>Como funciona o Clique por Lead Qualificado</span>
+                    <span>Como funciona o Interesse Qualificado</span>
                   </div>
                 </AccordionTrigger>
                 <AccordionContent className="space-y-4 pt-2">
                   <div className="p-3 rounded-lg bg-primary/10 border border-primary/20 mb-4">
                     <p className="text-sm font-medium text-primary mb-2">
-                      💡 O que é um Lead Qualificado?
+                      💡 O que é um Interesse Qualificado?
                     </p>
                     <p className="text-sm text-muted-foreground">
                       Na Clilin, você paga apenas quando um cliente <strong>demonstra interesse real</strong> na sua oferta. 
@@ -100,28 +100,28 @@ const HelpPage = () => {
                       </li>
                     </ul>
                     <p className="text-xs text-muted-foreground mt-2 italic">
-                      Em ambos os casos, é um lead LOCAL, SEGMENTADO e com INTERESSE DEMONSTRADO.
+                      Em ambos os casos, é um contato LOCAL, SEGMENTADO e com INTERESSE DEMONSTRADO.
                     </p>
                   </div>
                   <p className="text-muted-foreground">
-                    O custo por lead é calculado com base na nota da sua oferta. Quanto melhor a nota, menor o custo:
+                    O custo por interesse é calculado com base na nota da sua oferta. Quanto melhor a nota, menor o custo:
                   </p>
                   <div className="grid gap-3">
                     <div className="flex items-center justify-between p-3 rounded-lg bg-green-500/10 border border-green-500/20">
                       <span className="font-medium text-green-600">Nota 10 (Excelente)</span>
-                      <span className="font-bold text-green-600">R$ 0,40 por lead</span>
+                      <span className="font-bold text-green-600">R$ 0,40 por contato</span>
                     </div>
                     <div className="flex items-center justify-between p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
                       <span className="font-medium text-yellow-600">Nota 7 (Inicial)</span>
-                      <span className="font-bold text-yellow-600">R$ 0,70 por lead</span>
+                      <span className="font-bold text-yellow-600">R$ 0,70 por contato</span>
                     </div>
                     <div className="flex items-center justify-between p-3 rounded-lg bg-red-500/10 border border-red-500/20">
                       <span className="font-medium text-red-600">Nota 4 (Mínima)</span>
-                      <span className="font-bold text-red-600">R$ 1,00 por lead</span>
+                      <span className="font-bold text-red-600">R$ 1,00 por contato</span>
                     </div>
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    <strong>Fórmula:</strong> Custo por Lead = 14 centavos × (14 - Nota da Oferta)
+                    <strong>Fórmula:</strong> Custo = 14 centavos × (14 - Nota da Oferta)
                   </p>
                 </AccordionContent>
               </AccordionItem>
@@ -220,7 +220,7 @@ const HelpPage = () => {
                     </li>
                     <li className="flex items-start gap-3">
                       <AlertCircle className="h-5 w-5 text-yellow-500 mt-0.5 flex-shrink-0" />
-                      <span>Créditos são descontados apenas em <strong>cliques válidos</strong></span>
+                      <span>Créditos são descontados apenas em <strong>interesses válidos</strong></span>
                     </li>
                   </ul>
                 </AccordionContent>
@@ -236,9 +236,9 @@ const HelpPage = () => {
                 <AccordionContent className="space-y-4 pt-2">
                   <div className="space-y-4">
                     <div>
-                      <p className="font-medium">O que é um clique válido?</p>
+                      <p className="font-medium">O que é um interesse válido?</p>
                       <p className="text-sm text-muted-foreground mt-1">
-                        Um clique de um usuário real que foi direcionado para seu WhatsApp, cardápio ou site. Cliques fraudulentos são automaticamente filtrados.
+                        Quando um usuário real é direcionado para seu WhatsApp, cardápio ou site. Acessos fraudulentos são automaticamente filtrados.
                       </p>
                     </div>
                     <div>
@@ -328,21 +328,21 @@ const HelpPage = () => {
                       Divisão 50/50 Transparente
                     </p>
                     <p className="text-center text-sm text-muted-foreground">
-                      Você ganha metade do que a empresa paga por cada clique
+                      Você ganha metade do que a empresa paga por cada indicação
                     </p>
                   </div>
                   <div className="grid gap-3 mt-4">
                     <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
-                      <span>Ganho mínimo por clique</span>
+                      <span>Ganho mínimo por indicação</span>
                       <span className="font-bold text-green-600">R$ 0,20</span>
                     </div>
                     <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
-                      <span>Ganho máximo por clique</span>
+                      <span>Ganho máximo por indicação</span>
                       <span className="font-bold text-green-600">R$ 0,50</span>
                     </div>
                   </div>
                   <p className="text-sm text-muted-foreground mt-2">
-                    O valor exato depende do CPC da oferta e do seu multiplicador de nível.
+                    O valor exato depende da nota da oferta e do seu multiplicador de nível.
                   </p>
                 </AccordionContent>
               </AccordionItem>
@@ -356,7 +356,7 @@ const HelpPage = () => {
                 </AccordionTrigger>
                 <AccordionContent className="space-y-4 pt-2">
                   <p className="text-muted-foreground">
-                    Quanto mais cliques válidos você gerar, maior seu nível e multiplicador de ganhos:
+                    Quanto mais indicações válidas você gerar, maior seu nível e multiplicador de ganhos:
                   </p>
                   <div className="space-y-3">
                     <div className="flex items-center justify-between p-3 rounded-lg bg-orange-500/10 border border-orange-500/20">
@@ -364,7 +364,7 @@ const HelpPage = () => {
                         <span className="text-xl">🥉</span>
                         <div>
                           <span className="font-medium">Bronze</span>
-                          <p className="text-xs text-muted-foreground">0+ cliques</p>
+                          <p className="text-xs text-muted-foreground">0+ indicações</p>
                         </div>
                       </div>
                       <span className="font-bold text-orange-600">1.0x</span>
@@ -374,7 +374,7 @@ const HelpPage = () => {
                         <span className="text-xl">🥈</span>
                         <div>
                           <span className="font-medium">Prata</span>
-                          <p className="text-xs text-muted-foreground">100+ cliques</p>
+                          <p className="text-xs text-muted-foreground">100+ indicações</p>
                         </div>
                       </div>
                       <span className="font-bold text-slate-600">1.25x</span>
@@ -384,7 +384,7 @@ const HelpPage = () => {
                         <span className="text-xl">🥇</span>
                         <div>
                           <span className="font-medium">Ouro</span>
-                          <p className="text-xs text-muted-foreground">500+ cliques</p>
+                          <p className="text-xs text-muted-foreground">500+ indicações</p>
                         </div>
                       </div>
                       <span className="font-bold text-yellow-600">1.5x</span>
@@ -397,17 +397,17 @@ const HelpPage = () => {
                 <AccordionTrigger className="hover:no-underline">
                   <div className="flex items-center gap-3">
                     <Shield className="h-5 w-5 text-blue-500" />
-                    <span>O que são Cliques Válidos</span>
+                    <span>O que são Indicações Válidas</span>
                   </div>
                 </AccordionTrigger>
                 <AccordionContent className="space-y-4 pt-2">
                   <p className="text-muted-foreground">
-                    Para ser contabilizado, um clique precisa:
+                    Para ser contabilizada, uma indicação precisa:
                   </p>
                   <ul className="space-y-3">
                     <li className="flex items-start gap-3">
                       <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-                      <span>Ser de um <strong>usuário único</strong> (1 clique por pessoa/oferta/hora)</span>
+                      <span>Ser de um <strong>usuário único</strong> (1 acesso por pessoa/oferta/hora)</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
@@ -420,7 +420,7 @@ const HelpPage = () => {
                   </ul>
                   <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 mt-4">
                     <p className="text-sm text-red-600">
-                      ⚠️ Cliques fraudulentos (auto-cliques, bots, VPN) são automaticamente bloqueados e podem resultar em banimento.
+                      ⚠️ Acessos fraudulentos (auto-indicação, bots, VPN) são automaticamente bloqueados e podem resultar em banimento.
                     </p>
                   </div>
                 </AccordionContent>
@@ -450,7 +450,7 @@ const HelpPage = () => {
                     <div>
                       <p className="font-medium">Como aumento meu nível?</p>
                       <p className="text-sm text-muted-foreground mt-1">
-                        Gerando cliques válidos! Quanto mais pessoas clicarem nos seus links, mais rápido você sobe de nível.
+                        Gerando indicações válidas! Quanto mais pessoas acessarem pelos seus links, mais rápido você sobe de nível.
                       </p>
                     </div>
                     <div>
@@ -570,7 +570,7 @@ const HelpPage = () => {
                     </li>
                     <li className="flex items-start gap-3">
                       <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-                      <span>Você é direcionado diretamente para o <strong>WhatsApp oficial</strong> da empresa</span>
+                      <span>Você é direcionado diretamente para o <strong>canal oficial</strong> da empresa (WhatsApp, site ou cardápio)</span>
                     </li>
                   </ul>
                 </AccordionContent>

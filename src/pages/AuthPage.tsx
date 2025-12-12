@@ -21,7 +21,7 @@ const ROLES: { value: AppRole; label: string; icon: React.ReactNode; description
     value: 'COMPANY',
     label: 'Empresa',
     icon: <Building2 className="h-5 w-5" />,
-    description: 'Anuncie ofertas e pague por lead qualificado',
+    description: 'Anuncie ofertas e pague por interesse real',
     color: 'bg-company text-company-foreground',
   },
   {
