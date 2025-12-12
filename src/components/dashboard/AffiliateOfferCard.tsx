@@ -68,7 +68,38 @@ export function AffiliateOfferCard({ offer, profileId, index }: AffiliateOfferCa
 
   const expInfo = getExpirationInfo();
 
+  // Helper function to copy text with iOS/mobile fallback
+  const copyToClipboard = (text: string): boolean => {
+    // Try modern clipboard API first (works on desktop)
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(text).catch(() => {});
+    }
+    
+    // Always use fallback method for reliability on mobile
+    const textArea = document.createElement('textarea');
+    textArea.value = text;
+    textArea.style.position = 'fixed';
+    textArea.style.left = '-999999px';
+    textArea.style.top = '-999999px';
+    textArea.style.opacity = '0';
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    
+    try {
+      const successful = document.execCommand('copy');
+      textArea.remove();
+      return successful;
+    } catch (err) {
+      textArea.remove();
+      return false;
+    }
+  };
+
   const copyLink = async () => {
+    // Generate fallback link IMMEDIATELY before any async operations
+    const fallbackLink = `${window.location.origin}/oferta/${offer.id}?ref=${profileId}`;
+    
     setLoading(true);
     try {
       // First check if short link already exists
@@ -99,27 +130,38 @@ export function AffiliateOfferCard({ offer, profileId, index }: AffiliateOfferCa
         }
       }
 
-      if (code) {
-        const shortLink = `${window.location.origin}/o/${code}`;
-        await navigator.clipboard.writeText(shortLink);
+      const linkToCopy = code 
+        ? `${window.location.origin}/o/${code}`
+        : fallbackLink;
+
+      const success = copyToClipboard(linkToCopy);
+      
+      if (success) {
         setCopied(true);
-        toast.success("Link curto copiado!", {
-          description: shortLink
+        toast.success(code ? "Link curto copiado!" : "Link copiado!", {
+          description: linkToCopy
         });
       } else {
-        // Fallback to long link
-        const longLink = `${window.location.origin}/oferta/${offer.id}?ref=${profileId}`;
-        await navigator.clipboard.writeText(longLink);
-        setCopied(true);
-        toast.success("Link copiado!");
+        // Show manual copy option
+        toast.error("Não foi possível copiar", {
+          description: linkToCopy,
+          action: {
+            label: "Copiar",
+            onClick: () => copyToClipboard(linkToCopy)
+          }
+        });
       }
     } catch (err) {
       console.error('Error generating short link:', err);
-      // Fallback to long link
-      const longLink = `${window.location.origin}/oferta/${offer.id}?ref=${profileId}`;
-      await navigator.clipboard.writeText(longLink);
-      setCopied(true);
-      toast.success("Link copiado!");
+      const success = copyToClipboard(fallbackLink);
+      if (success) {
+        setCopied(true);
+        toast.success("Link copiado!");
+      } else {
+        toast.error("Erro ao copiar", {
+          description: fallbackLink
+        });
+      }
     } finally {
       setLoading(false);
       setTimeout(() => setCopied(false), 2000);
