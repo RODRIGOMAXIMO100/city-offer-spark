@@ -75,9 +75,9 @@ export const TOUR_STEPS: Record<string, TourStep[]> = {
       position: 'bottom',
     },
     {
-      target: '[data-tour="fiscal-data"]',
-      title: 'Dados da Empresa',
-      content: 'Complete os dados fiscais da sua empresa para emitir notas fiscais.',
+      target: '[data-tour="company-logo"]',
+      title: 'Logo da Empresa',
+      content: 'Adicione a logo da sua empresa para aparecer nas ofertas e ganhar credibilidade.',
       position: 'bottom',
     },
     {
