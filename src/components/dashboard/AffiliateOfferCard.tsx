@@ -187,7 +187,7 @@ export function AffiliateOfferCard({ offer, profileId, index }: AffiliateOfferCa
               <div className="space-y-1 text-xs">
                 <p>📊 Nota da oferta: <strong>{offerScore.toFixed(1)}</strong></p>
                 <p>💰 CPC total: R$ {(cpcCents / 100).toFixed(2)}</p>
-                <p>✨ Sua parte (50%): <strong className="text-affiliate">R$ {affiliateEarning.toFixed(2)}</strong></p>
+                <p>✨ Sua parte (30% base): <strong className="text-affiliate">R$ {affiliateEarning.toFixed(2)}</strong></p>
               </div>
               <p className="text-[10px] mt-2 text-muted-foreground border-t border-border pt-2">
                 💡 Seu bônus de nível pode aumentar esse valor em até 50%!
