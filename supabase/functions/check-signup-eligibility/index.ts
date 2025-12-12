@@ -18,16 +18,71 @@ function getClientIp(req: Request): string {
   return 'unknown';
 }
 
+async function verifyTurnstileToken(token: string, ip: string): Promise<boolean> {
+  const secretKey = Deno.env.get('TURNSTILE_SECRET_KEY');
+  
+  if (!secretKey) {
+    console.error('[check-signup-eligibility] TURNSTILE_SECRET_KEY not configured');
+    return false;
+  }
+
+  try {
+    const formData = new FormData();
+    formData.append('secret', secretKey);
+    formData.append('response', token);
+    formData.append('remoteip', ip);
+
+    const response = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+      method: 'POST',
+      body: formData,
+    });
+
+    const result = await response.json();
+    console.log('[check-signup-eligibility] Turnstile verification result:', result);
+    
+    return result.success === true;
+  } catch (error) {
+    console.error('[check-signup-eligibility] Turnstile verification error:', error);
+    return false;
+  }
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { email, cpf, honeypot } = await req.json();
+    const { email, cpf, honeypot, turnstileToken } = await req.json();
     const clientIp = getClientIp(req);
 
     console.log(`[check-signup-eligibility] Checking eligibility for email: ${email}, IP: ${clientIp}`);
+
+    // 0. TURNSTILE VERIFICATION - Must pass captcha
+    if (!turnstileToken) {
+      console.log(`[check-signup-eligibility] BLOCKED: No Turnstile token provided`);
+      return new Response(JSON.stringify({
+        eligible: false,
+        reason: 'captcha_required',
+        message: 'Por favor, complete a verificação de segurança.'
+      }), {
+        status: 200,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    const isTurnstileValid = await verifyTurnstileToken(turnstileToken, clientIp);
+    if (!isTurnstileValid) {
+      console.log(`[check-signup-eligibility] BLOCKED: Turnstile verification failed`);
+      return new Response(JSON.stringify({
+        eligible: false,
+        reason: 'captcha_failed',
+        message: 'Verificação de segurança falhou. Tente novamente.'
+      }), {
+        status: 200,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
 
     // 1. HONEYPOT CHECK - Se preenchido, é bot
     if (honeypot && honeypot.trim() !== '') {
