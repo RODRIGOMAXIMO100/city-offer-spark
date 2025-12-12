@@ -185,19 +185,34 @@ Usuário: "comida" ou "hambúrguer" ou "pizza" (qualquer preferência)
 
     const data = await response.json();
     const aiContent = data.choices?.[0]?.message?.content || "";
+    
+    console.log("AI raw response:", aiContent.substring(0, 500));
 
     // Try to parse JSON response
     let parsedResponse;
     try {
       // Extract JSON from the response (might be wrapped in markdown)
-      const jsonMatch = aiContent.match(/\{[\s\S]*\}/);
+      const jsonMatch = aiContent.match(/\{[\s\S]*?\}/);
       if (jsonMatch) {
         parsedResponse = JSON.parse(jsonMatch[0]);
       } else {
+        // If no JSON found, use the raw text
         parsedResponse = { text: aiContent, suggestedOfferIds: [] };
       }
-    } catch {
-      parsedResponse = { text: aiContent, suggestedOfferIds: [] };
+    } catch (parseError) {
+      console.log("JSON parse error, using raw text:", parseError);
+      // Clean up markdown formatting from raw text
+      let cleanText = aiContent
+        .replace(/```json\s*/g, '')
+        .replace(/```\s*/g, '')
+        .replace(/^\s*\{[\s\S]*?\}\s*$/g, ''); // Remove failed JSON
+      
+      // If cleaned text is empty or just whitespace, provide a fallback
+      if (!cleanText.trim()) {
+        cleanText = "Encontrei algumas ofertas que podem te interessar! 😊";
+      }
+      
+      parsedResponse = { text: cleanText, suggestedOfferIds: [] };
     }
 
     // Get full offer details for suggested offers

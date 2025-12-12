@@ -90,10 +90,18 @@ export default function ClientDashboard() {
 
       if (error) throw error;
 
+      // Determinar texto da resposta
+      let responseText = data.text;
+      if (!responseText && data.suggestedOffers?.length > 0) {
+        responseText = 'Achei essas ofertas pra você! 😊';
+      } else if (!responseText) {
+        responseText = 'Desculpe, não consegui processar sua mensagem. Tente novamente!';
+      }
+
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: data.text || 'Desculpe, não consegui processar sua mensagem.',
+        content: responseText,
         suggestedOffers: data.suggestedOffers,
       };
 
