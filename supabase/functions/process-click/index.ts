@@ -731,14 +731,20 @@ serve(async (req) => {
       offer_id: offerId,
     });
 
-    // 4. Credit affiliate if valid
+    // 4. Credit affiliate if valid AND not banned
     let actualAffiliatePayout = 0;
     if (validAffiliateId) {
       const { data: affiliateProfile } = await supabase
         .from("profiles")
-        .select("id, balance")
+        .select("id, balance, banned, balance_frozen")
         .eq("id", validAffiliateId)
         .single();
+
+      // Skip payout if affiliate is banned or balance is frozen
+      if (affiliateProfile?.banned || affiliateProfile?.balance_frozen) {
+        console.log(`Affiliate ${validAffiliateId} is banned/frozen - no payout`);
+        validAffiliateId = null;
+      } else if (affiliateProfile) {
 
       if (affiliateProfile) {
         const { data: multiplierResult } = await supabase
@@ -796,6 +802,7 @@ serve(async (req) => {
             }
           }
         }
+      }
       }
     }
 

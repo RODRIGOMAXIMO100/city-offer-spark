@@ -73,21 +73,61 @@ export default function TermsPage() {
           <section>
             <h2 className="text-2xl font-display font-semibold mb-4">5. Política Anti-Fraude</h2>
             <p className="text-muted-foreground leading-relaxed">
-              O clilin utiliza sistemas automatizados para detectar e prevenir fraudes, incluindo:
+              O clilin utiliza sistemas automatizados avançados para detectar e prevenir fraudes, incluindo:
             </p>
             <ul className="list-disc pl-6 mt-4 space-y-2 text-muted-foreground">
               <li>Limite de 1 clique válido por IP por oferta a cada 24 horas.</li>
               <li>Detecção de auto-cliques por divulgadores.</li>
-              <li>Limite de taxa global para prevenir ataques de bots.</li>
-              <li>Análise de padrões de comportamento suspeito.</li>
+              <li>Limite de taxa global de 50 cliques por hora para prevenir ataques de bots.</li>
+              <li>Verificação de geolocalização (apenas cliques do Brasil são válidos).</li>
+              <li>Bloqueio de VPNs, proxies e IPs de data centers suspeitos.</li>
+              <li>Análise de padrões de comportamento suspeito (intervalos regulares, concentração de cliques).</li>
+              <li>Verificação de timezone do navegador para detectar falsificação de localização.</li>
+              <li>Fingerprinting de dispositivo para detectar múltiplos cliques do mesmo aparelho.</li>
+              <li>Score de fraude automático para solicitações de saque.</li>
+            </ul>
+            
+            <h3 className="text-xl font-display font-semibold mt-6 mb-3">5.1. Comportamentos Proibidos</h3>
+            <p className="text-muted-foreground leading-relaxed">
+              São expressamente proibidos e resultarão em penalidades:
+            </p>
+            <ul className="list-disc pl-6 mt-4 space-y-2 text-muted-foreground">
+              <li>Clicar em seus próprios links de afiliado ou solicitar que terceiros cliquem.</li>
+              <li>Usar VPN, proxy ou qualquer ferramenta para mascarar localização.</li>
+              <li>Utilizar bots, scripts ou automação para gerar cliques.</li>
+              <li>Criar múltiplas contas para obter vantagens indevidas.</li>
+              <li>Fazer spam ou divulgação enganosa de ofertas.</li>
+              <li>Falsificar informações de cadastro (CPF, dados bancários, etc).</li>
+              <li>Tentar burlar ou testar os sistemas de segurança da plataforma.</li>
+              <li>Qualquer outra ação que prejudique a integridade do sistema.</li>
+            </ul>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-display font-semibold mb-4">6. Penalidades por Fraude</h2>
+            <p className="text-muted-foreground leading-relaxed">
+              Em caso de detecção de atividade fraudulenta, a plataforma reserva-se o direito de aplicar as seguintes penalidades:
+            </p>
+            <ul className="list-disc pl-6 mt-4 space-y-2 text-muted-foreground">
+              <li><strong>Advertência:</strong> Para infrações leves ou primeira ocorrência.</li>
+              <li><strong>Congelamento de Saldo:</strong> Bloqueio temporário do saldo para análise detalhada.</li>
+              <li><strong>Suspensão Temporária:</strong> Bloqueio do acesso à conta por período determinado.</li>
+              <li><strong>Banimento Permanente:</strong> Exclusão definitiva da plataforma.</li>
+              <li><strong>Confisco de Saldo:</strong> Perda total dos créditos acumulados em casos graves.</li>
+              <li><strong>Inclusão em Blacklist:</strong> CPF, email e dados bancários são bloqueados permanentemente.</li>
             </ul>
             <p className="text-muted-foreground leading-relaxed mt-4">
-              Tentativas de fraude resultarão em suspensão imediata da conta e perda de créditos.
+              <strong>Importante:</strong> O clilin se reserva ao direito de reter saques por até 7 dias úteis para análise de fraude. 
+              Usuários com comportamento suspeito terão seus saques submetidos a verificação manual adicional.
+            </p>
+            <p className="text-muted-foreground leading-relaxed mt-4">
+              Em casos de fraude comprovada, a plataforma pode tomar medidas legais cabíveis, incluindo 
+              notificação às autoridades competentes e ações judiciais para recuperação de valores.
             </p>
           </section>
 
           <section>
-            <h2 className="text-2xl font-display font-semibold mb-4">6. Responsabilidades das Empresas</h2>
+            <h2 className="text-2xl font-display font-semibold mb-4">7. Responsabilidades das Empresas</h2>
             <p className="text-muted-foreground leading-relaxed">
               As empresas são responsáveis por:
             </p>
@@ -100,7 +140,7 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-display font-semibold mb-4">7. Responsabilidades dos Divulgadores</h2>
+            <h2 className="text-2xl font-display font-semibold mb-4">8. Responsabilidades dos Divulgadores</h2>
             <p className="text-muted-foreground leading-relaxed">
               Os divulgadores são responsáveis por:
             </p>
@@ -113,7 +153,7 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-display font-semibold mb-4">8. Limitação de Responsabilidade</h2>
+            <h2 className="text-2xl font-display font-semibold mb-4">9. Limitação de Responsabilidade</h2>
             <p className="text-muted-foreground leading-relaxed">
               O clilin atua como intermediário e não se responsabiliza pela qualidade, segurança ou 
               legalidade das ofertas publicadas, nem pela capacidade das empresas de cumpri-las. 
@@ -122,7 +162,7 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-display font-semibold mb-4">9. Modificações nos Termos</h2>
+            <h2 className="text-2xl font-display font-semibold mb-4">10. Modificações nos Termos</h2>
             <p className="text-muted-foreground leading-relaxed">
               Reservamo-nos o direito de modificar estes termos a qualquer momento. Alterações 
               significativas serão comunicadas por e-mail ou através da plataforma. O uso continuado 
@@ -131,7 +171,7 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-display font-semibold mb-4">10. Contato</h2>
+            <h2 className="text-2xl font-display font-semibold mb-4">11. Contato</h2>
             <p className="text-muted-foreground leading-relaxed">
               Para dúvidas sobre estes Termos de Uso, entre em contato através do e-mail:{' '}
               <a href="mailto:contato@clilin.com" className="text-primary hover:underline">

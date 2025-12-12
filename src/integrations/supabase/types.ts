@@ -287,6 +287,119 @@ export type Database = {
         }
         Relationships: []
       }
+      fraud_alerts: {
+        Row: {
+          alert_type: string
+          created_at: string | null
+          data: Json | null
+          description: string | null
+          id: string
+          resolved: boolean | null
+          resolved_at: string | null
+          resolved_by: string | null
+          severity: string
+          title: string
+          user_id: string | null
+        }
+        Insert: {
+          alert_type: string
+          created_at?: string | null
+          data?: Json | null
+          description?: string | null
+          id?: string
+          resolved?: boolean | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          severity: string
+          title: string
+          user_id?: string | null
+        }
+        Update: {
+          alert_type?: string
+          created_at?: string | null
+          data?: Json | null
+          description?: string | null
+          id?: string
+          resolved?: boolean | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          severity?: string
+          title?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fraud_alerts_resolved_by_fkey"
+            columns: ["resolved_by"]
+            isOneToOne: false
+            referencedRelation: "company_public_info"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fraud_alerts_resolved_by_fkey"
+            columns: ["resolved_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fraud_alerts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "company_public_info"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fraud_alerts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      fraud_blacklist: {
+        Row: {
+          added_by: string | null
+          created_at: string | null
+          id: string
+          reason: string | null
+          type: string
+          value: string
+        }
+        Insert: {
+          added_by?: string | null
+          created_at?: string | null
+          id?: string
+          reason?: string | null
+          type: string
+          value: string
+        }
+        Update: {
+          added_by?: string | null
+          created_at?: string | null
+          id?: string
+          reason?: string | null
+          type?: string
+          value?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fraud_blacklist_added_by_fkey"
+            columns: ["added_by"]
+            isOneToOne: false
+            referencedRelation: "company_public_info"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fraud_blacklist_added_by_fkey"
+            columns: ["added_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notifications: {
         Row: {
           created_at: string | null
@@ -704,6 +817,11 @@ export type Database = {
           asaas_customer_id: string | null
           avatar_url: string | null
           balance: number
+          balance_frozen: boolean | null
+          banned: boolean | null
+          banned_at: string | null
+          banned_by: string | null
+          banned_reason: string | null
           cep: string | null
           city: string
           cnpj: string | null
@@ -727,6 +845,11 @@ export type Database = {
           asaas_customer_id?: string | null
           avatar_url?: string | null
           balance?: number
+          balance_frozen?: boolean | null
+          banned?: boolean | null
+          banned_at?: string | null
+          banned_by?: string | null
+          banned_reason?: string | null
           cep?: string | null
           city?: string
           cnpj?: string | null
@@ -750,6 +873,11 @@ export type Database = {
           asaas_customer_id?: string | null
           avatar_url?: string | null
           balance?: number
+          balance_frozen?: boolean | null
+          banned?: boolean | null
+          banned_at?: string | null
+          banned_by?: string | null
+          banned_reason?: string | null
           cep?: string | null
           city?: string
           cnpj?: string | null
@@ -769,7 +897,22 @@ export type Database = {
           updated_at?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "profiles_banned_by_fkey"
+            columns: ["banned_by"]
+            isOneToOne: false
+            referencedRelation: "company_public_info"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "profiles_banned_by_fkey"
+            columns: ["banned_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       short_links: {
         Row: {
@@ -865,6 +1008,68 @@ export type Database = {
           },
           {
             foreignKeyName: "transactions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_bans: {
+        Row: {
+          action_type: string
+          balance_at_ban: number
+          banned_by: string
+          created_at: string | null
+          evidence: Json | null
+          id: string
+          reason: string
+          user_id: string
+        }
+        Insert: {
+          action_type?: string
+          balance_at_ban?: number
+          banned_by: string
+          created_at?: string | null
+          evidence?: Json | null
+          id?: string
+          reason: string
+          user_id: string
+        }
+        Update: {
+          action_type?: string
+          balance_at_ban?: number
+          banned_by?: string
+          created_at?: string | null
+          evidence?: Json | null
+          id?: string
+          reason?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_bans_banned_by_fkey"
+            columns: ["banned_by"]
+            isOneToOne: false
+            referencedRelation: "company_public_info"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_bans_banned_by_fkey"
+            columns: ["banned_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_bans_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "company_public_info"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_bans_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
