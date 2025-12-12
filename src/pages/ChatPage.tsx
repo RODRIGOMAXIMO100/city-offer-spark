@@ -378,7 +378,7 @@ export default function ChatPage() {
   // No Offers Screen (shown as overlay/modal style within chat)
   if (showNoOffersScreen) {
     return (
-      <div className="min-h-screen bg-background flex flex-col">
+      <div className="h-[100dvh] bg-background flex flex-col overflow-hidden">
         {/* Header */}
         <header className="flex items-center justify-between px-4 py-3 border-b border-border bg-card shrink-0">
           <Button variant="ghost" size="sm" onClick={() => navigate('/')}>
@@ -480,26 +480,28 @@ export default function ChatPage() {
         </div>
 
         {/* Input Area - Disabled */}
-        <div className="shrink-0 p-4 border-t border-border bg-card">
-          <div className="max-w-3xl mx-auto">
-            <div className="relative">
-              <Input
-                value=""
-                placeholder="Selecione uma cidade com ofertas para começar..."
-                className="pr-14 py-6 rounded-full text-base opacity-50"
-                disabled
-              />
-              <Button
-                disabled
-                size="icon"
-                className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full h-10 w-10 bg-muted"
-              >
-                <Send className="h-5 w-5" />
-              </Button>
+        <div className="shrink-0 border-t border-border bg-card">
+          <div className="px-3 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+            <div className="max-w-3xl mx-auto">
+              <div className="relative">
+                <Input
+                  value=""
+                  placeholder="Selecione uma cidade com ofertas..."
+                  className="pr-12 py-5 rounded-full text-base opacity-50"
+                  disabled
+                />
+                <Button
+                  disabled
+                  size="icon"
+                  className="absolute right-1.5 top-1/2 -translate-y-1/2 rounded-full h-9 w-9 bg-muted"
+                >
+                  <Send className="h-4 w-4" />
+                </Button>
+              </div>
+              <p className="text-[10px] text-center text-muted-foreground mt-1.5 sm:text-xs sm:mt-2">
+                Powered by Clilin AI
+              </p>
             </div>
-            <p className="text-xs text-center text-muted-foreground mt-2">
-              Powered by Clilin AI • Ofertas locais personalizadas
-            </p>
           </div>
         </div>
       </div>
@@ -508,7 +510,7 @@ export default function ChatPage() {
 
   // Main Chat Interface (always shown)
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="h-[100dvh] bg-background flex flex-col overflow-hidden">
       {/* Header */}
       <header className="flex items-center justify-between px-4 py-3 border-b border-border bg-card shrink-0">
         <Button variant="ghost" size="sm" onClick={() => navigate('/')}>
@@ -641,37 +643,39 @@ export default function ChatPage() {
         </div>
       </div>
 
-      {/* Input Area - Fixed at bottom */}
-      <div className="shrink-0 p-4 border-t border-border bg-card">
-        <div className="max-w-3xl mx-auto">
-          <div className="relative">
-            <Input
-              value={inputText}
-              onChange={(e) => setInputText(e.target.value)}
-              onKeyPress={handleKeyPress}
-              placeholder={chatStarted ? "Pergunte sobre ofertas, produtos, serviços..." : "Selecione sua cidade acima para começar..."}
-              className="pr-14 py-6 rounded-full text-base"
-              disabled={!chatStarted || isTyping}
-            />
-            <Button
-              onClick={sendMessage}
-              disabled={!chatStarted || !inputText.trim() || isTyping}
-              size="icon"
-              className={cn(
-                "absolute right-2 top-1/2 -translate-y-1/2 rounded-full h-10 w-10",
-                chatStarted ? "bg-client hover:bg-client/90" : "bg-muted"
-              )}
-            >
-              {isTyping ? (
-                <Loader2 className="h-5 w-5 animate-spin" />
-              ) : (
-                <Send className="h-5 w-5" />
-              )}
-            </Button>
+      {/* Input Area - Fixed at bottom with safe area for iOS */}
+      <div className="shrink-0 border-t border-border bg-card">
+        <div className="px-3 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+          <div className="max-w-3xl mx-auto">
+            <div className="relative">
+              <Input
+                value={inputText}
+                onChange={(e) => setInputText(e.target.value)}
+                onKeyPress={handleKeyPress}
+                placeholder={chatStarted ? "Pergunte sobre ofertas..." : "Selecione sua cidade acima..."}
+                className="pr-12 py-5 rounded-full text-base"
+                disabled={!chatStarted || isTyping}
+              />
+              <Button
+                onClick={sendMessage}
+                disabled={!chatStarted || !inputText.trim() || isTyping}
+                size="icon"
+                className={cn(
+                  "absolute right-1.5 top-1/2 -translate-y-1/2 rounded-full h-9 w-9",
+                  chatStarted ? "bg-client hover:bg-client/90" : "bg-muted"
+                )}
+              >
+                {isTyping ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Send className="h-4 w-4" />
+                )}
+              </Button>
+            </div>
+            <p className="text-[10px] text-center text-muted-foreground mt-1.5 sm:text-xs sm:mt-2">
+              Powered by Clilin AI
+            </p>
           </div>
-          <p className="text-xs text-center text-muted-foreground mt-2">
-            Powered by Clilin AI • Ofertas locais personalizadas
-          </p>
         </div>
       </div>
     </div>
