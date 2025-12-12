@@ -59,7 +59,7 @@ export function Navbar() {
             ))}
             <Link 
               to="/chat" 
-              className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground rounded-lg hover:bg-muted/50 transition-all"
+              className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground rounded-lg hover:bg-muted/50 transition-all whitespace-nowrap"
             >
               Chat IA
             </Link>
