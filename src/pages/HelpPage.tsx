@@ -77,7 +77,7 @@ const HelpPage = () => {
                 <AccordionTrigger className="hover:no-underline">
                   <div className="flex items-center gap-3">
                     <Calculator className="h-5 w-5 text-primary" />
-                    <span>Como funciona o Custo por Lead Qualificado</span>
+                    <span>Como funciona o Clique por Lead Qualificado</span>
                   </div>
                 </AccordionTrigger>
                 <AccordionContent className="space-y-4 pt-2">

@@ -135,8 +135,8 @@ export default function TransparencyPage() {
             {/* Tab 1: CPC Automático */}
             <TabsContent value="auction" className="space-y-8">
               <div className="text-center mb-8">
-                <h2 className="text-3xl font-display font-bold mb-2">Custo por Lead Qualificado</h2>
-                <p className="text-muted-foreground">Sem lances manuais: sua Nota da Oferta define o custo por lead</p>
+                <h2 className="text-3xl font-display font-bold mb-2">Clique por Lead Qualificado</h2>
+                <p className="text-muted-foreground">Cada clique é um lead qualificado. Sua Nota define o custo.</p>
                 
                 {/* Lead Qualificado Explanation */}
                 <div className="max-w-2xl mx-auto mt-6 p-4 bg-primary/5 border border-primary/20 rounded-xl text-left">
