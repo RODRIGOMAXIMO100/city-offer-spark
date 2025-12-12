@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { AppRole } from '@/types/database';
@@ -16,6 +16,7 @@ import { BRAZIL_STATES, getCitiesByState } from '@/data/brazilLocations';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
 import logoImg from '@/assets/logo.png';
+import Turnstile from '@/components/Turnstile';
 
 const ROLES: { value: AppRole; label: string; icon: React.ReactNode; description: string; color: string }[] = [
   {
@@ -67,6 +68,17 @@ export default function AuthPage() {
   
   // Honeypot field - invisible to users, bots will fill it
   const [honeypot, setHoneypot] = useState('');
+  
+  // Turnstile token
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+
+  const handleTurnstileVerify = useCallback((token: string) => {
+    setTurnstileToken(token);
+  }, []);
+
+  const handleTurnstileExpire = useCallback(() => {
+    setTurnstileToken(null);
+  }, []);
 
   const formatCnpj = (value: string) => {
     const numbers = value.replace(/\D/g, '').slice(0, 14);
@@ -161,13 +173,24 @@ export default function AuthPage() {
       }
     }
 
-    // Check eligibility before signup (honeypot, blacklist, rate limit)
+    // Check eligibility before signup (honeypot, blacklist, rate limit, turnstile)
+    if (!turnstileToken) {
+      toast({
+        title: 'Verificação necessária',
+        description: 'Por favor, complete a verificação de segurança.',
+        variant: 'destructive',
+      });
+      setIsLoading(false);
+      return;
+    }
+
     try {
       const { data: eligibilityData, error: eligibilityError } = await supabase.functions.invoke('check-signup-eligibility', {
         body: {
           email: signupEmail,
           cpf: signupRole === 'COMPANY' ? cnpjNumbers : null,
-          honeypot: honeypot
+          honeypot: honeypot,
+          turnstileToken: turnstileToken
         }
       });
 
@@ -479,7 +502,15 @@ export default function AuthPage() {
                     />
                   </div>
 
-                  <Button type="submit" className="w-full" disabled={isLoading}>
+                  {/* Cloudflare Turnstile */}
+                  <div className="flex justify-center">
+                    <Turnstile
+                      onVerify={handleTurnstileVerify}
+                      onExpire={handleTurnstileExpire}
+                    />
+                  </div>
+
+                  <Button type="submit" className="w-full" disabled={isLoading || !turnstileToken}>
                     {isLoading ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
