@@ -8,7 +8,7 @@ const comparisonData = [
   { type: "Marketplaces de Delivery*", cost: "15% - 30%", metric: "por venda", highlight: false, isMarketplace: true, isLogo: false },
   { type: "Anúncios de Busca", cost: "~R$ 25,00", metric: "por clique genérico", highlight: false, isMarketplace: false, isLogo: false },
   { type: "Redes Sociais", cost: "~R$ 3,00", metric: "por clique genérico", highlight: false, isMarketplace: false, isLogo: false },
-  { type: "Clilin", cost: "R$ 0,40 - R$ 1,00**", metric: "clique = lead qualificado", highlight: true, isMarketplace: false, isLogo: true },
+  { type: "Clilin", cost: "R$ 0,40 - R$ 1,00**", metric: "custo por lead qualificado", highlight: true, isMarketplace: false, isLogo: true },
 ];
 
 const differentials = [
