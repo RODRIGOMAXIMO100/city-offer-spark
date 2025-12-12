@@ -97,11 +97,26 @@ export function HeroSection() {
           ].map((card, i) => (
             <div
               key={card.title}
-              className={`glass-card rounded-2xl p-6 hover:scale-105 transition-all duration-300 group opacity-0 animate-fade-in-up ${i === 1 ? "md:-mt-4" : ""}`}
-              style={{ animationDelay: card.delay, animationFillMode: "forwards" }}
+              className={`glass-card rounded-2xl p-6 transition-all duration-500 group opacity-0 animate-fade-in-up cursor-pointer ${i === 1 ? "md:-mt-4" : ""}`}
+              style={{ 
+                animationDelay: card.delay, 
+                animationFillMode: "forwards",
+                transformStyle: "preserve-3d",
+                perspective: "1000px",
+              }}
+              onMouseEnter={(e) => {
+                const target = e.currentTarget;
+                target.style.transform = "translateY(-8px) rotateX(5deg) scale(1.02)";
+                target.style.boxShadow = `0 25px 50px -12px hsl(var(--${card.color}) / 0.35), 0 0 40px hsl(var(--${card.color}) / 0.2)`;
+              }}
+              onMouseLeave={(e) => {
+                const target = e.currentTarget;
+                target.style.transform = "translateY(0) rotateX(0deg) scale(1)";
+                target.style.boxShadow = "";
+              }}
             >
-              <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${card.gradient} flex items-center justify-center mb-4 shadow-lg group-hover:shadow-xl transition-shadow`}>
-                <card.icon className="h-7 w-7 text-white" />
+              <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${card.gradient} flex items-center justify-center mb-4 shadow-lg group-hover:shadow-2xl group-hover:scale-110 transition-all duration-300`}>
+                <card.icon className="h-7 w-7 text-white group-hover:scale-110 transition-transform duration-300" />
               </div>
               <h3 className="text-lg font-display font-semibold mb-1">{card.title}</h3>
               <p className="text-sm text-muted-foreground">{card.desc}</p>
