@@ -220,6 +220,11 @@ Usuário: "comida" ou "hambúrguer" ou "pizza" (qualquer preferência)
       parsedResponse.suggestedOfferIds?.includes(o.id)
     );
 
+    console.log(
+      "AI Chat - Suggested offers:",
+      suggestedOffers.map((o: any) => ({ id: o.id, hasImage: !!(o.images && o.images.length) }))
+    );
+
     return new Response(
       JSON.stringify({
         text: parsedResponse.text,
