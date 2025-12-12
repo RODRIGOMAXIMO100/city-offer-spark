@@ -142,10 +142,10 @@ export function AffiliateOfferCard({ offer, profileId, index }: AffiliateOfferCa
         {/* Price Row - Fixed height */}
         <div className="flex items-center justify-between min-h-[2.5rem]">
           <div className="flex items-baseline gap-2">
-            <span className="text-muted-foreground line-through text-sm">
+            <span className="text-muted-foreground line-through text-xs sm:text-sm">
               R$ {offer.price_old.toFixed(2)}
             </span>
-            <span className="text-secondary font-bold text-xl sm:text-2xl whitespace-nowrap">
+            <span className="text-secondary font-bold text-lg sm:text-xl whitespace-nowrap leading-tight">
               R$ {offer.price_new.toFixed(2)}
             </span>
           </div>
@@ -169,7 +169,7 @@ export function AffiliateOfferCard({ offer, profileId, index }: AffiliateOfferCa
                   </div>
                   <div>
                     <p className="text-xs text-muted-foreground">Seu ganho por clique</p>
-                    <p className="font-bold text-affiliate text-lg">
+                    <p className="font-bold text-affiliate text-sm sm:text-base leading-tight">
                       R$ {affiliateEarning.toFixed(2)}
                     </p>
                   </div>
