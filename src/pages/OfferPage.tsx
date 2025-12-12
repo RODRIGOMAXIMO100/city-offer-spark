@@ -543,12 +543,11 @@ export default function OfferPage() {
       </Card>
       </div>
 
-      {/* Footer with navigation */}
+      {/* Footer com logo */}
       <div className="py-6">
         <div className="flex justify-center">
           <img src={logo} alt="clilin" className="h-8 opacity-60" />
         </div>
-      </div>
       </div>
     </div>
   );
