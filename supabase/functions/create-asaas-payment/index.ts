@@ -119,6 +119,8 @@ serve(async (req) => {
         );
       }
 
+      console.log('Creating Asaas customer at:', `${ASAAS_API_URL}/customers`);
+      
       const customerResponse = await fetch(`${ASAAS_API_URL}/customers`, {
         method: 'POST',
         headers: {
@@ -128,7 +130,20 @@ serve(async (req) => {
         body: JSON.stringify(customerData),
       });
 
-      const customerResult = await customerResponse.json();
+      const customerText = await customerResponse.text();
+      console.log('Asaas customer response status:', customerResponse.status);
+      console.log('Asaas customer response:', customerText.substring(0, 500));
+      
+      let customerResult;
+      try {
+        customerResult = JSON.parse(customerText);
+      } catch {
+        console.error('Asaas returned non-JSON response:', customerText.substring(0, 200));
+        return new Response(
+          JSON.stringify({ error: 'Erro de comunicação com o Asaas. Verifique a chave de API.' }),
+          { status: 503, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
       
       if (!customerResponse.ok) {
         console.error('Asaas customer creation failed:', customerResult);
@@ -201,6 +216,7 @@ serve(async (req) => {
     }
 
     console.log('Creating Asaas payment:', { billingType: paymentData.billingType, value: paymentData.value });
+    console.log('Asaas API URL:', `${ASAAS_API_URL}/payments`);
 
     const paymentResponse = await fetch(`${ASAAS_API_URL}/payments`, {
       method: 'POST',
@@ -211,7 +227,20 @@ serve(async (req) => {
       body: JSON.stringify(paymentData),
     });
 
-    const paymentResult = await paymentResponse.json();
+    const paymentText = await paymentResponse.text();
+    console.log('Asaas payment response status:', paymentResponse.status);
+    console.log('Asaas payment response:', paymentText.substring(0, 500));
+    
+    let paymentResult;
+    try {
+      paymentResult = JSON.parse(paymentText);
+    } catch {
+      console.error('Asaas payment returned non-JSON response:', paymentText.substring(0, 200));
+      return new Response(
+        JSON.stringify({ error: 'Erro de comunicação com o Asaas. Verifique a configuração.' }),
+        { status: 503, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
 
     if (!paymentResponse.ok) {
       console.error('Asaas payment creation failed:', paymentResult);
