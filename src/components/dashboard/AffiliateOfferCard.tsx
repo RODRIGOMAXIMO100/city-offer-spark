@@ -38,7 +38,7 @@ export function AffiliateOfferCard({ offer, profileId, index }: AffiliateOfferCa
   const discount = Math.round((1 - offer.price_new / offer.price_old) * 100);
   const offerScore = offer.current_offer_score || 5;
   const cpcCents = (14 - offerScore) * 10;
-  const affiliateEarning = (cpcCents * 0.5) / 100;
+  const affiliateEarning = (cpcCents * 0.30) / 100; // Base 30% commission
   const ctr = offer.views_count > 0 ? ((offer.clicks_count / offer.views_count) * 100).toFixed(1) : "0";
   const isHot = parseFloat(ctr) > 5;
 

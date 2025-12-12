@@ -325,24 +325,28 @@ const HelpPage = () => {
                 <AccordionContent className="space-y-4 pt-2">
                   <div className="p-4 rounded-lg bg-green-500/10 border border-green-500/20">
                     <p className="text-center text-lg font-bold text-green-600 mb-2">
-                      Divisão 50/50 Transparente
+                      Ganhe até 50% de Comissão! 🚀
                     </p>
                     <p className="text-center text-sm text-muted-foreground">
-                      Você ganha metade do que a empresa paga por cada indicação
+                      Comece com 30% e evolua para 50% conforme sobe de nível
                     </p>
                   </div>
                   <div className="grid gap-3 mt-4">
-                    <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
-                      <span>Ganho mínimo por indicação</span>
-                      <span className="font-bold text-green-600">R$ 0,20</span>
+                    <div className="flex items-center justify-between p-3 rounded-lg bg-orange-500/10 border border-orange-500/20">
+                      <span>Bronze (Base)</span>
+                      <span className="font-bold text-orange-600">30% → R$ 0,12 a R$ 0,30</span>
                     </div>
-                    <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
-                      <span>Ganho máximo por indicação</span>
-                      <span className="font-bold text-green-600">R$ 0,50</span>
+                    <div className="flex items-center justify-between p-3 rounded-lg bg-slate-400/10 border border-slate-400/20">
+                      <span>Prata (100+ indicações)</span>
+                      <span className="font-bold text-slate-600">40% → R$ 0,16 a R$ 0,40</span>
+                    </div>
+                    <div className="flex items-center justify-between p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                      <span>Ouro (500+ indicações)</span>
+                      <span className="font-bold text-yellow-600">50% → R$ 0,20 a R$ 0,50</span>
                     </div>
                   </div>
                   <p className="text-sm text-muted-foreground mt-2">
-                    O valor exato depende da nota da oferta e do seu multiplicador de nível.
+                    <strong>Dica:</strong> Quanto mais você divulga, mais rápido sobe de nível e maior é sua comissão!
                   </p>
                 </AccordionContent>
               </AccordionItem>
@@ -356,7 +360,7 @@ const HelpPage = () => {
                 </AccordionTrigger>
                 <AccordionContent className="space-y-4 pt-2">
                   <p className="text-muted-foreground">
-                    Quanto mais indicações válidas você gerar, maior seu nível e multiplicador de ganhos:
+                    Quanto mais indicações válidas você gerar, maior sua comissão:
                   </p>
                   <div className="space-y-3">
                     <div className="flex items-center justify-between p-3 rounded-lg bg-orange-500/10 border border-orange-500/20">
@@ -367,7 +371,7 @@ const HelpPage = () => {
                           <p className="text-xs text-muted-foreground">0+ indicações</p>
                         </div>
                       </div>
-                      <span className="font-bold text-orange-600">1.0x</span>
+                      <span className="font-bold text-orange-600">30%</span>
                     </div>
                     <div className="flex items-center justify-between p-3 rounded-lg bg-slate-400/10 border border-slate-400/20">
                       <div className="flex items-center gap-2">
@@ -377,7 +381,7 @@ const HelpPage = () => {
                           <p className="text-xs text-muted-foreground">100+ indicações</p>
                         </div>
                       </div>
-                      <span className="font-bold text-slate-600">1.25x</span>
+                      <span className="font-bold text-slate-600">40%</span>
                     </div>
                     <div className="flex items-center justify-between p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
                       <div className="flex items-center gap-2">
@@ -387,7 +391,7 @@ const HelpPage = () => {
                           <p className="text-xs text-muted-foreground">500+ indicações</p>
                         </div>
                       </div>
-                      <span className="font-bold text-yellow-600">1.5x</span>
+                      <span className="font-bold text-yellow-600">50%</span>
                     </div>
                   </div>
                 </AccordionContent>

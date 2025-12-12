@@ -33,9 +33,9 @@ const benefits = [
 ];
 
 const earnings = [
-  { level: "Bronze (1.0x)", offers: "10 ofertas", clicks: "~50 cliques/dia", value: "R$ 300", period: "/mês" },
-  { level: "Prata (1.25x)", offers: "25 ofertas", clicks: "~150 cliques/dia", value: "R$ 1.125", period: "/mês" },
-  { level: "Ouro (1.5x)", offers: "50 ofertas", clicks: "~300 cliques/dia", value: "R$ 2.700", period: "/mês" },
+  { level: "Bronze (30%)", offers: "10 ofertas", clicks: "~50 cliques/dia", value: "R$ 315", period: "/mês" },
+  { level: "Prata (40%)", offers: "25 ofertas", clicks: "~150 cliques/dia", value: "R$ 1.260", period: "/mês" },
+  { level: "Ouro (50%)", offers: "50 ofertas", clicks: "~300 cliques/dia", value: "R$ 3.150", period: "/mês" },
 ];
 
 export function ForAffiliates() {
@@ -99,7 +99,7 @@ export function ForAffiliates() {
             
             <p className="text-lg text-muted-foreground mb-10 leading-relaxed">
               Você já influencia pessoas na sua região. Agora pode ganhar dinheiro 
-              compartilhando ofertas que sua audiência vai adorar. <strong className="text-foreground">100% do valor pago pelas empresas é dividido entre a plataforma e você</strong> — pessoas reais da sua cidade.
+              compartilhando ofertas que sua audiência vai adorar. <strong className="text-foreground">Comece ganhando 30% e chegue até 50% de comissão</strong> conforme sobe de nível — quanto mais você divulga, mais você ganha!
             </p>
 
             {/* Benefits */}

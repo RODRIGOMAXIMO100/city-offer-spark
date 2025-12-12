@@ -119,12 +119,13 @@ export default function AffiliateLevel({ affiliateId }: AffiliateLevelProps) {
   };
 
   const getRealCommission = () => {
-    if (!currentLevel) return { percent: '50%', perClick: 'R$ 0,20 - R$ 0,50' };
-    const basePercent = 50 * currentLevel.commission_multiplier;
-    const minPerClick = (0.20 * currentLevel.commission_multiplier).toFixed(2).replace('.', ',');
-    const maxPerClick = (0.50 * currentLevel.commission_multiplier).toFixed(2).replace('.', ',');
+    if (!currentLevel) return { percent: '30%', perClick: 'R$ 0,12 - R$ 0,30' };
+    // Base is 30%, multiplier increases it (1.0 = 30%, 1.33 = 40%, 1.67 = 50%)
+    const basePercent = 30 * currentLevel.commission_multiplier;
+    const minPerClick = (0.12 * currentLevel.commission_multiplier).toFixed(2).replace('.', ',');
+    const maxPerClick = (0.30 * currentLevel.commission_multiplier).toFixed(2).replace('.', ',');
     return { 
-      percent: `${basePercent.toFixed(0)}%`, 
+      percent: `${Math.round(basePercent)}%`, 
       perClick: `R$ ${minPerClick} - R$ ${maxPerClick}`,
       multiplier: currentLevel.commission_multiplier
     };
@@ -234,8 +235,8 @@ export default function AffiliateLevel({ affiliateId }: AffiliateLevelProps) {
               {allLevels.map((level) => {
                 const isUnlocked = (stats?.total_clicks || 0) >= level.min_clicks;
                 const isCurrent = level.id === currentLevel?.id;
-                const levelPercent = (50 * level.commission_multiplier).toFixed(0);
-                const levelPerClick = (0.35 * level.commission_multiplier).toFixed(2).replace('.', ',');
+                const levelPercent = Math.round(30 * level.commission_multiplier);
+                const levelPerClick = (0.21 * level.commission_multiplier).toFixed(2).replace('.', ',');
                 
                 return (
                   <div
