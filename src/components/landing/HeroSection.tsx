@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Building2, Users, Sparkles, Zap, TrendingUp, CheckCircle2 } from "lucide-react";
+import { FloatingParticles } from "./FloatingParticles";
 
 export function HeroSection() {
   return (
@@ -10,6 +11,9 @@ export function HeroSection() {
       <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-3xl" />
       <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-accent/20 rounded-full blur-3xl" />
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-radial from-secondary/10 via-transparent to-transparent" />
+      
+      {/* Floating Particles */}
+      <FloatingParticles />
       
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <div className="text-center max-w-4xl mx-auto">
