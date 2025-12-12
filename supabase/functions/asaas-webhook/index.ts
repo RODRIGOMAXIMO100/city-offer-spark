@@ -228,7 +228,8 @@ serve(async (req) => {
     }
 
     // Evento de transferência concluída (saques)
-    if (event === 'TRANSFER_COMPLETED') {
+    // Asaas envia TRANSFER_DONE quando a transferência PIX é concluída
+    if (event === 'TRANSFER_COMPLETED' || event === 'TRANSFER_DONE') {
       if (!transfer) {
         return new Response(JSON.stringify({ error: 'No transfer data' }), { 
           status: 400, 
