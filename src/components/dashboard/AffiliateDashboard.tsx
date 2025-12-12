@@ -5,7 +5,7 @@ import { formatCreditsToReal, CONFIG } from '@/types/database';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Banknote, LogOut, Share2, Copy, Check, TrendingUp, Loader2, MapPin, Instagram, Clock, History, Coins } from 'lucide-react';
+import { Banknote, LogOut, Share2, Copy, Check, TrendingUp, Loader2, MapPin, Instagram, Clock, History, Coins, HelpCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import PaymentDataModal from './PaymentDataModal';
@@ -37,7 +37,7 @@ function AffiliateDashboardContent() {
   const { profile, signOut, refreshProfile } = useAuth();
   const { offers, loading } = useOffers(profile?.city);
   const { toast } = useToast();
-  const { claimBonus, hasClaimedBonus } = useOnboarding();
+  const { claimBonus, hasClaimedBonus, startTour } = useOnboarding();
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [withdrawing, setWithdrawing] = useState(false);
@@ -266,9 +266,20 @@ function AffiliateDashboardContent() {
                 Divulgador
               </Badge>
             </div>
-            <Button size="icon" variant="outline" onClick={signOut} className="shrink-0">
-              <LogOut className="h-4 w-4" />
-            </Button>
+            <div className="flex gap-1.5">
+              <Button 
+                size="icon" 
+                variant="outline" 
+                onClick={startTour} 
+                className="shrink-0"
+                title="Ver tour guiado"
+              >
+                <HelpCircle className="h-4 w-4" />
+              </Button>
+              <Button size="icon" variant="outline" onClick={signOut} className="shrink-0">
+                <LogOut className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
           
           {/* Balance row */}

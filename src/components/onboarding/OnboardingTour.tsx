@@ -76,8 +76,8 @@ export function OnboardingTour() {
       height: rect.height + padding * 2,
     });
 
-    const tooltipWidth = 320;
-    const tooltipHeight = 180;
+    const tooltipWidth = Math.min(340, window.innerWidth - 32);
+    const tooltipHeight = 160; // Reduced for better fit
     let tooltipTop = 0;
     let tooltipLeft = 0;
 
@@ -297,7 +297,7 @@ export function OnboardingTour() {
       {/* Tooltip com animação de transição */}
       <div
         className={cn(
-          "absolute w-80 bg-card border border-border rounded-lg shadow-2xl p-4",
+          "absolute w-[calc(100vw-32px)] sm:w-80 max-w-[340px] bg-card border border-border rounded-lg shadow-2xl p-3 sm:p-4",
           "transition-all duration-300 ease-out",
           isTransitioning 
             ? "opacity-0 translate-y-2 scale-95" 
@@ -311,32 +311,32 @@ export function OnboardingTour() {
         {/* Botão fechar */}
         <button
           onClick={skipTour}
-          className="absolute top-2 right-2 p-1 rounded-full hover:bg-muted transition-colors"
+          className="absolute top-2 right-2 p-1.5 rounded-full hover:bg-muted transition-colors z-10"
         >
           <X className="h-4 w-4 text-muted-foreground" />
         </button>
 
         {/* Conteúdo */}
-        <div className="pr-6">
-          <h3 className="font-semibold text-lg text-foreground mb-2">
+        <div className="pr-8">
+          <h3 className="font-semibold text-base sm:text-lg text-foreground mb-1.5">
             {currentStepData.title}
           </h3>
-          <p className="text-sm text-muted-foreground leading-relaxed">
+          <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
             {currentStepData.content}
           </p>
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between mt-4 pt-3 border-t border-border">
+        <div className="flex items-center justify-between mt-3 pt-2 border-t border-border">
           {/* Indicadores */}
-          <div className="flex gap-1.5">
+          <div className="flex gap-1">
             {steps.map((_, index) => (
               <div
                 key={index}
                 className={cn(
                   'h-1.5 rounded-full transition-all',
                   index === tourCurrentStep
-                    ? 'w-4 bg-primary'
+                    ? 'w-3 sm:w-4 bg-primary'
                     : index < tourCurrentStep
                     ? 'w-1.5 bg-primary/50'
                     : 'w-1.5 bg-muted'
@@ -346,13 +346,13 @@ export function OnboardingTour() {
           </div>
 
           {/* Botões */}
-          <div className="flex gap-2">
+          <div className="flex gap-1.5">
             {!isFirstStep && (
-              <Button variant="ghost" size="sm" onClick={prevStep}>
+              <Button variant="ghost" size="sm" onClick={prevStep} className="h-8 px-2">
                 <ChevronLeft className="h-4 w-4" />
               </Button>
             )}
-            <Button size="sm" onClick={handleNext} className="gap-1">
+            <Button size="sm" onClick={handleNext} className="gap-1 h-8 px-3 text-xs sm:text-sm">
               {isLastStep ? 'Concluir' : 'Próximo'}
               {!isLastStep && <ChevronRight className="h-4 w-4" />}
             </Button>
