@@ -344,7 +344,7 @@ function CompanyDashboardContent() {
 
       <div className="max-w-2xl mx-auto px-3 sm:px-4 py-4 sm:py-6 space-y-4 sm:space-y-6">
         {/* Company Logo Section */}
-        <Card data-tour="fiscal-data">
+        <Card data-tour="company-logo">
           <CardHeader className="pb-2 sm:pb-3 px-3 sm:px-6 pt-3 sm:pt-6">
             <CardTitle className="text-xs sm:text-sm flex items-center gap-2">
               <Image className="h-3 w-3 sm:h-4 sm:w-4" />
