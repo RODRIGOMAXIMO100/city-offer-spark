@@ -68,7 +68,7 @@ export function HeroSection() {
         </div>
 
         {/* Visual Cards */}
-        <div className="mt-20 grid md:grid-cols-3 gap-6 max-w-5xl mx-auto animate-fade-in-up" style={{ animationDelay: "0.5s" }}>
+        <div className="mt-20 grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
           {[
             {
               icon: Building2,
@@ -76,6 +76,7 @@ export function HeroSection() {
               desc: "Seja encontrado por IA e indicação real",
               color: "company",
               gradient: "from-company to-company/70",
+              delay: "0.5s",
             },
             {
               icon: TrendingUp,
@@ -83,6 +84,7 @@ export function HeroSection() {
               desc: "Ganhe comissão por cada cliente",
               color: "affiliate",
               gradient: "from-affiliate to-affiliate/70",
+              delay: "0.65s",
             },
             {
               icon: Sparkles,
@@ -90,11 +92,13 @@ export function HeroSection() {
               desc: "As melhores ofertas da sua cidade",
               color: "client",
               gradient: "from-client to-client/70",
+              delay: "0.8s",
             },
           ].map((card, i) => (
             <div
               key={card.title}
-              className={`glass-card rounded-2xl p-6 hover:scale-105 transition-all duration-300 group ${i === 1 ? "md:-mt-4" : ""}`}
+              className={`glass-card rounded-2xl p-6 hover:scale-105 transition-all duration-300 group opacity-0 animate-fade-in-up ${i === 1 ? "md:-mt-4" : ""}`}
+              style={{ animationDelay: card.delay, animationFillMode: "forwards" }}
             >
               <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${card.gradient} flex items-center justify-center mb-4 shadow-lg group-hover:shadow-xl transition-shadow`}>
                 <card.icon className="h-7 w-7 text-white" />
