@@ -192,7 +192,7 @@ Usuário: "comida" ou "hambúrguer" ou "pizza" (qualquer preferência)
     let parsedResponse;
     try {
       // Extract JSON from the response (might be wrapped in markdown)
-      const jsonMatch = aiContent.match(/\{[\s\S]*?\}/);
+      const jsonMatch = aiContent.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
         parsedResponse = JSON.parse(jsonMatch[0]);
       } else {

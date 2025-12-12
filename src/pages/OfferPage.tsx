@@ -350,14 +350,18 @@ export default function OfferPage() {
             variant="ghost"
             size="sm"
             onClick={() => {
-              // Check if there's history to go back to
-              if (window.history.length > 1) {
+              const from = searchParams.get('from');
+              const cityParts = offer.city.split(' - ');
+              const cityName = cityParts[0];
+              const stateName = cityParts[1] || '';
+              
+              if (from === 'public-chat') {
+                // Redirecionar para /chat quando veio do PublicAIChat
+                navigate(`/chat?city=${encodeURIComponent(cityName)}&state=${encodeURIComponent(stateName)}`);
+              } else if (window.history.length > 1) {
                 navigate(-1);
               } else {
                 // Fallback to chat page with city params
-                const cityParts = offer.city.split(' - ');
-                const cityName = cityParts[0];
-                const stateName = cityParts[1] || '';
                 navigate(`/chat?city=${encodeURIComponent(cityName)}&state=${encodeURIComponent(stateName)}`);
               }
             }}
