@@ -242,9 +242,12 @@ export type Database = {
       device_fingerprints: {
         Row: {
           blocked: boolean | null
+          browser_timezone: string | null
           device_id: string
+          expected_country: string | null
           fingerprint_data: Json | null
           first_seen_at: string | null
+          geo_mismatch_count: number | null
           id: string
           ip_address: string
           is_suspicious: boolean | null
@@ -252,9 +255,12 @@ export type Database = {
         }
         Insert: {
           blocked?: boolean | null
+          browser_timezone?: string | null
           device_id: string
+          expected_country?: string | null
           fingerprint_data?: Json | null
           first_seen_at?: string | null
+          geo_mismatch_count?: number | null
           id?: string
           ip_address: string
           is_suspicious?: boolean | null
@@ -262,9 +268,12 @@ export type Database = {
         }
         Update: {
           blocked?: boolean | null
+          browser_timezone?: string | null
           device_id?: string
+          expected_country?: string | null
           fingerprint_data?: Json | null
           first_seen_at?: string | null
+          geo_mismatch_count?: number | null
           id?: string
           ip_address?: string
           is_suspicious?: boolean | null
@@ -326,8 +335,11 @@ export type Database = {
           click_type: string | null
           client_ip: string | null
           created_at: string
+          expected_timezone: string | null
+          geo_mismatch: boolean | null
           id: string
           offer_id: string | null
+          timezone_offset: number | null
           user_agent: string | null
         }
         Insert: {
@@ -335,8 +347,11 @@ export type Database = {
           click_type?: string | null
           client_ip?: string | null
           created_at?: string
+          expected_timezone?: string | null
+          geo_mismatch?: boolean | null
           id?: string
           offer_id?: string | null
+          timezone_offset?: number | null
           user_agent?: string | null
         }
         Update: {
@@ -344,8 +359,11 @@ export type Database = {
           click_type?: string | null
           client_ip?: string | null
           created_at?: string
+          expected_timezone?: string | null
+          geo_mismatch?: boolean | null
           id?: string
           offer_id?: string | null
+          timezone_offset?: number | null
           user_agent?: string | null
         }
         Relationships: [

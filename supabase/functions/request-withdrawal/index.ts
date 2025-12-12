@@ -9,6 +9,7 @@ const corsHeaders = {
 // Business config - valores em centavos
 const MIN_WITHDRAW_CENTS = 10000; // R$ 100 em centavos
 const MIN_ACCOUNT_AGE_DAYS = 3; // Minimum account age for withdrawals
+const HIGH_FRAUD_SCORE_THRESHOLD = 50; // Threshold for admin alerts
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -194,7 +195,23 @@ serve(async (req) => {
       }
     }
 
-    // 5. First withdrawal bonus fraud check
+    // 5. Geolocation mismatch check
+    const { data: geoMismatchClicks } = await supabase
+      .from("offer_clicks")
+      .select("id")
+      .eq("affiliate_id", profile.id)
+      .eq("geo_mismatch", true)
+      .gte("created_at", new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString());
+
+    if (geoMismatchClicks && geoMismatchClicks.length > 5) {
+      fraudScore += 20;
+      fraudReasons.push(`Muitos cliques com geolocalização inconsistente (${geoMismatchClicks.length} cliques)`);
+    } else if (geoMismatchClicks && geoMismatchClicks.length > 2) {
+      fraudScore += 10;
+      fraudReasons.push(`Alguns cliques com geolocalização suspeita (${geoMismatchClicks.length} cliques)`);
+    }
+
+    // 6. First withdrawal bonus fraud check
     const { data: previousWithdrawals } = await supabase
       .from("withdrawals")
       .select("id")
@@ -259,6 +276,53 @@ serve(async (req) => {
     }
 
     console.log(`Withdrawal request created - User: ${profile.id}, Amount: R$ ${amountBrl.toFixed(2)}, Fraud Score: ${fraudScore}`);
+
+    // ========== ALERT ADMINS FOR HIGH FRAUD SCORE ==========
+    if (fraudScore >= HIGH_FRAUD_SCORE_THRESHOLD) {
+      console.log(`High fraud score detected: ${fraudScore} - Alerting admins`);
+      
+      // Get all admin profiles
+      const { data: adminRoles } = await supabase
+        .from("user_roles")
+        .select("user_id")
+        .eq("role", "ADMIN");
+
+      if (adminRoles && adminRoles.length > 0) {
+        // Get admin profile IDs
+        const { data: adminProfiles } = await supabase
+          .from("profiles")
+          .select("id")
+          .in("user_id", adminRoles.map(r => r.user_id));
+
+        if (adminProfiles && adminProfiles.length > 0) {
+          // Create alert notifications for all admins
+          const notifications = adminProfiles.map(admin => ({
+            user_id: admin.id,
+            type: "FRAUD_ALERT",
+            title: "⚠️ Alerta de Fraude - Saque Suspeito",
+            message: `Saque de R$ ${amountBrl.toFixed(2)} por ${profile.nome_completo || profile.name} com fraud score ${fraudScore}`,
+            data: {
+              withdrawal_id: withdrawal.id,
+              user_id: profile.id,
+              user_name: profile.nome_completo || profile.name,
+              amount_brl: amountBrl,
+              fraud_score: fraudScore,
+              fraud_reasons: fraudReasons,
+            },
+          }));
+
+          const { error: notifError } = await supabase
+            .from("notifications")
+            .insert(notifications);
+
+          if (notifError) {
+            console.error("Error creating fraud alert notifications:", notifError);
+          } else {
+            console.log(`Fraud alert sent to ${adminProfiles.length} admin(s)`);
+          }
+        }
+      }
+    }
 
     return new Response(
       JSON.stringify({
