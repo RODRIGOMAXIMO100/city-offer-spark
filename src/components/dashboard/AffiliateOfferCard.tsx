@@ -81,9 +81,9 @@ export function AffiliateOfferCard({ offer, profileId, index }: AffiliateOfferCa
     : null;
 
   return (
-    <Card className="overflow-hidden group hover:shadow-lg transition-all duration-300 border-border/50">
+    <Card className="overflow-hidden group hover:shadow-lg transition-all duration-300 border-border/50 h-full flex flex-col">
       {/* Image Header */}
-      <div className="relative aspect-[16/9] bg-muted overflow-hidden">
+      <div className="relative aspect-[16/9] bg-muted overflow-hidden flex-shrink-0">
         {imageUrl ? (
           <img 
             src={imageUrl} 
@@ -129,7 +129,7 @@ export function AffiliateOfferCard({ offer, profileId, index }: AffiliateOfferCa
 
         {/* Bottom - Title & Company */}
         <div className="absolute bottom-0 left-0 right-0 p-3">
-          <h3 className="font-bold text-white text-base sm:text-lg line-clamp-2 drop-shadow-lg">
+          <h3 className="font-bold text-white text-base sm:text-lg line-clamp-2 drop-shadow-lg min-h-[2.5rem]">
             {offer.title}
           </h3>
           <p className="text-white/80 text-sm truncate mt-0.5">
@@ -138,20 +138,20 @@ export function AffiliateOfferCard({ offer, profileId, index }: AffiliateOfferCa
         </div>
       </div>
 
-      <CardContent className="p-3 sm:p-4 space-y-3">
-        {/* Price Row */}
-        <div className="flex items-center justify-between">
+      <CardContent className="p-3 sm:p-4 flex flex-col flex-1">
+        {/* Price Row - Fixed height */}
+        <div className="flex items-center justify-between min-h-[2.5rem]">
           <div className="flex items-baseline gap-2">
             <span className="text-muted-foreground line-through text-sm">
               R$ {offer.price_old.toFixed(2)}
             </span>
-            <span className="text-secondary font-bold text-xl sm:text-2xl">
+            <span className="text-secondary font-bold text-xl sm:text-2xl whitespace-nowrap">
               R$ {offer.price_new.toFixed(2)}
             </span>
           </div>
           <Badge 
             variant="outline" 
-            className={`flex items-center gap-1 text-xs ${expInfo.urgent ? 'border-destructive text-destructive' : 'border-muted-foreground/50'}`}
+            className={`flex items-center gap-1 text-xs shrink-0 ${expInfo.urgent ? 'border-destructive text-destructive' : 'border-muted-foreground/50'}`}
           >
             <Clock className="h-3 w-3" />
             {expInfo.text}
@@ -162,9 +162,9 @@ export function AffiliateOfferCard({ offer, profileId, index }: AffiliateOfferCa
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <div className="flex items-center justify-between bg-affiliate/15 rounded-lg p-3 cursor-help border border-affiliate/30">
+              <div className="flex items-center justify-between bg-affiliate/15 rounded-lg p-3 cursor-help border border-affiliate/30 mt-3">
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-affiliate/20 flex items-center justify-center">
+                  <div className="w-8 h-8 rounded-full bg-affiliate/20 flex items-center justify-center shrink-0">
                     <DollarSign className="h-4 w-4 text-affiliate" />
                   </div>
                   <div>
@@ -174,7 +174,7 @@ export function AffiliateOfferCard({ offer, profileId, index }: AffiliateOfferCa
                     </p>
                   </div>
                 </div>
-                <div className="text-right">
+                <div className="text-right shrink-0">
                   <div className="flex items-center gap-1 text-xs text-muted-foreground">
                     <TrendingUp className="h-3 w-3" />
                     CTR: {ctr}%
@@ -195,6 +195,9 @@ export function AffiliateOfferCard({ offer, profileId, index }: AffiliateOfferCa
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
+
+        {/* Spacer to push buttons to bottom */}
+        <div className="flex-1 min-h-3" />
 
         {/* Action Buttons */}
         <div className="flex gap-2">
