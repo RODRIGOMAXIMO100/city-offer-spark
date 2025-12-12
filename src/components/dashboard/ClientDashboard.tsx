@@ -1,11 +1,12 @@
 import { useState, useRef, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
+import { useOnboarding } from '@/contexts/OnboardingContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Send, LogOut, Bot, Loader2, MapPin, Instagram } from 'lucide-react';
+import { Send, LogOut, Bot, Loader2, MapPin, Instagram, HelpCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Footer } from '@/components/landing/Footer';
 import logo from '@/assets/logo.png';
@@ -27,6 +28,7 @@ interface Message {
 
 export default function ClientDashboard() {
   const { profile, signOut } = useAuth();
+  const { startTour } = useOnboarding();
   const navigate = useNavigate();
   
   const [messages, setMessages] = useState<Message[]>([
@@ -121,6 +123,9 @@ export default function ClientDashboard() {
               <MapPin className="h-3 w-3" />
               {profile?.city}
             </div>
+            <Button size="icon" variant="ghost" onClick={startTour} title="Iniciar tour">
+              <HelpCircle className="h-4 w-4" />
+            </Button>
             <Button size="icon" variant="ghost" onClick={signOut}>
               <LogOut className="h-4 w-4" />
             </Button>
