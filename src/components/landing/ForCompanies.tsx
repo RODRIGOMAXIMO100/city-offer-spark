@@ -12,18 +12,18 @@ import {
 const benefits = [
   {
     icon: MousePointerClick,
-    title: "Pague por clique",
-    description: "Sem mensalidade. Pague apenas quando alguém clica na sua oferta.",
+    title: "Pague por lead qualificado",
+    description: "Sem mensalidade. Pague apenas quando um cliente local demonstra interesse real na sua oferta.",
   },
   {
     icon: BarChart3,
     title: "Dashboard completo",
-    description: "Acompanhe visualizações, cliques e conversões em tempo real.",
+    description: "Acompanhe visualizações, leads e conversões em tempo real.",
   },
   {
     icon: MapPin,
-    title: "Alcance local",
-    description: "Chegue a clientes da sua cidade através de divulgadores locais.",
+    title: "Leads locais garantidos",
+    description: "Clientes da sua cidade que pediram ao assistente IA ou receberam indicação de divulgadores.",
   },
   {
     icon: Link2,
@@ -55,7 +55,8 @@ export function ForCompanies() {
             
             <p className="text-lg text-muted-foreground mb-10 leading-relaxed">
               Pare de gastar com anúncios que não convertem. Com o clilin, você paga apenas 
-              quando alguém realmente interage com sua oferta.
+              quando um cliente qualificado demonstra interesse real — seja pedindo ao nosso assistente 
+              ou clicando em uma indicação local.
             </p>
 
             {/* Benefits */}
@@ -99,7 +100,7 @@ export function ForCompanies() {
                   </div>
                   <div className="bg-card rounded-xl p-3 sm:p-4 text-center">
                     <p className="text-xl sm:text-3xl font-display font-bold text-company">340</p>
-                    <p className="text-xs text-muted-foreground mt-1">Cliques</p>
+                    <p className="text-xs text-muted-foreground mt-1">Leads</p>
                   </div>
                   <div className="bg-card rounded-xl p-3 sm:p-4 text-center">
                     <p className="text-xl sm:text-3xl font-display font-bold text-secondary">28%</p>

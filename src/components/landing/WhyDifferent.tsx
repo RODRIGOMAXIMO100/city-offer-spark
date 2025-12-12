@@ -6,17 +6,17 @@ import logo from "@/assets/logo.png";
 
 const comparisonData = [
   { type: "Marketplaces de Delivery*", cost: "15% - 30%", metric: "por venda", highlight: false, isMarketplace: true, isLogo: false },
-  { type: "Anúncios de Busca", cost: "~R$ 25,00", metric: "por clique", highlight: false, isMarketplace: false, isLogo: false },
-  { type: "Redes Sociais", cost: "~R$ 3,00", metric: "por clique", highlight: false, isMarketplace: false, isLogo: false },
-  { type: "Clilin", cost: "R$ 0,40 - R$ 1,00**", metric: "por clique", highlight: true, isMarketplace: false, isLogo: true },
+  { type: "Anúncios de Busca", cost: "~R$ 25,00", metric: "por clique genérico", highlight: false, isMarketplace: false, isLogo: false },
+  { type: "Redes Sociais", cost: "~R$ 3,00", metric: "por clique genérico", highlight: false, isMarketplace: false, isLogo: false },
+  { type: "Clilin", cost: "R$ 0,40 - R$ 1,00**", metric: "por lead qualificado", highlight: true, isMarketplace: false, isLogo: true },
 ];
 
 const differentials = [
   {
     icon: TrendingDown,
-    title: "CPC até 60x mais barato",
-    description: "Enquanto plataformas tradicionais cobram de R$ 3 a R$ 25 por clique, na Clilin você paga de R$ 0,40 a R$ 1,00.",
-    highlight: "Economia de até 97% por clique",
+    title: "Leads até 60x mais baratos",
+    description: "Enquanto plataformas tradicionais cobram de R$ 3 a R$ 25 por clique genérico, na Clilin você paga de R$ 0,40 a R$ 1,00 por um lead qualificado e local.",
+    highlight: "Economia de até 97% por lead",
     color: "text-emerald-500",
     bgColor: "bg-emerald-500/10",
   },
@@ -24,15 +24,15 @@ const differentials = [
     icon: MessageSquare,
     title: "Clientes encontram você conversando",
     description: "O cliente diz para nossa IA o que precisa e ela sugere sua oferta. É demanda real, não impressões vazias.",
-    highlight: "O cliente vem até você",
+    highlight: "Lead com intenção de compra",
     color: "text-primary",
     bgColor: "bg-primary/10",
   },
   {
     icon: Users,
     title: "Divulgado por gente da sua cidade",
-    description: "Pessoas reais da sua comunidade divulgam suas ofertas e ganham 50% de cada clique. Confiança local + alcance orgânico.",
-    highlight: "Pessoas reais, não algoritmos",
+    description: "Pessoas reais da sua comunidade indicam suas ofertas. Cada lead é local, segmentado e com interesse demonstrado.",
+    highlight: "Leads locais de confiança",
     color: "text-orange-500",
     bgColor: "bg-orange-500/10",
   },
@@ -68,7 +68,7 @@ export function WhyDifferent() {
           <div className="bg-card rounded-2xl border border-border overflow-hidden shadow-lg">
             <div className="grid grid-cols-2 gap-4 p-4 bg-muted/50 font-semibold text-sm">
               <span>Plataforma</span>
-              <span className="text-right">Custo</span>
+              <span className="text-right">Custo por Lead</span>
             </div>
             {comparisonData.map((item, index) => (
               <div
