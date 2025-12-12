@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -45,7 +45,57 @@ interface AffiliateOfferCardProps {
 
 export function AffiliateOfferCard({ offer, profileId, index }: AffiliateOfferCardProps) {
   const [copied, setCopied] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [shortLink, setShortLink] = useState<string | null>(null);
+  const [isLoadingLink, setIsLoadingLink] = useState(true);
+
+  const longLink = `${window.location.origin}/oferta/${offer.id}?ref=${profileId}`;
+
+  // Pre-load short link on component mount
+  useEffect(() => {
+    const loadShortLink = async () => {
+      try {
+        // Check if short link already exists
+        const { data: existingLink } = await supabase
+          .from('short_links')
+          .select('code')
+          .eq('offer_id', offer.id)
+          .eq('affiliate_id', profileId)
+          .maybeSingle();
+
+        if (existingLink?.code) {
+          setShortLink(`${window.location.origin}/o/${existingLink.code}`);
+          setIsLoadingLink(false);
+          return;
+        }
+
+        // Create new short link in background
+        let code = generateShortCode();
+        let attempts = 0;
+        while (attempts < 5) {
+          const { error } = await supabase
+            .from('short_links')
+            .insert({
+              code,
+              offer_id: offer.id,
+              affiliate_id: profileId
+            });
+          
+          if (!error) {
+            setShortLink(`${window.location.origin}/o/${code}`);
+            break;
+          }
+          code = generateShortCode();
+          attempts++;
+        }
+      } catch (err) {
+        console.error('Error loading short link:', err);
+      } finally {
+        setIsLoadingLink(false);
+      }
+    };
+
+    loadShortLink();
+  }, [offer.id, profileId]);
 
   const discount = Math.round((1 - offer.price_new / offer.price_old) * 100);
   const offerScore = offer.current_offer_score || 5;
@@ -96,75 +146,26 @@ export function AffiliateOfferCard({ offer, profileId, index }: AffiliateOfferCa
     }
   };
 
-  const copyLink = async () => {
-    // Generate fallback link IMMEDIATELY before any async operations
-    const fallbackLink = `${window.location.origin}/oferta/${offer.id}?ref=${profileId}`;
+  // SYNCHRONOUS copy - no await before clipboard access (iOS compatible)
+  const copyLink = () => {
+    const linkToCopy = shortLink || longLink;
     
-    setLoading(true);
-    try {
-      // First check if short link already exists
-      const { data: existingLink } = await supabase
-        .from('short_links')
-        .select('code')
-        .eq('offer_id', offer.id)
-        .eq('affiliate_id', profileId)
-        .maybeSingle();
-
-      let code = existingLink?.code;
-
-      // If no existing link, create one
-      if (!code) {
-        let attempts = 0;
-        while (attempts < 5) {
-          code = generateShortCode();
-          const { error } = await supabase
-            .from('short_links')
-            .insert({
-              code,
-              offer_id: offer.id,
-              affiliate_id: profileId
-            });
-          
-          if (!error) break;
-          attempts++;
-        }
-      }
-
-      const linkToCopy = code 
-        ? `${window.location.origin}/o/${code}`
-        : fallbackLink;
-
-      const success = copyToClipboard(linkToCopy);
-      
-      if (success) {
-        setCopied(true);
-        toast.success(code ? "Link curto copiado!" : "Link copiado!", {
-          description: linkToCopy
-        });
-      } else {
-        // Show manual copy option
-        toast.error("Não foi possível copiar", {
-          description: linkToCopy,
-          action: {
-            label: "Copiar",
-            onClick: () => copyToClipboard(linkToCopy)
-          }
-        });
-      }
-    } catch (err) {
-      console.error('Error generating short link:', err);
-      const success = copyToClipboard(fallbackLink);
-      if (success) {
-        setCopied(true);
-        toast.success("Link copiado!");
-      } else {
-        toast.error("Erro ao copiar", {
-          description: fallbackLink
-        });
-      }
-    } finally {
-      setLoading(false);
+    const success = copyToClipboard(linkToCopy);
+    
+    if (success) {
+      setCopied(true);
+      toast.success(shortLink ? "Link curto copiado!" : "Link copiado!", {
+        description: linkToCopy
+      });
       setTimeout(() => setCopied(false), 2000);
+    } else {
+      toast.error("Não foi possível copiar", {
+        description: linkToCopy,
+        action: {
+          label: "Copiar",
+          onClick: () => copyToClipboard(linkToCopy)
+        }
+      });
     }
   };
 
@@ -307,13 +308,13 @@ export function AffiliateOfferCard({ offer, profileId, index }: AffiliateOfferCa
         <div className="flex gap-2">
           <Button
             onClick={copyLink}
-            disabled={loading}
+            disabled={isLoadingLink}
             className="flex-1 bg-foreground hover:bg-foreground/90 h-11 font-semibold"
           >
-            {loading ? (
+            {isLoadingLink ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Gerando...
+                Carregando...
               </>
             ) : copied ? (
               <>
