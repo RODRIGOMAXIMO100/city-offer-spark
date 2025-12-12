@@ -7,46 +7,46 @@ import logo from "@/assets/logo.png";
 const strategicComparison = [
   {
     feature: "Cliente vai pra onde?",
-    ifood: "Pro iFood",
-    ifoodNote: "(você perde o contato)",
-    google: "Pro site genérico",
-    googleNote: "",
+    marketplace: "Pro marketplace",
+    marketplaceNote: "(você perde o contato)",
+    ads: "Pro site genérico",
+    adsNote: "",
     clilin: "Pro SEU WhatsApp",
     clilinNote: "✓",
   },
   {
     feature: "Quem indica você?",
-    ifood: "Algoritmo",
-    ifoodNote: "",
-    google: "Algoritmo",
-    googleNote: "",
+    marketplace: "Algoritmo",
+    marketplaceNote: "",
+    ads: "Algoritmo",
+    adsNote: "",
     clilin: "Pessoas reais + IA",
     clilinNote: "✓",
   },
   {
     feature: "Você fideliza?",
-    ifood: "Não",
-    ifoodNote: "(cliente é do iFood)",
-    google: "Difícil",
-    googleNote: "",
+    marketplace: "Não",
+    marketplaceNote: "(cliente é do marketplace)",
+    ads: "Difícil",
+    adsNote: "",
     clilin: "Sim, você controla",
     clilinNote: "✓",
   },
   {
     feature: "Taxa por venda?",
-    ifood: "15-30%",
-    ifoodNote: "sempre",
-    google: "Não",
-    googleNote: "",
+    marketplace: "15-30%",
+    marketplaceNote: "sempre",
+    ads: "Não",
+    adsNote: "",
     clilin: "Não",
     clilinNote: "✓",
   },
   {
     feature: "Branding local?",
-    ifood: "Mínimo",
-    ifoodNote: "(marca iFood)",
-    google: "Não",
-    googleNote: "",
+    marketplace: "Mínimo",
+    marketplaceNote: "(marca deles)",
+    ads: "Não",
+    adsNote: "",
     clilin: "Sim, sua marca",
     clilinNote: "✓",
   },
@@ -110,8 +110,8 @@ export function WhyDifferent() {
             {/* Header */}
             <div className="grid grid-cols-4 gap-2 p-4 bg-muted/50 font-semibold text-sm">
               <span></span>
-              <span className="text-center text-muted-foreground">iFood / Marketplaces</span>
-              <span className="text-center text-muted-foreground">Google Ads</span>
+              <span className="text-center text-muted-foreground">Marketplaces</span>
+              <span className="text-center text-muted-foreground">Anúncios Online</span>
               <span className="text-center">
                 <img src={logo} alt="Clilin" className="h-5 mx-auto object-contain" />
               </span>
@@ -124,12 +124,12 @@ export function WhyDifferent() {
               >
                 <span className="font-medium text-sm">{row.feature}</span>
                 <div className="text-center text-sm text-muted-foreground">
-                  <span>{row.ifood}</span>
-                  {row.ifoodNote && <span className="block text-xs opacity-70">{row.ifoodNote}</span>}
+                  <span>{row.marketplace}</span>
+                  {row.marketplaceNote && <span className="block text-xs opacity-70">{row.marketplaceNote}</span>}
                 </div>
                 <div className="text-center text-sm text-muted-foreground">
-                  <span>{row.google}</span>
-                  {row.googleNote && <span className="block text-xs opacity-70">{row.googleNote}</span>}
+                  <span>{row.ads}</span>
+                  {row.adsNote && <span className="block text-xs opacity-70">{row.adsNote}</span>}
                 </div>
                 <div className="text-center text-sm font-medium text-primary">
                   <span>{row.clilin}</span>
