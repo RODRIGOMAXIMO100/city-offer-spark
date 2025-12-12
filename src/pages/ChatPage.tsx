@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
-import { Send, Bot, Loader2, MapPin, Instagram, Sparkles, Share2, Copy, MessageCircle, ArrowLeft, CheckCircle, ChevronsUpDown, Check, RotateCcw, Home } from 'lucide-react';
+import { Send, Bot, Loader2, MapPin, Instagram, Share2, Copy, MessageCircle, CheckCircle, ChevronsUpDown, Check, RotateCcw, Home } from 'lucide-react';
 import { BRAZIL_STATES, getCitiesByState } from '@/data/brazilLocations';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
@@ -279,205 +279,234 @@ export default function ChatPage() {
     window.open(url, '_blank');
   };
 
-  // No Offers Screen
+  // Component for city selection inside chat
+  const CitySelectionMessage = () => (
+    <div className="flex justify-start animate-fade-in">
+      <div className="max-w-[90%] sm:max-w-[85%] bg-card border border-border rounded-2xl rounded-bl-md px-4 py-4">
+        <div className="flex items-center gap-1 mb-3 text-xs font-bold text-client">
+          <Bot className="h-3 w-3" />
+          <span>Assistente</span>
+        </div>
+        
+        <p className="text-sm leading-relaxed mb-4">
+          Olá! 👋 Eu sou a <strong>Clilin AI</strong>. Para encontrar as melhores ofertas na sua região, primeiro me diga onde você está:
+        </p>
+
+        <div className="space-y-3">
+          <div>
+            <label className="text-xs font-medium mb-1.5 block text-muted-foreground">Estado</label>
+            <Select value={selectedState} onValueChange={(value) => {
+              setSelectedState(value);
+              setSelectedCity('');
+            }}>
+              <SelectTrigger className="h-11">
+                <SelectValue placeholder="Selecione o estado" />
+              </SelectTrigger>
+              <SelectContent>
+                {BRAZIL_STATES.map((state) => (
+                  <SelectItem key={state.code} value={state.code}>
+                    {state.code} - {state.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div>
+            <label className="text-xs font-medium mb-1.5 block text-muted-foreground">Cidade</label>
+            <Popover open={cityPopoverOpen} onOpenChange={setCityPopoverOpen}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  role="combobox"
+                  aria-expanded={cityPopoverOpen}
+                  className="w-full h-11 justify-between font-normal"
+                  disabled={!selectedState}
+                >
+                  {selectedCity || "Buscar cidade..."}
+                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" align="start">
+                <Command>
+                  <CommandInput placeholder="Digite para buscar..." />
+                  <CommandList>
+                    <CommandEmpty>Nenhuma cidade encontrada.</CommandEmpty>
+                    <CommandGroup>
+                      {availableCities.map((city) => (
+                        <CommandItem
+                          key={city}
+                          value={city}
+                          onSelect={() => {
+                            setSelectedCity(city);
+                            setCityPopoverOpen(false);
+                          }}
+                        >
+                          <Check
+                            className={cn(
+                              "mr-2 h-4 w-4",
+                              selectedCity === city ? "opacity-100" : "opacity-0"
+                            )}
+                          />
+                          {city}
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </CommandList>
+                </Command>
+              </PopoverContent>
+            </Popover>
+          </div>
+
+          <Button 
+            onClick={startChat} 
+            className="w-full h-11 bg-client hover:bg-client/90"
+            disabled={!selectedCity || loadingCities}
+          >
+            {loadingCities ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <CheckCircle className="mr-2 h-4 w-4" />
+            )}
+            Confirmar Localização
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+
+  // No Offers Screen (shown as overlay/modal style within chat)
   if (showNoOffersScreen) {
     return (
       <div className="min-h-screen bg-background flex flex-col">
         {/* Header */}
-        <header className="flex items-center justify-between px-4 py-3 border-b border-border bg-card">
+        <header className="flex items-center justify-between px-4 py-3 border-b border-border bg-card shrink-0">
           <Button variant="ghost" size="sm" onClick={() => navigate('/')}>
             <Home className="h-4 w-4 mr-2" />
             Início
           </Button>
           <div className="flex items-center gap-2">
-            <img src={logoImage} alt="Clilin" className="h-6" />
-            <span className="font-display font-bold text-lg">Clilin AI</span>
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-client to-client/70 flex items-center justify-center">
+              <Bot className="h-4 w-4 text-white" />
+            </div>
+            <span className="font-display font-bold">Clilin AI</span>
           </div>
           <div className="w-20" />
         </header>
 
-        <div className="flex-1 flex items-center justify-center p-4">
-          <Card className="max-w-md w-full border-primary/20 shadow-2xl">
-            <CardContent className="p-8">
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={goBack}
-                className="mb-4 -ml-2 text-muted-foreground hover:text-foreground"
+        {/* Messages Area with No Offers Card */}
+        <div 
+          ref={messagesContainerRef}
+          className="flex-1 overflow-y-auto p-4"
+        >
+          <div className="max-w-3xl mx-auto space-y-4">
+            {/* City selection message */}
+            <div className="flex justify-start animate-fade-in">
+              <div className="max-w-[90%] sm:max-w-[85%] bg-card border border-border rounded-2xl rounded-bl-md px-4 py-4">
+                <div className="flex items-center gap-1 mb-3 text-xs font-bold text-client">
+                  <Bot className="h-3 w-3" />
+                  <span>Assistente</span>
+                </div>
+                <p className="text-sm leading-relaxed">
+                  Você selecionou: <strong>{formattedCity}</strong>
+                </p>
+              </div>
+            </div>
+
+            {/* No offers message */}
+            <div className="flex justify-start animate-fade-in">
+              <div className="max-w-[90%] sm:max-w-[85%] bg-card border border-border rounded-2xl rounded-bl-md px-4 py-4">
+                <div className="flex items-center gap-1 mb-3 text-xs font-bold text-client">
+                  <Bot className="h-3 w-3" />
+                  <span>Assistente</span>
+                </div>
+                
+                <div className="text-center mb-4">
+                  <div className="w-16 h-16 mx-auto mb-3 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-lg">
+                    <Share2 className="h-8 w-8 text-white" />
+                  </div>
+                  <h2 className="text-lg font-display font-bold mb-1">
+                    A Clilin ainda não chegou em {selectedCity}!
+                  </h2>
+                  <p className="text-sm text-muted-foreground">
+                    Mas você pode mudar isso!
+                  </p>
+                </div>
+
+                <div className="bg-muted/50 rounded-xl p-3 mb-4">
+                  <p className="text-xs text-center">
+                    Ajude a trazer ofertas incríveis para sua cidade compartilhando com os <strong>negócios locais</strong>.
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <Button 
+                    onClick={shareOnWhatsApp}
+                    className="w-full h-10 bg-[#25D366] hover:bg-[#128C7E] text-white"
+                  >
+                    <MessageCircle className="mr-2 h-4 w-4" />
+                    Compartilhar no WhatsApp
+                  </Button>
+
+                  <Button 
+                    onClick={copyBusinessLink}
+                    variant="outline"
+                    className="w-full h-10"
+                  >
+                    {linkCopied ? (
+                      <>
+                        <CheckCircle className="mr-2 h-4 w-4 text-green-500" />
+                        Link Copiado!
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="mr-2 h-4 w-4" />
+                        Copiar Link para Empresas
+                      </>
+                    )}
+                  </Button>
+
+                  <Button 
+                    onClick={goBack}
+                    variant="ghost"
+                    className="w-full h-10 text-muted-foreground"
+                  >
+                    Escolher outra cidade
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Input Area - Disabled */}
+        <div className="shrink-0 p-4 border-t border-border bg-card">
+          <div className="max-w-3xl mx-auto">
+            <div className="relative">
+              <Input
+                value=""
+                placeholder="Selecione uma cidade com ofertas para começar..."
+                className="pr-14 py-6 rounded-full text-base opacity-50"
+                disabled
+              />
+              <Button
+                disabled
+                size="icon"
+                className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full h-10 w-10 bg-muted"
               >
-                <ArrowLeft className="h-4 w-4 mr-1" />
-                Voltar
+                <Send className="h-5 w-5" />
               </Button>
-
-              <div className="text-center mb-6">
-                <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-lg">
-                  <Share2 className="h-10 w-10 text-white" />
-                </div>
-                <h2 className="text-2xl font-display font-bold mb-2">
-                  A Clilin ainda não chegou em {selectedCity}!
-                </h2>
-                <p className="text-muted-foreground">
-                  Mas você pode mudar isso!
-                </p>
-              </div>
-
-              <div className="bg-muted/50 rounded-xl p-4 mb-6">
-                <p className="text-sm text-center">
-                  Ajude a trazer ofertas incríveis para sua cidade compartilhando com os <strong>negócios locais</strong>.
-                </p>
-              </div>
-
-              <div className="space-y-3">
-                <Button 
-                  onClick={shareOnWhatsApp}
-                  className="w-full h-12 bg-[#25D366] hover:bg-[#128C7E] text-white"
-                >
-                  <MessageCircle className="mr-2 h-5 w-5" />
-                  Compartilhar no WhatsApp
-                </Button>
-
-                <Button 
-                  onClick={copyBusinessLink}
-                  variant="outline"
-                  className="w-full h-12"
-                >
-                  {linkCopied ? (
-                    <>
-                      <CheckCircle className="mr-2 h-5 w-5 text-green-500" />
-                      Link Copiado!
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="mr-2 h-5 w-5" />
-                      Copiar Link para Empresas
-                    </>
-                  )}
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    );
-  }
-
-  // City Selection Screen
-  if (!chatStarted) {
-    return (
-      <div className="min-h-screen bg-background flex flex-col">
-        {/* Header */}
-        <header className="flex items-center justify-between px-4 py-3 border-b border-border bg-card">
-          <Button variant="ghost" size="sm" onClick={() => navigate('/')}>
-            <Home className="h-4 w-4 mr-2" />
-            Início
-          </Button>
-          <div className="flex items-center gap-2">
-            <img src={logoImage} alt="Clilin" className="h-6" />
-            <span className="font-display font-bold text-lg">Clilin AI</span>
+            </div>
+            <p className="text-xs text-center text-muted-foreground mt-2">
+              Powered by Clilin AI • Ofertas locais personalizadas
+            </p>
           </div>
-          <div className="w-20" />
-        </header>
-
-        <div className="flex-1 flex items-center justify-center p-4">
-          <Card className="max-w-md w-full border-primary/20 shadow-2xl">
-            <CardContent className="p-8">
-              <div className="text-center mb-6">
-                <div className="w-20 h-20 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-client to-client/70 flex items-center justify-center shadow-lg">
-                  <Sparkles className="h-10 w-10 text-white" />
-                </div>
-                <h1 className="text-3xl font-display font-bold mb-2">Encontre Ofertas com IA</h1>
-                <p className="text-muted-foreground">
-                  Selecione sua cidade para começar a conversar
-                </p>
-              </div>
-
-              <div className="space-y-4">
-                <div>
-                  <label className="text-sm font-medium mb-2 block">Estado</label>
-                  <Select value={selectedState} onValueChange={(value) => {
-                    setSelectedState(value);
-                    setSelectedCity('');
-                  }}>
-                    <SelectTrigger className="h-12">
-                      <SelectValue placeholder="Selecione o estado" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {BRAZIL_STATES.map((state) => (
-                        <SelectItem key={state.code} value={state.code}>
-                          {state.code} - {state.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div>
-                  <label className="text-sm font-medium mb-2 block">Cidade</label>
-                  <Popover open={cityPopoverOpen} onOpenChange={setCityPopoverOpen}>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant="outline"
-                        role="combobox"
-                        aria-expanded={cityPopoverOpen}
-                        className="w-full h-12 justify-between font-normal"
-                        disabled={!selectedState}
-                      >
-                        {selectedCity || "Buscar cidade..."}
-                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" align="start">
-                      <Command>
-                        <CommandInput placeholder="Digite para buscar..." />
-                        <CommandList>
-                          <CommandEmpty>Nenhuma cidade encontrada.</CommandEmpty>
-                          <CommandGroup>
-                            {availableCities.map((city) => (
-                              <CommandItem
-                                key={city}
-                                value={city}
-                                onSelect={() => {
-                                  setSelectedCity(city);
-                                  setCityPopoverOpen(false);
-                                }}
-                              >
-                                <Check
-                                  className={cn(
-                                    "mr-2 h-4 w-4",
-                                    selectedCity === city ? "opacity-100" : "opacity-0"
-                                  )}
-                                />
-                                {city}
-                              </CommandItem>
-                            ))}
-                          </CommandGroup>
-                        </CommandList>
-                      </Command>
-                    </PopoverContent>
-                  </Popover>
-                </div>
-
-                <Button 
-                  onClick={startChat} 
-                  className="w-full h-14 text-lg bg-client hover:bg-client/90"
-                  disabled={!selectedCity || loadingCities}
-                >
-                  {loadingCities ? (
-                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                  ) : (
-                    <Bot className="mr-2 h-5 w-5" />
-                  )}
-                  Começar a Conversar
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
         </div>
       </div>
     );
   }
 
-  // Fullscreen Chat Interface
+  // Main Chat Interface (always shown)
   return (
     <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
@@ -492,19 +521,26 @@ export default function ChatPage() {
           </div>
           <div className="text-center">
             <span className="font-display font-bold">Clilin AI</span>
-            <div className="flex items-center justify-center gap-1 text-xs text-muted-foreground">
-              <MapPin className="h-3 w-3" />
-              {formattedCity}
-            </div>
+            {chatStarted && formattedCity && (
+              <div className="flex items-center justify-center gap-1 text-xs text-muted-foreground">
+                <MapPin className="h-3 w-3" />
+                {formattedCity}
+              </div>
+            )}
           </div>
         </div>
         <div className="flex items-center gap-1">
-          <Button variant="ghost" size="sm" onClick={resetChat} title="Nova conversa">
-            <RotateCcw className="h-4 w-4" />
-          </Button>
-          <Button variant="outline" size="sm" onClick={changeCity}>
-            Trocar Cidade
-          </Button>
+          {chatStarted && (
+            <>
+              <Button variant="ghost" size="sm" onClick={resetChat} title="Nova conversa">
+                <RotateCcw className="h-4 w-4" />
+              </Button>
+              <Button variant="outline" size="sm" onClick={changeCity}>
+                Trocar Cidade
+              </Button>
+            </>
+          )}
+          {!chatStarted && <div className="w-20" />}
         </div>
       </header>
 
@@ -514,6 +550,10 @@ export default function ChatPage() {
         className="flex-1 overflow-y-auto p-4 space-y-4"
       >
         <div className="max-w-3xl mx-auto space-y-4">
+          {/* Show city selection if chat not started */}
+          {!chatStarted && <CitySelectionMessage />}
+
+          {/* Regular messages */}
           {messages.map((msg) => (
             <div
               key={msg.id}
@@ -609,15 +649,18 @@ export default function ChatPage() {
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
               onKeyPress={handleKeyPress}
-              placeholder="Pergunte sobre ofertas, produtos, serviços..."
+              placeholder={chatStarted ? "Pergunte sobre ofertas, produtos, serviços..." : "Selecione sua cidade acima para começar..."}
               className="pr-14 py-6 rounded-full text-base"
-              disabled={isTyping}
+              disabled={!chatStarted || isTyping}
             />
             <Button
               onClick={sendMessage}
-              disabled={!inputText.trim() || isTyping}
+              disabled={!chatStarted || !inputText.trim() || isTyping}
               size="icon"
-              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full h-10 w-10 bg-client hover:bg-client/90"
+              className={cn(
+                "absolute right-2 top-1/2 -translate-y-1/2 rounded-full h-10 w-10",
+                chatStarted ? "bg-client hover:bg-client/90" : "bg-muted"
+              )}
             >
               {isTyping ? (
                 <Loader2 className="h-5 w-5 animate-spin" />
