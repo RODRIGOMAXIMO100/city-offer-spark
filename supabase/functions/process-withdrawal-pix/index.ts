@@ -85,7 +85,7 @@ serve(async (req) => {
 
     const { data: withdrawal, error: withdrawalError } = await supabaseAdmin
       .from('withdrawals')
-      .select('*, profiles!inner(id, name, email)')
+      .select('*, profiles!withdrawals_user_id_fkey(id, name, email)')
       .eq('id', withdrawal_id)
       .single();
 
