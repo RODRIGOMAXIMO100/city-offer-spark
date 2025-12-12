@@ -12,8 +12,8 @@ import {
 const benefits = [
   {
     icon: Banknote,
-    title: "Comissão por clique",
-    description: "Cada clique no seu link gera saldo real na sua conta.",
+    title: "Comissão por lead",
+    description: "Cada lead qualificado gera saldo real na sua conta.",
   },
   {
     icon: Share2,

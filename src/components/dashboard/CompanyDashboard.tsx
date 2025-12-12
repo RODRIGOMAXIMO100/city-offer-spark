@@ -489,9 +489,9 @@ function CompanyDashboardContent() {
                 <Info className="h-4 w-4 sm:h-5 sm:w-5 text-company" />
               </div>
               <div className="space-y-1.5 sm:space-y-2 min-w-0">
-                <p className="font-bold text-foreground text-sm sm:text-base">Sistema de Leilão Inteligente</p>
+                <p className="font-bold text-foreground text-sm sm:text-base">Clique por Lead Qualificado</p>
                 <ul className="text-xs sm:text-sm text-muted-foreground space-y-0.5 sm:space-y-1">
-                  <li>• <strong className="text-foreground">CPC dinâmico:</strong> R$ 0,40 a R$ 1,00/clique</li>
+                  <li>• <strong className="text-foreground">Custo por lead:</strong> R$ 0,40 a R$ 1,00</li>
                   <li>• <strong className="text-foreground">Nota alta = paga menos</strong></li>
                   <li>• <strong className="text-foreground">Divisão 50/50:</strong> metade para divulgadores</li>
                 </ul>
@@ -616,10 +616,10 @@ function CompanyDashboardContent() {
                               </Tooltip>
                             </div>
 
-                            {/* CPC & Expiration */}
+                            {/* Cost per Lead & Expiration */}
                             <div className="flex items-center gap-2 mt-1 flex-wrap">
                               <span className="text-[10px] sm:text-xs text-muted-foreground">
-                                CPC: R$ {((14 - offerScore) / 10).toFixed(2)}
+                                Custo/Lead: R$ {((14 - offerScore) / 10).toFixed(2)}
                               </span>
                               <span className="text-muted-foreground">•</span>
                               <div className={`flex items-center gap-1 text-[10px] sm:text-xs ${expInfo.color}`}>
