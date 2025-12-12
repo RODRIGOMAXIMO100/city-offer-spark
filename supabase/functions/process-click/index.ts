@@ -11,6 +11,10 @@ const COOLDOWN_HOURS = 24;
 const GLOBAL_RATE_LIMIT_PER_HOUR = 50;
 const MIN_SESSION_AGE_MS = 1500;
 
+// Brazil timezone ranges (UTC-2 to UTC-5)
+const BRAZIL_TIMEZONE_MIN = -5 * 60; // -300 minutes (Acre)
+const BRAZIL_TIMEZONE_MAX = -2 * 60; // -120 minutes (Fernando de Noronha)
+
 function getClientIp(req: Request): string {
   return (
     req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
@@ -18,6 +22,22 @@ function getClientIp(req: Request): string {
     req.headers.get("x-real-ip") ||
     "unknown"
   );
+}
+
+// Check if timezone offset is consistent with Brazil
+function isTimezoneConsistentWithBrazil(timezoneOffset: number | null | undefined): boolean {
+  if (timezoneOffset === null || timezoneOffset === undefined) return true; // Allow if not provided
+  // timezoneOffset is in minutes, negative for west of UTC
+  // Brazil ranges from UTC-2 (Fernando de Noronha) to UTC-5 (Acre)
+  return timezoneOffset >= BRAZIL_TIMEZONE_MIN && timezoneOffset <= BRAZIL_TIMEZONE_MAX;
+}
+
+// Get expected timezone name from offset
+function getExpectedTimezone(timezoneOffset: number | null | undefined): string {
+  if (timezoneOffset === null || timezoneOffset === undefined) return "unknown";
+  const hours = Math.abs(Math.floor(timezoneOffset / 60));
+  const sign = timezoneOffset <= 0 ? "-" : "+";
+  return `UTC${sign}${hours}`;
 }
 
 // ========== TRACKING FUNCTIONS ==========
@@ -112,12 +132,14 @@ serve(async (req) => {
       clickType = 'MAIN',
       sessionToken,
       deviceId,
-      advancedFingerprint
+      advancedFingerprint,
+      timezoneOffset, // New: browser timezone offset in minutes
+      browserTimezone // New: browser timezone name (e.g., "America/Sao_Paulo")
     } = await req.json();
 
     const clientIp = getClientIp(req);
 
-    console.log(`Processing click - Offer: ${offerId}, IP: ${clientIp}, Type: ${clickType}`);
+    console.log(`Processing click - Offer: ${offerId}, IP: ${clientIp}, Type: ${clickType}, TZ: ${timezoneOffset}`);
 
     if (!offerId) {
       return new Response(
@@ -186,6 +208,35 @@ serve(async (req) => {
         }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
+    }
+
+    // ========== GEOLOCATION VERIFICATION ==========
+    // Check if browser timezone is consistent with Brazil (where the platform operates)
+    const geoMismatch = !isTimezoneConsistentWithBrazil(timezoneOffset);
+    const expectedTimezone = getExpectedTimezone(timezoneOffset);
+
+    if (geoMismatch && timezoneOffset !== null && timezoneOffset !== undefined) {
+      console.log(`Geolocation mismatch detected - TZ offset: ${timezoneOffset} (expected Brazil: -120 to -300)`);
+      
+      // Update device fingerprint with geo mismatch count
+      if (deviceId) {
+        const { data: existingDevice } = await supabase
+          .from("device_fingerprints")
+          .select("*")
+          .eq("device_id", deviceId)
+          .maybeSingle();
+
+        if (existingDevice) {
+          await supabase
+            .from("device_fingerprints")
+            .update({ 
+              geo_mismatch_count: (existingDevice.geo_mismatch_count || 0) + 1,
+              browser_timezone: browserTimezone || expectedTimezone,
+              is_suspicious: (existingDevice.geo_mismatch_count || 0) >= 2 // Mark as suspicious after 3 mismatches
+            })
+            .eq("id", existingDevice.id);
+        }
+      }
     }
 
     // ========== ANTI-FRAUD CHECKS FOR MAIN CLICKS ==========
@@ -261,6 +312,7 @@ serve(async (req) => {
           ip_address: clientIp,
           fingerprint_data: advancedFingerprint,
           last_seen_at: new Date().toISOString(),
+          browser_timezone: browserTimezone || null,
         }, { onConflict: 'device_id,ip_address' });
     }
 
@@ -311,6 +363,9 @@ serve(async (req) => {
         client_ip: clientIp,
         user_agent: userAgent,
         click_type: 'DUPLICATE',
+        timezone_offset: timezoneOffset,
+        expected_timezone: expectedTimezone,
+        geo_mismatch: geoMismatch,
       });
 
       // Duplicate clicks still get tracking for UX
@@ -494,13 +549,16 @@ serve(async (req) => {
       }
     }
 
-    // 5. Record click
+    // 5. Record click with geolocation data
     await supabase.from("offer_clicks").insert({
       offer_id: offerId,
       affiliate_id: validAffiliateId || null,
       client_ip: clientIp,
       user_agent: userAgent,
       click_type: 'MAIN',
+      timezone_offset: timezoneOffset,
+      expected_timezone: expectedTimezone,
+      geo_mismatch: geoMismatch,
     });
 
     // 6. Increment click count
@@ -516,7 +574,7 @@ serve(async (req) => {
       validAffiliateId
     );
 
-    console.log(`Main click processed - Offer: ${offerId}, CPC: ${cpcCost}, Company: -${cpcCost}, Affiliate: ${validAffiliateId ? `+${actualAffiliatePayout}` : 'none'}`);
+    console.log(`Main click processed - Offer: ${offerId}, CPC: ${cpcCost}, Company: -${cpcCost}, Affiliate: ${validAffiliateId ? `+${actualAffiliatePayout}` : 'none'}, GeoMismatch: ${geoMismatch}`);
 
     return new Response(
       JSON.stringify({

@@ -219,6 +219,10 @@ export default function OfferPage() {
     setProcessing(true);
 
     try {
+      // Get timezone info for geolocation verification
+      const timezoneOffset = new Date().getTimezoneOffset();
+      const browserTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
       const { data, error } = await supabase.functions.invoke('process-click', {
         body: {
           offerId: offer.id,
@@ -229,6 +233,8 @@ export default function OfferPage() {
           sessionToken,
           deviceId: getDeviceId(),
           advancedFingerprint: fingerprint,
+          timezoneOffset,
+          browserTimezone,
         },
       });
 
