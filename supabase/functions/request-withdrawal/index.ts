@@ -211,7 +211,23 @@ serve(async (req) => {
       fraudReasons.push(`Alguns cliques com geolocalização suspeita (${geoMismatchClicks.length} cliques)`);
     }
 
-    // 6. First withdrawal bonus fraud check
+    // 6. VPN/Proxy usage check
+    const { data: vpnClicks } = await supabase
+      .from("offer_clicks")
+      .select("id")
+      .eq("affiliate_id", profile.id)
+      .or("is_vpn.eq.true,is_proxy.eq.true")
+      .gte("created_at", new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString());
+
+    if (vpnClicks && vpnClicks.length > 3) {
+      fraudScore += 25;
+      fraudReasons.push(`Cliques de VPN/Proxy detectados (${vpnClicks.length} cliques)`);
+    } else if (vpnClicks && vpnClicks.length > 0) {
+      fraudScore += 10;
+      fraudReasons.push(`Alguns cliques de VPN/Proxy (${vpnClicks.length} cliques)`);
+    }
+
+    // 7. First withdrawal bonus fraud check
     const { data: previousWithdrawals } = await supabase
       .from("withdrawals")
       .select("id")

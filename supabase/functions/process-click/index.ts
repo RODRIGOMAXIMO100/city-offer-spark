@@ -26,9 +26,7 @@ function getClientIp(req: Request): string {
 
 // Check if timezone offset is consistent with Brazil
 function isTimezoneConsistentWithBrazil(timezoneOffset: number | null | undefined): boolean {
-  if (timezoneOffset === null || timezoneOffset === undefined) return true; // Allow if not provided
-  // timezoneOffset is in minutes, negative for west of UTC
-  // Brazil ranges from UTC-2 (Fernando de Noronha) to UTC-5 (Acre)
+  if (timezoneOffset === null || timezoneOffset === undefined) return true;
   return timezoneOffset >= BRAZIL_TIMEZONE_MIN && timezoneOffset <= BRAZIL_TIMEZONE_MAX;
 }
 
@@ -40,6 +38,68 @@ function getExpectedTimezone(timezoneOffset: number | null | undefined): string 
   return `UTC${sign}${hours}`;
 }
 
+// VPN/Proxy detection using IPInfo API
+interface IPInfoResponse {
+  ip: string;
+  city?: string;
+  region?: string;
+  country?: string;
+  org?: string;
+  privacy?: {
+    vpn?: boolean;
+    proxy?: boolean;
+    tor?: boolean;
+    relay?: boolean;
+    hosting?: boolean;
+  };
+}
+
+async function checkVPNProxy(ip: string): Promise<{
+  isVpn: boolean;
+  isProxy: boolean;
+  country: string | null;
+  city: string | null;
+  org: string | null;
+}> {
+  const ipinfoApiKey = Deno.env.get("IPINFO_API_KEY");
+  
+  // Default response if API key not configured or IP is unknown
+  if (!ipinfoApiKey || ip === "unknown") {
+    return { isVpn: false, isProxy: false, country: null, city: null, org: null };
+  }
+
+  try {
+    const response = await fetch(`https://ipinfo.io/${ip}?token=${ipinfoApiKey}`, {
+      method: "GET",
+      headers: { "Accept": "application/json" },
+    });
+
+    if (!response.ok) {
+      console.error(`IPInfo API error: ${response.status}`);
+      return { isVpn: false, isProxy: false, country: null, city: null, org: null };
+    }
+
+    const data: IPInfoResponse = await response.json();
+    
+    // Check privacy fields for VPN/Proxy detection
+    const isVpn = data.privacy?.vpn === true || data.privacy?.hosting === true;
+    const isProxy = data.privacy?.proxy === true || data.privacy?.tor === true || data.privacy?.relay === true;
+
+    console.log(`IPInfo check for ${ip}: VPN=${isVpn}, Proxy=${isProxy}, Country=${data.country}, City=${data.city}, Org=${data.org}`);
+
+    return {
+      isVpn,
+      isProxy,
+      country: data.country || null,
+      city: data.city || null,
+      org: data.org || null,
+    };
+  } catch (error) {
+    console.error("Error checking VPN/Proxy:", error);
+    return { isVpn: false, isProxy: false, country: null, city: null, org: null };
+  }
+}
+
 // ========== TRACKING FUNCTIONS ==========
 
 function generateTrackedWhatsAppLink(
@@ -48,12 +108,8 @@ function generateTrackedWhatsAppLink(
   offerId: string,
   affiliateId?: string | null
 ): string {
-  // Extract number from wa.me link
   const waNumber = baseLink.replace('https://wa.me/', '').split('?')[0];
-  
-  // Build simple message - no refs, no emojis
   const message = `Olá!\nVi a oferta "${offerTitle}" no CliLin.`;
-  
   const encodedMessage = encodeURIComponent(message);
   return `https://wa.me/${waNumber}?text=${encodedMessage}`;
 }
@@ -67,12 +123,9 @@ function generateTrackedSiteLink(
 ): string {
   try {
     const url = new URL(baseLink);
-    
-    // Standard UTM parameters
     url.searchParams.set('utm_source', 'clilin');
     url.searchParams.set('utm_medium', 'offer');
     
-    // Campaign = sanitized offer title
     const campaign = offerTitle
       .toLowerCase()
       .normalize('NFD')
@@ -81,7 +134,6 @@ function generateTrackedSiteLink(
       .substring(0, 50);
     url.searchParams.set('utm_campaign', campaign);
     
-    // Term = city
     const term = city
       .toLowerCase()
       .normalize('NFD')
@@ -89,17 +141,13 @@ function generateTrackedSiteLink(
       .replace(/[^a-z0-9]+/g, '_');
     url.searchParams.set('utm_term', term);
     
-    // Content = affiliate ID (if present)
     if (affiliateId) {
       url.searchParams.set('utm_content', `ref_${affiliateId.substring(0, 8)}`);
     }
     
-    // Internal tracking ref
     url.searchParams.set('clilin_ref', offerId.substring(0, 8));
-    
     return url.toString();
   } catch {
-    // If URL parsing fails, return original
     return baseLink;
   }
 }
@@ -133,8 +181,8 @@ serve(async (req) => {
       sessionToken,
       deviceId,
       advancedFingerprint,
-      timezoneOffset, // New: browser timezone offset in minutes
-      browserTimezone // New: browser timezone name (e.g., "America/Sao_Paulo")
+      timezoneOffset,
+      browserTimezone
     } = await req.json();
 
     const clientIp = getClientIp(req);
@@ -210,15 +258,82 @@ serve(async (req) => {
       );
     }
 
+    // ========== VPN/PROXY DETECTION ==========
+    const vpnCheck = await checkVPNProxy(clientIp);
+    
+    if (vpnCheck.isVpn || vpnCheck.isProxy) {
+      console.log(`VPN/Proxy detected for IP ${clientIp} - Blocking click`);
+      
+      // Update device fingerprint with VPN detection count
+      if (deviceId) {
+        const { data: existingDevice } = await supabase
+          .from("device_fingerprints")
+          .select("*")
+          .eq("device_id", deviceId)
+          .maybeSingle();
+
+        if (existingDevice) {
+          await supabase
+            .from("device_fingerprints")
+            .update({ 
+              vpn_detected_count: (existingDevice.vpn_detected_count || 0) + 1,
+              last_vpn_check_at: new Date().toISOString(),
+              is_suspicious: true
+            })
+            .eq("id", existingDevice.id);
+        }
+      }
+
+      // Record the blocked click for analytics
+      await supabase.from("offer_clicks").insert({
+        offer_id: offerId,
+        affiliate_id: null, // No credit for VPN clicks
+        client_ip: clientIp,
+        user_agent: userAgent,
+        click_type: 'VPN_BLOCKED',
+        is_vpn: vpnCheck.isVpn,
+        is_proxy: vpnCheck.isProxy,
+        ip_country: vpnCheck.country,
+        ip_city: vpnCheck.city,
+        ip_org: vpnCheck.org,
+      });
+
+      // Still redirect user but don't charge company or credit affiliate
+      const blockedRedirectUrl = getTrackedRedirectUrl(
+        offer.link_destination,
+        offer.link_type,
+        offer.title,
+        offerId,
+        offer.city,
+        null
+      );
+
+      return new Response(
+        JSON.stringify({
+          success: true,
+          redirectUrl: blockedRedirectUrl,
+          clickType: 'VPN_BLOCKED',
+          charged: false,
+          reason: "vpn_proxy_detected"
+        }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     // ========== GEOLOCATION VERIFICATION ==========
-    // Check if browser timezone is consistent with Brazil (where the platform operates)
     const geoMismatch = !isTimezoneConsistentWithBrazil(timezoneOffset);
     const expectedTimezone = getExpectedTimezone(timezoneOffset);
+
+    // Additional check: IP country should be BR for Brazil-focused platform
+    const ipCountryMismatch = vpnCheck.country && vpnCheck.country !== "BR";
+    
+    if (ipCountryMismatch) {
+      console.log(`IP country mismatch detected - IP country: ${vpnCheck.country}, Expected: BR`);
+    }
 
     if (geoMismatch && timezoneOffset !== null && timezoneOffset !== undefined) {
       console.log(`Geolocation mismatch detected - TZ offset: ${timezoneOffset} (expected Brazil: -120 to -300)`);
       
-      // Update device fingerprint with geo mismatch count
       if (deviceId) {
         const { data: existingDevice } = await supabase
           .from("device_fingerprints")
@@ -232,7 +347,7 @@ serve(async (req) => {
             .update({ 
               geo_mismatch_count: (existingDevice.geo_mismatch_count || 0) + 1,
               browser_timezone: browserTimezone || expectedTimezone,
-              is_suspicious: (existingDevice.geo_mismatch_count || 0) >= 2 // Mark as suspicious after 3 mismatches
+              is_suspicious: (existingDevice.geo_mismatch_count || 0) >= 2
             })
             .eq("id", existingDevice.id);
         }
@@ -313,6 +428,7 @@ serve(async (req) => {
           fingerprint_data: advancedFingerprint,
           last_seen_at: new Date().toISOString(),
           browser_timezone: browserTimezone || null,
+          expected_country: vpnCheck.country || null,
         }, { onConflict: 'device_id,ip_address' });
     }
 
@@ -366,16 +482,20 @@ serve(async (req) => {
         timezone_offset: timezoneOffset,
         expected_timezone: expectedTimezone,
         geo_mismatch: geoMismatch,
+        is_vpn: vpnCheck.isVpn,
+        is_proxy: vpnCheck.isProxy,
+        ip_country: vpnCheck.country,
+        ip_city: vpnCheck.city,
+        ip_org: vpnCheck.org,
       });
 
-      // Duplicate clicks still get tracking for UX
       const duplicateRedirectUrl = getTrackedRedirectUrl(
         offer.link_destination,
         offer.link_type,
         offer.title,
         offerId,
         offer.city,
-        null // No affiliate credit for duplicates
+        null
       );
 
       return new Response(
@@ -415,17 +535,14 @@ serve(async (req) => {
       }
     }
 
-    // ========== CALCULATE DYNAMIC CPC (Google Ads Style) ==========
-    
-    // Get dynamic CPC using database function
+    // ========== CALCULATE DYNAMIC CPC ==========
     const { data: realCpc } = await supabase
       .rpc("calculate_real_cpc", { p_offer_id: offerId, p_city: offer.city });
     
-    const cpcCost = realCpc || 5; // Fallback to 5 if function fails
+    const cpcCost = realCpc || 5;
     
-    console.log(`Dynamic CPC calculated - Offer: ${offerId}, CPC: ${cpcCost}, Bid: ${offer.max_cpc_bid}, Score: ${offer.current_offer_score}`);
+    console.log(`Dynamic CPC calculated - Offer: ${offerId}, CPC: ${cpcCost}, Score: ${offer.current_offer_score}`);
 
-    // Get pricing config for affiliate share
     const { data: pricingConfig } = await supabase
       .from("pricing_config")
       .select("*")
@@ -457,7 +574,7 @@ serve(async (req) => {
       last_click_at: new Date().toISOString(),
     }, { onConflict: 'offer_id,ip_address' });
 
-    // 2. Debit company with DYNAMIC CPC
+    // 2. Debit company
     const { error: debitError } = await supabase
       .from("profiles")
       .update({ balance: companyProfile.balance - cpcCost })
@@ -468,7 +585,7 @@ serve(async (req) => {
       throw new Error("Erro ao processar pagamento");
     }
 
-    // 3. Record company transaction with actual CPC
+    // 3. Record company transaction
     await supabase.from("transactions").insert({
       user_id: companyProfile.id,
       amount: -cpcCost,
@@ -477,7 +594,7 @@ serve(async (req) => {
       offer_id: offerId,
     });
 
-    // 4. Credit affiliate if valid (with level multiplier and dynamic earnings)
+    // 4. Credit affiliate if valid
     let actualAffiliatePayout = 0;
     if (validAffiliateId) {
       const { data: affiliateProfile } = await supabase
@@ -487,13 +604,10 @@ serve(async (req) => {
         .single();
 
       if (affiliateProfile) {
-        // Get commission multiplier from affiliate level
         const { data: multiplierResult } = await supabase
           .rpc("get_commission_multiplier", { affiliate_profile_id: validAffiliateId });
 
         const multiplier = multiplierResult || 1.0;
-        
-        // Calculate affiliate payout: CPC × affiliate_share × level_multiplier
         const basePayout = Math.floor(cpcCost * affiliateShare);
         actualAffiliatePayout = Math.floor(basePayout * multiplier);
 
@@ -510,7 +624,6 @@ serve(async (req) => {
           offer_id: offerId,
         });
 
-        // Update affiliate stats
         await supabase.rpc("update_affiliate_stats", { 
           affiliate_profile_id: validAffiliateId, 
           earnings: actualAffiliatePayout 
@@ -549,7 +662,7 @@ serve(async (req) => {
       }
     }
 
-    // 5. Record click with geolocation data
+    // 5. Record click with all tracking data
     await supabase.from("offer_clicks").insert({
       offer_id: offerId,
       affiliate_id: validAffiliateId || null,
@@ -558,13 +671,17 @@ serve(async (req) => {
       click_type: 'MAIN',
       timezone_offset: timezoneOffset,
       expected_timezone: expectedTimezone,
-      geo_mismatch: geoMismatch,
+      geo_mismatch: geoMismatch || ipCountryMismatch,
+      is_vpn: vpnCheck.isVpn,
+      is_proxy: vpnCheck.isProxy,
+      ip_country: vpnCheck.country,
+      ip_city: vpnCheck.city,
+      ip_org: vpnCheck.org,
     });
 
     // 6. Increment click count
     await supabase.rpc("increment_offer_clicks", { offer_id: offerId });
 
-    // Generate tracked redirect URL
     const trackedRedirectUrl = getTrackedRedirectUrl(
       offer.link_destination,
       offer.link_type,
@@ -574,7 +691,7 @@ serve(async (req) => {
       validAffiliateId
     );
 
-    console.log(`Main click processed - Offer: ${offerId}, CPC: ${cpcCost}, Company: -${cpcCost}, Affiliate: ${validAffiliateId ? `+${actualAffiliatePayout}` : 'none'}, GeoMismatch: ${geoMismatch}`);
+    console.log(`Main click processed - Offer: ${offerId}, CPC: ${cpcCost}, Affiliate: ${validAffiliateId ? `+${actualAffiliatePayout}` : 'none'}, VPN: ${vpnCheck.isVpn}, Country: ${vpnCheck.country}`);
 
     return new Response(
       JSON.stringify({
