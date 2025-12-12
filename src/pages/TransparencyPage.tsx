@@ -57,16 +57,18 @@ const cpcExamples = [
   { score: 4, cpc: 10, position: 3, reason: "Nota mínima = CPC máximo" },
 ];
 
+// Exemplos corrigidos: 30% base para afiliados (Plataforma 70%, Afiliado 30%)
 const earningsExamples = [
-  { cpc: 4, company: "R$ 0,40", platform: "R$ 0,20", affiliate: "R$ 0,20", affiliateBase: 2 },
-  { cpc: 7, company: "R$ 0,70", platform: "R$ 0,35", affiliate: "R$ 0,35", affiliateBase: 3.5 },
-  { cpc: 10, company: "R$ 1,00", platform: "R$ 0,50", affiliate: "R$ 0,50", affiliateBase: 5 },
+  { cpc: 4, company: "R$ 0,40", platform: "R$ 0,28", affiliate: "R$ 0,12", affiliateBase: 12 },
+  { cpc: 7, company: "R$ 0,70", platform: "R$ 0,49", affiliate: "R$ 0,21", affiliateBase: 21 },
+  { cpc: 10, company: "R$ 1,00", platform: "R$ 0,70", affiliate: "R$ 0,30", affiliateBase: 30 },
 ];
 
+// Níveis alinhados com banco de dados: Bronze 1.0x (30%), Prata 1.33x (~40%), Ouro 1.67x (~50%)
 const levelMultipliers = [
-  { name: "Bronze", multiplier: "1.0x", clicks: "0+", color: "bg-amber-600" },
-  { name: "Prata", multiplier: "1.25x", clicks: "100+", color: "bg-gray-400" },
-  { name: "Ouro", multiplier: "1.5x", clicks: "500+", color: "bg-yellow-500" },
+  { name: "Bronze", multiplier: "1.0x", commission: "30%", clicks: "0+", color: "bg-amber-600" },
+  { name: "Prata", multiplier: "1.33x", commission: "40%", clicks: "100+", color: "bg-gray-400" },
+  { name: "Ouro", multiplier: "1.67x", commission: "50%", clicks: "500+", color: "bg-yellow-500" },
 ];
 
 export default function TransparencyPage() {
@@ -404,7 +406,7 @@ export default function TransparencyPage() {
             <TabsContent value="division" className="space-y-8">
               <div className="text-center mb-8">
                 <h2 className="text-3xl font-display font-bold mb-2">Divisão de Valores</h2>
-                <p className="text-muted-foreground">Transparência total: 50% para você, 50% para a plataforma</p>
+                <p className="text-muted-foreground">Sistema progressivo: de 30% a 50% para você conforme evolui</p>
               </div>
 
               {/* Flow Diagram */}
@@ -422,15 +424,46 @@ export default function TransparencyPage() {
                     <div className="grid grid-cols-2 gap-4">
                       <div className="bg-muted rounded-2xl p-6 text-center">
                         <p className="text-sm text-muted-foreground mb-1">Plataforma</p>
-                        <p className="text-3xl font-bold">50%</p>
+                        <p className="text-3xl font-bold">70%</p>
                         <p className="text-xs text-muted-foreground mt-1">operação + tech</p>
                       </div>
                       <div className="bg-affiliate text-affiliate-foreground rounded-2xl p-6 text-center">
                         <p className="text-sm opacity-90 mb-1">Divulgador</p>
-                        <p className="text-3xl font-bold">50%</p>
-                        <p className="text-xs opacity-75 mt-1">comissão base</p>
+                        <p className="text-3xl font-bold">30%</p>
+                        <p className="text-xs opacity-75 mt-1">comissão base*</p>
                       </div>
                     </div>
+                  </div>
+                  <p className="text-center mt-4 text-sm text-muted-foreground">
+                    * Com níveis, a comissão pode chegar a <strong className="text-affiliate">50%</strong> (Nível Ouro)
+                  </p>
+                </CardContent>
+              </Card>
+
+              {/* Level Progression Card */}
+              <Card className="border-affiliate/20">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Award className="h-5 w-5 text-affiliate" />
+                    Progressão de Comissões
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Quanto mais cliques você gera, maior sua comissão! Comece com 30% e chegue a 50%.
+                  </p>
+                  <div className="grid sm:grid-cols-3 gap-4">
+                    {levelMultipliers.map((level, i) => (
+                      <div key={i} className={`text-center p-4 rounded-xl border-2 ${i === 2 ? 'border-yellow-500/50 bg-yellow-500/5' : 'border-border bg-muted/30'}`}>
+                        <div className={`w-10 h-10 ${level.color} rounded-full mx-auto mb-2 flex items-center justify-center`}>
+                          <Award className="h-5 w-5 text-white" />
+                        </div>
+                        <p className="font-bold">{level.name}</p>
+                        <p className="text-2xl font-display font-bold text-affiliate mt-1">{level.commission}</p>
+                        <p className="text-xs text-muted-foreground">{level.clicks} cliques</p>
+                        <p className="text-xs text-muted-foreground/70">({level.multiplier})</p>
+                      </div>
+                    ))}
                   </div>
                 </CardContent>
               </Card>
@@ -440,7 +473,7 @@ export default function TransparencyPage() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Calculator className="h-5 w-5 text-primary" />
-                    Exemplos de Divisão
+                    Exemplos de Divisão (Nível Bronze - 30%)
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -450,8 +483,8 @@ export default function TransparencyPage() {
                         <tr className="border-b border-border">
                           <th className="text-left py-3 px-4">CPC Cobrado</th>
                           <th className="text-center py-3 px-4">Empresa Paga</th>
-                          <th className="text-center py-3 px-4">Plataforma (50%)</th>
-                          <th className="text-center py-3 px-4">Divulgador (50%)</th>
+                          <th className="text-center py-3 px-4">Plataforma (70%)</th>
+                          <th className="text-center py-3 px-4">Divulgador (30%)</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -467,23 +500,27 @@ export default function TransparencyPage() {
                     </table>
                   </div>
                   <p className="text-xs text-muted-foreground mt-4 text-center">
-                    💡 O divulgador ainda pode ganhar bônus de até +30% com os multiplicadores de nível!
+                    💡 No nível Ouro (50%), o divulgador ganharia R$ 0,20, R$ 0,35 e R$ 0,50 respectivamente!
                   </p>
                 </CardContent>
               </Card>
 
-              {/* Why 50/50 */}
+              {/* Why 30% base */}
               <Card className="bg-primary/5 border-primary/20">
                 <CardContent className="p-6">
-                  <h3 className="font-bold text-lg mb-3">Por que 50/50?</h3>
+                  <h3 className="font-bold text-lg mb-3">Por que 30% base com progressão?</h3>
                   <ul className="space-y-2 text-sm text-muted-foreground">
+                    <li className="flex items-start gap-2">
+                      <CheckCircle2 className="h-4 w-4 text-secondary shrink-0 mt-0.5" />
+                      <span><strong className="text-foreground">Meritocracia:</strong> quem mais divulga, mais ganha (até 50%)</span>
+                    </li>
                     <li className="flex items-start gap-2">
                       <CheckCircle2 className="h-4 w-4 text-secondary shrink-0 mt-0.5" />
                       <span><strong className="text-foreground">Sustentabilidade:</strong> mantém a plataforma funcionando com qualidade</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <CheckCircle2 className="h-4 w-4 text-secondary shrink-0 mt-0.5" />
-                      <span><strong className="text-foreground">Incentivo justo:</strong> divulgadores ganham bem por cada clique</span>
+                      <span><strong className="text-foreground">Incentivo claro:</strong> Bronze 30% → Prata 40% → Ouro 50%</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <CheckCircle2 className="h-4 w-4 text-secondary shrink-0 mt-0.5" />
@@ -498,7 +535,7 @@ export default function TransparencyPage() {
             <TabsContent value="earnings" className="space-y-8">
               <div className="text-center mb-8">
                 <h2 className="text-3xl font-display font-bold mb-2">Ganhos do Divulgador</h2>
-                <p className="text-muted-foreground">De R$ 0,20 a R$ 0,65 por clique (com bônus de nível)</p>
+                <p className="text-muted-foreground">De R$ 0,12 a R$ 0,50 por clique (conforme seu nível)</p>
               </div>
 
               {/* Earnings Range */}
@@ -507,17 +544,17 @@ export default function TransparencyPage() {
                   <p className="text-sm text-muted-foreground mb-2">Ganho por clique</p>
                   <div className="flex items-center justify-center gap-4">
                     <div>
-                      <p className="text-4xl font-display font-bold text-affiliate">R$ 0,20</p>
-                      <p className="text-xs text-muted-foreground">mínimo</p>
+                      <p className="text-4xl font-display font-bold text-affiliate">R$ 0,12</p>
+                      <p className="text-xs text-muted-foreground">mínimo (Bronze)</p>
                     </div>
                     <span className="text-2xl text-muted-foreground">→</span>
                     <div>
-                      <p className="text-4xl font-display font-bold text-affiliate">R$ 0,65</p>
-                      <p className="text-xs text-muted-foreground">máximo*</p>
+                      <p className="text-4xl font-display font-bold text-affiliate">R$ 0,50</p>
+                      <p className="text-xs text-muted-foreground">máximo (Ouro)*</p>
                     </div>
                   </div>
                   <p className="text-xs text-muted-foreground mt-4">
-                    *Com CPC máximo (R$ 1,00) + multiplicador Diamante (1.3x)
+                    *Com CPC máximo (R$ 1,00) + nível Ouro (50%)
                   </p>
                 </CardContent>
               </Card>
@@ -527,22 +564,28 @@ export default function TransparencyPage() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Award className="h-5 w-5 text-primary" />
-                    Multiplicadores de Nível
+                    Sistema de Níveis e Comissões
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm text-muted-foreground mb-4">
-                    Quanto mais cliques você gera, maior seu nível e maior seu multiplicador de ganhos!
+                    Quanto mais cliques você gera, maior seu nível e maior sua comissão!
                   </p>
-                  <div className="grid sm:grid-cols-4 gap-4">
+                  <div className="grid sm:grid-cols-3 gap-4">
                     {levelMultipliers.map((level, i) => (
-                      <div key={i} className="text-center p-4 bg-muted/50 rounded-xl hover:bg-muted transition-colors">
+                      <div key={i} className={`text-center p-4 rounded-xl transition-colors ${i === 2 ? 'bg-yellow-500/10 border-2 border-yellow-500/30' : 'bg-muted/50 hover:bg-muted'}`}>
                         <div className={`w-12 h-12 ${level.color} rounded-full mx-auto mb-3 flex items-center justify-center`}>
                           <Award className="h-6 w-6 text-white" />
                         </div>
                         <p className="font-bold">{level.name}</p>
-                        <p className="text-2xl font-display font-bold text-affiliate mt-1">{level.multiplier}</p>
+                        <p className="text-2xl font-display font-bold text-affiliate mt-1">{level.commission}</p>
                         <p className="text-xs text-muted-foreground">{level.clicks} cliques</p>
+                        <div className="mt-2 pt-2 border-t border-border/50">
+                          <p className="text-xs text-muted-foreground">CPC R$ 0,70 =</p>
+                          <p className="text-sm font-bold text-affiliate">
+                            R$ {(0.70 * parseFloat(level.commission) / 100).toFixed(2).replace('.', ',')}
+                          </p>
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -559,28 +602,30 @@ export default function TransparencyPage() {
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm text-muted-foreground mb-4">
-                    Baseado em CPC médio de R$ 0,70 (R$ 0,35 por clique para o divulgador):
+                    Baseado em CPC médio de R$ 0,70 (R$ 0,21 por clique para Bronze - 30%):
                   </p>
                   <div className="grid sm:grid-cols-3 gap-4">
                     <div className="bg-card rounded-xl p-4 text-center border border-border">
                       <p className="text-sm text-muted-foreground">10 cliques/dia</p>
-                      <p className="text-2xl font-bold text-affiliate mt-1">R$ 105</p>
-                      <p className="text-xs text-muted-foreground">/mês</p>
+                      <p className="text-2xl font-bold text-affiliate mt-1">R$ 63</p>
+                      <p className="text-xs text-muted-foreground">/mês (Bronze)</p>
                     </div>
                     <div className="bg-card rounded-xl p-4 text-center border border-border">
                       <p className="text-sm text-muted-foreground">50 cliques/dia</p>
-                      <p className="text-2xl font-bold text-affiliate mt-1">R$ 525</p>
-                      <p className="text-xs text-muted-foreground">/mês</p>
+                      <p className="text-2xl font-bold text-affiliate mt-1">R$ 315</p>
+                      <p className="text-xs text-muted-foreground">/mês (Bronze)</p>
                     </div>
                     <div className="bg-card rounded-xl p-4 text-center border border-border">
                       <p className="text-sm text-muted-foreground">100 cliques/dia</p>
-                      <p className="text-2xl font-bold text-affiliate mt-1">R$ 1.050</p>
-                      <p className="text-xs text-muted-foreground">/mês</p>
+                      <p className="text-2xl font-bold text-affiliate mt-1">R$ 630</p>
+                      <p className="text-xs text-muted-foreground">/mês (Bronze)</p>
                     </div>
                   </div>
-                  <p className="text-xs text-muted-foreground mt-4 text-center">
-                    💡 Com nível Diamante (1.3x), esses valores podem ser até 30% maiores!
-                  </p>
+                  <div className="mt-4 p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
+                    <p className="text-sm text-center">
+                      💡 Com nível <strong className="text-yellow-600">Ouro (50%)</strong>, os mesmos 100 cliques/dia = <strong className="text-affiliate">R$ 1.050/mês</strong>!
+                    </p>
+                  </div>
                 </CardContent>
               </Card>
 
