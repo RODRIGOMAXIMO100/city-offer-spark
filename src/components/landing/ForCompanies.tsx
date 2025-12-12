@@ -1,34 +1,34 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { 
-  MousePointerClick, 
-  BarChart3, 
-  MapPin, 
-  Link2, 
+  Sparkles, 
+  Users, 
+  MessageSquare, 
+  ShieldCheck, 
   ArrowRight,
   Zap
 } from "lucide-react";
 
 const benefits = [
   {
-    icon: MousePointerClick,
-    title: "Pague por lead qualificado",
-    description: "Sem mensalidade. Pague apenas quando um cliente local demonstra interesse real na sua oferta.",
+    icon: Sparkles,
+    title: "Apareça quando perguntarem",
+    description: "Sua oferta é sugerida pela IA quando alguém da cidade perguntar sobre seu tipo de negócio.",
   },
   {
-    icon: BarChart3,
-    title: "Dashboard completo",
-    description: "Acompanhe visualizações, leads e conversões em tempo real.",
+    icon: Users,
+    title: "Branding na comunidade",
+    description: "Divulgadores locais falando da sua marca. Marketing de confiança, não anúncios frios.",
   },
   {
-    icon: MapPin,
-    title: "Leads locais garantidos",
-    description: "Clientes da sua cidade que pediram ao assistente IA ou receberam indicação de divulgadores.",
+    icon: MessageSquare,
+    title: "Cliente no SEU WhatsApp",
+    description: "Diferente de marketplaces, o cliente vai direto pra você. Sem intermediários, sem taxa por venda.",
   },
   {
-    icon: Link2,
-    title: "Links inteligentes",
-    description: "WhatsApp, cardápio ou site. O cliente vai direto onde você quer.",
+    icon: ShieldCheck,
+    title: "Sem dependência",
+    description: "Você não vira refém. Construa sua base de clientes, não a de uma plataforma.",
   },
 ];
 
@@ -49,14 +49,14 @@ export function ForCompanies() {
             </div>
             
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold mb-6">
-              Marketing que dá{" "}
-              <span className="text-company">resultado</span>
+              Visibilidade que{" "}
+              <span className="text-company">constrói marca</span>
             </h2>
             
             <p className="text-lg text-muted-foreground mb-10 leading-relaxed">
-              Pare de gastar com anúncios que não convertem. Com o clilin, você paga apenas 
-              quando um cliente qualificado demonstra interesse real — seja pedindo ao nosso assistente 
-              ou clicando em uma indicação local.
+              Mais que cliques: sua empresa entra na conversa da cidade. Seja encontrado por IA quando 
+              perguntarem "onde comer?" ou indicado por pessoas reais da comunidade. Cliente vai 
+              direto pro seu WhatsApp — você fideliza.
             </p>
 
             {/* Benefits */}
