@@ -52,11 +52,14 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Legal */}
+          {/* Recursos */}
           <div>
-            <h4 className="font-display font-semibold mb-4">Legal</h4>
+            <h4 className="font-display font-semibold mb-4">Recursos</h4>
             <ul className="space-y-3">
               {[
+                { label: "Central de Ajuda", to: "/ajuda" },
+                { label: "Blog", to: "/blog" },
+                { label: "Transparência", to: "/transparencia" },
                 { label: "Termos de Uso", to: "/termos" },
                 { label: "Privacidade", to: "/privacidade" },
               ].map((link) => (
