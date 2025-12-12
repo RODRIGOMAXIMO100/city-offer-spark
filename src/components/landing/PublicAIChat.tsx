@@ -23,6 +23,7 @@ interface SuggestedOffer {
   price_new: number;
   discount: number;
   instagram_url?: string;
+  images?: string[];
 }
 
 interface Message {
@@ -542,9 +543,16 @@ export function PublicAIChat() {
                       {msg.suggestedOffers.map((offer) => (
                         <Card
                           key={offer.id}
-                          className="cursor-pointer hover:shadow-md transition-shadow bg-background"
-                          onClick={() => navigate(`/offer/${offer.id}`)}
+                          className="cursor-pointer hover:shadow-md transition-shadow bg-background overflow-hidden"
+                          onClick={() => navigate(`/oferta/${offer.id}`)}
                         >
+                          {offer.images?.[0] && (
+                            <img 
+                              src={offer.images[0]} 
+                              alt={offer.title}
+                              className="w-full h-24 object-cover"
+                            />
+                          )}
                           <CardContent className="p-3">
                             <div className="flex justify-between items-start mb-1">
                               <p className="font-bold text-sm text-foreground">{offer.company}</p>

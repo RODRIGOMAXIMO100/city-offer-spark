@@ -24,6 +24,7 @@ interface Message {
     price_new: number;
     discount: number;
     instagram_url?: string;
+    images?: string[];
   }>;
 }
 
@@ -170,14 +171,21 @@ export default function ClientDashboard() {
               <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.content}</p>
 
               {/* Suggested Offers */}
-              {msg.suggestedOffers && msg.suggestedOffers.length > 0 && (
+                  {msg.suggestedOffers && msg.suggestedOffers.length > 0 && (
                 <div className="mt-3 space-y-2">
                   {msg.suggestedOffers.map((offer) => (
                     <Card
                       key={offer.id}
-                      className="cursor-pointer hover:shadow-md transition-shadow"
-                      onClick={() => navigate(`/offer/${offer.id}`)}
+                      className="cursor-pointer hover:shadow-md transition-shadow overflow-hidden"
+                      onClick={() => navigate(`/oferta/${offer.id}`)}
                     >
+                      {offer.images?.[0] && (
+                        <img 
+                          src={offer.images[0]} 
+                          alt={offer.title}
+                          className="w-full h-24 object-cover"
+                        />
+                      )}
                       <CardContent className="p-3">
                         <div className="flex justify-between items-start mb-1">
                           <p className="font-bold text-sm text-foreground">{offer.company}</p>

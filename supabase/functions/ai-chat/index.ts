@@ -49,6 +49,7 @@ serve(async (req) => {
         clicks_count,
         views_count,
         expires_at,
+        images,
         profiles!offers_company_id_fkey(name, instagram_url)
       `)
       .eq("city", city)
@@ -76,10 +77,11 @@ serve(async (req) => {
         price_old: o.price_old,
         price_new: o.price_new,
         savings_reais: savingsReais,
-        discount_percent: discountPercent,
+        discount: discountPercent,
         tags: o.tags || [],
         company: o.profiles?.name || "Empresa",
         instagram_url: o.profiles?.instagram_url || null,
+        images: o.images || [],
         clicks: o.clicks_count || 0,
         views: o.views_count || 0,
         hours_remaining: hoursRemaining,
