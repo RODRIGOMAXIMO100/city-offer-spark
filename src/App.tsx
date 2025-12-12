@@ -19,6 +19,7 @@ import BlogPostPage from "./pages/BlogPostPage";
 import AuthorPage from "./pages/AuthorPage";
 import HelpPage from "./pages/HelpPage";
 import NotFound from "./pages/NotFound";
+import WhatsAppButton from "./components/WhatsAppButton";
 
 const queryClient = new QueryClient();
 
@@ -82,6 +83,7 @@ const App = () => (
         <AuthProvider>
           <OnboardingProvider>
             <AppRoutes />
+            <WhatsAppButton />
           </OnboardingProvider>
         </AuthProvider>
       </BrowserRouter>
