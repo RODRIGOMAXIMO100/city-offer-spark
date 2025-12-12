@@ -31,6 +31,39 @@ serve(async (req) => {
   }
 
   try {
+    // ========== VERIFICAÇÃO DE SEGURANÇA DO TOKEN ==========
+    const WEBHOOK_TOKEN = Deno.env.get('ASAAS_WEBHOOK_TOKEN');
+    
+    if (!WEBHOOK_TOKEN) {
+      console.error('ASAAS_WEBHOOK_TOKEN not configured');
+      return new Response(JSON.stringify({ error: 'Webhook not configured' }), { 
+        status: 503, 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+      });
+    }
+
+    // O Asaas envia o token no header 'asaas-access-token'
+    const receivedToken = req.headers.get('asaas-access-token');
+    
+    if (!receivedToken) {
+      console.error('No asaas-access-token header received');
+      return new Response(JSON.stringify({ error: 'Missing authentication token' }), { 
+        status: 401, 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+      });
+    }
+
+    if (receivedToken !== WEBHOOK_TOKEN) {
+      console.error('Invalid webhook token received');
+      return new Response(JSON.stringify({ error: 'Invalid authentication token' }), { 
+        status: 401, 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+      });
+    }
+
+    console.log('Webhook token validated successfully');
+    // ========================================================
+
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
