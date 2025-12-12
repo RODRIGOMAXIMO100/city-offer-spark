@@ -604,14 +604,32 @@ function CompanyDashboardContent() {
                               </h3>
                               <Tooltip>
                                 <TooltipTrigger asChild>
-                                  <div className={`flex items-center gap-1 text-xs sm:text-sm ${getScoreColor(offerScore)} shrink-0`}>
+                                  <div className={`flex items-center gap-1 text-xs sm:text-sm ${getScoreColor(offerScore)} shrink-0 cursor-help`}>
                                     <Star className="h-3 w-3 sm:h-4 sm:w-4 fill-current" />
                                     <span className="font-bold">{offerScore.toFixed(1)}</span>
                                   </div>
                                 </TooltipTrigger>
-                                <TooltipContent>
-                                  <p className="font-medium">Nota da Oferta</p>
-                                  <p className="text-xs">{getScoreTip(offerScore)}</p>
+                                <TooltipContent className="max-w-[250px]">
+                                  <p className="font-bold mb-2">Nota da Oferta: {offerScore.toFixed(2)}</p>
+                                  <div className="space-y-1 text-xs">
+                                    <p className="flex justify-between">
+                                      <span>CTR (taxa de cliques):</span>
+                                      <span className="font-medium">{((offer as any).ctr_score || 5).toFixed(1)}</span>
+                                    </p>
+                                    <p className="flex justify-between">
+                                      <span>Qualidade (descrição, imagens):</span>
+                                      <span className="font-medium">{((offer as any).quality_score || 5).toFixed(1)}</span>
+                                    </p>
+                                    <p className="flex justify-between">
+                                      <span>Reputação (Instagram, logo):</span>
+                                      <span className="font-medium">{((offer as any).reputation_score || 5).toFixed(1)}</span>
+                                    </p>
+                                  </div>
+                                  <hr className="my-2 border-border/50" />
+                                  <p className="text-xs text-muted-foreground">{getScoreTip(offerScore)}</p>
+                                  <p className="text-xs font-medium mt-1">
+                                    Custo por lead: R$ {((14 - offerScore) / 10).toFixed(2)}
+                                  </p>
                                 </TooltipContent>
                               </Tooltip>
                             </div>
