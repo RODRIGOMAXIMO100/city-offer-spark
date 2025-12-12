@@ -69,15 +69,24 @@ export default function AuthPage() {
   // Honeypot field - invisible to users, bots will fill it
   const [honeypot, setHoneypot] = useState('');
   
-  // Turnstile token
-  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  // Turnstile tokens
+  const [loginTurnstileToken, setLoginTurnstileToken] = useState<string | null>(null);
+  const [signupTurnstileToken, setSignupTurnstileToken] = useState<string | null>(null);
 
-  const handleTurnstileVerify = useCallback((token: string) => {
-    setTurnstileToken(token);
+  const handleLoginTurnstileVerify = useCallback((token: string) => {
+    setLoginTurnstileToken(token);
   }, []);
 
-  const handleTurnstileExpire = useCallback(() => {
-    setTurnstileToken(null);
+  const handleLoginTurnstileExpire = useCallback(() => {
+    setLoginTurnstileToken(null);
+  }, []);
+
+  const handleSignupTurnstileVerify = useCallback((token: string) => {
+    setSignupTurnstileToken(token);
+  }, []);
+
+  const handleSignupTurnstileExpire = useCallback(() => {
+    setSignupTurnstileToken(null);
   }, []);
 
   const formatCnpj = (value: string) => {
@@ -123,6 +132,16 @@ export default function AuthPage() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!loginTurnstileToken) {
+      toast({
+        title: 'Verificação necessária',
+        description: 'Por favor, complete a verificação de segurança.',
+        variant: 'destructive',
+      });
+      return;
+    }
+    
     setIsLoading(true);
 
     const { error } = await signIn(loginEmail, loginPassword);
@@ -174,7 +193,7 @@ export default function AuthPage() {
     }
 
     // Check eligibility before signup (honeypot, blacklist, rate limit, turnstile)
-    if (!turnstileToken) {
+    if (!signupTurnstileToken) {
       toast({
         title: 'Verificação necessária',
         description: 'Por favor, complete a verificação de segurança.',
@@ -190,7 +209,7 @@ export default function AuthPage() {
           email: signupEmail,
           cpf: signupRole === 'COMPANY' ? cnpjNumbers : null,
           honeypot: honeypot,
-          turnstileToken: turnstileToken
+          turnstileToken: signupTurnstileToken
         }
       });
 
@@ -288,7 +307,15 @@ export default function AuthPage() {
                     />
                   </div>
 
-                  <Button type="submit" className="w-full" disabled={isLoading}>
+                  {/* Cloudflare Turnstile for Login */}
+                  <div className="flex justify-center">
+                    <Turnstile
+                      onVerify={handleLoginTurnstileVerify}
+                      onExpire={handleLoginTurnstileExpire}
+                    />
+                  </div>
+
+                  <Button type="submit" className="w-full" disabled={isLoading || !loginTurnstileToken}>
                     {isLoading ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -502,15 +529,15 @@ export default function AuthPage() {
                     />
                   </div>
 
-                  {/* Cloudflare Turnstile */}
+                  {/* Cloudflare Turnstile for Signup */}
                   <div className="flex justify-center">
                     <Turnstile
-                      onVerify={handleTurnstileVerify}
-                      onExpire={handleTurnstileExpire}
+                      onVerify={handleSignupTurnstileVerify}
+                      onExpire={handleSignupTurnstileExpire}
                     />
                   </div>
 
-                  <Button type="submit" className="w-full" disabled={isLoading || !turnstileToken}>
+                  <Button type="submit" className="w-full" disabled={isLoading || !signupTurnstileToken}>
                     {isLoading ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
