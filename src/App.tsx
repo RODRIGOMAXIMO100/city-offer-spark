@@ -17,6 +17,7 @@ import TransparencyPage from "./pages/TransparencyPage";
 import BlogPage from "./pages/BlogPage";
 import BlogPostPage from "./pages/BlogPostPage";
 import AuthorPage from "./pages/AuthorPage";
+import HelpPage from "./pages/HelpPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -67,6 +68,7 @@ const AppRoutes = () => (
     <Route path="/blog" element={<BlogPage />} />
     <Route path="/blog/:slug" element={<BlogPostPage />} />
     <Route path="/autor/:slug" element={<AuthorPage />} />
+    <Route path="/ajuda" element={<ProtectedRoute><HelpPage /></ProtectedRoute>} />
     <Route path="*" element={<NotFound />} />
   </Routes>
 );
