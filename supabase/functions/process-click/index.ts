@@ -826,6 +826,85 @@ serve(async (req) => {
     // 6. Increment click count
     await supabase.rpc("increment_offer_clicks", { offer_id: offerId });
 
+    // 7. AUTO FRAUD DETECTION - Check affiliate patterns
+    if (validAffiliateId) {
+      try {
+        // Get affiliate click stats for the last 24h
+        const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+        
+        const { data: recentClicks } = await supabase
+          .from("offer_clicks")
+          .select("id, client_ip, is_vpn, geo_mismatch")
+          .eq("affiliate_id", validAffiliateId)
+          .eq("click_type", "MAIN")
+          .gte("created_at", twentyFourHoursAgo);
+
+        if (recentClicks && recentClicks.length >= 10) {
+          const totalClicks = recentClicks.length;
+          const uniqueIPs = new Set(recentClicks.map(c => c.client_ip)).size;
+          const vpnClicks = recentClicks.filter(c => c.is_vpn).length;
+          const geoMismatchClicks = recentClicks.filter(c => c.geo_mismatch).length;
+
+          // Alert: Too few unique IPs (potential self-clicking)
+          if (totalClicks >= 20 && uniqueIPs < 5) {
+            await supabase.from("fraud_alerts").insert({
+              user_id: validAffiliateId,
+              alert_type: "LOW_IP_DIVERSITY",
+              severity: "high",
+              title: "Baixa diversidade de IPs",
+              description: `Afiliado tem ${totalClicks} cliques de apenas ${uniqueIPs} IPs únicos nas últimas 24h.`,
+              data: { total_clicks: totalClicks, unique_ips: uniqueIPs }
+            });
+
+            // Update fraud score
+            await supabase.rpc("update_affiliate_fraud_score", {
+              p_affiliate_id: validAffiliateId,
+              p_score_delta: 15
+            });
+          }
+
+          // Alert: High VPN usage
+          const vpnPercentage = (vpnClicks / totalClicks) * 100;
+          if (totalClicks >= 15 && vpnPercentage > 40) {
+            await supabase.from("fraud_alerts").insert({
+              user_id: validAffiliateId,
+              alert_type: "HIGH_VPN_USAGE",
+              severity: "medium",
+              title: "Alto uso de VPN/Hosting",
+              description: `${vpnPercentage.toFixed(0)}% dos cliques do afiliado vêm de VPN/Hosting.`,
+              data: { vpn_clicks: vpnClicks, total_clicks: totalClicks, vpn_percentage: vpnPercentage }
+            });
+
+            await supabase.rpc("update_affiliate_fraud_score", {
+              p_affiliate_id: validAffiliateId,
+              p_score_delta: 10
+            });
+          }
+
+          // Alert: High geo mismatch
+          const geoMismatchPercentage = (geoMismatchClicks / totalClicks) * 100;
+          if (totalClicks >= 15 && geoMismatchPercentage > 30) {
+            await supabase.from("fraud_alerts").insert({
+              user_id: validAffiliateId,
+              alert_type: "HIGH_GEO_MISMATCH",
+              severity: "medium",
+              title: "Alta inconsistência geográfica",
+              description: `${geoMismatchPercentage.toFixed(0)}% dos cliques têm timezone inconsistente.`,
+              data: { geo_mismatch_clicks: geoMismatchClicks, total_clicks: totalClicks }
+            });
+
+            await supabase.rpc("update_affiliate_fraud_score", {
+              p_affiliate_id: validAffiliateId,
+              p_score_delta: 8
+            });
+          }
+        }
+      } catch (fraudCheckError) {
+        console.error("Error in fraud detection:", fraudCheckError);
+        // Don't fail the click processing due to fraud check errors
+      }
+    }
+
     const trackedRedirectUrl = getTrackedRedirectUrl(
       offer.link_destination,
       offer.link_type,

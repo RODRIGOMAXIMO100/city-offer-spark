@@ -1,5 +1,8 @@
 project_id = "sukvjgxxuzophzjcojvd"
 
+[functions.check-signup-eligibility]
+verify_jwt = false
+
 [functions.process-click]
 verify_jwt = false
 
