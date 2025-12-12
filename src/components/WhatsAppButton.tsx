@@ -1,6 +1,14 @@
 import { MessageCircle } from 'lucide-react';
+import { useLocation } from 'react-router-dom';
 
 const WhatsAppButton = () => {
+  const location = useLocation();
+  
+  // Hide on chat page
+  if (location.pathname === '/chat') {
+    return null;
+  }
+
   const phoneNumber = '5531995118248';
   const message = encodeURIComponent('Olá! Preciso de ajuda com a plataforma.');
   const whatsappUrl = `https://wa.me/${phoneNumber}?text=${message}`;
