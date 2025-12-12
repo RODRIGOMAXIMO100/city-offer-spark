@@ -117,7 +117,7 @@ export default function ClientDashboard() {
             <img src={logo} alt="clilin" className="h-8" />
           </div>
           <div className="flex items-center gap-3">
-            <div className="flex items-center gap-1 text-xs text-muted-foreground">
+            <div data-tour="location" className="flex items-center gap-1 text-xs text-muted-foreground">
               <MapPin className="h-3 w-3" />
               {profile?.city}
             </div>
@@ -218,7 +218,7 @@ export default function ClientDashboard() {
       {/* Input Area */}
       <div className="bg-card border-t border-border p-4">
         <div className="max-w-2xl mx-auto">
-          <div className="relative">
+          <div data-tour="chat" className="relative">
             <Input
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
