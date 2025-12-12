@@ -21,16 +21,14 @@ export function HeroSection() {
 
           {/* Headline */}
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-display font-bold tracking-tight mb-6 animate-fade-in-up" style={{ animationDelay: "0.1s" }}>
-            Conecte ofertas a{" "}
             <span className="bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
-              quem realmente importa
+              Apareça. Indique. Descubra.
             </span>
           </h1>
 
           {/* Subtitle */}
           <p className="text-lg sm:text-xl text-muted-foreground mb-10 max-w-2xl mx-auto leading-relaxed animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
-            Seja encontrado quando alguém perguntar "o que fazer hoje?" — por IA ou por indicação de pessoas reais da sua cidade. 
-            Cliente vai direto pro seu canal — WhatsApp, site ou cardápio.
+            A única plataforma onde empresas, divulgadores e clientes se encontram — com IA e indicação real, direto na sua cidade.
           </p>
 
           {/* CTAs */}
@@ -75,21 +73,21 @@ export function HeroSection() {
             {
               icon: Building2,
               title: "Apareça",
-              desc: "Sua marca visível para toda a cidade",
+              desc: "Seja encontrado por IA e indicação real",
               color: "company",
               gradient: "from-company to-company/70",
             },
             {
-              icon: Users,
-              title: "Seja indicado",
-              desc: "Pessoas reais falam de você",
+              icon: TrendingUp,
+              title: "Indique",
+              desc: "Ganhe comissão por cada cliente",
               color: "affiliate",
               gradient: "from-affiliate to-affiliate/70",
             },
             {
               icon: Sparkles,
-              title: "Conecte direto",
-              desc: "Cliente vai pra onde você escolher",
+              title: "Descubra",
+              desc: "As melhores ofertas da sua cidade",
               color: "client",
               gradient: "from-client to-client/70",
             },
