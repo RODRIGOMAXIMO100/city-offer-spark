@@ -5,7 +5,7 @@ import { AppRole } from '@/types/database';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '@/components/ui/command';
@@ -14,6 +14,7 @@ import { Building2, Users, Sparkles, Loader2, Check, ChevronsUpDown, Eye, EyeOff
 import { useToast } from '@/hooks/use-toast';
 import { BRAZIL_STATES, getCitiesByState } from '@/data/brazilLocations';
 import { cn } from '@/lib/utils';
+import { supabase } from '@/integrations/supabase/client';
 import logoImg from '@/assets/logo.png';
 
 const ROLES: { value: AppRole; label: string; icon: React.ReactNode; description: string; color: string }[] = [
@@ -63,6 +64,9 @@ export default function AuthPage() {
   const [signupTelefone, setSignupTelefone] = useState('');
   const [openCityCombobox, setOpenCityCombobox] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  
+  // Honeypot field - invisible to users, bots will fill it
+  const [honeypot, setHoneypot] = useState('');
 
   const formatCnpj = (value: string) => {
     const numbers = value.replace(/\D/g, '').slice(0, 14);
@@ -155,6 +159,33 @@ export default function AuthPage() {
         setIsLoading(false);
         return;
       }
+    }
+
+    // Check eligibility before signup (honeypot, blacklist, rate limit)
+    try {
+      const { data: eligibilityData, error: eligibilityError } = await supabase.functions.invoke('check-signup-eligibility', {
+        body: {
+          email: signupEmail,
+          cpf: signupRole === 'COMPANY' ? cnpjNumbers : null,
+          honeypot: honeypot
+        }
+      });
+
+      if (eligibilityError) {
+        console.error('Eligibility check error:', eligibilityError);
+        // Continue with signup if check fails (fail open for UX)
+      } else if (!eligibilityData?.eligible) {
+        toast({
+          title: 'Cadastro não permitido',
+          description: eligibilityData?.message || 'Não foi possível criar sua conta.',
+          variant: 'destructive',
+        });
+        setIsLoading(false);
+        return;
+      }
+    } catch (checkError) {
+      console.error('Error checking eligibility:', checkError);
+      // Continue with signup if check fails (fail open for UX)
     }
 
     const telefoneNumbers = signupTelefone.replace(/\D/g, '');
@@ -430,6 +461,22 @@ export default function AuthPage() {
                         )}
                       </button>
                     </div>
+                  </div>
+
+                  {/* Honeypot field - invisible to users, bots will fill it */}
+                  <div 
+                    className="absolute left-[-9999px] top-[-9999px]" 
+                    aria-hidden="true"
+                    style={{ position: 'absolute', left: '-9999px', top: '-9999px' }}
+                  >
+                    <Input
+                      type="text"
+                      name="website"
+                      tabIndex={-1}
+                      autoComplete="off"
+                      value={honeypot}
+                      onChange={(e) => setHoneypot(e.target.value)}
+                    />
                   </div>
 
                   <Button type="submit" className="w-full" disabled={isLoading}>

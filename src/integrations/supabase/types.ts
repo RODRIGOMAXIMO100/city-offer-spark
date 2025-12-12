@@ -829,6 +829,7 @@ export type Database = {
           created_at: string
           email: string | null
           endereco_fiscal: string | null
+          fraud_score: number | null
           id: string
           instagram_url: string | null
           name: string
@@ -857,6 +858,7 @@ export type Database = {
           created_at?: string
           email?: string | null
           endereco_fiscal?: string | null
+          fraud_score?: number | null
           id?: string
           instagram_url?: string | null
           name: string
@@ -885,6 +887,7 @@ export type Database = {
           created_at?: string
           email?: string | null
           endereco_fiscal?: string | null
+          fraud_score?: number | null
           id?: string
           instagram_url?: string | null
           name?: string
@@ -962,6 +965,30 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      signup_rate_limits: {
+        Row: {
+          blocked: boolean | null
+          created_at: string | null
+          email: string | null
+          id: string
+          ip_address: string
+        }
+        Insert: {
+          blocked?: boolean | null
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          ip_address: string
+        }
+        Update: {
+          blocked?: boolean | null
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          ip_address?: string
+        }
+        Relationships: []
       }
       transactions: {
         Row: {
@@ -1291,6 +1318,18 @@ export type Database = {
       }
       cleanup_old_rate_limits: { Args: never; Returns: undefined }
       cleanup_old_sessions: { Args: never; Returns: undefined }
+      cleanup_old_signup_rate_limits: { Args: never; Returns: undefined }
+      create_fraud_alert: {
+        Args: {
+          p_alert_type: string
+          p_data?: Json
+          p_description: string
+          p_severity: string
+          p_title: string
+          p_user_id: string
+        }
+        Returns: string
+      }
       credit_onboarding_bonus: {
         Args: { p_amount: number; p_bonus_type: string; p_user_id: string }
         Returns: boolean
@@ -1321,6 +1360,10 @@ export type Database = {
       recalculate_all_affiliate_stats: { Args: never; Returns: undefined }
       recalculate_all_offer_scores: { Args: never; Returns: undefined }
       reset_weekly_clicks: { Args: never; Returns: undefined }
+      update_affiliate_fraud_score: {
+        Args: { p_affiliate_id: string; p_score_delta: number }
+        Returns: number
+      }
       update_affiliate_stats: {
         Args: { affiliate_profile_id: string; earnings: number }
         Returns: undefined
