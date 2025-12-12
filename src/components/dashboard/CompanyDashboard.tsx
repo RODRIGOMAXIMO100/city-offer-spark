@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useOffers } from '@/hooks/useOffers';
 import { formatBalance, CONFIG, Offer } from '@/types/database';
@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { Banknote, PlusCircle, LogOut, Eye, MousePointer, TrendingUp, Loader2, Instagram, Check, Clock, Trash2, Info, Star, ExternalLink, AlertTriangle, Pencil, Image, HelpCircle } from 'lucide-react';
+import { Banknote, PlusCircle, LogOut, Eye, MousePointer, TrendingUp, Loader2, Instagram, Check, Clock, Trash2, Info, Star, ExternalLink, AlertTriangle, Pencil, Image, HelpCircle, BookOpen } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import CreateOfferModal from './CreateOfferModal';
 import PerformanceChart from './PerformanceChart';
@@ -42,6 +42,7 @@ function CompanyDashboardContent() {
   const { profile, signOut, refreshProfile, user } = useAuth();
   const { offers, loading, fetchMyOffers, deleteOffer } = useOffers();
   const { toast } = useToast();
+  const navigate = useNavigate();
   const { claimBonus, hasClaimedBonus, startTour } = useOnboarding();
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showFiscalModal, setShowFiscalModal] = useState(false);
@@ -315,6 +316,21 @@ function CompanyDashboardContent() {
             >
               <PlusCircle className="h-3 w-3 sm:h-4 sm:w-4" />
             </Button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  onClick={() => navigate('/ajuda')}
+                  className="h-8 w-8 sm:h-9 sm:w-9"
+                >
+                  <BookOpen className="h-3 w-3 sm:h-4 sm:w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Central de Ajuda</p>
+              </TooltipContent>
+            </Tooltip>
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button
