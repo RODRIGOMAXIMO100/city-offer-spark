@@ -38,65 +38,114 @@ function getExpectedTimezone(timezoneOffset: number | null | undefined): string 
   return `UTC${sign}${hours}`;
 }
 
-// VPN/Proxy detection using IPInfo API
-interface IPInfoResponse {
+// ========== SUSPICIOUS ASN LIST (Hosting/VPN providers) ==========
+const SUSPICIOUS_ASNS = [
+  'AS14061',  // DigitalOcean
+  'AS16509',  // Amazon AWS
+  'AS13335',  // Cloudflare
+  'AS20473',  // Vultr
+  'AS63949',  // Linode
+  'AS396982', // Google Cloud
+  'AS8075',   // Microsoft Azure
+  'AS9009',   // M247 (VPN comum)
+  'AS60068',  // Datacamp (VPN)
+  'AS212238', // NordVPN
+  'AS9808',   // OVH
+  'AS36352',  // ColoCrossing
+  'AS46606',  // Unified Layer
+  'AS62563',  // GTHost
+  'AS62567',  // DigitalOcean
+  'AS201011', // Netcup
+  'AS24940',  // Hetzner
+  'AS12876',  // Scaleway
+  'AS51167',  // Contabo
+  'AS394711', // Limenet
+  'AS55286',  // B2 Net Solutions
+  'AS44477',  // Stark Industries
+  'AS136787', // TEFINCOM (NordVPN)
+  'AS209103', // Private Internet Access
+  'AS202425', // IP Volume Inc (VPN)
+  'AS206092', // IPXO (IP reseller)
+  'AS398722', // ExpressVPN
+  'AS394354', // Surfshark
+];
+
+// IPinfo Lite API - FREE & UNLIMITED
+interface IPInfoLiteResponse {
   ip: string;
-  city?: string;
-  region?: string;
-  country?: string;
-  org?: string;
-  privacy?: {
-    vpn?: boolean;
-    proxy?: boolean;
-    tor?: boolean;
-    relay?: boolean;
-    hosting?: boolean;
-  };
+  country: string;
+  country_name: string;
+  continent: string;
+  asn: string;
+  as_name: string;
+  as_domain: string;
 }
 
-async function checkVPNProxy(ip: string): Promise<{
-  isVpn: boolean;
-  isProxy: boolean;
+async function checkIPWithLite(ip: string): Promise<{
+  isFromBrazil: boolean;
+  isSuspiciousASN: boolean;
   country: string | null;
-  city: string | null;
-  org: string | null;
+  asn: string | null;
+  asName: string | null;
+  asDomain: string | null;
 }> {
   const ipinfoApiKey = Deno.env.get("IPINFO_API_KEY");
   
   // Default response if API key not configured or IP is unknown
   if (!ipinfoApiKey || ip === "unknown") {
-    return { isVpn: false, isProxy: false, country: null, city: null, org: null };
+    return { 
+      isFromBrazil: true, // Assume Brazil if can't check
+      isSuspiciousASN: false, 
+      country: null, 
+      asn: null, 
+      asName: null, 
+      asDomain: null 
+    };
   }
 
   try {
-    const response = await fetch(`https://ipinfo.io/${ip}?token=${ipinfoApiKey}`, {
+    const response = await fetch(`https://api.ipinfo.io/lite/${ip}?token=${ipinfoApiKey}`, {
       method: "GET",
       headers: { "Accept": "application/json" },
     });
 
     if (!response.ok) {
-      console.error(`IPInfo API error: ${response.status}`);
-      return { isVpn: false, isProxy: false, country: null, city: null, org: null };
+      console.error(`IPInfo Lite API error: ${response.status}`);
+      return { 
+        isFromBrazil: true, 
+        isSuspiciousASN: false, 
+        country: null, 
+        asn: null, 
+        asName: null, 
+        asDomain: null 
+      };
     }
 
-    const data: IPInfoResponse = await response.json();
+    const data: IPInfoLiteResponse = await response.json();
     
-    // Check privacy fields for VPN/Proxy detection
-    const isVpn = data.privacy?.vpn === true || data.privacy?.hosting === true;
-    const isProxy = data.privacy?.proxy === true || data.privacy?.tor === true || data.privacy?.relay === true;
+    const isFromBrazil = data.country === 'BR';
+    const isSuspiciousASN = SUSPICIOUS_ASNS.includes(data.asn);
 
-    console.log(`IPInfo check for ${ip}: VPN=${isVpn}, Proxy=${isProxy}, Country=${data.country}, City=${data.city}, Org=${data.org}`);
+    console.log(`IPInfo Lite check for ${ip}: Country=${data.country}, ASN=${data.asn}, Org=${data.as_name}, Suspicious=${isSuspiciousASN}`);
 
     return {
-      isVpn,
-      isProxy,
+      isFromBrazil,
+      isSuspiciousASN,
       country: data.country || null,
-      city: data.city || null,
-      org: data.org || null,
+      asn: data.asn || null,
+      asName: data.as_name || null,
+      asDomain: data.as_domain || null,
     };
   } catch (error) {
-    console.error("Error checking VPN/Proxy:", error);
-    return { isVpn: false, isProxy: false, country: null, city: null, org: null };
+    console.error("Error checking IP with Lite API:", error);
+    return { 
+      isFromBrazil: true, 
+      isSuspiciousASN: false, 
+      country: null, 
+      asn: null, 
+      asName: null, 
+      asDomain: null 
+    };
   }
 }
 
@@ -258,13 +307,51 @@ serve(async (req) => {
       );
     }
 
-    // ========== VPN/PROXY DETECTION ==========
-    const vpnCheck = await checkVPNProxy(clientIp);
+    // ========== IP VERIFICATION WITH IPINFO LITE ==========
+    const ipCheck = await checkIPWithLite(clientIp);
     
-    if (vpnCheck.isVpn || vpnCheck.isProxy) {
-      console.log(`VPN/Proxy detected for IP ${clientIp} - Blocking click`);
+    // Block non-Brazilian IPs
+    if (!ipCheck.isFromBrazil && ipCheck.country !== null) {
+      console.log(`Non-Brazilian IP detected: ${clientIp}, Country: ${ipCheck.country} - Blocking click`);
       
-      // Update device fingerprint with VPN detection count
+      await supabase.from("offer_clicks").insert({
+        offer_id: offerId,
+        affiliate_id: null,
+        client_ip: clientIp,
+        user_agent: userAgent,
+        click_type: 'GEO_BLOCKED',
+        is_vpn: false,
+        is_proxy: false,
+        ip_country: ipCheck.country,
+        ip_city: null,
+        ip_org: ipCheck.asName,
+      });
+
+      const blockedRedirectUrl = getTrackedRedirectUrl(
+        offer.link_destination,
+        offer.link_type,
+        offer.title,
+        offerId,
+        offer.city,
+        null
+      );
+
+      return new Response(
+        JSON.stringify({
+          success: true,
+          redirectUrl: blockedRedirectUrl,
+          clickType: 'GEO_BLOCKED',
+          charged: false,
+          reason: "non_brazilian_ip"
+        }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+    
+    // Block suspicious ASNs (hosting/VPN providers)
+    if (ipCheck.isSuspiciousASN) {
+      console.log(`Suspicious ASN detected: ${ipCheck.asn} (${ipCheck.asName}) - Blocking click`);
+      
       if (deviceId) {
         const { data: existingDevice } = await supabase
           .from("device_fingerprints")
@@ -284,21 +371,19 @@ serve(async (req) => {
         }
       }
 
-      // Record the blocked click for analytics
       await supabase.from("offer_clicks").insert({
         offer_id: offerId,
-        affiliate_id: null, // No credit for VPN clicks
+        affiliate_id: null,
         client_ip: clientIp,
         user_agent: userAgent,
         click_type: 'VPN_BLOCKED',
-        is_vpn: vpnCheck.isVpn,
-        is_proxy: vpnCheck.isProxy,
-        ip_country: vpnCheck.country,
-        ip_city: vpnCheck.city,
-        ip_org: vpnCheck.org,
+        is_vpn: true,
+        is_proxy: false,
+        ip_country: ipCheck.country,
+        ip_city: null,
+        ip_org: `${ipCheck.asn} - ${ipCheck.asName}`,
       });
 
-      // Still redirect user but don't charge company or credit affiliate
       const blockedRedirectUrl = getTrackedRedirectUrl(
         offer.link_destination,
         offer.link_type,
@@ -314,7 +399,7 @@ serve(async (req) => {
           redirectUrl: blockedRedirectUrl,
           clickType: 'VPN_BLOCKED',
           charged: false,
-          reason: "vpn_proxy_detected"
+          reason: "suspicious_asn_detected"
         }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
@@ -324,12 +409,8 @@ serve(async (req) => {
     const geoMismatch = !isTimezoneConsistentWithBrazil(timezoneOffset);
     const expectedTimezone = getExpectedTimezone(timezoneOffset);
 
-    // Additional check: IP country should be BR for Brazil-focused platform
-    const ipCountryMismatch = vpnCheck.country && vpnCheck.country !== "BR";
-    
-    if (ipCountryMismatch) {
-      console.log(`IP country mismatch detected - IP country: ${vpnCheck.country}, Expected: BR`);
-    }
+    // Additional check: IP country should be BR for Brazil-focused platform (already handled above)
+    const ipCountryMismatch = ipCheck.country && ipCheck.country !== "BR";
 
     if (geoMismatch && timezoneOffset !== null && timezoneOffset !== undefined) {
       console.log(`Geolocation mismatch detected - TZ offset: ${timezoneOffset} (expected Brazil: -120 to -300)`);
@@ -428,7 +509,7 @@ serve(async (req) => {
           fingerprint_data: advancedFingerprint,
           last_seen_at: new Date().toISOString(),
           browser_timezone: browserTimezone || null,
-          expected_country: vpnCheck.country || null,
+          expected_country: ipCheck.country || null,
         }, { onConflict: 'device_id,ip_address' });
     }
 
@@ -482,11 +563,11 @@ serve(async (req) => {
         timezone_offset: timezoneOffset,
         expected_timezone: expectedTimezone,
         geo_mismatch: geoMismatch,
-        is_vpn: vpnCheck.isVpn,
-        is_proxy: vpnCheck.isProxy,
-        ip_country: vpnCheck.country,
-        ip_city: vpnCheck.city,
-        ip_org: vpnCheck.org,
+        is_vpn: ipCheck.isSuspiciousASN,
+        is_proxy: false,
+        ip_country: ipCheck.country,
+        ip_city: null,
+        ip_org: ipCheck.asName,
       });
 
       const duplicateRedirectUrl = getTrackedRedirectUrl(
@@ -672,11 +753,11 @@ serve(async (req) => {
       timezone_offset: timezoneOffset,
       expected_timezone: expectedTimezone,
       geo_mismatch: geoMismatch || ipCountryMismatch,
-      is_vpn: vpnCheck.isVpn,
-      is_proxy: vpnCheck.isProxy,
-      ip_country: vpnCheck.country,
-      ip_city: vpnCheck.city,
-      ip_org: vpnCheck.org,
+      is_vpn: ipCheck.isSuspiciousASN,
+      is_proxy: false,
+      ip_country: ipCheck.country,
+      ip_city: null,
+      ip_org: ipCheck.asName,
     });
 
     // 6. Increment click count
@@ -691,7 +772,7 @@ serve(async (req) => {
       validAffiliateId
     );
 
-    console.log(`Main click processed - Offer: ${offerId}, CPC: ${cpcCost}, Affiliate: ${validAffiliateId ? `+${actualAffiliatePayout}` : 'none'}, VPN: ${vpnCheck.isVpn}, Country: ${vpnCheck.country}`);
+    console.log(`Main click processed - Offer: ${offerId}, CPC: ${cpcCost}, Affiliate: ${validAffiliateId ? `+${actualAffiliatePayout}` : 'none'}, ASN: ${ipCheck.asn}, Country: ${ipCheck.country}`);
 
     return new Response(
       JSON.stringify({
