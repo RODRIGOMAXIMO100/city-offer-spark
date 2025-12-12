@@ -4,13 +4,11 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Trophy, Medal, Award, TrendingUp, Crown } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
-import { formatCreditsToReal } from '@/types/database';
 
 interface RankingEntry {
   affiliate_id: string;
   profile_name: string;
   clicks: number;
-  earnings: number;
   level_name: string;
   badge_color: string;
 }
@@ -36,49 +34,60 @@ export default function AffiliateRanking({ currentAffiliateId }: AffiliateRankin
     setLoading(true);
 
     try {
-      // Fetch affiliate stats with profile info and level
+      // Use the secure public view for ranking data
+      // This view only exposes: affiliate_id, affiliate_name, rank_position, level_name, badge_color
+      const { data: publicRanking } = await supabase
+        .from('affiliate_ranking_public')
+        .select('*')
+        .order('rank_position', { ascending: true })
+        .limit(10);
+
+      // For click counts, we can only see our own or use aggregate data
+      // Fetch weekly/monthly stats separately (only accessible fields)
       const { data: stats } = await supabase
         .from('affiliate_stats')
-        .select(`
-          affiliate_id,
-          clicks_this_week,
-          clicks_this_month,
-          total_earnings,
-          current_level_id,
-          profiles!affiliate_stats_affiliate_id_fkey(name),
-          affiliate_levels!affiliate_stats_current_level_id_fkey(name, badge_color)
-        `)
+        .select('affiliate_id, clicks_this_week, clicks_this_month')
         .order('clicks_this_week', { ascending: false })
         .limit(50);
 
-      if (stats) {
-        // Weekly ranking (top 10)
+      if (publicRanking && stats) {
+        // Create a map of clicks per affiliate (from what we can access)
+        const clicksMap = new Map(stats.map(s => [s.affiliate_id, {
+          weekly: s.clicks_this_week || 0,
+          monthly: s.clicks_this_month || 0
+        }]));
+
+        // Weekly ranking - sort by weekly clicks
         const weekly = stats
           .filter(s => (s.clicks_this_week || 0) > 0)
           .sort((a, b) => (b.clicks_this_week || 0) - (a.clicks_this_week || 0))
           .slice(0, 10)
-          .map(s => ({
-            affiliate_id: s.affiliate_id,
-            profile_name: (s.profiles as { name: string })?.name || 'Anônimo',
-            clicks: s.clicks_this_week || 0,
-            earnings: s.total_earnings || 0,
-            level_name: (s.affiliate_levels as { name: string })?.name || 'Bronze',
-            badge_color: (s.affiliate_levels as { badge_color: string })?.badge_color || '#CD7F32',
-          }));
+          .map(s => {
+            const rankInfo = publicRanking.find(r => r.affiliate_id === s.affiliate_id);
+            return {
+              affiliate_id: s.affiliate_id,
+              profile_name: rankInfo?.affiliate_name || 'Anônimo',
+              clicks: s.clicks_this_week || 0,
+              level_name: rankInfo?.level_name || 'Bronze',
+              badge_color: rankInfo?.badge_color || '#CD7F32',
+            };
+          });
 
-        // Monthly ranking (top 10)
+        // Monthly ranking - sort by monthly clicks
         const monthly = [...stats]
           .filter(s => (s.clicks_this_month || 0) > 0)
           .sort((a, b) => (b.clicks_this_month || 0) - (a.clicks_this_month || 0))
           .slice(0, 10)
-          .map(s => ({
-            affiliate_id: s.affiliate_id,
-            profile_name: (s.profiles as { name: string })?.name || 'Anônimo',
-            clicks: s.clicks_this_month || 0,
-            earnings: s.total_earnings || 0,
-            level_name: (s.affiliate_levels as { name: string })?.name || 'Bronze',
-            badge_color: (s.affiliate_levels as { badge_color: string })?.badge_color || '#CD7F32',
-          }));
+          .map(s => {
+            const rankInfo = publicRanking.find(r => r.affiliate_id === s.affiliate_id);
+            return {
+              affiliate_id: s.affiliate_id,
+              profile_name: rankInfo?.affiliate_name || 'Anônimo',
+              clicks: s.clicks_this_month || 0,
+              level_name: rankInfo?.level_name || 'Bronze',
+              badge_color: rankInfo?.badge_color || '#CD7F32',
+            };
+          });
 
         setWeeklyRanking(weekly);
         setMonthlyRanking(monthly);
@@ -170,9 +179,6 @@ export default function AffiliateRanking({ currentAffiliateId }: AffiliateRankin
                     {entry.level_name}
                   </Badge>
                 </div>
-                <p className="text-xs text-muted-foreground">
-                  {formatCreditsToReal(entry.earnings)} ganhos
-                </p>
               </div>
               
               <div className="text-right shrink-0">
