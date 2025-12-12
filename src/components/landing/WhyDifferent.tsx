@@ -1,65 +1,24 @@
-import { MessageSquare, Users, Heart, ShieldCheck, TrendingUp, Smartphone } from "lucide-react";
+import { MessageSquare, Users, Globe, Smartphone, DollarSign, Target } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { PRICING_DISCLAIMER } from "@/types/database";
-import logo from "@/assets/logo.png";
-
-const strategicComparison = [
-  {
-    feature: "Cliente vai pra onde?",
-    marketplace: "Pro marketplace",
-    marketplaceNote: "(você perde o contato)",
-    ads: "Pro site genérico",
-    adsNote: "",
-    clilin: "Pro SEU WhatsApp",
-    clilinNote: "✓",
-  },
-  {
-    feature: "Quem indica você?",
-    marketplace: "Algoritmo",
-    marketplaceNote: "",
-    ads: "Algoritmo",
-    adsNote: "",
-    clilin: "Pessoas reais + IA",
-    clilinNote: "✓",
-  },
-  {
-    feature: "Você fideliza?",
-    marketplace: "Não",
-    marketplaceNote: "(cliente é do marketplace)",
-    ads: "Difícil",
-    adsNote: "",
-    clilin: "Sim, você controla",
-    clilinNote: "✓",
-  },
-  {
-    feature: "Taxa por venda?",
-    marketplace: "15-30%",
-    marketplaceNote: "sempre",
-    ads: "Não",
-    adsNote: "",
-    clilin: "Não",
-    clilinNote: "✓",
-  },
-  {
-    feature: "Branding local?",
-    marketplace: "Mínimo",
-    marketplaceNote: "(marca deles)",
-    ads: "Não",
-    adsNote: "",
-    clilin: "Sim, sua marca",
-    clilinNote: "✓",
-  },
-];
 
 const differentials = [
   {
-    icon: MessageSquare,
-    title: "Descoberta por IA",
-    description: "Quando alguém perguntar 'onde comer?' ou 'qual salão?' para nossa IA, sua oferta aparece. Demanda real, não anúncio frio.",
-    highlight: "Seja encontrado naturalmente",
+    icon: Globe,
+    title: "Você escolhe o destino",
+    description: "Cliente vai pro seu WhatsApp, site ou cardápio digital. Você decide onde prefere receber e atender.",
+    highlight: "Flexibilidade total",
     color: "text-primary",
     bgColor: "bg-primary/10",
+  },
+  {
+    icon: MessageSquare,
+    title: "Descoberta natural",
+    description: "Sua oferta aparece quando alguém pergunta pra IA ou quando um divulgador da cidade indica. Demanda real, não anúncio frio.",
+    highlight: "Seja encontrado organicamente",
+    color: "text-emerald-500",
+    bgColor: "bg-emerald-500/10",
   },
   {
     icon: Users,
@@ -70,20 +29,28 @@ const differentials = [
     bgColor: "bg-orange-500/10",
   },
   {
-    icon: Smartphone,
-    title: "Cliente no SEU canal",
-    description: "Diferente de marketplaces, o cliente vai direto pro seu WhatsApp. Você conversa, fideliza e não paga taxa por venda.",
-    highlight: "Relacionamento direto",
-    color: "text-emerald-500",
-    bgColor: "bg-emerald-500/10",
-  },
-  {
-    icon: ShieldCheck,
-    title: "Independência total",
-    description: "Construa SUA base de clientes, não a de uma plataforma. Sem ficar refém de algoritmos ou taxas abusivas.",
-    highlight: "Sua empresa, suas regras",
+    icon: DollarSign,
+    title: "Sem taxa por venda",
+    description: "Pague apenas pelo interesse gerado, não uma porcentagem de cada venda. Você sabe exatamente quanto vai gastar.",
+    highlight: "Preço justo e previsível",
     color: "text-blue-500",
     bgColor: "bg-blue-500/10",
+  },
+  {
+    icon: Smartphone,
+    title: "Relacionamento direto",
+    description: "O cliente vai pro SEU canal — você conversa, entende o que ele precisa e fideliza. Sem intermediários.",
+    highlight: "Construa sua base de clientes",
+    color: "text-purple-500",
+    bgColor: "bg-purple-500/10",
+  },
+  {
+    icon: Target,
+    title: "Foco no local",
+    description: "Feito para negócios locais que querem ser encontrados na própria cidade. Visibilidade onde importa.",
+    highlight: "Sua cidade, sua marca",
+    color: "text-rose-500",
+    bgColor: "bg-rose-500/10",
   },
 ];
 
@@ -94,59 +61,18 @@ export function WhyDifferent() {
         {/* Header */}
         <div className="text-center mb-12">
           <span className="inline-block px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
-            Compare e decida
+            Por que a Clilin
           </span>
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-            O que você REALMENTE ganha com cada plataforma
+            Visibilidade local com flexibilidade
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Não é só sobre custo — é sobre construir SEU negócio, não o de uma plataforma
+            Conecte sua empresa a clientes reais da sua cidade, do jeito que funciona pra você
           </p>
         </div>
 
-        {/* Strategic Comparison Table */}
-        <div className="max-w-4xl mx-auto mb-16 overflow-x-auto">
-          <div className="bg-card rounded-2xl border border-border overflow-hidden shadow-lg min-w-[600px]">
-            {/* Header */}
-            <div className="grid grid-cols-4 gap-2 p-4 bg-muted/50 font-semibold text-sm">
-              <span></span>
-              <span className="text-center text-muted-foreground">Marketplaces</span>
-              <span className="text-center text-muted-foreground">Anúncios Online</span>
-              <span className="text-center">
-                <img src={logo} alt="Clilin" className="h-5 mx-auto object-contain" />
-              </span>
-            </div>
-            {/* Rows */}
-            {strategicComparison.map((row, index) => (
-              <div
-                key={index}
-                className="grid grid-cols-4 gap-2 p-4 border-t border-border items-center"
-              >
-                <span className="font-medium text-sm">{row.feature}</span>
-                <div className="text-center text-sm text-muted-foreground">
-                  <span>{row.marketplace}</span>
-                  {row.marketplaceNote && <span className="block text-xs opacity-70">{row.marketplaceNote}</span>}
-                </div>
-                <div className="text-center text-sm text-muted-foreground">
-                  <span>{row.ads}</span>
-                  {row.adsNote && <span className="block text-xs opacity-70">{row.adsNote}</span>}
-                </div>
-                <div className="text-center text-sm font-medium text-primary">
-                  <span>{row.clilin}</span>
-                  {row.clilinNote === "✓" && <span className="ml-1 text-secondary">✓</span>}
-                </div>
-              </div>
-            ))}
-          </div>
-          
-          {/* Footnote */}
-          <p className="mt-4 text-xs text-muted-foreground text-center">
-            {PRICING_DISCLAIMER.full}
-          </p>
-        </div>
-
-        {/* 4 Pillars Grid */}
-        <div className="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto mb-12">
+        {/* Benefits Grid */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto mb-12">
           {differentials.map((item, index) => (
             <div
               key={index}
@@ -167,6 +93,11 @@ export function WhyDifferent() {
             </div>
           ))}
         </div>
+
+        {/* Footnote */}
+        <p className="text-center text-xs text-muted-foreground mb-8 max-w-2xl mx-auto">
+          {PRICING_DISCLAIMER.full}
+        </p>
 
         {/* CTA */}
         <div className="text-center">
