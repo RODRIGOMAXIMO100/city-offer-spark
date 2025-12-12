@@ -18,6 +18,7 @@ import AffiliateTutorial from './AffiliateTutorial';
 import { Footer } from '@/components/landing/Footer';
 import { OnboardingProvider, useOnboarding } from '@/contexts/OnboardingContext';
 import { WelcomeModal, OnboardingTour, OnboardingChecklist } from '@/components/onboarding';
+import { AffiliateOfferCard } from './AffiliateOfferCard';
 import logo from '@/assets/logo.png';
 
 interface Withdrawal {
@@ -471,147 +472,21 @@ function AffiliateDashboardContent() {
               </CardContent>
             </Card>
           ) : (
-            <div className="space-y-3">
-              {sortedOffers.map((offer, index) => {
-                const discount = Math.round((1 - offer.price_new / offer.price_old) * 100);
-                const expInfo = getExpirationInfo(offer.expires_at);
-                
-                return (
-                  <Card key={offer.id} className="overflow-hidden">
-                    <CardContent className="p-3 sm:p-4">
-                      {/* Rank Badge & Expiration */}
-                      <div className="flex justify-between items-center mb-2 gap-2">
-                        {index < 3 ? (
-                          <Badge 
-                            className={`shrink-0 text-[10px] sm:text-xs ${
-                              index === 0 ? 'bg-yellow-500' : 
-                              index === 1 ? 'bg-gray-400' : 
-                              'bg-amber-600'
-                            }`}
-                          >
-                            #{index + 1} Top
-                          </Badge>
-                        ) : <div />}
-                        <Badge 
-                          variant="outline" 
-                          className={`flex items-center gap-1 text-[10px] sm:text-xs ${expInfo.urgent ? 'border-destructive text-destructive' : ''}`}
-                        >
-                          <Clock className="h-3 w-3 shrink-0" />
-                          <span className="whitespace-nowrap">{expInfo.text}</span>
-                        </Badge>
-                      </div>
-
-                      {/* Title + Company + Discount */}
-                      <div className="flex justify-between items-start mb-2 gap-2">
-                        <div className="min-w-0 flex-1">
-                          <h3 className="font-bold text-foreground text-sm sm:text-base line-clamp-2">{offer.title}</h3>
-                          <p className="text-xs sm:text-sm text-muted-foreground truncate">{offer.profiles?.name}</p>
-                        </div>
-                        <Badge variant="destructive" className="shrink-0 text-xs sm:text-sm">
-                          -{discount}%
-                        </Badge>
-                      </div>
-
-                      {/* Instagram Button - ALWAYS VISIBLE */}
-                      {offer.profiles?.instagram_url ? (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="w-full mb-3 text-pink-500 border-pink-500 hover:bg-pink-500 hover:text-white h-10 font-medium"
-                          onClick={() => openInstagram(offer.profiles!.instagram_url!)}
-                        >
-                          <Instagram className="h-5 w-5 shrink-0 mr-2" />
-                          <span>Ver Instagram da Empresa</span>
-                        </Button>
-                      ) : (
-                        <div className="w-full mb-3 text-xs text-center text-muted-foreground bg-muted/50 rounded-lg py-2">
-                          <Instagram className="h-4 w-4 inline mr-1 opacity-50" />
-                          Instagram não cadastrado
-                        </div>
-                      )}
-
-                      {/* Prices */}
-                      <div className="flex items-center gap-3 text-sm mb-3">
-                        <span className="line-through text-muted-foreground text-xs sm:text-sm">
-                          R$ {offer.price_old.toFixed(2)}
-                        </span>
-                        <span className="font-bold text-secondary text-base sm:text-lg">
-                          R$ {offer.price_new.toFixed(2)}
-                        </span>
-                      </div>
-
-                      {/* Stats */}
-                      <div className="grid grid-cols-3 gap-1.5 sm:gap-2 mb-3 text-center">
-                        <div className="bg-muted rounded-lg py-1.5 sm:py-2 px-1">
-                          <p className="font-bold text-xs sm:text-sm">{offer.views_count}</p>
-                          <p className="text-[9px] sm:text-xs text-muted-foreground">Views</p>
-                        </div>
-                        <div className="bg-muted rounded-lg py-1.5 sm:py-2 px-1">
-                          <p className="font-bold text-xs sm:text-sm">{offer.clicks_count}</p>
-                          <p className="text-[9px] sm:text-xs text-muted-foreground">Cliques</p>
-                        </div>
-                        <div className="bg-affiliate/10 rounded-lg py-1.5 sm:py-2 px-1">
-                          <div className="flex items-center justify-center gap-0.5">
-                            <TrendingUp className="h-3 w-3 text-affiliate shrink-0" />
-                            <p className="font-bold text-xs sm:text-sm text-affiliate">{getScore(offer)}%</p>
-                          </div>
-                          <p className="text-[9px] sm:text-xs text-muted-foreground">CTR</p>
-                        </div>
-                      </div>
-
-                      {/* Commission - Dynamic based on offer score */}
-                      {(() => {
-                        const offerScore = (offer as any).current_offer_score || 5;
-                        const cpcCents = (14 - offerScore) * 10; // CPC em centavos
-                        const affiliateEarning = (cpcCents * 0.5) / 100; // 50% para afiliado em reais
-                        return (
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center bg-affiliate/10 rounded-lg p-2 mb-3 gap-0.5 cursor-help">
-                                  <span className="text-[10px] sm:text-xs text-muted-foreground">Ganho estimado (50%)</span>
-                                  <span className="font-bold text-affiliate text-xs sm:text-sm">
-                                    ~R$ {affiliateEarning.toFixed(2)}/clique
-                                  </span>
-                                </div>
-                              </TooltipTrigger>
-                              <TooltipContent className="max-w-[220px]">
-                                <p className="font-bold mb-1">Cálculo do ganho</p>
-                                <div className="space-y-1 text-xs">
-                                  <p>Nota da oferta: {offerScore.toFixed(1)}</p>
-                                  <p>CPC total: R$ {(cpcCents / 100).toFixed(2)}</p>
-                                  <p>Sua parte (50%): <strong className="text-affiliate">R$ {affiliateEarning.toFixed(2)}</strong></p>
-                                </div>
-                                <p className="text-[10px] mt-1 text-muted-foreground">
-                                  +Bônus de nível pode aumentar até 50%!
-                                </p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
-                        );
-                      })()}
-
-                      {/* Copy Button */}
-                      <Button
-                        onClick={() => copyLink(offer.id)}
-                        className="w-full bg-foreground hover:bg-foreground/90 h-10 sm:h-11 text-xs sm:text-sm"
-                      >
-                        {copiedId === offer.id ? (
-                          <>
-                            <Check className="mr-1.5 h-4 w-4 shrink-0" />
-                            <span>Link Copiado!</span>
-                          </>
-                        ) : (
-                          <>
-                            <Copy className="mr-1.5 h-4 w-4 shrink-0" />
-                            <span className="truncate">COPIAR LINK DE DIVULGAÇÃO</span>
-                          </>
-                        )}
-                      </Button>
-                    </CardContent>
-                  </Card>
-                );
-              })}
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {sortedOffers.map((offer, index) => (
+                <AffiliateOfferCard
+                  key={offer.id}
+                  offer={{
+                    ...offer,
+                    current_offer_score: (offer as any).current_offer_score,
+                    ctr_score: (offer as any).ctr_score,
+                    quality_score: (offer as any).quality_score,
+                    reputation_score: (offer as any).reputation_score,
+                  }}
+                  profileId={profile?.id || ''}
+                  index={index}
+                />
+              ))}
             </div>
           )}
         </div>
