@@ -40,35 +40,91 @@ function getExpectedTimezone(timezoneOffset: number | null | undefined): string 
 
 // ========== SUSPICIOUS ASN LIST (Hosting/VPN providers) ==========
 const SUSPICIOUS_ASNS = [
+  // Major Cloud Providers
   'AS14061',  // DigitalOcean
   'AS16509',  // Amazon AWS
   'AS13335',  // Cloudflare
   'AS20473',  // Vultr
-  'AS63949',  // Linode
+  'AS63949',  // Linode (Akamai)
   'AS396982', // Google Cloud
   'AS8075',   // Microsoft Azure
-  'AS9009',   // M247 (VPN comum)
-  'AS60068',  // Datacamp (VPN)
-  'AS212238', // NordVPN
-  'AS9808',   // OVH
-  'AS36352',  // ColoCrossing
-  'AS46606',  // Unified Layer
-  'AS62563',  // GTHost
-  'AS62567',  // DigitalOcean
-  'AS201011', // Netcup
+  'AS15169',  // Google LLC
+  'AS14618',  // Amazon.com
+  'AS45102',  // Alibaba Cloud
+  'AS37963',  // Alibaba China
+  
+  // European Hosting
   'AS24940',  // Hetzner
   'AS12876',  // Scaleway
   'AS51167',  // Contabo
-  'AS394711', // Limenet
+  'AS201011', // Netcup
+  'AS16276',  // OVH SAS
+  'AS35540',  // OVH Hosting
+  'AS60781',  // Leaseweb
+  'AS28753',  // Leaseweb DE
+  'AS30633',  // Leaseweb NL
+  'AS60068',  // Datacamp Limited
+  
+  // US Hosting
+  'AS36352',  // ColoCrossing
+  'AS46606',  // Unified Layer
   'AS55286',  // B2 Net Solutions
-  'AS44477',  // Stark Industries
+  'AS32097',  // WholeSale Internet
+  'AS20278',  // Nexeon Technologies
+  'AS29802',  // HVC Data Center
+  'AS30633',  // Leaseweb USA
+  'AS62567',  // DigitalOcean NYC
+  'AS394711', // Limenet
+  'AS62563',  // GTHost
+  
+  // Known VPN Providers
+  'AS9009',   // M247 (Many VPNs use this)
+  'AS212238', // NordVPN
   'AS136787', // TEFINCOM (NordVPN)
   'AS209103', // Private Internet Access
-  'AS202425', // IP Volume Inc (VPN)
-  'AS206092', // IPXO (IP reseller)
-  'AS398722', // ExpressVPN
+  'AS398722', // ExpressVPN  
   'AS394354', // Surfshark
+  'AS202425', // IP Volume Inc (VPN reseller)
+  'AS206092', // IPXO (IP reseller)
+  'AS44477',  // Stark Industries (VPN/Hosting)
+  'AS9808',   // Guangdong Mobile (frequent VPN exit)
+  'AS49981',  // WorldStream (VPN hosting)
+  'AS200651', // Flokinet (Privacy hosting)
+  'AS51396',  // Pfcloud (VPN)
+  'AS41378',  // Kirino LLC (VPN)
+  'AS35913',  // DediPath (VPN hosting)
+  'AS40676',  // Psychz Networks
+  'AS25820',  // IT7 Networks (VPN)
+  'AS44592',  // SkyLink Data Center
+  'AS62468',  // Amarutu Technology (VPN)
+  'AS9370',   // Sakura Internet (VPN exit)
+  'AS202448', // MVPS (VPN)
+  'AS211252', // Delis LLC (VPN)
+  'AS211298', // Konstantin Kiselev (VPN)
+  'AS211321', // Xhost Internet (VPN)
+  'AS56971',  // CGI Global (VPN)
+  'AS51852',  // Private Layer (VPN)
+  'AS42708',  // Portlane (VPN)
+  'AS197540', // Netcup GmbH (VPN)
+  'AS35540',  // OVH Hosting
+  
+  // Datacenter/Proxy Networks
+  'AS174',    // Cogent (datacenter)
+  'AS3356',   // Level3/Lumen (datacenter)
+  'AS6939',   // Hurricane Electric
+  'AS7922',   // Comcast Business (datacenter ranges)
+  'AS32748',  // Steadfast Networks
+  'AS33387',  // DataShack
+  'AS30083',  // HEG US (datacenter)
+  'AS397423', // Tier.Net Technologies
+  'AS395003', // Cherry Servers
+  'AS18779',  // EGIHosting
+  'AS54825',  // Packet Host (Equinix Metal)
+  'AS19624',  // Data Foundry
 ];
+
+// Brazilian ISPs that are ALLOWED (not in suspicious list)
+// Claro, Vivo, TIM, Oi, NET, etc. are legitimate residential ISPs
 
 // IPinfo Lite API - FREE & UNLIMITED
 interface IPInfoLiteResponse {
