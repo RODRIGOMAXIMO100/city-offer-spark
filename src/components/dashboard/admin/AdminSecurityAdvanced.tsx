@@ -14,9 +14,11 @@ import {
   Check, 
   Smartphone,
   Globe,
-  UserX
+  UserX,
+  Server
 } from 'lucide-react';
 import AdminPagination, { usePagination } from './AdminPagination';
+import AdminBlockedStats from './AdminBlockedStats';
 
 interface RateLimitData {
   id: string;
@@ -269,29 +271,35 @@ export default function AdminSecurityAdvanced() {
       </div>
 
       {/* Tabs */}
-      <Tabs defaultValue="rate-limits">
+      <Tabs defaultValue="blocked-stats">
         <div className="overflow-x-auto -mx-3 px-3 sm:mx-0 sm:px-0">
-          <TabsList className="inline-flex w-auto min-w-full sm:grid sm:w-full sm:grid-cols-3">
+          <TabsList className="inline-flex w-auto min-w-full sm:grid sm:w-full sm:grid-cols-4">
+            <TabsTrigger value="blocked-stats" className="flex-1 sm:flex-none text-xs sm:text-sm">
+              <Server className="h-4 w-4 sm:mr-2" />
+              <span className="hidden sm:inline">Bloqueios</span>
+            </TabsTrigger>
             <TabsTrigger value="rate-limits" className="flex-1 sm:flex-none text-xs sm:text-sm">
               <Globe className="h-4 w-4 sm:mr-2" />
               <span className="hidden sm:inline">Rate Limits</span>
-              <span className="sm:hidden ml-1">({rateLimits.length})</span>
               <span className="hidden sm:inline ml-1">({rateLimits.length})</span>
             </TabsTrigger>
             <TabsTrigger value="fingerprints" className="flex-1 sm:flex-none text-xs sm:text-sm">
               <Fingerprint className="h-4 w-4 sm:mr-2" />
               <span className="hidden sm:inline">Fingerprints</span>
-              <span className="sm:hidden ml-1">({fingerprints.length})</span>
               <span className="hidden sm:inline ml-1">({fingerprints.length})</span>
             </TabsTrigger>
             <TabsTrigger value="suspicious" className="flex-1 sm:flex-none text-xs sm:text-sm">
               <AlertTriangle className="h-4 w-4 sm:mr-2" />
               <span className="hidden sm:inline">Afiliados</span>
-              <span className="sm:hidden ml-1">({suspiciousAffiliates.length})</span>
               <span className="hidden sm:inline ml-1">({suspiciousAffiliates.length})</span>
             </TabsTrigger>
           </TabsList>
         </div>
+
+        {/* Blocked Stats Tab */}
+        <TabsContent value="blocked-stats">
+          <AdminBlockedStats />
+        </TabsContent>
 
         {/* Rate Limits Tab */}
         <TabsContent value="rate-limits">
