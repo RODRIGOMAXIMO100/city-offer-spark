@@ -544,25 +544,11 @@ export default function OfferPage() {
       </div>
 
       {/* Footer with navigation */}
-      <div className="py-6 space-y-4">
-        <div className="max-w-md mx-auto px-4">
-          <Button
-            variant="outline"
-            className="w-full"
-            onClick={() => {
-              const cityParts = offer.city.split(' - ');
-              const cityName = cityParts[0];
-              const stateName = cityParts[1] || '';
-              navigate(`/?city=${encodeURIComponent(cityName)}&state=${encodeURIComponent(stateName)}#ai-chat`);
-            }}
-          >
-            <Search className="mr-2 h-4 w-4" />
-            Ver Mais Ofertas em {offer.city.split(' - ')[0]}
-          </Button>
-        </div>
+      <div className="py-6">
         <div className="flex justify-center">
           <img src={logo} alt="clilin" className="h-8 opacity-60" />
         </div>
+      </div>
       </div>
     </div>
   );
