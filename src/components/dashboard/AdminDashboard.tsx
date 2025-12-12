@@ -36,6 +36,7 @@ import AdminAlerts from './admin/AdminAlerts';
 import UserDetailModal from './admin/UserDetailModal';
 import { exportUsers, exportOffers, exportTransactions } from './admin/AdminExport';
 import AdminPayments from './admin/AdminPayments';
+import AdminFraudManagement from './admin/AdminFraudManagement';
 
 interface Stats {
   totalCompanies: number;
@@ -377,7 +378,7 @@ export default function AdminDashboard() {
         {/* Tabs */}
         <Tabs defaultValue="users" className="space-y-4" onValueChange={resetFilters}>
           <div className="overflow-x-auto -mx-3 px-3 sm:mx-0 sm:px-0">
-            <TabsList className="inline-flex w-auto min-w-full sm:grid sm:w-full sm:grid-cols-8">
+            <TabsList className="inline-flex w-auto min-w-full sm:grid sm:w-full sm:grid-cols-9">
               <TabsTrigger value="users" className="flex-1 sm:flex-none text-xs sm:text-sm">
                 <Users className="h-4 w-4 sm:mr-2" />
                 <span className="hidden sm:inline">Usuários</span>
@@ -397,6 +398,10 @@ export default function AdminDashboard() {
               <TabsTrigger value="withdrawals" className="flex-1 sm:flex-none text-xs sm:text-sm">
                 <Banknote className="h-4 w-4 sm:mr-2" />
                 <span className="hidden sm:inline">Saques</span>
+              </TabsTrigger>
+              <TabsTrigger value="fraud" className="flex-1 sm:flex-none text-xs sm:text-sm">
+                <Ban className="h-4 w-4 sm:mr-2" />
+                <span className="hidden sm:inline">Anti-Fraude</span>
               </TabsTrigger>
               <TabsTrigger value="blog" className="flex-1 sm:flex-none text-xs sm:text-sm">
                 <FileText className="h-4 w-4 sm:mr-2" />
@@ -616,6 +621,11 @@ export default function AdminDashboard() {
           {/* Withdrawals Tab */}
           <TabsContent value="withdrawals">
             <AdminWithdrawals />
+          </TabsContent>
+
+          {/* Fraud Management Tab */}
+          <TabsContent value="fraud">
+            <AdminFraudManagement />
           </TabsContent>
 
           {/* Blog Tab */}
