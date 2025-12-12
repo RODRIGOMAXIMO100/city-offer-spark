@@ -22,8 +22,8 @@ const benefits = [
   },
   {
     icon: MessageSquare,
-    title: "Cliente no SEU WhatsApp",
-    description: "Diferente de marketplaces, o cliente vai direto pra você. Sem intermediários, sem taxa por venda.",
+    title: "Cliente direto no seu canal",
+    description: "WhatsApp, site ou cardápio — você decide onde receber. Sem intermediários, sem taxa por venda.",
   },
   {
     icon: ShieldCheck,
@@ -56,7 +56,7 @@ export function ForCompanies() {
             <p className="text-lg text-muted-foreground mb-10 leading-relaxed">
               Mais que cliques: sua empresa entra na conversa da cidade. Seja encontrado por IA quando 
               perguntarem "onde comer?" ou indicado por pessoas reais da comunidade. Cliente vai 
-              direto pro seu WhatsApp — você fideliza.
+              direto pro seu canal — você fideliza.
             </p>
 
             {/* Benefits */}
@@ -100,7 +100,7 @@ export function ForCompanies() {
                   </div>
                   <div className="bg-card rounded-xl p-3 sm:p-4 text-center">
                     <p className="text-xl sm:text-3xl font-display font-bold text-company">340</p>
-                    <p className="text-xs text-muted-foreground mt-1">Leads</p>
+                    <p className="text-xs text-muted-foreground mt-1">Contatos</p>
                   </div>
                   <div className="bg-card rounded-xl p-3 sm:p-4 text-center">
                     <p className="text-xl sm:text-3xl font-display font-bold text-secondary">28%</p>

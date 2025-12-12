@@ -30,7 +30,7 @@ export function HeroSection() {
           {/* Subtitle */}
           <p className="text-lg sm:text-xl text-muted-foreground mb-10 max-w-2xl mx-auto leading-relaxed animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
             Seja encontrado quando alguém perguntar "o que fazer hoje?" — por IA ou por indicação de pessoas reais da sua cidade. 
-            Cliente vai direto pro seu WhatsApp.
+            Cliente vai direto pro seu canal — WhatsApp, site ou cardápio.
           </p>
 
           {/* CTAs */}
@@ -55,7 +55,7 @@ export function HeroSection() {
             {[
               { icon: CheckCircle2, text: "Visibilidade local garantida" },
               { icon: CheckCircle2, text: "Branding na comunidade" },
-              { icon: CheckCircle2, text: "Cliente no SEU WhatsApp" },
+              { icon: CheckCircle2, text: "Cliente vai pro seu canal" },
             ].map((item) => (
               <div key={item.text} className="flex items-center gap-2 text-muted-foreground">
                 <item.icon className="h-4 w-4 sm:h-5 sm:w-5 text-secondary shrink-0" />
@@ -89,7 +89,7 @@ export function HeroSection() {
             {
               icon: Sparkles,
               title: "Conecte direto",
-              desc: "Cliente vai pro seu WhatsApp",
+              desc: "Cliente vai pra onde você escolher",
               color: "client",
               gradient: "from-client to-client/70",
             },

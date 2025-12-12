@@ -6,7 +6,7 @@ const options = [
   {
     icon: Building2,
     title: "Empresa",
-    description: "Cadastre ofertas e pague apenas por cliques verificados",
+    description: "Cadastre ofertas e pague apenas por interesse real",
     cta: "Começar como Empresa",
     ctaMobile: "Começar",
     color: "company",
