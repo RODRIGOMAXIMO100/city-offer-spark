@@ -552,7 +552,7 @@ export function PublicAIChat() {
                         <Card
                           key={offer.id}
                           className="cursor-pointer hover:shadow-md transition-shadow bg-background overflow-hidden"
-                          onClick={() => navigate(`/oferta/${offer.id}`)}
+                          onClick={() => navigate(`/oferta/${offer.id}?from=public-chat`)}
                         >
                           {offer.images?.[0] && (
                             <img 
