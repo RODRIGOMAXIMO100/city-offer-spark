@@ -1,0 +1,3 @@
+-- Remover o índice com subquery que não é suportado
+-- O índice idx_affiliate_stats_rank já foi criado na migração anterior
+-- Apenas garantir que não há problema
