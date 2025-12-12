@@ -184,7 +184,7 @@ const HelpPage = () => {
                     </li>
                     <li className="flex items-start gap-3">
                       <Clock className="h-5 w-5 text-yellow-500 mt-0.5 flex-shrink-0" />
-                      <span>Ofertas expiram em <strong>7 dias</strong> após criação</span>
+                      <span>Você define a <strong>data de expiração</strong> da sua oferta</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <Zap className="h-5 w-5 text-blue-500 mt-0.5 flex-shrink-0" />
