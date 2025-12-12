@@ -48,7 +48,6 @@ export function Navbar() {
               { label: "Como Funciona", id: "como-funciona" },
               { label: "Empresas", id: "empresas" },
               { label: "Divulgadores", id: "divulgadores" },
-              { label: "FAQ", id: "faq" },
             ].map((item) => (
               <button 
                 key={item.id}
@@ -58,6 +57,12 @@ export function Navbar() {
                 {item.label}
               </button>
             ))}
+            <Link 
+              to="/chat" 
+              className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground rounded-lg hover:bg-muted/50 transition-all"
+            >
+              Chat IA
+            </Link>
             <Link 
               to="/blog" 
               className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground rounded-lg hover:bg-muted/50 transition-all"
@@ -99,7 +104,6 @@ export function Navbar() {
                 { label: "Como Funciona", id: "como-funciona" },
                 { label: "Empresas", id: "empresas" },
                 { label: "Divulgadores", id: "divulgadores" },
-                { label: "FAQ", id: "faq" },
               ].map((item) => (
                 <button 
                   key={item.id}
@@ -109,6 +113,13 @@ export function Navbar() {
                   {item.label}
                 </button>
               ))}
+              <Link 
+                to="/chat" 
+                onClick={() => setIsOpen(false)}
+                className="text-left px-4 py-3 text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-lg transition-colors"
+              >
+                Chat IA
+              </Link>
               <Link 
                 to="/blog" 
                 onClick={() => setIsOpen(false)}
