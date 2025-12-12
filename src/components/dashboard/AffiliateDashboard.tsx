@@ -259,13 +259,16 @@ function AffiliateDashboardContent() {
       {/* Header */}
       <header className="bg-card border-b border-border sticky top-0 z-10">
         <div className="max-w-2xl mx-auto px-4 py-3">
-          {/* Top row: Logo + Logout */}
+          {/* Top row: Logo + Name + Actions */}
           <div className="flex justify-between items-center mb-2">
-            <div className="flex items-center gap-2">
-              <img src={logo} alt="clilin" className="h-8" />
-              <Badge variant="outline" className="text-affiliate border-affiliate text-xs">
-                Divulgador
-              </Badge>
+            <div className="flex items-center gap-2 min-w-0">
+              <img src={logo} alt="clilin" className="h-8 shrink-0" />
+              <div className="min-w-0">
+                <p className="text-sm font-medium truncate">{profile?.name}</p>
+                <Badge variant="outline" className="text-affiliate border-affiliate text-[10px]">
+                  Divulgador
+                </Badge>
+              </div>
             </div>
             <div className="flex gap-1.5">
               <TooltipProvider>
