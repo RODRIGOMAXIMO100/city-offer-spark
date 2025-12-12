@@ -151,8 +151,20 @@ export function OnboardingProvider({ children }: { children: React.ReactNode }) 
 
   // Carregar estado do onboarding
   useEffect(() => {
-    if (!user || !role) {
+    // Não carregar onboarding se não há usuário, role ainda não carregou, ou é ADMIN
+    if (!user) {
       setState(prev => ({ ...prev, isLoading: false }));
+      return;
+    }
+
+    // Aguardar o role carregar
+    if (role === null) {
+      return;
+    }
+
+    // ADMIN não precisa de onboarding
+    if (role === 'ADMIN') {
+      setState(prev => ({ ...prev, isLoading: false, showWelcomeModal: false }));
       return;
     }
 
@@ -166,6 +178,7 @@ export function OnboardingProvider({ children }: { children: React.ReactNode }) 
 
         if (error && error.code !== 'PGRST116') {
           console.error('Error loading onboarding:', error);
+          setState(prev => ({ ...prev, isLoading: false }));
           return;
         }
 
@@ -184,27 +197,32 @@ export function OnboardingProvider({ children }: { children: React.ReactNode }) 
             showWelcomeModal: !data.tour_completed,
           });
         } else {
-          // Criar registro de onboarding
-          const { error: insertError } = await supabase
-            .from('user_onboarding')
-            .insert({
-              user_id: user.id,
-              role: role,
+          // Criar registro de onboarding apenas para roles válidos
+          const validRoles = ['COMPANY', 'AFFILIATE', 'CLIENT'];
+          if (validRoles.includes(role)) {
+            const { error: insertError } = await supabase
+              .from('user_onboarding')
+              .insert({
+                user_id: user.id,
+                role: role,
+              });
+
+            if (insertError) {
+              console.error('Error creating onboarding:', insertError);
+            }
+
+            setState({
+              isLoading: false,
+              tourCompleted: false,
+              tourCurrentStep: 0,
+              checklistItems: [],
+              bonusEarned: 0,
+              showTour: false,
+              showWelcomeModal: true,
             });
-
-          if (insertError) {
-            console.error('Error creating onboarding:', insertError);
+          } else {
+            setState(prev => ({ ...prev, isLoading: false, showWelcomeModal: false }));
           }
-
-          setState({
-            isLoading: false,
-            tourCompleted: false,
-            tourCurrentStep: 0,
-            checklistItems: [],
-            bonusEarned: 0,
-            showTour: false,
-            showWelcomeModal: true,
-          });
         }
       } catch (err) {
         console.error('Error in loadOnboarding:', err);
