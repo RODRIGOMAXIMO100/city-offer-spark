@@ -33,10 +33,7 @@ export const ONBOARDING_BONUSES: Record<string, BonusMap> = {
     first_offer: { amount: 100, label: 'Criar primeira oferta' }, // R$1,00
     first_click: { amount: 100, label: 'Receber primeiro clique' }, // R$1,00
   }, // Total: R$5,00
-  CLIENT: {
-    tour_completed: { amount: 250, label: 'Completar o tour' }, // R$2,50
-    first_search: { amount: 250, label: 'Fazer primeira busca' }, // R$2,50
-  }, // Total: R$5,00
+  CLIENT: {}, // Cliente não tem bônus
 };
 
 // Steps do tour por tipo de usuário
@@ -95,16 +92,22 @@ export const TOUR_STEPS: Record<string, TourStep[]> = {
   ],
   CLIENT: [
     {
-      target: '[data-tour="chat"]',
-      title: 'Chat Inteligente',
-      content: 'Converse com nossa IA para encontrar as melhores ofertas da sua cidade!',
-      position: 'bottom',
+      target: '[data-tour="chat-input"]',
+      title: 'Busque Ofertas',
+      content: 'Digite o que você procura: "pizza", "academia", "salão de beleza"... Nossa IA encontra as melhores ofertas para você!',
+      position: 'top',
     },
     {
       target: '[data-tour="location"]',
-      title: 'Sua Localização',
-      content: 'Diga sua cidade para ver ofertas exclusivas perto de você.',
-      position: 'top',
+      title: 'Sua Cidade',
+      content: 'As ofertas são filtradas pela sua localização para mostrar apenas o que está perto de você.',
+      position: 'bottom',
+    },
+    {
+      target: '[data-tour="chat-area"]',
+      title: 'Resultados Personalizados',
+      content: 'Aqui aparecem as ofertas encontradas. Clique em "Ver Oferta" para mais detalhes ou acesse direto o Instagram da empresa.',
+      position: 'bottom',
     },
   ],
 };

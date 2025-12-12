@@ -135,7 +135,7 @@ export default function ClientDashboard() {
       </header>
 
       {/* Chat Area */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 max-w-2xl mx-auto w-full">
+      <div data-tour="chat-area" className="flex-1 overflow-y-auto p-4 space-y-4 max-w-2xl mx-auto w-full">
         {messages.map((msg) => (
           <div
             key={msg.id}
@@ -224,7 +224,7 @@ export default function ClientDashboard() {
       {/* Input Area */}
       <div className="bg-card border-t border-border p-4">
         <div className="max-w-2xl mx-auto">
-          <div data-tour="chat" className="relative">
+          <div data-tour="chat-input" className="relative">
             <Input
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
