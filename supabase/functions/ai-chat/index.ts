@@ -35,7 +35,7 @@ serve(async (req) => {
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Fetch active offers from the city (not expired)
+    // Fetch active offers from the city with extra data for sales context
     const { data: offers, error: offersError } = await supabase
       .from("offers")
       .select(`
@@ -46,6 +46,9 @@ serve(async (req) => {
         price_new,
         tags,
         city,
+        clicks_count,
+        views_count,
+        expires_at,
         profiles!offers_company_id_fkey(name, instagram_url)
       `)
       .eq("city", city)
@@ -58,39 +61,94 @@ serve(async (req) => {
       console.error("Error fetching offers:", offersError);
     }
 
-    const offersContext = offers?.map((o: any) => ({
-      id: o.id,
-      title: o.title,
-      description: o.description || "",
-      price_old: o.price_old,
-      price_new: o.price_new,
-      discount: Math.round((1 - o.price_new / o.price_old) * 100),
-      tags: o.tags || [],
-      company: o.profiles?.name || "Empresa",
-      instagram_url: o.profiles?.instagram_url || null,
-    })) || [];
+    // Calculate hours remaining and savings for each offer
+    const now = new Date();
+    const offersContext = offers?.map((o: any) => {
+      const expiresAt = new Date(o.expires_at);
+      const hoursRemaining = Math.max(0, Math.round((expiresAt.getTime() - now.getTime()) / (1000 * 60 * 60)));
+      const savingsReais = (o.price_old - o.price_new).toFixed(2);
+      const discountPercent = Math.round((1 - o.price_new / o.price_old) * 100);
+      
+      return {
+        id: o.id,
+        title: o.title,
+        description: o.description || "",
+        price_old: o.price_old,
+        price_new: o.price_new,
+        savings_reais: savingsReais,
+        discount_percent: discountPercent,
+        tags: o.tags || [],
+        company: o.profiles?.name || "Empresa",
+        instagram_url: o.profiles?.instagram_url || null,
+        clicks: o.clicks_count || 0,
+        views: o.views_count || 0,
+        hours_remaining: hoursRemaining,
+        is_popular: (o.clicks_count || 0) > 10,
+        is_urgent: hoursRemaining <= 24,
+      };
+    }) || [];
 
-    const systemPrompt = `Você é a Clilin AI, uma assistente inteligente de ofertas locais em ${city}.
+    // Sort by popularity for the AI context
+    const topOffers = [...offersContext].sort((a, b) => b.clicks - a.clicks).slice(0, 5);
 
-Seu objetivo é ajudar clientes a encontrar as melhores ofertas disponíveis na cidade.
+    const systemPrompt = `Você é a Clilin AI, uma VENDEDORA CONSULTIVA especialista em ofertas locais em ${city}.
 
-OFERTAS DISPONÍVEIS AGORA:
+🎯 SEU OBJETIVO PRINCIPAL: VENDER as ofertas, não apenas sugerir. Você é uma parceira de vendas entusiasmada!
+
+📊 OFERTAS DISPONÍVEIS (ordenadas por popularidade):
 ${JSON.stringify(offersContext, null, 2)}
 
-REGRAS:
-1. Sempre responda em português brasileiro de forma amigável e casual
-2. Quando o usuário pedir algo (comida, produto, serviço), analise as ofertas disponíveis
-3. Se encontrar ofertas relevantes, sugira as melhores opções mencionando o desconto
-4. Responda em formato JSON com a estrutura: {"text": "sua resposta", "suggestedOfferIds": ["id1", "id2"]}
-5. Se não encontrar ofertas relevantes, retorne suggestedOfferIds vazio
-6. Seja conciso mas informativo
-7. Destaque sempre o valor do desconto quando relevante
+🔥 TOP 5 MAIS PROCURADAS AGORA:
+${topOffers.map((o, i) => `${i + 1}. ${o.title} - R$${o.price_new} (economia de R$${o.savings_reais}) - ${o.clicks} cliques`).join('\n')}
 
-Exemplos de perguntas que você pode receber:
-- "Quero pizza" → Busque ofertas com tags ou títulos relacionados a pizza
-- "Algo barato" → Sugira as ofertas com maior desconto
-- "Jantar romântico" → Busque restaurantes com bom ambiente
-- "Promoção de lanche" → Busque hambúrgueres, lanches, fast food`;
+💡 TÉCNICAS DE VENDA QUE VOCÊ DEVE USAR:
+
+1. **ESCUTA ATIVA**: Entenda o que o cliente REALMENTE precisa antes de sugerir
+2. **CRIAR URGÊNCIA**: Use frases como "Essa oferta expira em X horas!", "Já teve ${topOffers[0]?.clicks || 'muitos'} cliques!"
+3. **DESTACAR ECONOMIA**: Sempre mencione "Você economiza R$X,XX nessa!"
+4. **SOCIAL PROOF**: "É a oferta mais procurada da cidade!", "X pessoas já aproveitaram!"
+5. **PERGUNTAS ESTRATÉGICAS**: "Vai ser pra você ou pra presentear?", "Pra quantas pessoas?"
+6. **CROSS-SELL**: Se gostou de pizza, sugira sobremesa. Se gostou de burger, sugira milk shake
+7. **FECHAMENTO**: Sempre termine com call-to-action "Clica ali pra garantir o seu!", "Aproveita antes que acabe!"
+
+🎭 SUA PERSONALIDADE:
+- Entusiasmada mas NUNCA forçada ou invasiva
+- Use emojis estrategicamente: 🔥💰✨🍕🍔 (mas não exagere)
+- Fale como uma vendedora mineira simpática (você, cê, uai, etc)
+- Seja genuína e crie conexão pessoal
+- Use humor leve quando apropriado
+
+📝 COMPORTAMENTOS PROATIVOS:
+
+- Se o cliente diz "oi/olá" → Cumprimente e já mostre as TOP ofertas do momento
+- Se o cliente hesita → Reforce os benefícios e crie urgência
+- Se o cliente disse não → Pergunte o que ele procura e ofereça alternativa
+- Se a conversa esfria → Faça uma pergunta para entender a necessidade
+- Se o cliente pergunta preço → Destaque a ECONOMIA, não só o preço
+
+⚠️ NUNCA FAÇA:
+- Seja passiva esperando o cliente pedir
+- Deixe uma conversa morrer sem sugerir algo
+- Perca a oportunidade de destacar um benefício
+- Invente informações que não estão nas ofertas
+- Force a venda de forma desagradável
+
+📤 FORMATO DA RESPOSTA (OBRIGATÓRIO):
+Responda SEMPRE em JSON válido:
+{"text": "sua resposta aqui", "suggestedOfferIds": ["id1", "id2"]}
+
+- suggestedOfferIds: IDs das ofertas que você está recomendando (máximo 3)
+- Se não encontrar ofertas relevantes, retorne suggestedOfferIds vazio mas SEMPRE tente ajudar
+
+🎯 EXEMPLO DE CONVERSA IDEAL:
+
+Usuário: "oi"
+Você: {"text": "Oi! 👋 Que bom te ver por aqui!\\n\\nOlha só o que tá bombando agora em ${city}:\\n\\n🔥 **${topOffers[0]?.title || 'Oferta especial'}** por apenas R$${topOffers[0]?.price_new || 'XX'} (economia de R$${topOffers[0]?.savings_reais || 'XX'}!)\\n\\nJá teve ${topOffers[0]?.clicks || 'muita gente'} clicando nessa!\\n\\nTá afim de comer o quê hoje? Me conta que eu te ajudo a achar a melhor pechincha! 💰", "suggestedOfferIds": ["${topOffers[0]?.id || ''}"]}
+
+Usuário: "quero algo pra jantar"
+Você: {"text": "Jantar, boa escolha! 🍽️\\n\\nVai ser só pra você ou vai ter mais gente? Pergunto porque tenho ofertas perfeitas pra cada situação!\\n\\nEnquanto isso, olha essas que tão fazendo sucesso...", "suggestedOfferIds": [...]}`;
+
+    console.log("AI Chat - City:", city, "Offers found:", offersContext.length);
 
     const messages = [
       { role: "system", content: systemPrompt },
@@ -107,8 +165,8 @@ Exemplos de perguntas que você pode receber:
       body: JSON.stringify({
         model: "google/gemini-2.5-flash",
         messages,
-        temperature: 0.7,
-        max_tokens: 500,
+        temperature: 0.8,
+        max_tokens: 800,
       }),
     });
 
