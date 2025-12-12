@@ -21,22 +21,22 @@ export type BonusMap = Record<string, BonusItem>;
 export const ONBOARDING_BONUSES: Record<string, BonusMap> = {
   AFFILIATE: {
     tour_completed: { amount: 500, label: 'Completar o tour' }, // R$5,00
-    first_link_copied: { amount: 5, label: 'Copiar primeiro link' },
-    first_click: { amount: 10, label: 'Primeiro clique válido' },
-    payment_data_filled: { amount: 5, label: 'Preencher dados PIX' },
-    ten_clicks: { amount: 20, label: 'Atingir 10 cliques' },
-  },
+    first_link_copied: { amount: 500, label: 'Copiar primeiro link' }, // R$5,00
+    first_click: { amount: 1000, label: 'Primeiro clique válido' }, // R$10,00
+    payment_data_filled: { amount: 1000, label: 'Preencher dados PIX' }, // R$10,00
+    ten_clicks: { amount: 2000, label: 'Atingir 10 cliques' }, // R$20,00
+  }, // Total: R$50,00
   COMPANY: {
     tour_completed: { amount: 500, label: 'Completar o tour' }, // R$5,00
-    logo_added: { amount: 20, label: 'Adicionar logo' },
-    instagram_connected: { amount: 20, label: 'Conectar Instagram' },
-    first_offer: { amount: 50, label: 'Criar primeira oferta' },
-    first_click: { amount: 10, label: 'Receber primeiro clique' },
-  },
+    logo_added: { amount: 500, label: 'Adicionar logo' }, // R$5,00
+    instagram_connected: { amount: 500, label: 'Conectar Instagram' }, // R$5,00
+    first_offer: { amount: 1500, label: 'Criar primeira oferta' }, // R$15,00
+    first_click: { amount: 2000, label: 'Receber primeiro clique' }, // R$20,00
+  }, // Total: R$50,00
   CLIENT: {
     tour_completed: { amount: 500, label: 'Completar o tour' }, // R$5,00
-    first_search: { amount: 0, label: 'Fazer primeira busca' },
-  },
+    first_search: { amount: 500, label: 'Fazer primeira busca' }, // R$5,00
+  }, // Total: R$10,00
 };
 
 // Steps do tour por tipo de usuário
