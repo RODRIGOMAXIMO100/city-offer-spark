@@ -62,19 +62,25 @@ export const TOUR_STEPS: Record<string, TourStep[]> = {
     {
       target: '[data-tour="balance"]',
       title: 'Seus Créditos',
-      content: 'Veja seus créditos e adicione mais clicando aqui. Você só paga por cliques e leads reais!',
+      content: 'Veja seus créditos e adicione mais clicando no "+". Você só paga por cliques e leads reais!',
+      position: 'bottom',
+    },
+    {
+      target: '[data-tour="company-logo"]',
+      title: 'Logo da Empresa',
+      content: 'Adicione a logo da sua empresa para aparecer nas ofertas e ganhar credibilidade.',
       position: 'bottom',
     },
     {
       target: '[data-tour="performance"]',
       title: 'Desempenho',
-      content: 'Acompanhe views, cliques e CTR das suas ofertas em tempo real.',
+      content: 'Acompanhe views, leads e taxa de conversão das suas ofertas em tempo real.',
       position: 'bottom',
     },
     {
       target: '[data-tour="create-offer"]',
       title: 'Criar Oferta',
-      content: 'Crie ofertas com descontos atrativos. Quanto melhor a oferta, mais cliques você recebe!',
+      content: 'Crie ofertas com descontos atrativos. Quanto melhor a oferta, mais leads você recebe!',
       position: 'top',
     },
   ],

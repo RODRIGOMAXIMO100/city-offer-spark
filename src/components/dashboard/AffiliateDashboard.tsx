@@ -370,7 +370,9 @@ function AffiliateDashboardContent() {
           <TabsContent value="inicio" className="space-y-6">
             {/* Affiliate Level Card */}
             {profile?.id && (
-              <AffiliateLevel affiliateId={profile.id} />
+              <div data-tour="level">
+                <AffiliateLevel affiliateId={profile.id} />
+              </div>
             )}
 
             {/* Info Card - Earnings Explanation */}
