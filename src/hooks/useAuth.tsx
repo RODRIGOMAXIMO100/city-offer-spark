@@ -139,7 +139,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signUp = async (email: string, password: string, name: string, city: string, userRole: AppRole, cnpj?: string, telefone?: string) => {
     try {
-      const redirectUrl = `${window.location.origin}/`;
+      // Garante que o link de confirmação sempre use o domínio personalizado em produção
+      const baseUrl = window.location.hostname.includes('lovableproject.com')
+        ? 'https://clilin.com'
+        : window.location.origin;
+      const redirectUrl = `${baseUrl}/`;
       
       const { data, error } = await supabase.auth.signUp({
         email,
@@ -200,7 +204,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signInWithGoogle = async () => {
-    const redirectUrl = `${window.location.origin}/auth/callback`;
+    // Se o usuário estiver acessando pelo domínio da Lovable,
+    // força o callback a usar o domínio personalizado em produção
+    const baseUrl = window.location.hostname.includes('lovableproject.com')
+      ? 'https://clilin.com'
+      : window.location.origin;
+    const redirectUrl = `${baseUrl}/auth/callback`;
     
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
