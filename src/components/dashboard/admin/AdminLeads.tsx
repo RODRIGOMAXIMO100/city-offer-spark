@@ -40,6 +40,8 @@ interface LeadData {
   company_name?: string;
   company_id?: string;
   city?: string;
+  niche_name?: string;
+  niche_icon?: string;
 }
 
 interface CompanyOption {
@@ -47,9 +49,17 @@ interface CompanyOption {
   name: string;
 }
 
+interface NicheOption {
+  id: string;
+  name: string;
+  icon: string | null;
+  category: string;
+}
+
 export default function AdminLeads() {
   const [leads, setLeads] = useState<LeadData[]>([]);
   const [companies, setCompanies] = useState<CompanyOption[]>([]);
+  const [niches, setNiches] = useState<NicheOption[]>([]);
   const [cities, setCities] = useState<string[]>([]);
   const [allTags, setAllTags] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
@@ -59,6 +69,7 @@ export default function AdminLeads() {
   const [companyFilter, setCompanyFilter] = useState('all');
   const [cityFilter, setCityFilter] = useState('all');
   const [tagFilter, setTagFilter] = useState('all');
+  const [nicheFilter, setNicheFilter] = useState('all');
   const [validFilter, setValidFilter] = useState<'all' | 'valid' | 'invalid'>('all');
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
@@ -80,6 +91,7 @@ export default function AdminLeads() {
     await Promise.all([
       fetchLeads(),
       fetchCompanies(),
+      fetchNiches(),
       fetchFiltersData()
     ]);
     setLoading(false);
@@ -87,6 +99,13 @@ export default function AdminLeads() {
 
   const fetchLeads = async () => {
     try {
+      // Fetch niches for mapping
+      const { data: nichesData } = await supabase
+        .from('niches')
+        .select('id, name, icon');
+      
+      const nichesMap = new Map(nichesData?.map(n => [n.id, { name: n.name, icon: n.icon }]) || []);
+
       const { data, error } = await supabase
         .from('leads')
         .select(`
@@ -102,7 +121,7 @@ export default function AdminLeads() {
             tags,
             city,
             company_id,
-            profiles:company_id (name)
+            profiles:company_id (name, niche_id)
           )
         `)
         .order('created_at', { ascending: false })
@@ -110,20 +129,27 @@ export default function AdminLeads() {
 
       if (error) throw error;
 
-      const formattedLeads: LeadData[] = data?.map(lead => ({
-        id: lead.id,
-        name: lead.name,
-        phone_whatsapp: lead.phone_whatsapp,
-        created_at: lead.created_at || '',
-        is_valid: lead.is_valid ?? true,
-        offer_id: lead.offer_id,
-        affiliate_id: lead.affiliate_id,
-        offer_title: (lead.offers as any)?.title || 'N/A',
-        offer_tags: (lead.offers as any)?.tags || [],
-        company_name: (lead.offers as any)?.profiles?.name || 'N/A',
-        company_id: (lead.offers as any)?.company_id,
-        city: (lead.offers as any)?.city || 'N/A'
-      })) || [];
+      const formattedLeads: LeadData[] = data?.map(lead => {
+        const nicheId = (lead.offers as any)?.profiles?.niche_id;
+        const nicheInfo = nicheId ? nichesMap.get(nicheId) : null;
+        
+        return {
+          id: lead.id,
+          name: lead.name,
+          phone_whatsapp: lead.phone_whatsapp,
+          created_at: lead.created_at || '',
+          is_valid: lead.is_valid ?? true,
+          offer_id: lead.offer_id,
+          affiliate_id: lead.affiliate_id,
+          offer_title: (lead.offers as any)?.title || 'N/A',
+          offer_tags: (lead.offers as any)?.tags || [],
+          company_name: (lead.offers as any)?.profiles?.name || 'N/A',
+          company_id: (lead.offers as any)?.company_id,
+          city: (lead.offers as any)?.city || 'N/A',
+          niche_name: nicheInfo?.name || null,
+          niche_icon: nicheInfo?.icon || null
+        };
+      }) || [];
 
       setLeads(formattedLeads);
 
@@ -156,6 +182,21 @@ export default function AdminLeads() {
     }
   };
 
+  const fetchNiches = async () => {
+    try {
+      const { data } = await supabase
+        .from('niches')
+        .select('id, name, icon, category')
+        .eq('active', true)
+        .order('category')
+        .order('name');
+      
+      setNiches(data || []);
+    } catch (error) {
+      console.error('Error fetching niches:', error);
+    }
+  };
+
   const fetchFiltersData = async () => {
     try {
       const { data: offersData } = await supabase
@@ -184,6 +225,7 @@ export default function AdminLeads() {
       const matchesCompany = companyFilter === 'all' || lead.company_id === companyFilter;
       const matchesCity = cityFilter === 'all' || lead.city === cityFilter;
       const matchesTag = tagFilter === 'all' || lead.offer_tags?.includes(tagFilter);
+      const matchesNiche = nicheFilter === 'all' || lead.niche_name === niches.find(n => n.id === nicheFilter)?.name;
       const matchesValid = validFilter === 'all' || 
         (validFilter === 'valid' && lead.is_valid) || 
         (validFilter === 'invalid' && !lead.is_valid);
@@ -192,9 +234,9 @@ export default function AdminLeads() {
       const matchesDateFrom = !dateFrom || leadDate >= new Date(dateFrom);
       const matchesDateTo = !dateTo || leadDate <= new Date(dateTo + 'T23:59:59');
       
-      return matchesSearch && matchesCompany && matchesCity && matchesTag && matchesValid && matchesDateFrom && matchesDateTo;
+      return matchesSearch && matchesCompany && matchesCity && matchesTag && matchesNiche && matchesValid && matchesDateFrom && matchesDateTo;
     });
-  }, [leads, searchTerm, companyFilter, cityFilter, tagFilter, validFilter, dateFrom, dateTo]);
+  }, [leads, searchTerm, companyFilter, cityFilter, tagFilter, nicheFilter, niches, validFilter, dateFrom, dateTo]);
 
   const pagination = usePagination(filteredLeads, 20);
 
@@ -225,6 +267,19 @@ export default function AdminLeads() {
       .slice(0, 5);
   }, [filteredLeads]);
 
+  const leadsByNiche = useMemo(() => {
+    const grouped = filteredLeads.reduce((acc, lead) => {
+      const niche = lead.niche_name || 'Não classificado';
+      acc[niche] = (acc[niche] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+    return Object.entries(grouped)
+      .map(([name, value]) => ({ name, value }))
+      .sort((a, b) => b.value - a.value)
+      .slice(0, 6);
+  }, [filteredLeads]);
+
   const COLORS = ['hsl(var(--primary))', 'hsl(var(--secondary))', 'hsl(var(--accent))', 'hsl(var(--muted))', 'hsl(var(--destructive))'];
 
   const clearFilters = () => {
@@ -232,6 +287,7 @@ export default function AdminLeads() {
     setCompanyFilter('all');
     setCityFilter('all');
     setTagFilter('all');
+    setNicheFilter('all');
     setValidFilter('all');
     setDateFrom('');
     setDateTo('');
@@ -423,16 +479,16 @@ export default function AdminLeads() {
               </SelectContent>
             </Select>
 
-            {/* Tag Filter */}
-            <Select value={tagFilter} onValueChange={setTagFilter}>
+            {/* Niche Filter */}
+            <Select value={nicheFilter} onValueChange={setNicheFilter}>
               <SelectTrigger>
                 <Tag className="h-4 w-4 mr-2" />
-                <SelectValue placeholder="Nicho/Tag" />
+                <SelectValue placeholder="Nicho" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Todos Nichos</SelectItem>
-                {allTags.map(tag => (
-                  <SelectItem key={tag} value={tag}>{tag}</SelectItem>
+                {niches.map(niche => (
+                  <SelectItem key={niche.id} value={niche.id}>{niche.icon} {niche.name}</SelectItem>
                 ))}
               </SelectContent>
             </Select>

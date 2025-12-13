@@ -541,6 +541,33 @@ export type Database = {
           },
         ]
       }
+      niches: {
+        Row: {
+          active: boolean | null
+          category: string
+          created_at: string | null
+          icon: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          active?: boolean | null
+          category: string
+          created_at?: string | null
+          icon?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          active?: boolean | null
+          category?: string
+          created_at?: string | null
+          icon?: string | null
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
       notifications: {
         Row: {
           created_at: string | null
@@ -977,6 +1004,9 @@ export type Database = {
           id: string
           instagram_url: string | null
           name: string
+          niche_confidence: number | null
+          niche_id: string | null
+          niche_last_updated: string | null
           nome_completo: string | null
           pix_key: string | null
           pix_tipo: string | null
@@ -1006,6 +1036,9 @@ export type Database = {
           id?: string
           instagram_url?: string | null
           name: string
+          niche_confidence?: number | null
+          niche_id?: string | null
+          niche_last_updated?: string | null
           nome_completo?: string | null
           pix_key?: string | null
           pix_tipo?: string | null
@@ -1035,6 +1068,9 @@ export type Database = {
           id?: string
           instagram_url?: string | null
           name?: string
+          niche_confidence?: number | null
+          niche_id?: string | null
+          niche_last_updated?: string | null
           nome_completo?: string | null
           pix_key?: string | null
           pix_tipo?: string | null
@@ -1057,6 +1093,13 @@ export type Database = {
             columns: ["banned_by"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "profiles_niche_id_fkey"
+            columns: ["niche_id"]
+            isOneToOne: false
+            referencedRelation: "niches"
             referencedColumns: ["id"]
           },
         ]

@@ -172,6 +172,19 @@ export function useOffers(city?: string) {
         description: "Sua oferta está ativa e visível para os divulgadores.",
       });
 
+      // Classify company niche in background (non-blocking)
+      supabase.functions.invoke('classify-company-niche', {
+        body: { company_id: profile.id }
+      }).then(({ error }) => {
+        if (error) {
+          console.log('Niche classification skipped:', error.message);
+        } else {
+          console.log('Company niche classified successfully');
+        }
+      }).catch(err => {
+        console.log('Niche classification error:', err);
+      });
+
       return data;
     } catch (err) {
       console.error('Error creating offer:', err);
