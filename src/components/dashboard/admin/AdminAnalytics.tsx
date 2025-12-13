@@ -18,7 +18,7 @@ import {
   LineChart,
   Line
 } from 'recharts';
-import { TrendingUp, TrendingDown, Users, MousePointerClick, DollarSign, Megaphone, Eye, Target } from 'lucide-react';
+import { TrendingUp, TrendingDown, Users, MousePointerClick, DollarSign, Megaphone, Eye, Target, Shield } from 'lucide-react';
 import { formatCredits, CONFIG } from '@/types/database';
 
 interface AnalyticsData {
@@ -376,7 +376,7 @@ export default function AdminAnalytics() {
           icon={Users}
         />
         <ComparisonCard 
-          title="Cliques (tracking)" 
+          title="Cliques (Anti-fraude)" 
           current={comparison.clicks.current} 
           previous={comparison.clicks.previous}
           icon={MousePointerClick}
@@ -621,11 +621,17 @@ export default function AdminAnalytics() {
           </CardContent>
         </Card>
 
-        {/* Click Type Distribution */}
+        {/* Click Type Distribution - For fraud monitoring only */}
         {data.clicksByType.length > 0 && (
-          <Card>
+          <Card className="border-dashed border-muted-foreground/30">
             <CardHeader>
-              <CardTitle className="text-base">Distribuição por Tipo de Clique</CardTitle>
+              <CardTitle className="text-base flex items-center gap-2">
+                <Shield className="h-4 w-4 text-muted-foreground" />
+                Tracking de Cliques (Anti-fraude)
+              </CardTitle>
+              <p className="text-xs text-muted-foreground">
+                Apenas para monitoramento de fraude. O modelo PPL cobra por leads, não cliques.
+              </p>
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={250}>

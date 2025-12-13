@@ -14,7 +14,6 @@ import {
   UserCheck, 
   Megaphone,
   DollarSign,
-  MousePointerClick,
   Shield,
   TrendingUp,
   Ban,
@@ -47,7 +46,9 @@ interface Stats {
   totalAffiliates: number;
   totalClients: number;
   totalOffers: number;
-  totalClicks: number;
+  totalLeads: number;
+  totalViews: number;
+  conversionRate: number;
   platformEarnings: number;
   blockedIPs: number;
 }
@@ -108,7 +109,9 @@ export default function AdminDashboard() {
     totalAffiliates: 0,
     totalClients: 0,
     totalOffers: 0,
-    totalClicks: 0,
+    totalLeads: 0,
+    totalViews: 0,
+    conversionRate: 0,
     platformEarnings: 0,
     blockedIPs: 0
   });
@@ -150,8 +153,18 @@ export default function AdminDashboard() {
       const clients = roles?.filter(r => r.role === 'CLIENT').length || 0;
 
       const { count: offersCount } = await supabase.from('offers').select('*', { count: 'exact', head: true });
-      const { count: clicksCount } = await supabase.from('offer_clicks').select('*', { count: 'exact', head: true });
-      const platformEarnings = (clicksCount || 0) * CONFIG.CPC_PLATFORM_PROFIT;
+      
+      // Buscar leads válidos e views para métricas CPL
+      const { count: leadsCount } = await supabase.from('leads').select('*', { count: 'exact', head: true }).eq('is_valid', true);
+      const { data: offersData } = await supabase.from('offers').select('views_count');
+      const totalViews = offersData?.reduce((sum, o) => sum + o.views_count, 0) || 0;
+      
+      // Calcular ganhos baseado em CPL (modelo novo)
+      const platformEarnings = (leadsCount || 0) * CONFIG.CPL_PLATFORM_PROFIT;
+      
+      // Taxa de conversão
+      const conversionRate = totalViews > 0 ? ((leadsCount || 0) / totalViews) * 100 : 0;
+      
       const { count: blockedCount } = await supabase.from('click_rate_limits').select('*', { count: 'exact', head: true }).eq('blocked', true);
 
       setStats({
@@ -159,7 +172,9 @@ export default function AdminDashboard() {
         totalAffiliates: affiliates,
         totalClients: clients,
         totalOffers: offersCount || 0,
-        totalClicks: clicksCount || 0,
+        totalLeads: leadsCount || 0,
+        totalViews,
+        conversionRate,
         platformEarnings,
         blockedIPs: blockedCount || 0
       });
@@ -276,10 +291,10 @@ export default function AdminDashboard() {
   const getTransactionBadge = (type: string) => {
     const config: Record<string, { color: string, label: string }> = {
       'DEPOSIT': { color: 'bg-green-500', label: 'Depósito' },
-      'CLICK_COST': { color: 'bg-red-500', label: 'Custo Clique' },
-      'CLICK_EARNING': { color: 'bg-blue-500', label: 'Ganho Clique' },
-      'LEAD_COST': { color: 'bg-red-600', label: 'Custo Lead' },
-      'LEAD_EARNING': { color: 'bg-blue-600', label: 'Ganho Lead' },
+      'LEAD_COST': { color: 'bg-red-600', label: '💰 Custo Lead' },
+      'LEAD_EARNING': { color: 'bg-emerald-600', label: '💰 Ganho Lead' },
+      'CLICK_COST': { color: 'bg-red-300', label: '(Legado) Custo Clique' },
+      'CLICK_EARNING': { color: 'bg-blue-300', label: '(Legado) Ganho Clique' },
       'WITHDRAW': { color: 'bg-orange-500', label: 'Saque' },
       'PLATFORM_FEE': { color: 'bg-purple-500', label: 'Taxa Plataforma' }
     };
@@ -330,7 +345,7 @@ export default function AdminDashboard() {
 
       <main className="container mx-auto px-3 sm:px-4 py-4 sm:py-6">
         {/* Stats Cards */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2 sm:gap-4 mb-4 sm:mb-6">
+        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2 sm:gap-4 mb-4 sm:mb-6">
           <Card className="hover:shadow-lg transition-shadow">
             <CardContent className="p-3 sm:p-4 text-center">
               <Building2 className="h-5 w-5 sm:h-6 sm:w-6 mx-auto mb-1 sm:mb-2 text-company" />
@@ -361,16 +376,23 @@ export default function AdminDashboard() {
           </Card>
           <Card className="hover:shadow-lg transition-shadow">
             <CardContent className="p-3 sm:p-4 text-center">
-              <MousePointerClick className="h-5 w-5 sm:h-6 sm:w-6 mx-auto mb-1 sm:mb-2 text-accent-foreground" />
-              <p className="text-xl sm:text-2xl font-bold">{stats.totalClicks}</p>
-              <p className="text-[10px] sm:text-xs text-muted-foreground">Cliques</p>
+              <Phone className="h-5 w-5 sm:h-6 sm:w-6 mx-auto mb-1 sm:mb-2 text-secondary" />
+              <p className="text-xl sm:text-2xl font-bold">{stats.totalLeads}</p>
+              <p className="text-[10px] sm:text-xs text-muted-foreground">Leads</p>
+            </CardContent>
+          </Card>
+          <Card className="hover:shadow-lg transition-shadow">
+            <CardContent className="p-3 sm:p-4 text-center">
+              <Eye className="h-5 w-5 sm:h-6 sm:w-6 mx-auto mb-1 sm:mb-2 text-muted-foreground" />
+              <p className="text-xl sm:text-2xl font-bold">{stats.totalViews.toLocaleString('pt-BR')}</p>
+              <p className="text-[10px] sm:text-xs text-muted-foreground">Views</p>
             </CardContent>
           </Card>
           <Card className="hover:shadow-lg transition-shadow">
             <CardContent className="p-3 sm:p-4 text-center">
               <TrendingUp className="h-5 w-5 sm:h-6 sm:w-6 mx-auto mb-1 sm:mb-2 text-green-500" />
               <p className="text-xl sm:text-2xl font-bold">{formatBalance(stats.platformEarnings)}</p>
-              <p className="text-[10px] sm:text-xs text-muted-foreground">Ganhos</p>
+              <p className="text-[10px] sm:text-xs text-muted-foreground">Ganhos (PPL)</p>
             </CardContent>
           </Card>
           <Card className="hover:shadow-lg transition-shadow col-span-2 sm:col-span-1">
@@ -527,36 +549,43 @@ export default function AdminDashboard() {
                         <TableHead className="min-w-[150px]">Título</TableHead>
                         <TableHead className="hidden sm:table-cell">Empresa</TableHead>
                         <TableHead className="hidden md:table-cell">Cidade</TableHead>
-                        <TableHead>Cliques</TableHead>
+                        <TableHead>Leads</TableHead>
                         <TableHead className="hidden lg:table-cell">Views</TableHead>
+                        <TableHead className="hidden xl:table-cell">Conversão</TableHead>
                         <TableHead>Status</TableHead>
                         <TableHead className="hidden md:table-cell">Expira</TableHead>
                         <TableHead>Ações</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {offersPagination.paginatedItems.map((offer) => (
-                        <TableRow key={offer.id}>
-                          <TableCell className="font-medium max-w-[150px] sm:max-w-[200px] truncate">{offer.title}</TableCell>
-                          <TableCell className="hidden sm:table-cell">{offer.company_name}</TableCell>
-                          <TableCell className="hidden md:table-cell">{offer.city}</TableCell>
-                          <TableCell>{offer.clicks_count}</TableCell>
-                          <TableCell className="hidden lg:table-cell">{offer.views_count}</TableCell>
-                          <TableCell>
-                            <Badge variant={offer.active ? 'default' : 'secondary'}>
-                              {offer.active ? 'Ativa' : 'Inativa'}
-                            </Badge>
-                          </TableCell>
-                          <TableCell className="hidden md:table-cell">{new Date(offer.expires_at).toLocaleDateString('pt-BR')}</TableCell>
-                          <TableCell>
-                            {offer.active && (
-                              <Button variant="ghost" size="sm" onClick={() => handleDeactivateOffer(offer.id)}>
-                                <Ban className="h-4 w-4" />
-                              </Button>
-                            )}
-                          </TableCell>
-                        </TableRow>
-                      ))}
+                      {offersPagination.paginatedItems.map((offer) => {
+                        const conversionRate = offer.views_count > 0 
+                          ? ((offer.leads_count || 0) / offer.views_count * 100).toFixed(1) 
+                          : '0.0';
+                        return (
+                          <TableRow key={offer.id}>
+                            <TableCell className="font-medium max-w-[150px] sm:max-w-[200px] truncate">{offer.title}</TableCell>
+                            <TableCell className="hidden sm:table-cell">{offer.company_name}</TableCell>
+                            <TableCell className="hidden md:table-cell">{offer.city}</TableCell>
+                            <TableCell className="font-semibold text-secondary">{offer.leads_count || 0}</TableCell>
+                            <TableCell className="hidden lg:table-cell">{offer.views_count}</TableCell>
+                            <TableCell className="hidden xl:table-cell">{conversionRate}%</TableCell>
+                            <TableCell>
+                              <Badge variant={offer.active ? 'default' : 'secondary'}>
+                                {offer.active ? 'Ativa' : 'Inativa'}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="hidden md:table-cell">{new Date(offer.expires_at).toLocaleDateString('pt-BR')}</TableCell>
+                            <TableCell>
+                              {offer.active && (
+                                <Button variant="ghost" size="sm" onClick={() => handleDeactivateOffer(offer.id)}>
+                                  <Ban className="h-4 w-4" />
+                                </Button>
+                              )}
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
                     </TableBody>
                   </Table>
                 </div>
