@@ -14,7 +14,11 @@ export default function DashboardPage() {
     if (!loading && !user) {
       navigate('/auth');
     }
-  }, [loading, user, navigate]);
+    // Usuário autenticado mas sem role = novo usuário Google que precisa completar cadastro
+    if (!loading && user && !role) {
+      navigate('/complete-signup');
+    }
+  }, [loading, user, role, navigate]);
 
   if (loading) {
     return (

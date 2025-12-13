@@ -11,7 +11,10 @@ export default function AuthCallbackPage() {
   useEffect(() => {
     const handleCallback = async () => {
       try {
-        // Get session from URL hash
+        // Aguardar um pouco para a sessão ser estabelecida pelo Supabase
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        // Get session
         const { data: { session }, error: sessionError } = await supabase.auth.getSession();
 
         if (sessionError) {
@@ -22,34 +25,48 @@ export default function AuthCallbackPage() {
         }
 
         if (!session?.user) {
-          navigate('/auth');
+          // Tentar novamente após um delay maior
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          const { data: { session: retrySession } } = await supabase.auth.getSession();
+          
+          if (!retrySession?.user) {
+            navigate('/auth');
+            return;
+          }
+          
+          // Usar a sessão do retry
+          await checkProfileAndRedirect(retrySession.user.id);
           return;
         }
 
-        setStatus('Verificando perfil...');
-
-        // Check if user has a profile
-        const { data: existingProfile } = await supabase
-          .from('profiles')
-          .select('id')
-          .eq('user_id', session.user.id)
-          .maybeSingle();
-
-        if (existingProfile) {
-          // User already has profile, go to dashboard
-          toast.success('Login realizado com sucesso!');
-          navigate('/dashboard');
-          return;
-        }
-
-        // New user - redirect to complete signup page to choose role
-        setStatus('Redirecionando para completar cadastro...');
-        navigate('/complete-signup');
+        await checkProfileAndRedirect(session.user.id);
       } catch (error) {
         console.error('Callback error:', error);
         toast.error('Erro inesperado na autenticação');
         navigate('/auth');
       }
+    };
+
+    const checkProfileAndRedirect = async (userId: string) => {
+      setStatus('Verificando perfil...');
+
+      // Check if user has a profile
+      const { data: existingProfile } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('user_id', userId)
+        .maybeSingle();
+
+      if (existingProfile) {
+        // User already has profile, go to dashboard
+        toast.success('Login realizado com sucesso!');
+        navigate('/dashboard');
+        return;
+      }
+
+      // New user - redirect to complete signup page to choose role
+      setStatus('Redirecionando para completar cadastro...');
+      navigate('/complete-signup');
     };
 
     handleCallback();
