@@ -50,18 +50,20 @@ const scoreComponents = [
   }
 ];
 
-// Exemplos de CPL automático baseado na nota (R$ 1,00 a R$ 3,00)
+// Exemplos de CPL automático baseado na nota (R$ 0,60 a R$ 1,50)
+// Fórmula: CPL = 15 centavos × (14 - Nota)
 const cplExamples = [
-  { score: 10, cpl: 100, position: 1, reason: "Nota máxima = CPL mínimo" },
-  { score: 7, cpl: 200, position: 2, reason: "Nota inicial padrão" },
-  { score: 4, cpl: 300, position: 3, reason: "Nota mínima = CPL máximo" },
+  { score: 10, cpl: 60, position: 1, reason: "Nota máxima = CPL mínimo" },
+  { score: 7, cpl: 105, position: 2, reason: "Nota inicial padrão" },
+  { score: 4, cpl: 150, position: 3, reason: "Nota mínima = CPL máximo" },
 ];
 
 // Exemplos corrigidos: 30% base para afiliados (Plataforma 70%, Afiliado 30%)
+// CPL de R$ 0,60 a R$ 1,50
 const earningsExamples = [
-  { cpl: 100, company: "R$ 1,00", platform: "R$ 0,70", affiliate: "R$ 0,30", affiliateBase: 30 },
-  { cpl: 200, company: "R$ 2,00", platform: "R$ 1,40", affiliate: "R$ 0,60", affiliateBase: 60 },
-  { cpl: 300, company: "R$ 3,00", platform: "R$ 2,10", affiliate: "R$ 0,90", affiliateBase: 90 },
+  { cpl: 60, company: "R$ 0,60", platform: "R$ 0,42", affiliate: "R$ 0,18", affiliateBase: 18 },
+  { cpl: 105, company: "R$ 1,05", platform: "R$ 0,74", affiliate: "R$ 0,31", affiliateBase: 31 },
+  { cpl: 150, company: "R$ 1,50", platform: "R$ 1,05", affiliate: "R$ 0,45", affiliateBase: 45 },
 ];
 
 // Níveis alinhados com banco de dados: Bronze 1.0x (30%), Prata 1.33x (~40%), Ouro 1.67x (~50%)
@@ -179,18 +181,18 @@ export default function TransparencyPage() {
                 <CardContent className="p-8">
                   <div className="flex flex-col md:flex-row items-center justify-center gap-4 text-center">
                     <div className="bg-card rounded-xl p-4 shadow-lg">
-                      <p className="text-sm text-muted-foreground mb-1">CPL Máximo</p>
-                      <p className="text-2xl font-bold text-primary">R$ 3,00</p>
+                      <p className="text-sm text-muted-foreground mb-1">Constante</p>
+                      <p className="text-2xl font-bold text-primary">R$ 0,15</p>
                     </div>
-                    <span className="text-2xl font-bold text-muted-foreground">−</span>
+                    <span className="text-2xl font-bold text-muted-foreground">×</span>
                     <div className="bg-card rounded-xl p-4 shadow-lg">
-                      <p className="text-sm text-muted-foreground mb-1">Nota × R$ 0,33</p>
-                      <p className="text-2xl font-bold text-secondary">7 × 0,33</p>
+                      <p className="text-sm text-muted-foreground mb-1">(14 − Nota)</p>
+                      <p className="text-2xl font-bold text-secondary">(14 − 7)</p>
                     </div>
                     <span className="text-2xl font-bold text-muted-foreground">=</span>
                     <div className="bg-card rounded-xl p-4 shadow-lg border-2 border-accent">
                       <p className="text-sm text-muted-foreground mb-1">CPL</p>
-                      <p className="text-2xl font-bold text-accent">R$ 2,00</p>
+                      <p className="text-2xl font-bold text-accent">R$ 1,05</p>
                     </div>
                   </div>
                   <p className="text-center mt-6 text-muted-foreground">
@@ -204,7 +206,7 @@ export default function TransparencyPage() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Calculator className="h-5 w-5 text-primary" />
-                    Custo por Lead = R$ 3,00 − (Nota × R$ 0,33)
+                    Custo por Lead = R$ 0,15 × (14 − Nota)
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -248,7 +250,7 @@ export default function TransparencyPage() {
                   <CardContent className="p-6 text-center">
                     <Zap className="h-8 w-8 text-secondary mx-auto mb-3" />
                     <h4 className="font-bold mb-1">Nota 10</h4>
-                    <p className="text-2xl font-bold text-secondary">R$ 1,00</p>
+                    <p className="text-2xl font-bold text-secondary">R$ 0,60</p>
                     <p className="text-xs text-muted-foreground mt-1">por lead qualificado</p>
                   </CardContent>
                 </Card>
@@ -256,7 +258,7 @@ export default function TransparencyPage() {
                   <CardContent className="p-6 text-center">
                     <Target className="h-8 w-8 text-primary mx-auto mb-3" />
                     <h4 className="font-bold mb-1">Nota 7</h4>
-                    <p className="text-2xl font-bold text-primary">R$ 2,00</p>
+                    <p className="text-2xl font-bold text-primary">R$ 1,05</p>
                     <p className="text-xs text-muted-foreground mt-1">por lead qualificado</p>
                   </CardContent>
                 </Card>
@@ -264,7 +266,7 @@ export default function TransparencyPage() {
                   <CardContent className="p-6 text-center">
                     <Award className="h-8 w-8 text-destructive mx-auto mb-3" />
                     <h4 className="font-bold mb-1">Nota 4</h4>
-                    <p className="text-2xl font-bold text-destructive">R$ 3,00</p>
+                    <p className="text-2xl font-bold text-destructive">R$ 1,50</p>
                     <p className="text-xs text-muted-foreground mt-1">por lead qualificado</p>
                   </CardContent>
                 </Card>
@@ -500,7 +502,7 @@ export default function TransparencyPage() {
                     </table>
                   </div>
                   <p className="text-xs text-muted-foreground mt-4 text-center">
-                    💡 No nível Ouro (50%), o divulgador ganharia R$ 0,50, R$ 1,00 e R$ 1,50 respectivamente!
+                    💡 No nível Ouro (50%), o divulgador ganharia R$ 0,30, R$ 0,53 e R$ 0,75 respectivamente!
                   </p>
                 </CardContent>
               </Card>
@@ -535,7 +537,7 @@ export default function TransparencyPage() {
             <TabsContent value="earnings" className="space-y-8">
               <div className="text-center mb-8">
                 <h2 className="text-3xl font-display font-bold mb-2">Ganhos do Divulgador</h2>
-                <p className="text-muted-foreground">De R$ 0,30 a R$ 1,50 por lead (conforme seu nível)</p>
+                <p className="text-muted-foreground">De R$ 0,18 a R$ 0,75 por lead (conforme seu nível)</p>
               </div>
 
               {/* Earnings Range */}
@@ -544,17 +546,17 @@ export default function TransparencyPage() {
                   <p className="text-sm text-muted-foreground mb-2">Ganho por lead</p>
                   <div className="flex items-center justify-center gap-4">
                     <div>
-                      <p className="text-4xl font-display font-bold text-affiliate">R$ 0,30</p>
+                      <p className="text-4xl font-display font-bold text-affiliate">R$ 0,18</p>
                       <p className="text-xs text-muted-foreground">mínimo (Bronze)</p>
                     </div>
                     <span className="text-2xl text-muted-foreground">→</span>
                     <div>
-                      <p className="text-4xl font-display font-bold text-affiliate">R$ 1,50</p>
+                      <p className="text-4xl font-display font-bold text-affiliate">R$ 0,75</p>
                       <p className="text-xs text-muted-foreground">máximo (Ouro)*</p>
                     </div>
                   </div>
                   <p className="text-xs text-muted-foreground mt-4">
-                    *Com CPL máximo (R$ 3,00) + nível Ouro (50%)
+                    *Com CPL máximo (R$ 1,50) + nível Ouro (50%)
                   </p>
                 </CardContent>
               </Card>
@@ -581,9 +583,9 @@ export default function TransparencyPage() {
                         <p className="text-2xl font-display font-bold text-affiliate mt-1">{level.commission}</p>
                         <p className="text-xs text-muted-foreground">{level.leads} leads</p>
                         <div className="mt-2 pt-2 border-t border-border/50">
-                          <p className="text-xs text-muted-foreground">CPL R$ 2,00 =</p>
+                          <p className="text-xs text-muted-foreground">CPL R$ 1,05 =</p>
                           <p className="text-sm font-bold text-affiliate">
-                            R$ {(2.00 * parseFloat(level.commission) / 100).toFixed(2).replace('.', ',')}
+                            R$ {(1.05 * parseFloat(level.commission) / 100).toFixed(2).replace('.', ',')}
                           </p>
                         </div>
                       </div>
@@ -602,28 +604,28 @@ export default function TransparencyPage() {
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm text-muted-foreground mb-4">
-                    Baseado em CPL médio de R$ 2,00 (R$ 0,60 por lead para Bronze - 30%):
+                    Baseado em CPL médio de R$ 1,05 (R$ 0,32 por lead para Bronze - 30%):
                   </p>
                   <div className="grid sm:grid-cols-3 gap-4">
                     <div className="bg-card rounded-xl p-4 text-center border border-border">
                       <p className="text-sm text-muted-foreground">5 leads/dia</p>
-                      <p className="text-2xl font-bold text-affiliate mt-1">R$ 90</p>
+                      <p className="text-2xl font-bold text-affiliate mt-1">R$ 48</p>
                       <p className="text-xs text-muted-foreground">/mês (Bronze)</p>
                     </div>
                     <div className="bg-card rounded-xl p-4 text-center border border-border">
                       <p className="text-sm text-muted-foreground">15 leads/dia</p>
-                      <p className="text-2xl font-bold text-affiliate mt-1">R$ 270</p>
+                      <p className="text-2xl font-bold text-affiliate mt-1">R$ 144</p>
                       <p className="text-xs text-muted-foreground">/mês (Bronze)</p>
                     </div>
                     <div className="bg-card rounded-xl p-4 text-center border border-border">
                       <p className="text-sm text-muted-foreground">30 leads/dia</p>
-                      <p className="text-2xl font-bold text-affiliate mt-1">R$ 540</p>
+                      <p className="text-2xl font-bold text-affiliate mt-1">R$ 288</p>
                       <p className="text-xs text-muted-foreground">/mês (Bronze)</p>
                     </div>
                   </div>
                   <div className="mt-4 p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
                     <p className="text-sm text-center">
-                      💡 Com nível <strong className="text-yellow-600">Ouro (50%)</strong>, os mesmos 30 leads/dia = <strong className="text-affiliate">R$ 900/mês</strong>!
+                      💡 Com nível <strong className="text-yellow-600">Ouro (50%)</strong>, os mesmos 30 leads/dia = <strong className="text-affiliate">R$ 480/mês</strong>!
                     </p>
                   </div>
                 </CardContent>
