@@ -1254,6 +1254,7 @@ export type Database = {
           checklist_items: Json | null
           completed_at: string | null
           created_at: string | null
+          dismissed: boolean | null
           id: string
           role: string
           tour_completed: boolean | null
@@ -1267,6 +1268,7 @@ export type Database = {
           checklist_items?: Json | null
           completed_at?: string | null
           created_at?: string | null
+          dismissed?: boolean | null
           id?: string
           role: string
           tour_completed?: boolean | null
@@ -1280,6 +1282,7 @@ export type Database = {
           checklist_items?: Json | null
           completed_at?: string | null
           created_at?: string | null
+          dismissed?: boolean | null
           id?: string
           role?: string
           tour_completed?: boolean | null
@@ -1527,6 +1530,7 @@ export type Database = {
         Args: { affiliate_profile_id: string; earnings: number }
         Returns: undefined
       }
+      update_ranking_positions: { Args: never; Returns: undefined }
     }
     Enums: {
       app_role: "COMPANY" | "AFFILIATE" | "CLIENT" | "ADMIN"

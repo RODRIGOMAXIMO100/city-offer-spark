@@ -120,6 +120,7 @@ interface OnboardingState {
   bonusEarned: number;
   showTour: boolean;
   showWelcomeModal: boolean;
+  dismissed: boolean;
 }
 
 interface OnboardingContextType extends OnboardingState {
@@ -134,6 +135,7 @@ interface OnboardingContextType extends OnboardingState {
   getBonuses: () => BonusMap;
   getChecklistProgress: () => { completed: number; total: number; percentage: number };
   dismissWelcomeModal: () => void;
+  dismissOnboarding: () => Promise<void>;
 }
 const OnboardingContext = createContext<OnboardingContextType | null>(null);
 
@@ -147,6 +149,7 @@ export function OnboardingProvider({ children }: { children: React.ReactNode }) 
     bonusEarned: 0,
     showTour: false,
     showWelcomeModal: false,
+    dismissed: false,
   });
 
   // Carregar estado do onboarding
@@ -187,6 +190,9 @@ export function OnboardingProvider({ children }: { children: React.ReactNode }) 
             ? data.checklist_items as string[]
             : [];
           
+          // Verificar se está dismissed OU se é objeto com propriedade dismissed
+          const isDismissed = (data as { dismissed?: boolean }).dismissed === true;
+          
           setState({
             isLoading: false,
             tourCompleted: data.tour_completed || false,
@@ -194,7 +200,8 @@ export function OnboardingProvider({ children }: { children: React.ReactNode }) 
             checklistItems,
             bonusEarned: data.bonus_earned || 0,
             showTour: false,
-            showWelcomeModal: !data.tour_completed,
+            showWelcomeModal: !data.tour_completed && !isDismissed,
+            dismissed: isDismissed,
           });
         } else {
           // Criar registro de onboarding apenas para roles válidos
@@ -219,6 +226,7 @@ export function OnboardingProvider({ children }: { children: React.ReactNode }) 
               bonusEarned: 0,
               showTour: false,
               showWelcomeModal: true,
+              dismissed: false,
             });
           } else {
             setState(prev => ({ ...prev, isLoading: false, showWelcomeModal: false }));
@@ -355,6 +363,17 @@ export function OnboardingProvider({ children }: { children: React.ReactNode }) 
     setState(prev => ({ ...prev, showWelcomeModal: false }));
   }, []);
 
+  const dismissOnboarding = useCallback(async () => {
+    if (!user) return;
+
+    setState(prev => ({ ...prev, dismissed: true }));
+
+    await supabase
+      .from('user_onboarding')
+      .update({ dismissed: true } as Record<string, unknown>)
+      .eq('user_id', user.id);
+  }, [user]);
+
   return (
     <OnboardingContext.Provider
       value={{
@@ -370,6 +389,7 @@ export function OnboardingProvider({ children }: { children: React.ReactNode }) 
         getBonuses,
         getChecklistProgress,
         dismissWelcomeModal,
+        dismissOnboarding,
       }}
     >
       {children}

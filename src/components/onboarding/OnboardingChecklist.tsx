@@ -15,20 +15,22 @@ export function OnboardingChecklist() {
     getChecklistProgress,
     bonusEarned,
     startTour,
+    dismissed,
+    dismissOnboarding,
   } = useOnboarding();
 
   const [isExpanded, setIsExpanded] = useState(true);
-  const [isDismissed, setIsDismissed] = useState(false);
-
-  if (isLoading || isDismissed) return null;
 
   const bonuses = getBonuses();
   const progress = getChecklistProgress();
   const bonusItems = Object.entries(bonuses);
   const allCompleted = progress.completed === progress.total;
 
-  // Não mostrar se tudo foi completado e o usuário não quer ver
-  if (allCompleted && !isExpanded) return null;
+  // Não mostrar se foi dismissed no banco OU se está carregando
+  if (isLoading || dismissed) return null;
+
+  // Não mostrar se todas as tarefas foram completadas
+  if (allCompleted) return null;
 
   return (
     <div className="fixed bottom-4 right-4 z-50 w-80 animate-fade-in">
@@ -148,18 +150,16 @@ export function OnboardingChecklist() {
               </div>
             )}
 
-            {/* Botão de fechar se completou tudo */}
-            {allCompleted && (
-              <Button
-                variant="ghost"
-                size="sm"
-                className="w-full mt-2 text-muted-foreground"
-                onClick={() => setIsDismissed(true)}
-              >
-                <X className="h-4 w-4 mr-1" />
-                Fechar
-              </Button>
-            )}
+            {/* Botão de fechar - persiste no banco */}
+            <Button
+              variant="ghost"
+              size="sm"
+              className="w-full mt-2 text-muted-foreground"
+              onClick={dismissOnboarding}
+            >
+              <X className="h-4 w-4 mr-1" />
+              Não mostrar mais
+            </Button>
           </div>
         )}
       </div>
