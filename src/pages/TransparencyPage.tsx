@@ -228,27 +228,49 @@ export default function TransparencyPage() {
                     </table>
                   </div>
                   
-                  {/* Simple explanation */}
-                  <div className="mt-6 p-4 bg-muted/50 rounded-xl space-y-3">
-                    <div className="flex items-start gap-3">
-                      <TrendingUp className="h-5 w-5 text-secondary mt-0.5 shrink-0" />
-                      <div>
-                        <p className="font-medium text-sm">Cada ponto extra na nota = R$ 0,33 a menos</p>
-                        <p className="text-xs text-muted-foreground">Melhore sua oferta para economizar em cada lead</p>
+                  {/* Como definimos os valores - explicação clara */}
+                  <div className="mt-6 p-4 bg-primary/5 border border-primary/20 rounded-xl">
+                    <div className="flex items-center gap-2 mb-3">
+                      <Calculator className="h-5 w-5 text-primary" />
+                      <p className="font-semibold text-sm">Como definimos esses valores?</p>
+                    </div>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex items-center gap-2 p-2 bg-background/50 rounded-lg">
+                        <span className="text-primary font-bold">1.</span>
+                        <span>Definimos um range justo: <strong>R$ 1,00</strong> (melhor) a <strong>R$ 3,00</strong> (pior)</span>
+                      </div>
+                      <div className="flex items-center gap-2 p-2 bg-background/50 rounded-lg">
+                        <span className="text-primary font-bold">2.</span>
+                        <span>A nota válida vai de <strong>4</strong> a <strong>10</strong> = <strong>6 pontos</strong> de diferença</span>
+                      </div>
+                      <div className="flex items-center gap-2 p-2 bg-background/50 rounded-lg">
+                        <span className="text-primary font-bold">3.</span>
+                        <span>Diferença de preço: R$ 3,00 - R$ 1,00 = <strong>R$ 2,00</strong></span>
+                      </div>
+                      <div className="flex items-center gap-2 p-2 bg-secondary/10 border border-secondary/20 rounded-lg">
+                        <span className="text-secondary font-bold">→</span>
+                        <span>R$ 2,00 ÷ 6 pontos = <strong className="text-secondary">R$ 0,33 por ponto</strong></span>
                       </div>
                     </div>
-                    <div className="flex items-start gap-3">
+                    <p className="text-xs text-muted-foreground mt-3 italic">
+                      Por isso cada ponto extra na sua nota economiza R$ 0,33 no custo por lead.
+                    </p>
+                  </div>
+                  
+                  {/* Simple highlights */}
+                  <div className="mt-4 grid sm:grid-cols-2 gap-3">
+                    <div className="flex items-start gap-3 p-3 bg-muted/50 rounded-lg">
                       <Target className="h-5 w-5 text-primary mt-0.5 shrink-0" />
                       <div>
-                        <p className="font-medium text-sm">Ofertas novas começam com Nota 7 (R$ 2,00/lead)</p>
-                        <p className="text-xs text-muted-foreground">Você pode chegar em R$ 1,00 melhorando a qualidade</p>
+                        <p className="font-medium text-sm">Ofertas novas começam com Nota 7</p>
+                        <p className="text-xs text-muted-foreground">Custo inicial: R$ 2,00/lead</p>
                       </div>
                     </div>
-                    <div className="flex items-start gap-3">
+                    <div className="flex items-start gap-3 p-3 bg-muted/50 rounded-lg">
                       <Zap className="h-5 w-5 text-accent mt-0.5 shrink-0" />
                       <div>
-                        <p className="font-medium text-sm">100% automático - sem lances manuais</p>
-                        <p className="text-xs text-muted-foreground">Foque em qualidade, nós calculamos o preço justo</p>
+                        <p className="font-medium text-sm">100% automático</p>
+                        <p className="text-xs text-muted-foreground">Sem lances manuais - foque na qualidade</p>
                       </div>
                     </div>
                   </div>
@@ -321,27 +343,36 @@ export default function TransparencyPage() {
                 </Card>
               </div>
               
-              {/* Comparison Section */}
-              <Card className="bg-gradient-to-r from-muted/50 to-muted/30 border-border">
+              {/* O que você recebe - sem mencionar concorrentes */}
+              <Card className="bg-gradient-to-r from-secondary/5 to-primary/5 border-secondary/20">
                 <CardHeader>
-                  <CardTitle className="text-lg">Comparativo: Lead Qualificado vs Outras Métricas</CardTitle>
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <CheckCircle2 className="h-5 w-5 text-secondary" />
+                    O que você recebe na Clilin?
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="grid sm:grid-cols-3 gap-4">
-                    <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-center">
-                      <p className="text-xs text-muted-foreground mb-1">Redes Sociais</p>
-                      <p className="font-bold text-red-500">Impressão</p>
-                      <p className="text-xs text-muted-foreground mt-2">Alguém viu = Zero garantia de interesse</p>
-                    </div>
-                    <div className="p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-xl text-center">
-                      <p className="text-xs text-muted-foreground mb-1">Google Ads</p>
-                      <p className="font-bold text-yellow-600">Clique Genérico</p>
-                      <p className="text-xs text-muted-foreground mt-2">Alguém clicou = Pode ser curiosidade</p>
-                    </div>
-                    <div className="p-4 bg-secondary/10 border border-secondary/20 rounded-xl text-center">
-                      <p className="text-xs text-muted-foreground mb-1">Clilin</p>
+                    <div className="p-4 bg-muted/50 rounded-xl text-center">
+                      <div className="w-10 h-10 bg-secondary/10 rounded-full flex items-center justify-center mx-auto mb-2">
+                        <Users className="h-5 w-5 text-secondary" />
+                      </div>
                       <p className="font-bold text-secondary">Lead Qualificado</p>
-                      <p className="text-xs text-muted-foreground mt-2">Nome + WhatsApp = Cliente pronto para contato</p>
+                      <p className="text-xs text-muted-foreground mt-2">Pessoa interessada com nome e WhatsApp</p>
+                    </div>
+                    <div className="p-4 bg-muted/50 rounded-xl text-center">
+                      <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-2">
+                        <Target className="h-5 w-5 text-primary" />
+                      </div>
+                      <p className="font-bold text-primary">Interesse Real</p>
+                      <p className="text-xs text-muted-foreground mt-2">Cliente que pediu por ofertas como a sua</p>
+                    </div>
+                    <div className="p-4 bg-muted/50 rounded-xl text-center">
+                      <div className="w-10 h-10 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-2">
+                        <Zap className="h-5 w-5 text-accent" />
+                      </div>
+                      <p className="font-bold text-accent">Contato Direto</p>
+                      <p className="text-xs text-muted-foreground mt-2">Você recebe os dados para fechar a venda</p>
                     </div>
                   </div>
                 </CardContent>
