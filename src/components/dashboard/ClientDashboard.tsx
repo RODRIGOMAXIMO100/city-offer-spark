@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import ReactMarkdown from 'react-markdown';
 import { useAuth } from '@/hooks/useAuth';
 import { useOnboarding } from '@/contexts/OnboardingContext';
 import { OnboardingTour } from '@/components/onboarding/OnboardingTour';
@@ -181,7 +182,9 @@ export default function ClientDashboard() {
                 </div>
               )}
               
-              <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.content}</p>
+              <div className="text-sm leading-relaxed prose prose-sm dark:prose-invert max-w-none">
+                <ReactMarkdown>{msg.content}</ReactMarkdown>
+              </div>
 
               {/* Suggested Offers */}
                   {msg.suggestedOffers && msg.suggestedOffers.length > 0 && (
