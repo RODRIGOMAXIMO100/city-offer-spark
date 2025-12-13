@@ -37,6 +37,7 @@ const earnings = [
   { level: "Prata (40%)", offers: "25 ofertas", clicks: "~40 leads/dia", value: "R$ 960", period: "/mês" },
   { level: "Ouro (50%)", offers: "50 ofertas", clicks: "~80 leads/dia", value: "R$ 2.400", period: "/mês" },
 ];
+// Cálculo baseado em CPL médio R$ 2,00: Bronze 30% = R$ 0,60/lead, Prata 40% = R$ 0,80/lead, Ouro 50% = R$ 1,00/lead
 
 export function ForAffiliates() {
   return (

@@ -112,19 +112,19 @@ const HelpPage = () => {
                   <div className="grid gap-3">
                     <div className="flex items-center justify-between p-3 rounded-lg bg-green-500/10 border border-green-500/20">
                       <span className="font-medium text-green-600">Nota 10 (Excelente)</span>
-                      <span className="font-bold text-green-600">R$ 0,60 por lead</span>
+                      <span className="font-bold text-green-600">R$ 1,00 por lead</span>
                     </div>
                     <div className="flex items-center justify-between p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
                       <span className="font-medium text-yellow-600">Nota 7 (Inicial)</span>
-                      <span className="font-bold text-yellow-600">R$ 1,05 por lead</span>
+                      <span className="font-bold text-yellow-600">R$ 2,00 por lead</span>
                     </div>
                     <div className="flex items-center justify-between p-3 rounded-lg bg-red-500/10 border border-red-500/20">
                       <span className="font-medium text-red-600">Nota 4 (Mínima)</span>
-                      <span className="font-bold text-red-600">R$ 1,50 por lead</span>
+                      <span className="font-bold text-red-600">R$ 3,00 por lead</span>
                     </div>
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    <strong>Fórmula:</strong> CPL = 15 centavos × (14 - Nota da Oferta)
+                    <strong>Fórmula:</strong> CPL = (14 - Nota) × R$ 0,33
                   </p>
                   <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20 mt-4">
                     <p className="text-sm text-blue-600">
@@ -353,15 +353,15 @@ const HelpPage = () => {
                   <div className="grid gap-3 mt-4">
                     <div className="flex items-center justify-between p-3 rounded-lg bg-orange-500/10 border border-orange-500/20">
                       <span>Bronze (Base)</span>
-                      <span className="font-bold text-orange-600">30% → R$ 0,18 a R$ 0,45 por lead</span>
+                      <span className="font-bold text-orange-600">30% → R$ 0,30 a R$ 0,90 por lead</span>
                     </div>
                     <div className="flex items-center justify-between p-3 rounded-lg bg-slate-400/10 border border-slate-400/20">
                       <span>Prata (100+ leads)</span>
-                      <span className="font-bold text-slate-600">40% → R$ 0,24 a R$ 0,60 por lead</span>
+                      <span className="font-bold text-slate-600">40% → R$ 0,40 a R$ 1,20 por lead</span>
                     </div>
                     <div className="flex items-center justify-between p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
                       <span>Ouro (500+ leads)</span>
-                      <span className="font-bold text-yellow-600">50% → R$ 0,30 a R$ 0,75 por lead</span>
+                      <span className="font-bold text-yellow-600">50% → R$ 0,50 a R$ 1,50 por lead</span>
                     </div>
                   </div>
                   <p className="text-sm text-muted-foreground mt-2">
