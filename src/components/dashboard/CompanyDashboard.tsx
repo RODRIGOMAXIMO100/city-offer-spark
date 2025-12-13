@@ -9,7 +9,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Banknote, PlusCircle, LogOut, Eye, MousePointer, TrendingUp, Loader2, Instagram, Check, Clock, Trash2, Info, Star, ExternalLink, AlertTriangle, Pencil, Image, HelpCircle, BookOpen, Users, Settings, LayoutDashboard } from 'lucide-react';
+import { Banknote, PlusCircle, LogOut, Eye, MousePointer, TrendingUp, Loader2, Instagram, Check, Clock, Trash2, Info, Star, ExternalLink, AlertTriangle, Pencil, Image, HelpCircle, BookOpen, Users, Settings, LayoutDashboard, MoreVertical } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { useToast } from '@/hooks/use-toast';
 import CreateOfferModal from './CreateOfferModal';
 import PerformanceChart from './PerformanceChart';
@@ -320,59 +326,91 @@ function CompanyDashboardContent() {
             >
               <PlusCircle className="h-3 w-3 sm:h-4 sm:w-4" />
             </Button>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  size="icon"
-                  variant="ghost"
-                  onClick={() => setShowProfileSettings(true)}
-                  className="h-8 w-8 sm:h-9 sm:w-9"
-                >
-                  <Settings className="h-3 w-3 sm:h-4 sm:w-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Configurações</p>
-              </TooltipContent>
-            </Tooltip>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  size="icon"
-                  variant="ghost"
-                  onClick={() => navigate('/ajuda')}
-                  className="h-8 w-8 sm:h-9 sm:w-9"
-                >
-                  <BookOpen className="h-3 w-3 sm:h-4 sm:w-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Central de Ajuda</p>
-              </TooltipContent>
-            </Tooltip>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  size="icon"
-                  variant="ghost"
-                  onClick={startTour}
-                  className="h-8 w-8 sm:h-9 sm:w-9"
-                >
-                  <HelpCircle className="h-3 w-3 sm:h-4 sm:w-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Ver tour guiado</p>
-              </TooltipContent>
-            </Tooltip>
-            <Button
-              size="icon"
-              variant="ghost"
-              onClick={signOut}
-              className="h-8 w-8 sm:h-9 sm:w-9"
-            >
-              <LogOut className="h-3 w-3 sm:h-4 sm:w-4" />
-            </Button>
+            {/* Mobile: Dropdown Menu */}
+            <div className="sm:hidden">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button size="icon" variant="ghost" className="h-8 w-8">
+                    <MoreVertical className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={() => setShowProfileSettings(true)}>
+                    <Settings className="h-4 w-4 mr-2" />
+                    Configurações
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate('/ajuda')}>
+                    <BookOpen className="h-4 w-4 mr-2" />
+                    Central de Ajuda
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={startTour}>
+                    <HelpCircle className="h-4 w-4 mr-2" />
+                    Ver Tour Guiado
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={signOut} className="text-destructive">
+                    <LogOut className="h-4 w-4 mr-2" />
+                    Sair
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+
+            {/* Desktop: Individual Buttons */}
+            <div className="hidden sm:flex items-center gap-2">
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    onClick={() => setShowProfileSettings(true)}
+                    className="h-9 w-9"
+                  >
+                    <Settings className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Configurações</p>
+                </TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    onClick={() => navigate('/ajuda')}
+                    className="h-9 w-9"
+                  >
+                    <BookOpen className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Central de Ajuda</p>
+                </TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    onClick={startTour}
+                    className="h-9 w-9"
+                  >
+                    <HelpCircle className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Ver tour guiado</p>
+                </TooltipContent>
+              </Tooltip>
+              <Button
+                size="icon"
+                variant="ghost"
+                onClick={signOut}
+                className="h-9 w-9"
+              >
+                <LogOut className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
         </div>
       </header>
@@ -490,7 +528,7 @@ function CompanyDashboardContent() {
         </Card>
 
         {/* Stats */}
-        <div className="grid grid-cols-4 gap-2 sm:gap-3" data-tour="performance">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3" data-tour="performance">
           <Card>
             <CardContent className="p-2 sm:p-4 text-center">
               <Eye className="h-4 w-4 sm:h-5 sm:w-5 mx-auto mb-1 text-muted-foreground" />
@@ -534,11 +572,10 @@ function CompanyDashboardContent() {
               <div className="space-y-1.5 sm:space-y-2 min-w-0">
                 <p className="font-bold text-foreground text-sm sm:text-base">💰 Modelo CPL (Custo por Lead)</p>
                 <ul className="text-xs sm:text-sm text-muted-foreground space-y-0.5 sm:space-y-1">
-                  <li>• <strong className="text-foreground">Você só paga por leads reais</strong> — pessoas que preencheram nome e WhatsApp</li>
-                  <li>• <strong className="text-foreground">Custo por lead:</strong> R$ 1,00 a R$ 3,00 (baseado na nota da oferta)</li>
-                  <li>• <strong className="text-foreground">Nota alta = paga menos:</strong> nota 10 paga R$ 1,00, nota 4 paga R$ 3,00</li>
-                  <li>• <strong className="text-foreground">Divisão 50/50:</strong> metade vai para o divulgador que trouxe o lead</li>
-                  <li>• <strong className="text-foreground">Sem cliques falsos:</strong> validamos IP, telefone e evitamos duplicatas</li>
+                  <li>• <strong className="text-foreground">Só paga por leads reais</strong><span className="hidden sm:inline"> — pessoas que preencheram nome e WhatsApp</span></li>
+                  <li>• <strong className="text-foreground">CPL:</strong> R$ 1,00 a R$ 3,00<span className="hidden sm:inline"> (baseado na nota)</span></li>
+                  <li>• <strong className="text-foreground">Nota alta = paga menos</strong><span className="hidden sm:inline">: nota 10 paga R$ 1,00</span></li>
+                  <li>• <strong className="text-foreground">Divisão 50/50</strong><span className="hidden sm:inline">: metade vai para o divulgador</span></li>
                 </ul>
                 <Button variant="link" asChild className="h-auto p-0 text-company text-xs sm:text-sm">
                   <Link to="/transparencia">
@@ -673,7 +710,7 @@ function CompanyDashboardContent() {
                                   <hr className="my-2 border-border/50" />
                                   <p className="text-xs text-muted-foreground">{getScoreTip(offerScore)}</p>
                                   <p className="text-xs font-medium mt-1">
-                                    Custo por lead: R$ {((14 - offerScore) / 10).toFixed(2)}
+                                    Custo por lead: R$ {((14 - offerScore) * 0.3333).toFixed(2)}
                                   </p>
                                 </TooltipContent>
                               </Tooltip>
@@ -682,7 +719,7 @@ function CompanyDashboardContent() {
                             {/* Cost per Lead & Expiration */}
                             <div className="flex items-center gap-2 mt-1 flex-wrap">
                               <span className="text-[10px] sm:text-xs text-muted-foreground">
-                                Custo/Lead: R$ {((14 - offerScore) / 10).toFixed(2)}
+                                CPL: R$ {((14 - offerScore) * 0.3333).toFixed(2)}
                               </span>
                               <span className="text-muted-foreground">•</span>
                               <div className={`flex items-center gap-1 text-[10px] sm:text-xs ${expInfo.color}`}>
