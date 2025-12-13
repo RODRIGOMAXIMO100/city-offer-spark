@@ -70,6 +70,12 @@ export function Navbar() {
               Blog
             </Link>
             <Link 
+              to="/sobre" 
+              className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground rounded-lg hover:bg-muted/50 transition-all"
+            >
+              Sobre
+            </Link>
+            <Link 
               to="/transparencia" 
               className="px-4 py-2 text-sm font-medium text-primary hover:text-primary/80 rounded-lg hover:bg-primary/5 transition-all"
             >

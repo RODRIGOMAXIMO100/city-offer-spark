@@ -15,6 +15,7 @@ import OfferPage from "./pages/OfferPage";
 import ShortLinkRedirect from "./pages/ShortLinkRedirect";
 import TermsPage from "./pages/TermsPage";
 import PrivacyPage from "./pages/PrivacyPage";
+import AboutPage from "./pages/AboutPage";
 import TransparencyPage from "./pages/TransparencyPage";
 import BlogPage from "./pages/BlogPage";
 import BlogPostPage from "./pages/BlogPostPage";
@@ -74,6 +75,7 @@ const AppRoutes = () => (
     <Route path="/o/:code" element={<ShortLinkRedirect />} />
     <Route path="/termos" element={<TermsPage />} />
     <Route path="/privacidade" element={<PrivacyPage />} />
+    <Route path="/sobre" element={<AboutPage />} />
     <Route path="/transparencia" element={<TransparencyPage />} />
     <Route path="/blog" element={<BlogPage />} />
     <Route path="/blog/:slug" element={<BlogPostPage />} />
