@@ -92,6 +92,7 @@ serve(async (req) => {
 
     // Sort by popularity for the AI context
     const topOffers = [...offersContext].sort((a, b) => b.clicks - a.clicks).slice(0, 5);
+    const topOfferIds = topOffers.slice(0, 3).map((o: any) => o.id);
 
     // Create a simple ID mapping for the AI
     const offersList = offersContext.map((o: any, index: number) => 
@@ -103,41 +104,29 @@ serve(async (req) => {
 📊 OFERTAS DISPONÍVEIS (use os IDs exatos):
 ${offersList}
 
-🎯 REGRAS CRÍTICAS:
+🎯 INSTRUÇÕES OBRIGATÓRIAS:
 
-1. **SEMPRE QUE MENCIONAR OFERTAS**: Você DEVE incluir os IDs no campo suggestedOfferIds
-2. Não descreva preços ou detalhes - os cards já mostram isso automaticamente
-3. Apenas faça uma introdução curta e deixe os cards mostrarem as ofertas
+1. SEMPRE responda em formato JSON válido
+2. O JSON deve ter exatamente 2 campos: "text" (string) e "suggestedOfferIds" (array de strings)
 
 **PRIMEIRO CONTATO (oi, olá, etc):**
-- Saudação curta: "Oi! 😊 Tá afim de quê hoje? Comida, serviço, ou quer ver as ofertas mais quentes?"
-- NÃO mostre ofertas ainda (suggestedOfferIds: [])
+- Resposta curta de boas-vindas
+- suggestedOfferIds deve ser um array VAZIO []
 
-**QUANDO SOUBER A PREFERÊNCIA ou PEDIR OFERTAS:**
-- Resposta CURTA tipo: "Opa, olha só o que separei pra você! 🔥" ou "Achei essas aqui que você vai curtir!"
-- SEMPRE inclua os IDs das ofertas no suggestedOfferIds
-- Os cards aparecem automaticamente, não descreva preços no texto
+**QUANDO O USUÁRIO PEDIR OFERTAS (quero ver, mostra, tem algo, o que tem, ofertas, etc):**
+- Resposta curta tipo "Olha o que separei pra você! 🔥"
+- suggestedOfferIds DEVE conter os IDs das ofertas: ${JSON.stringify(topOfferIds)}
 
-🎭 TOM:
-- Amiga animada, mineirês leve (cê, uai, né)
-- Emojis moderados 😊🍕💰
-- Respostas CURTAS - os cards fazem o trabalho pesado
+**QUANDO O USUÁRIO MENCIONAR CATEGORIA (comida, pizza, serviço, etc):**
+- Filtre ofertas relevantes pelos tags/título
+- Inclua IDs das ofertas filtradas no suggestedOfferIds
 
-📤 FORMATO OBRIGATÓRIO (JSON):
-{"text": "mensagem curta", "suggestedOfferIds": ["id-uuid-aqui", "outro-id"]}
+🎭 TOM: Amiga animada, mineirês leve (cê, uai), emojis moderados
 
-💬 EXEMPLOS:
+📤 RESPONDA APENAS COM JSON VÁLIDO, NADA MAIS:
+{"text": "sua mensagem aqui", "suggestedOfferIds": ["id1", "id2"]}`;
 
-Usuário: "oi"
-{"text": "Oi! 😊 Tá afim de quê hoje? Comida, serviço, ou quer ver as ofertas mais quentes de ${city}?", "suggestedOfferIds": []}
-
-Usuário: "quero ver ofertas" ou "o que tem?"
-{"text": "Olha só o que tá rolando de bom! 🔥", "suggestedOfferIds": ${JSON.stringify(topOffers.slice(0, 3).map((o: any) => o.id))}}
-
-Usuário: "comida" ou preferência específica
-{"text": "Boa escolha! Separei essas pra você 😋", "suggestedOfferIds": ["ids-das-ofertas-relevantes"]}`;
-
-    console.log("AI Chat - City:", city, "Offers found:", offersContext.length);
+    console.log("AI Chat - City:", city, "Offers found:", offersContext.length, "Top IDs:", topOfferIds);
 
     const messages = [
       { role: "system", content: systemPrompt },
@@ -154,8 +143,9 @@ Usuário: "comida" ou preferência específica
       body: JSON.stringify({
         model: "google/gemini-2.5-flash",
         messages,
-        temperature: 0.8,
-        max_tokens: 800,
+        temperature: 0.7,
+        max_tokens: 500,
+        response_format: { type: "json_object" },
       }),
     });
 
@@ -180,33 +170,49 @@ Usuário: "comida" ou preferência específica
     const data = await response.json();
     const aiContent = data.choices?.[0]?.message?.content || "";
     
-    console.log("AI raw response:", aiContent.substring(0, 500));
+    console.log("AI raw response:", aiContent);
 
     // Try to parse JSON response
-    let parsedResponse;
+    let parsedResponse: { text: string; suggestedOfferIds: string[] };
     try {
       // Extract JSON from the response (might be wrapped in markdown)
       const jsonMatch = aiContent.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
         parsedResponse = JSON.parse(jsonMatch[0]);
       } else {
-        // If no JSON found, use the raw text
         parsedResponse = { text: aiContent, suggestedOfferIds: [] };
       }
     } catch (parseError) {
-      console.log("JSON parse error, using raw text:", parseError);
+      console.log("JSON parse error:", parseError);
       // Clean up markdown formatting from raw text
       let cleanText = aiContent
         .replace(/```json\s*/g, '')
         .replace(/```\s*/g, '')
-        .replace(/^\s*\{[\s\S]*?\}\s*$/g, ''); // Remove failed JSON
+        .trim();
       
-      // If cleaned text is empty or just whitespace, provide a fallback
-      if (!cleanText.trim()) {
+      if (!cleanText) {
         cleanText = "Encontrei algumas ofertas que podem te interessar! 😊";
       }
       
       parsedResponse = { text: cleanText, suggestedOfferIds: [] };
+    }
+
+    // FALLBACK INTELIGENTE: Se o usuário pediu ofertas mas a IA não retornou IDs
+    const userWantsOffers = /oferta|quero|mostre|mostra|tem algo|o que tem|ver|procur|preciso|busco|pizza|comida|servi|desconto|promo/i.test(message);
+    const isGreeting = /^(oi|olá|ola|eai|e ai|hey|hello|bom dia|boa tarde|boa noite|tudo bem)[\s!?.,]*$/i.test(message.trim());
+    
+    if (
+      !isGreeting &&
+      userWantsOffers &&
+      (!parsedResponse.suggestedOfferIds || parsedResponse.suggestedOfferIds.length === 0)
+    ) {
+      console.log("Fallback triggered - user wants offers but AI returned none");
+      parsedResponse.suggestedOfferIds = topOfferIds;
+      
+      // Se o texto também não menciona ofertas, ajustar
+      if (!parsedResponse.text || parsedResponse.text.length < 10) {
+        parsedResponse.text = "Olha só o que separei pra você! 🔥";
+      }
     }
 
     // Get full offer details for suggested offers
@@ -214,10 +220,7 @@ Usuário: "comida" ou preferência específica
       parsedResponse.suggestedOfferIds?.includes(o.id)
     );
 
-    console.log(
-      "AI Chat - Suggested offers:",
-      suggestedOffers.map((o: any) => ({ id: o.id, hasImage: !!(o.images && o.images.length) }))
-    );
+    console.log("AI Chat - Final suggested offers:", suggestedOffers.length, "IDs:", parsedResponse.suggestedOfferIds);
 
     return new Response(
       JSON.stringify({
