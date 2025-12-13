@@ -51,6 +51,24 @@ function AffiliateDashboardContent() {
   const [withdrawing, setWithdrawing] = useState(false);
   const [withdrawals, setWithdrawals] = useState<Withdrawal[]>([]);
   const [earnings, setEarnings] = useState<Earning[]>([]);
+  const [commissionMultiplier, setCommissionMultiplier] = useState<number>(1.00);
+
+  // Fetch commission multiplier
+  useEffect(() => {
+    const fetchCommissionMultiplier = async () => {
+      if (!profile?.id) return;
+      
+      const { data, error } = await supabase.rpc('get_commission_multiplier', {
+        affiliate_profile_id: profile.id
+      });
+
+      if (!error && data) {
+        setCommissionMultiplier(Number(data));
+      }
+    };
+
+    fetchCommissionMultiplier();
+  }, [profile?.id]);
 
   // Fetch withdrawal history
   useEffect(() => {
@@ -457,6 +475,7 @@ function AffiliateDashboardContent() {
                       }}
                       profileId={profile?.id || ''}
                       index={index}
+                      commissionMultiplier={commissionMultiplier}
                     />
                   ))}
                 </div>
