@@ -281,101 +281,6 @@ export default function ChatPage() {
     window.open(url, '_blank');
   };
 
-  // Component for city selection inside chat
-  const CitySelectionMessage = () => (
-    <div className="flex justify-start animate-fade-in">
-      <div className="max-w-[90%] sm:max-w-[85%] bg-card border border-border rounded-2xl rounded-bl-md px-4 py-4">
-        <div className="flex items-center gap-1 mb-3 text-xs font-bold text-client">
-          <Bot className="h-3 w-3" />
-          <span>Assistente</span>
-        </div>
-        
-        <p className="text-sm leading-relaxed mb-4">
-          Olá! 👋 Eu sou a <strong>Clilin AI</strong>. Para encontrar as melhores ofertas na sua região, primeiro me diga onde você está:
-        </p>
-
-        <div className="space-y-3">
-          <div>
-            <label className="text-xs font-medium mb-1.5 block text-muted-foreground">Estado</label>
-            <Select value={selectedState} onValueChange={(value) => {
-              setSelectedState(value);
-              setSelectedCity('');
-            }}>
-              <SelectTrigger className="h-11">
-                <SelectValue placeholder="Selecione o estado" />
-              </SelectTrigger>
-              <SelectContent>
-                {BRAZIL_STATES.map((state) => (
-                  <SelectItem key={state.code} value={state.code}>
-                    {state.code} - {state.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div>
-            <label className="text-xs font-medium mb-1.5 block text-muted-foreground">Cidade</label>
-            <Popover open={cityPopoverOpen} onOpenChange={setCityPopoverOpen}>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  role="combobox"
-                  aria-expanded={cityPopoverOpen}
-                  className="w-full h-11 justify-between font-normal"
-                  disabled={!selectedState}
-                >
-                  {selectedCity || "Buscar cidade..."}
-                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" align="start">
-                <Command>
-                  <CommandInput placeholder="Digite para buscar..." />
-                  <CommandList>
-                    <CommandEmpty>Nenhuma cidade encontrada.</CommandEmpty>
-                    <CommandGroup>
-                      {availableCities.map((city) => (
-                        <CommandItem
-                          key={city}
-                          value={city}
-                          onSelect={() => {
-                            setSelectedCity(city);
-                            setCityPopoverOpen(false);
-                          }}
-                        >
-                          <Check
-                            className={cn(
-                              "mr-2 h-4 w-4",
-                              selectedCity === city ? "opacity-100" : "opacity-0"
-                            )}
-                          />
-                          {city}
-                        </CommandItem>
-                      ))}
-                    </CommandGroup>
-                  </CommandList>
-                </Command>
-              </PopoverContent>
-            </Popover>
-          </div>
-
-          <Button 
-            onClick={startChat} 
-            className="w-full h-11 bg-client hover:bg-client/90"
-            disabled={!selectedCity || loadingCities}
-          >
-            {loadingCities ? (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            ) : (
-              <CheckCircle className="mr-2 h-4 w-4" />
-            )}
-            Confirmar Localização
-          </Button>
-        </div>
-      </div>
-    </div>
-  );
 
   // No Offers Screen (shown as overlay/modal style within chat)
   if (showNoOffersScreen) {
@@ -555,7 +460,101 @@ export default function ChatPage() {
       >
         <div className="max-w-3xl mx-auto space-y-4">
           {/* Show city selection if chat not started */}
-          {!chatStarted && <CitySelectionMessage />}
+          {/* City selection message - inline to avoid forwardRef issues */}
+          {!chatStarted && (
+            <div className="flex justify-start animate-fade-in">
+              <div className="max-w-[90%] sm:max-w-[85%] bg-card border border-border rounded-2xl rounded-bl-md px-4 py-4">
+                <div className="flex items-center gap-1 mb-3 text-xs font-bold text-client">
+                  <Bot className="h-3 w-3" />
+                  <span>Assistente</span>
+                </div>
+                
+                <p className="text-sm leading-relaxed mb-4">
+                  Olá! 👋 Eu sou a <strong>Clilin AI</strong>. Para encontrar as melhores ofertas na sua região, primeiro me diga onde você está:
+                </p>
+
+                <div className="space-y-3">
+                  <div>
+                    <label className="text-xs font-medium mb-1.5 block text-muted-foreground">Estado</label>
+                    <Select value={selectedState} onValueChange={(value) => {
+                      setSelectedState(value);
+                      setSelectedCity('');
+                    }}>
+                      <SelectTrigger className="h-11">
+                        <SelectValue placeholder="Selecione o estado" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {BRAZIL_STATES.map((state) => (
+                          <SelectItem key={state.code} value={state.code}>
+                            {state.code} - {state.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-medium mb-1.5 block text-muted-foreground">Cidade</label>
+                    <Popover open={cityPopoverOpen} onOpenChange={setCityPopoverOpen}>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          role="combobox"
+                          aria-expanded={cityPopoverOpen}
+                          className="w-full h-11 justify-between font-normal"
+                          disabled={!selectedState}
+                        >
+                          {selectedCity || "Buscar cidade..."}
+                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" align="start">
+                        <Command>
+                          <CommandInput placeholder="Digite para buscar..." />
+                          <CommandList>
+                            <CommandEmpty>Nenhuma cidade encontrada.</CommandEmpty>
+                            <CommandGroup>
+                              {availableCities.map((city) => (
+                                <CommandItem
+                                  key={city}
+                                  value={city}
+                                  onSelect={() => {
+                                    setSelectedCity(city);
+                                    setCityPopoverOpen(false);
+                                  }}
+                                >
+                                  <Check
+                                    className={cn(
+                                      "mr-2 h-4 w-4",
+                                      selectedCity === city ? "opacity-100" : "opacity-0"
+                                    )}
+                                  />
+                                  {city}
+                                </CommandItem>
+                              ))}
+                            </CommandGroup>
+                          </CommandList>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+
+                  <Button 
+                    onClick={startChat} 
+                    className="w-full h-11 bg-client hover:bg-client/90"
+                    disabled={!selectedCity || loadingCities}
+                  >
+                    {loadingCities ? (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    ) : (
+                      <CheckCircle className="mr-2 h-4 w-4" />
+                    )}
+                    Confirmar Localização
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Regular messages */}
           {messages.map((msg) => (
