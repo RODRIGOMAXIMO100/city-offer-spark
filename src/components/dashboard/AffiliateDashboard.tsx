@@ -79,7 +79,7 @@ function AffiliateDashboardContent() {
         .from('transactions')
         .select('id, amount, created_at, offer_id, offers(title)')
         .eq('user_id', profile.id)
-        .eq('type', 'CLICK_EARNING')
+        .in('type', ['CLICK_EARNING', 'LEAD_EARNING'])
         .order('created_at', { ascending: false })
         .limit(50);
 
@@ -437,7 +437,7 @@ function AffiliateDashboardContent() {
               <div className="space-y-2">
                 <p className="font-bold text-lg">Comissão de 30% a 50%!</p>
                 <ul className="text-sm opacity-95 space-y-1">
-                  <li>• <strong>Comece com 30%</strong> do custo por clique</li>
+                  <li>• <strong>Comece com 30%</strong> do custo por lead</li>
                   <li>• <strong>Suba de nível</strong> e alcance até 50% de comissão!</li>
                   <li>• <strong>Saque mínimo: R$ 100,00</strong> via PIX instantâneo</li>
                   <li>• <strong><a href="/transparencia" className="underline">Veja como funciona →</a></strong></li>

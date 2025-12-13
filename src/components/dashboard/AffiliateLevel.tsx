@@ -119,14 +119,14 @@ export default function AffiliateLevel({ affiliateId }: AffiliateLevelProps) {
   };
 
   const getRealCommission = () => {
-    if (!currentLevel) return { percent: '30%', perClick: 'R$ 0,12 - R$ 0,30' };
+    if (!currentLevel) return { percent: '30%', perLead: 'R$ 0,30 - R$ 0,90' };
     // Base is 30%, multiplier increases it (1.0 = 30%, 1.33 = 40%, 1.67 = 50%)
     const basePercent = 30 * currentLevel.commission_multiplier;
-    const minPerClick = (0.12 * currentLevel.commission_multiplier).toFixed(2).replace('.', ',');
-    const maxPerClick = (0.30 * currentLevel.commission_multiplier).toFixed(2).replace('.', ',');
+    const minPerLead = (0.30 * currentLevel.commission_multiplier).toFixed(2).replace('.', ',');
+    const maxPerLead = (0.90 * currentLevel.commission_multiplier).toFixed(2).replace('.', ',');
     return { 
       percent: `${Math.round(basePercent)}%`, 
-      perClick: `R$ ${minPerClick} - R$ ${maxPerClick}`,
+      perLead: `R$ ${minPerLead} - R$ ${maxPerLead}`,
       multiplier: currentLevel.commission_multiplier
     };
   };
@@ -171,9 +171,9 @@ export default function AffiliateLevel({ affiliateId }: AffiliateLevelProps) {
             </div>
             <div className="flex flex-col sm:items-end gap-1 ml-11 sm:ml-0">
               <Badge className="bg-white/20 text-white border-white/30 w-fit">
-                {commission.percent} do CPC
+                {commission.percent} do CPL
               </Badge>
-              <span className="text-xs sm:text-sm font-semibold">{commission.perClick}/clique</span>
+              <span className="text-xs sm:text-sm font-semibold">{commission.perLead}/lead</span>
             </div>
           </div>
         </div>
@@ -184,7 +184,7 @@ export default function AffiliateLevel({ affiliateId }: AffiliateLevelProps) {
           <div className="grid grid-cols-3 gap-1.5 sm:gap-2 text-center">
             <div className="bg-muted/50 rounded-lg py-2 px-1">
               <p className="text-base sm:text-lg font-bold">{stats?.total_clicks || 0}</p>
-              <p className="text-[10px] sm:text-xs text-muted-foreground">Cliques totais</p>
+              <p className="text-[10px] sm:text-xs text-muted-foreground">Leads totais</p>
             </div>
             <div className="bg-muted/50 rounded-lg py-2 px-1">
               <p className="text-base sm:text-lg font-bold">{stats?.clicks_this_month || 0}</p>
@@ -204,12 +204,12 @@ export default function AffiliateLevel({ affiliateId }: AffiliateLevelProps) {
               <div className="flex justify-between text-sm mb-2">
                 <span className="text-muted-foreground">Progresso para {nextLevel.name}</span>
                 <span className="font-medium">
-                  {stats?.total_clicks || 0} / {nextLevel.min_clicks} cliques
+                  {stats?.total_clicks || 0} / {nextLevel.min_clicks} leads
                 </span>
               </div>
               <Progress value={calculateProgress()} className="h-2" />
               <p className="text-xs text-muted-foreground mt-1">
-                Faltam {Math.max(0, (nextLevel.min_clicks) - (stats?.total_clicks || 0))} cliques
+                Faltam {Math.max(0, (nextLevel.min_clicks) - (stats?.total_clicks || 0))} leads
               </p>
             </div>
           )}
@@ -236,7 +236,7 @@ export default function AffiliateLevel({ affiliateId }: AffiliateLevelProps) {
                 const isUnlocked = (stats?.total_clicks || 0) >= level.min_clicks;
                 const isCurrent = level.id === currentLevel?.id;
                 const levelPercent = Math.round(30 * level.commission_multiplier);
-                const levelPerClick = (0.21 * level.commission_multiplier).toFixed(2).replace('.', ',');
+                const levelPerLead = (0.60 * level.commission_multiplier).toFixed(2).replace('.', ',');
                 
                 return (
                   <div
