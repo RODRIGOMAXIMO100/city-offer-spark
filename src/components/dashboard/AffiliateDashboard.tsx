@@ -7,10 +7,11 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip';
 import { Badge } from '@/components/ui/badge';
-import { Banknote, LogOut, Share2, Copy, Check, TrendingUp, Loader2, MapPin, Instagram, Clock, History, Coins, HelpCircle, BookOpen } from 'lucide-react';
+import { Banknote, LogOut, Share2, Copy, Check, TrendingUp, Loader2, MapPin, Instagram, Clock, History, Coins, HelpCircle, BookOpen, Settings } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import PaymentDataModal from './PaymentDataModal';
+import ProfileSettingsModal from './ProfileSettingsModal';
 import AffiliateLevel from './AffiliateLevel';
 import AffiliateRanking from './AffiliateRanking';
 import NotificationBell from './NotificationBell';
@@ -44,6 +45,7 @@ function AffiliateDashboardContent() {
   const { claimBonus, hasClaimedBonus, startTour } = useOnboarding();
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [showProfileSettings, setShowProfileSettings] = useState(false);
   const [withdrawing, setWithdrawing] = useState(false);
   const [withdrawals, setWithdrawals] = useState<Withdrawal[]>([]);
   const [showWithdrawals, setShowWithdrawals] = useState(false);
@@ -280,6 +282,21 @@ function AffiliateDashboardContent() {
                     <Button 
                       size="icon" 
                       variant="outline" 
+                      onClick={() => setShowProfileSettings(true)} 
+                      className="shrink-0"
+                    >
+                      <Settings className="h-4 w-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Configurações</p>
+                  </TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button 
+                      size="icon" 
+                      variant="outline" 
                       onClick={() => navigate('/ajuda')} 
                       className="shrink-0"
                     >
@@ -497,6 +514,13 @@ function AffiliateDashboardContent() {
         open={showPaymentModal}
         onClose={() => setShowPaymentModal(false)}
         onSuccess={handlePaymentDataSaved}
+      />
+
+      {/* Profile Settings Modal */}
+      <ProfileSettingsModal
+        open={showProfileSettings}
+        onClose={() => setShowProfileSettings(false)}
+        userType="AFFILIATE"
       />
 
       <Footer />

@@ -7,9 +7,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Send, LogOut, Bot, Loader2, MapPin, Instagram, HelpCircle, BookOpen } from 'lucide-react';
+import { Send, LogOut, Bot, Loader2, MapPin, Instagram, HelpCircle, BookOpen, Settings } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Footer } from '@/components/landing/Footer';
+import ProfileSettingsModal from './ProfileSettingsModal';
 import logo from '@/assets/logo.png';
 
 interface Message {
@@ -32,6 +33,7 @@ export default function ClientDashboard() {
   const { profile, signOut } = useAuth();
   const { startTour } = useOnboarding();
   const navigate = useNavigate();
+  const [showProfileSettings, setShowProfileSettings] = useState(false);
   
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -144,6 +146,9 @@ export default function ClientDashboard() {
               <MapPin className="h-3 w-3" />
               {profile?.city}
             </div>
+            <Button size="icon" variant="ghost" onClick={() => setShowProfileSettings(true)} title="Configurações">
+              <Settings className="h-4 w-4" />
+            </Button>
             <Button size="icon" variant="ghost" onClick={() => navigate('/ajuda')} title="Central de Ajuda">
               <BookOpen className="h-4 w-4" />
             </Button>
@@ -281,6 +286,12 @@ export default function ClientDashboard() {
           </p>
         </div>
       </div>
+
+      <ProfileSettingsModal
+        open={showProfileSettings}
+        onClose={() => setShowProfileSettings(false)}
+        userType="CLIENT"
+      />
 
       <Footer />
       <OnboardingTour />
