@@ -454,8 +454,8 @@ function AffiliateDashboardContent() {
               <div className="space-y-2">
                 <p className="font-bold text-lg">💰 Ganhe por Lead Qualificado!</p>
                 <ul className="text-sm opacity-95 space-y-1">
-                  <li>• <strong>Ganhe R$ 0,50 a R$ 1,50 por lead</strong> (pessoa que preenche nome + WhatsApp)</li>
-                  <li>• <strong>Comissão base: 50%</strong> do custo por lead (empresa paga R$ 1 a R$ 3)</li>
+                  <li>• <strong>Ganhe R$ 0,30 a R$ 1,35 por lead</strong> (pessoa que preenche nome + WhatsApp)</li>
+                  <li>• <strong>Comissão base: 30%</strong> do custo por lead (empresa paga R$ 1 a R$ 3)</li>
                   <li>• <strong>Bônus de nível:</strong> suba de nível e ganhe multiplicador de até 1.5x!</li>
                   <li>• <strong>Saque mínimo: R$ 100,00</strong> via PIX instantâneo</li>
                   <li>• <strong><a href="/transparencia" className="underline">Veja como funciona →</a></strong></li>
