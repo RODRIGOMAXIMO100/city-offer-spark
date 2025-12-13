@@ -13,6 +13,7 @@ import { supabase } from '@/integrations/supabase/client';
 import PaymentDataModal from './PaymentDataModal';
 import ProfileSettingsModal from './ProfileSettingsModal';
 import AffiliateLevel from './AffiliateLevel';
+import AffiliateMonthlyHistory from './AffiliateMonthlyHistory';
 import AffiliateRanking from './AffiliateRanking';
 import NotificationBell from './NotificationBell';
 import AffiliateTutorial from './AffiliateTutorial';
@@ -439,6 +440,11 @@ function AffiliateDashboardContent() {
           <AffiliateLevel affiliateId={profile.id} />
         )}
 
+        {/* Monthly History */}
+        {profile?.id && (
+          <AffiliateMonthlyHistory affiliateId={profile.id} />
+        )}
+
         {/* Ranking Section */}
         {profile?.id && (
           <AffiliateRanking currentAffiliateId={profile.id} />
@@ -454,9 +460,10 @@ function AffiliateDashboardContent() {
               <div className="space-y-2">
                 <p className="font-bold text-lg">💰 Ganhe por Lead Qualificado!</p>
                 <ul className="text-sm opacity-95 space-y-1">
-                  <li>• <strong>Ganhe R$ 0,30 a R$ 1,35 por lead</strong> (pessoa que preenche nome + WhatsApp)</li>
-                  <li>• <strong>Comissão base: 30%</strong> do custo por lead (empresa paga R$ 1 a R$ 3)</li>
-                  <li>• <strong>Bônus de nível:</strong> suba de nível e ganhe multiplicador de até 1.5x!</li>
+                  <li>• <strong>Ganhe R$ 0,30 a R$ 1,50 por lead</strong> (pessoa que preenche nome + WhatsApp)</li>
+                  <li>• <strong>Comissão começa em 30%</strong> - suba de nível e ganhe mais!</li>
+                  <li>• <strong>Bronze (0-99 leads/mês):</strong> 30% | <strong>Prata (100-499):</strong> 40% | <strong>Ouro (500+):</strong> 50%</li>
+                  <li>• <strong>⚠️ Metas zeram dia 1</strong> - comece do Bronze e evolua todo mês!</li>
                   <li>• <strong>Saque mínimo: R$ 100,00</strong> via PIX instantâneo</li>
                   <li>• <strong><a href="/transparencia" className="underline">Veja como funciona →</a></strong></li>
                 </ul>

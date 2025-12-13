@@ -113,9 +113,11 @@ export default function AffiliateLevel({ affiliateId }: AffiliateLevelProps) {
 
   const calculateProgress = () => {
     if (!stats || !currentLevel || !nextLevel) return 0;
-    const clicksInLevel = stats.total_clicks - currentLevel.min_clicks;
+    // Usar leads do MÊS, não total
+    const leadsThisMonth = stats.clicks_this_month || 0;
+    const clicksInLevel = leadsThisMonth - currentLevel.min_clicks;
     const clicksNeeded = nextLevel.min_clicks - currentLevel.min_clicks;
-    return Math.min((clicksInLevel / clicksNeeded) * 100, 100);
+    return Math.min(Math.max((clicksInLevel / clicksNeeded) * 100, 0), 100);
   };
 
   const getRealCommission = () => {
@@ -181,15 +183,25 @@ export default function AffiliateLevel({ affiliateId }: AffiliateLevelProps) {
 
         {/* Progress */}
         <div className="p-3 sm:p-4 space-y-4">
+          {/* Monthly Stats - Main focus */}
+          <div className="bg-affiliate/10 rounded-lg p-3 border border-affiliate/20">
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-sm font-medium">📅 Meta do Mês</p>
+              <Badge variant="outline" className="text-[10px] text-affiliate border-affiliate">
+                Zera dia 1
+              </Badge>
+            </div>
+            <div className="text-center">
+              <p className="text-3xl font-bold text-affiliate">{stats?.clicks_this_month || 0}</p>
+              <p className="text-xs text-muted-foreground">leads este mês</p>
+            </div>
+          </div>
+
           {/* Stats */}
-          <div className="grid grid-cols-3 gap-1.5 sm:gap-2 text-center">
+          <div className="grid grid-cols-2 gap-1.5 sm:gap-2 text-center">
             <div className="bg-muted/50 rounded-lg py-2 px-1">
               <p className="text-base sm:text-lg font-bold">{stats?.total_clicks || 0}</p>
               <p className="text-[10px] sm:text-xs text-muted-foreground">Leads totais</p>
-            </div>
-            <div className="bg-muted/50 rounded-lg py-2 px-1">
-              <p className="text-base sm:text-lg font-bold">{stats?.clicks_this_month || 0}</p>
-              <p className="text-[10px] sm:text-xs text-muted-foreground">Este mês</p>
             </div>
             <div className="bg-muted/50 rounded-lg py-2 px-1">
               <p className="text-base sm:text-lg font-bold">
@@ -199,18 +211,18 @@ export default function AffiliateLevel({ affiliateId }: AffiliateLevelProps) {
             </div>
           </div>
 
-          {/* Progress to next level */}
+          {/* Progress to next level - Based on MONTHLY leads */}
           {nextLevel && (
             <div>
               <div className="flex justify-between text-sm mb-2">
                 <span className="text-muted-foreground">Progresso para {nextLevel.name}</span>
                 <span className="font-medium">
-                  {stats?.total_clicks || 0} / {nextLevel.min_clicks} leads
+                  {stats?.clicks_this_month || 0} / {nextLevel.min_clicks} leads
                 </span>
               </div>
               <Progress value={calculateProgress()} className="h-2" />
               <p className="text-xs text-muted-foreground mt-1">
-                Faltam {Math.max(0, (nextLevel.min_clicks) - (stats?.total_clicks || 0))} leads
+                Faltam {Math.max(0, (nextLevel.min_clicks) - (stats?.clicks_this_month || 0))} leads este mês
               </p>
             </div>
           )}
@@ -229,16 +241,20 @@ export default function AffiliateLevel({ affiliateId }: AffiliateLevelProps) {
             </div>
           )}
 
-          {/* All Levels */}
+          {/* All Levels - Monthly goals */}
           <div className="pt-2 border-t">
-            <p className="text-xs sm:text-sm font-medium mb-2">Níveis e comissões:</p>
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-xs sm:text-sm font-medium">Metas mensais:</p>
+              <p className="text-[10px] text-muted-foreground">Comissão sobe ao atingir meta</p>
+            </div>
             <div className="grid grid-cols-3 gap-2">
               {allLevels.map((level) => {
-                const isUnlocked = (stats?.total_clicks || 0) >= level.min_clicks;
+                const leadsThisMonth = stats?.clicks_this_month || 0;
+                const isUnlocked = leadsThisMonth >= level.min_clicks;
                 const isCurrent = level.id === currentLevel?.id;
-                const levelPercent = Math.round(30 * level.commission_multiplier);
-                // CPL médio R$ 2,00, 30% base = R$ 0,60
-                const levelPerLead = (0.60 * level.commission_multiplier).toFixed(2).replace('.', ',');
+                // Comissões fixas: Bronze 30%, Prata 40%, Ouro 50%
+                const levelPercent = level.id === 1 ? 30 : level.id === 2 ? 40 : 50;
+                const levelRange = level.id === 1 ? '0-99' : level.id === 2 ? '100-499' : '500+';
                 
                 return (
                   <div
@@ -259,7 +275,7 @@ export default function AffiliateLevel({ affiliateId }: AffiliateLevelProps) {
                     </div>
                     <p className="text-xs font-medium">{level.name}</p>
                     <p className="text-[10px] text-muted-foreground">
-                      {level.min_clicks > 0 ? `${level.min_clicks}+` : 'Inicial'}
+                      {levelRange} leads/mês
                     </p>
                     <p className="text-[10px] font-semibold text-affiliate mt-0.5">
                       {levelPercent}%
