@@ -168,6 +168,8 @@ export default function ProfileSettingsModal({ open, onClose, userType }: Profil
   };
 
   const handleSaveBasicData = async () => {
+    if (!profile) return;
+
     if (!name.trim()) {
       toast({
         title: 'Nome obrigatório',
@@ -189,6 +191,7 @@ export default function ProfileSettingsModal({ open, onClose, userType }: Profil
     setLoading(true);
 
     const cityFormatted = `${selectedCity} - ${selectedState}`;
+    const cityChanged = cityFormatted !== profile.city;
 
     const { error } = await supabase
       .from('profiles')
@@ -197,21 +200,39 @@ export default function ProfileSettingsModal({ open, onClose, userType }: Profil
         city: cityFormatted,
         telefone: telefone || null,
       })
-      .eq('id', profile?.id);
+      .eq('id', profile.id);
 
     if (error) {
+      setLoading(false);
       toast({
         title: 'Erro ao salvar',
         description: error.message,
         variant: 'destructive',
       });
-    } else {
-      await refreshProfile();
-      toast({
-        title: 'Dados salvos!',
-        description: 'Seus dados básicos foram atualizados.',
-      });
+      return;
     }
+
+    // Se a cidade mudou e é uma empresa, atualizar todas as ofertas ativas
+    if (cityChanged && userType === 'COMPANY') {
+      const { error: offersError } = await supabase
+        .from('offers')
+        .update({ city: cityFormatted })
+        .eq('company_id', profile.id)
+        .eq('active', true)
+        .is('deleted_at', null);
+
+      if (offersError) {
+        console.error('Erro ao atualizar ofertas:', offersError);
+      }
+    }
+
+    await refreshProfile();
+    toast({
+      title: 'Dados salvos!',
+      description: cityChanged && userType === 'COMPANY' 
+        ? 'Seus dados e ofertas foram atualizados para a nova cidade.'
+        : 'Seus dados básicos foram atualizados.',
+    });
 
     setLoading(false);
   };
