@@ -28,9 +28,9 @@ import { PRICING_DISCLAIMER } from "@/types/database";
 
 const scoreComponents = [
   {
-    name: "CTR / Engajamento",
+    name: "Taxa de Conversão",
     weight: 40,
-    description: "Taxa de cliques vs visualizações comparada com a média da cidade",
+    description: "Taxa de leads vs visualizações comparada com a média da cidade",
     tips: ["Crie títulos atrativos", "Ofereça descontos reais", "Use tags relevantes"],
     color: "bg-primary"
   },
@@ -50,25 +50,25 @@ const scoreComponents = [
   }
 ];
 
-// Exemplos de CPC automático baseado na nota
-const cpcExamples = [
-  { score: 10, cpc: 4, position: 1, reason: "Nota máxima = CPC mínimo" },
-  { score: 7, cpc: 7, position: 2, reason: "Nota inicial padrão" },
-  { score: 4, cpc: 10, position: 3, reason: "Nota mínima = CPC máximo" },
+// Exemplos de CPL automático baseado na nota (R$ 1,00 a R$ 3,00)
+const cplExamples = [
+  { score: 10, cpl: 100, position: 1, reason: "Nota máxima = CPL mínimo" },
+  { score: 7, cpl: 200, position: 2, reason: "Nota inicial padrão" },
+  { score: 4, cpl: 300, position: 3, reason: "Nota mínima = CPL máximo" },
 ];
 
 // Exemplos corrigidos: 30% base para afiliados (Plataforma 70%, Afiliado 30%)
 const earningsExamples = [
-  { cpc: 4, company: "R$ 0,40", platform: "R$ 0,28", affiliate: "R$ 0,12", affiliateBase: 12 },
-  { cpc: 7, company: "R$ 0,70", platform: "R$ 0,49", affiliate: "R$ 0,21", affiliateBase: 21 },
-  { cpc: 10, company: "R$ 1,00", platform: "R$ 0,70", affiliate: "R$ 0,30", affiliateBase: 30 },
+  { cpl: 100, company: "R$ 1,00", platform: "R$ 0,70", affiliate: "R$ 0,30", affiliateBase: 30 },
+  { cpl: 200, company: "R$ 2,00", platform: "R$ 1,40", affiliate: "R$ 0,60", affiliateBase: 60 },
+  { cpl: 300, company: "R$ 3,00", platform: "R$ 2,10", affiliate: "R$ 0,90", affiliateBase: 90 },
 ];
 
 // Níveis alinhados com banco de dados: Bronze 1.0x (30%), Prata 1.33x (~40%), Ouro 1.67x (~50%)
 const levelMultipliers = [
-  { name: "Bronze", multiplier: "1.0x", commission: "30%", clicks: "0+", color: "bg-amber-600" },
-  { name: "Prata", multiplier: "1.33x", commission: "40%", clicks: "100+", color: "bg-gray-400" },
-  { name: "Ouro", multiplier: "1.67x", commission: "50%", clicks: "500+", color: "bg-yellow-500" },
+  { name: "Bronze", multiplier: "1.0x", commission: "30%", leads: "0+", color: "bg-amber-600" },
+  { name: "Prata", multiplier: "1.33x", commission: "40%", leads: "100+", color: "bg-gray-400" },
+  { name: "Ouro", multiplier: "1.67x", commission: "50%", leads: "500+", color: "bg-yellow-500" },
 ];
 
 export default function TransparencyPage() {
@@ -134,11 +134,11 @@ export default function TransparencyPage() {
               </TabsTrigger>
             </TabsList>
 
-            {/* Tab 1: CPC Automático */}
+            {/* Tab 1: CPL Automático */}
             <TabsContent value="auction" className="space-y-8">
               <div className="text-center mb-8">
-                <h2 className="text-3xl font-display font-bold mb-2">Clique por Lead Qualificado</h2>
-                <p className="text-muted-foreground">Cada clique é um lead qualificado. Sua Nota define o custo.</p>
+                <h2 className="text-3xl font-display font-bold mb-2">Custo por Lead Qualificado</h2>
+                <p className="text-muted-foreground">Você só paga quando recebe um lead com nome e WhatsApp. Sua Nota define o custo.</p>
                 
                 {/* Lead Qualificado Explanation */}
                 <div className="max-w-2xl mx-auto mt-6 p-4 bg-primary/5 border border-primary/20 rounded-xl text-left">
@@ -147,7 +147,7 @@ export default function TransparencyPage() {
                   </p>
                   <p className="text-sm text-muted-foreground mb-3">
                     Diferente de plataformas que cobram por impressões ou cliques genéricos, na Clilin você paga apenas 
-                    quando um cliente <strong>demonstra interesse real</strong> na sua oferta:
+                    quando um cliente <strong>preenche seus dados</strong> (nome e WhatsApp) demonstrando interesse real:
                   </p>
                   <div className="grid sm:grid-cols-2 gap-3">
                     <div className="flex items-start gap-2 p-2 bg-background rounded-lg">
@@ -179,32 +179,32 @@ export default function TransparencyPage() {
                 <CardContent className="p-8">
                   <div className="flex flex-col md:flex-row items-center justify-center gap-4 text-center">
                     <div className="bg-card rounded-xl p-4 shadow-lg">
-                      <p className="text-sm text-muted-foreground mb-1">Fórmula</p>
-                      <p className="text-2xl font-bold text-primary">14</p>
+                      <p className="text-sm text-muted-foreground mb-1">CPL Máximo</p>
+                      <p className="text-2xl font-bold text-primary">R$ 3,00</p>
                     </div>
                     <span className="text-2xl font-bold text-muted-foreground">−</span>
                     <div className="bg-card rounded-xl p-4 shadow-lg">
-                      <p className="text-sm text-muted-foreground mb-1">Nota da Oferta</p>
-                      <p className="text-2xl font-bold text-secondary">7</p>
+                      <p className="text-sm text-muted-foreground mb-1">Nota × R$ 0,33</p>
+                      <p className="text-2xl font-bold text-secondary">7 × 0,33</p>
                     </div>
                     <span className="text-2xl font-bold text-muted-foreground">=</span>
                     <div className="bg-card rounded-xl p-4 shadow-lg border-2 border-accent">
-                      <p className="text-sm text-muted-foreground mb-1">CPC</p>
-                      <p className="text-2xl font-bold text-accent">R$ 0,70</p>
+                      <p className="text-sm text-muted-foreground mb-1">CPL</p>
+                      <p className="text-2xl font-bold text-accent">R$ 2,00</p>
                     </div>
                   </div>
                   <p className="text-center mt-6 text-muted-foreground">
-                    Quanto maior sua nota, menor o custo por clique!
+                    Quanto maior sua nota, menor o custo por lead!
                   </p>
                 </CardContent>
               </Card>
 
-              {/* How CPC Works */}
+              {/* How CPL Works */}
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Calculator className="h-5 w-5 text-primary" />
-                    Custo por Lead = 14 − Nota da Oferta
+                    Custo por Lead = R$ 3,00 − (Nota × R$ 0,33)
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -225,10 +225,10 @@ export default function TransparencyPage() {
                           </tr>
                         </thead>
                         <tbody>
-                          {cpcExamples.map((ex, i) => (
+                          {cplExamples.map((ex, i) => (
                             <tr key={i} className={i === 0 ? "bg-secondary/10" : ""}>
                               <td className="text-center py-2 px-3 font-bold">{ex.score}</td>
-                              <td className="text-center py-2 px-3 text-secondary font-bold">R$ {(ex.cpc * 0.10).toFixed(2).replace('.', ',')}</td>
+                              <td className="text-center py-2 px-3 text-secondary font-bold">R$ {(ex.cpl / 100).toFixed(2).replace('.', ',')}</td>
                               <td className="py-2 px-3 text-muted-foreground">{ex.reason}</td>
                             </tr>
                           ))}
@@ -248,7 +248,7 @@ export default function TransparencyPage() {
                   <CardContent className="p-6 text-center">
                     <Zap className="h-8 w-8 text-secondary mx-auto mb-3" />
                     <h4 className="font-bold mb-1">Nota 10</h4>
-                    <p className="text-2xl font-bold text-secondary">R$ 0,40</p>
+                    <p className="text-2xl font-bold text-secondary">R$ 1,00</p>
                     <p className="text-xs text-muted-foreground mt-1">por lead qualificado</p>
                   </CardContent>
                 </Card>
@@ -256,7 +256,7 @@ export default function TransparencyPage() {
                   <CardContent className="p-6 text-center">
                     <Target className="h-8 w-8 text-primary mx-auto mb-3" />
                     <h4 className="font-bold mb-1">Nota 7</h4>
-                    <p className="text-2xl font-bold text-primary">R$ 0,70</p>
+                    <p className="text-2xl font-bold text-primary">R$ 2,00</p>
                     <p className="text-xs text-muted-foreground mt-1">por lead qualificado</p>
                   </CardContent>
                 </Card>
@@ -264,7 +264,7 @@ export default function TransparencyPage() {
                   <CardContent className="p-6 text-center">
                     <Award className="h-8 w-8 text-destructive mx-auto mb-3" />
                     <h4 className="font-bold mb-1">Nota 4</h4>
-                    <p className="text-2xl font-bold text-destructive">R$ 1,00</p>
+                    <p className="text-2xl font-bold text-destructive">R$ 3,00</p>
                     <p className="text-xs text-muted-foreground mt-1">por lead qualificado</p>
                   </CardContent>
                 </Card>
@@ -273,7 +273,7 @@ export default function TransparencyPage() {
               {/* Comparison Section */}
               <Card className="bg-gradient-to-r from-muted/50 to-muted/30 border-border">
                 <CardHeader>
-                  <CardTitle className="text-lg">Comparativo: Lead Qualificado vs Clique Genérico</CardTitle>
+                  <CardTitle className="text-lg">Comparativo: Lead Qualificado vs Outras Métricas</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="grid sm:grid-cols-3 gap-4">
@@ -290,7 +290,7 @@ export default function TransparencyPage() {
                     <div className="p-4 bg-secondary/10 border border-secondary/20 rounded-xl text-center">
                       <p className="text-xs text-muted-foreground mb-1">Clilin</p>
                       <p className="font-bold text-secondary">Lead Qualificado</p>
-                      <p className="text-xs text-muted-foreground mt-2">Alguém local pediu OU foi indicado = Interesse real</p>
+                      <p className="text-xs text-muted-foreground mt-2">Nome + WhatsApp = Cliente pronto para contato</p>
                     </div>
                   </div>
                 </CardContent>
@@ -393,8 +393,8 @@ export default function TransparencyPage() {
                     <div className="flex items-start gap-3">
                       <BarChart3 className="h-5 w-5 text-accent shrink-0 mt-0.5" />
                       <div>
-                        <p className="font-medium text-sm">Mantenha bom CTR</p>
-                        <p className="text-xs text-muted-foreground">Até +5 pontos no CTR Esperado</p>
+                        <p className="font-medium text-sm">Mantenha boa conversão</p>
+                        <p className="text-xs text-muted-foreground">Até +5 pontos na Taxa de Conversão</p>
                       </div>
                     </div>
                   </div>
@@ -416,7 +416,7 @@ export default function TransparencyPage() {
                     <div className="bg-company text-company-foreground rounded-2xl p-6 text-center min-w-[140px]">
                       <p className="text-sm opacity-90 mb-1">Empresa paga</p>
                       <p className="text-3xl font-bold">100%</p>
-                      <p className="text-xs opacity-75 mt-1">do CPC cobrado</p>
+                      <p className="text-xs opacity-75 mt-1">do CPL cobrado</p>
                     </div>
                     
                     <ArrowRight className="h-8 w-8 text-muted-foreground rotate-90 md:rotate-0" />
@@ -450,7 +450,7 @@ export default function TransparencyPage() {
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm text-muted-foreground mb-4">
-                    Quanto mais cliques você gera, maior sua comissão! Comece com 30% e chegue a 50%.
+                    Quanto mais leads você gera, maior sua comissão! Comece com 30% e chegue a 50%.
                   </p>
                   <div className="grid sm:grid-cols-3 gap-4">
                     {levelMultipliers.map((level, i) => (
@@ -460,7 +460,7 @@ export default function TransparencyPage() {
                         </div>
                         <p className="font-bold">{level.name}</p>
                         <p className="text-2xl font-display font-bold text-affiliate mt-1">{level.commission}</p>
-                        <p className="text-xs text-muted-foreground">{level.clicks} cliques</p>
+                        <p className="text-xs text-muted-foreground">{level.leads} leads</p>
                         <p className="text-xs text-muted-foreground/70">({level.multiplier})</p>
                       </div>
                     ))}
@@ -481,7 +481,7 @@ export default function TransparencyPage() {
                     <table className="w-full text-sm">
                       <thead>
                         <tr className="border-b border-border">
-                          <th className="text-left py-3 px-4">CPC Cobrado</th>
+                          <th className="text-left py-3 px-4">CPL Cobrado</th>
                           <th className="text-center py-3 px-4">Empresa Paga</th>
                           <th className="text-center py-3 px-4">Plataforma (70%)</th>
                           <th className="text-center py-3 px-4">Divulgador (30%)</th>
@@ -490,7 +490,7 @@ export default function TransparencyPage() {
                       <tbody>
                         {earningsExamples.map((ex, i) => (
                           <tr key={i} className="border-b border-border/50 hover:bg-muted/50">
-                            <td className="py-3 px-4 font-medium">R$ {(ex.cpc * 0.10).toFixed(2).replace('.', ',')}</td>
+                            <td className="py-3 px-4 font-medium">R$ {(ex.cpl / 100).toFixed(2).replace('.', ',')}</td>
                             <td className="text-center py-3 px-4 text-company font-bold">{ex.company}</td>
                             <td className="text-center py-3 px-4 text-muted-foreground">{ex.platform}</td>
                             <td className="text-center py-3 px-4 text-affiliate font-bold">{ex.affiliate}</td>
@@ -500,7 +500,7 @@ export default function TransparencyPage() {
                     </table>
                   </div>
                   <p className="text-xs text-muted-foreground mt-4 text-center">
-                    💡 No nível Ouro (50%), o divulgador ganharia R$ 0,20, R$ 0,35 e R$ 0,50 respectivamente!
+                    💡 No nível Ouro (50%), o divulgador ganharia R$ 0,50, R$ 1,00 e R$ 1,50 respectivamente!
                   </p>
                 </CardContent>
               </Card>
@@ -535,26 +535,26 @@ export default function TransparencyPage() {
             <TabsContent value="earnings" className="space-y-8">
               <div className="text-center mb-8">
                 <h2 className="text-3xl font-display font-bold mb-2">Ganhos do Divulgador</h2>
-                <p className="text-muted-foreground">De R$ 0,12 a R$ 0,50 por clique (conforme seu nível)</p>
+                <p className="text-muted-foreground">De R$ 0,30 a R$ 1,50 por lead (conforme seu nível)</p>
               </div>
 
               {/* Earnings Range */}
               <Card className="bg-gradient-to-r from-affiliate/10 to-affiliate/5 border-affiliate/20">
                 <CardContent className="p-8 text-center">
-                  <p className="text-sm text-muted-foreground mb-2">Ganho por clique</p>
+                  <p className="text-sm text-muted-foreground mb-2">Ganho por lead</p>
                   <div className="flex items-center justify-center gap-4">
                     <div>
-                      <p className="text-4xl font-display font-bold text-affiliate">R$ 0,12</p>
+                      <p className="text-4xl font-display font-bold text-affiliate">R$ 0,30</p>
                       <p className="text-xs text-muted-foreground">mínimo (Bronze)</p>
                     </div>
                     <span className="text-2xl text-muted-foreground">→</span>
                     <div>
-                      <p className="text-4xl font-display font-bold text-affiliate">R$ 0,50</p>
+                      <p className="text-4xl font-display font-bold text-affiliate">R$ 1,50</p>
                       <p className="text-xs text-muted-foreground">máximo (Ouro)*</p>
                     </div>
                   </div>
                   <p className="text-xs text-muted-foreground mt-4">
-                    *Com CPC máximo (R$ 1,00) + nível Ouro (50%)
+                    *Com CPL máximo (R$ 3,00) + nível Ouro (50%)
                   </p>
                 </CardContent>
               </Card>
@@ -569,7 +569,7 @@ export default function TransparencyPage() {
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm text-muted-foreground mb-4">
-                    Quanto mais cliques você gera, maior seu nível e maior sua comissão!
+                    Quanto mais leads você gera, maior seu nível e maior sua comissão!
                   </p>
                   <div className="grid sm:grid-cols-3 gap-4">
                     {levelMultipliers.map((level, i) => (
@@ -579,11 +579,11 @@ export default function TransparencyPage() {
                         </div>
                         <p className="font-bold">{level.name}</p>
                         <p className="text-2xl font-display font-bold text-affiliate mt-1">{level.commission}</p>
-                        <p className="text-xs text-muted-foreground">{level.clicks} cliques</p>
+                        <p className="text-xs text-muted-foreground">{level.leads} leads</p>
                         <div className="mt-2 pt-2 border-t border-border/50">
-                          <p className="text-xs text-muted-foreground">CPC R$ 0,70 =</p>
+                          <p className="text-xs text-muted-foreground">CPL R$ 2,00 =</p>
                           <p className="text-sm font-bold text-affiliate">
-                            R$ {(0.70 * parseFloat(level.commission) / 100).toFixed(2).replace('.', ',')}
+                            R$ {(2.00 * parseFloat(level.commission) / 100).toFixed(2).replace('.', ',')}
                           </p>
                         </div>
                       </div>
@@ -602,28 +602,28 @@ export default function TransparencyPage() {
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm text-muted-foreground mb-4">
-                    Baseado em CPC médio de R$ 0,70 (R$ 0,21 por clique para Bronze - 30%):
+                    Baseado em CPL médio de R$ 2,00 (R$ 0,60 por lead para Bronze - 30%):
                   </p>
                   <div className="grid sm:grid-cols-3 gap-4">
                     <div className="bg-card rounded-xl p-4 text-center border border-border">
-                      <p className="text-sm text-muted-foreground">10 cliques/dia</p>
-                      <p className="text-2xl font-bold text-affiliate mt-1">R$ 63</p>
+                      <p className="text-sm text-muted-foreground">5 leads/dia</p>
+                      <p className="text-2xl font-bold text-affiliate mt-1">R$ 90</p>
                       <p className="text-xs text-muted-foreground">/mês (Bronze)</p>
                     </div>
                     <div className="bg-card rounded-xl p-4 text-center border border-border">
-                      <p className="text-sm text-muted-foreground">50 cliques/dia</p>
-                      <p className="text-2xl font-bold text-affiliate mt-1">R$ 315</p>
+                      <p className="text-sm text-muted-foreground">15 leads/dia</p>
+                      <p className="text-2xl font-bold text-affiliate mt-1">R$ 270</p>
                       <p className="text-xs text-muted-foreground">/mês (Bronze)</p>
                     </div>
                     <div className="bg-card rounded-xl p-4 text-center border border-border">
-                      <p className="text-sm text-muted-foreground">100 cliques/dia</p>
-                      <p className="text-2xl font-bold text-affiliate mt-1">R$ 630</p>
+                      <p className="text-sm text-muted-foreground">30 leads/dia</p>
+                      <p className="text-2xl font-bold text-affiliate mt-1">R$ 540</p>
                       <p className="text-xs text-muted-foreground">/mês (Bronze)</p>
                     </div>
                   </div>
                   <div className="mt-4 p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
                     <p className="text-sm text-center">
-                      💡 Com nível <strong className="text-yellow-600">Ouro (50%)</strong>, os mesmos 100 cliques/dia = <strong className="text-affiliate">R$ 1.050/mês</strong>!
+                      💡 Com nível <strong className="text-yellow-600">Ouro (50%)</strong>, os mesmos 30 leads/dia = <strong className="text-affiliate">R$ 900/mês</strong>!
                     </p>
                   </div>
                 </CardContent>
@@ -635,11 +635,11 @@ export default function TransparencyPage() {
                   <CardContent className="p-6">
                     <h4 className="font-bold mb-2 flex items-center gap-2">
                       <Users className="h-4 w-4 text-primary" />
-                      Cliques Válidos
+                      Leads Válidos
                     </h4>
                     <p className="text-sm text-muted-foreground">
-                      Só cliques reais contam. Nosso sistema anti-fraude detecta bots, 
-                      cliques repetidos e comportamentos suspeitos.
+                      Só leads reais contam. Nosso sistema anti-fraude detecta bots, 
+                      cadastros duplicados e comportamentos suspeitos.
                     </p>
                   </CardContent>
                 </Card>
