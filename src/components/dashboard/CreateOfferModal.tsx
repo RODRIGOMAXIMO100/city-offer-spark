@@ -595,14 +595,14 @@ export default function CreateOfferModal({
             </p>
           </div>
 
-          {/* CPC Info */}
+          {/* CPL Info */}
           <div className="p-3 bg-company/5 border border-company/20 rounded-lg">
             <div className="flex items-center gap-2 mb-1">
               <Star className="h-4 w-4 text-company" />
-              <span className="font-medium text-xs">CPC Automático</span>
+              <span className="font-medium text-xs">CPL Automático</span>
             </div>
             <p className="text-[10px] text-muted-foreground">
-              Seu custo por clique (R$ 0,40 - R$ 1,00) é calculado automaticamente com base na <strong>Nota da Oferta</strong>.
+              Seu custo por lead qualificado (R$ 1,00 - R$ 3,00) é calculado automaticamente com base na <strong>Nota da Oferta</strong>.
             </p>
             <p className="text-[9px] text-amber-600 dark:text-amber-400 mt-1 italic">
               Valores atuais, sujeitos a alteração conforme política da plataforma.
