@@ -66,6 +66,7 @@ export default function UserDetailModal({ user, open, onOpenChange, onUserUpdate
   const [loading, setLoading] = useState(false);
   const [balanceAmount, setBalanceAmount] = useState('');
   const [balanceAction, setBalanceAction] = useState<'add' | 'remove'>('add');
+  const [balanceNote, setBalanceNote] = useState('');
   const [banModalOpen, setBanModalOpen] = useState(false);
 
   useEffect(() => {
@@ -132,19 +133,24 @@ export default function UserDetailModal({ user, open, onOpenChange, onUserUpdate
       if (balanceError) throw balanceError;
 
       // Create transaction record
+      const description = balanceNote.trim() 
+        ? `Ajuste manual: ${balanceAction === 'add' ? '+' : '-'}${formatCentsToBRL(Math.abs(finalAmount))} — ${balanceNote.trim()}`
+        : `Ajuste manual: ${balanceAction === 'add' ? '+' : '-'}${formatCentsToBRL(Math.abs(finalAmount))}`;
+      
       const { error: txError } = await supabase
         .from('transactions')
         .insert({
           user_id: user.id,
           amount: Math.abs(finalAmount),
           type: 'ADMIN_ADJUSTMENT' as any,
-          description: `Ajuste manual: ${balanceAction === 'add' ? '+' : '-'}${formatCentsToBRL(Math.abs(finalAmount))}`
+          description
         });
 
       if (txError) throw txError;
 
       toast.success(`Saldo ${balanceAction === 'add' ? 'adicionado' : 'removido'} com sucesso`);
       setBalanceAmount('');
+      setBalanceNote('');
       onUserUpdated();
       fetchUserData();
     } catch (error) {
@@ -317,38 +323,52 @@ export default function UserDetailModal({ user, open, onOpenChange, onUserUpdate
                   <p className="text-xl sm:text-2xl font-bold">{formatCentsToBRL(user.balance)}</p>
                 </div>
 
-                <div className="space-y-2">
-                  <Label className="text-xs sm:text-sm">Ajustar Saldo (centavos)</Label>
-                  <div className="flex flex-col sm:flex-row gap-2">
-                    <Input
-                      type="number"
-                      placeholder="Ex: 100"
-                      value={balanceAmount}
-                      onChange={(e) => setBalanceAmount(e.target.value)}
-                      className="flex-1"
-                    />
-                    <div className="flex gap-2">
-                      <Button 
-                        variant="outline" 
-                        size="icon"
-                        onClick={() => setBalanceAction('add')}
-                        className={balanceAction === 'add' ? 'bg-green-100 border-green-500' : ''}
-                      >
-                        <Plus className="h-4 w-4" />
-                      </Button>
-                      <Button 
-                        variant="outline" 
-                        size="icon"
-                        onClick={() => setBalanceAction('remove')}
-                        className={balanceAction === 'remove' ? 'bg-red-100 border-red-500' : ''}
-                      >
-                        <Minus className="h-4 w-4" />
-                      </Button>
-                      <Button onClick={handleBalanceChange} disabled={!balanceAmount} className="flex-1 sm:flex-none">
-                        {balanceAction === 'add' ? 'Adicionar' : 'Remover'}
-                      </Button>
+                <div className="space-y-3">
+                  <div>
+                    <Label className="text-xs sm:text-sm">Valor (centavos)</Label>
+                    <div className="flex flex-col sm:flex-row gap-2 mt-1">
+                      <Input
+                        type="number"
+                        placeholder="Ex: 100"
+                        value={balanceAmount}
+                        onChange={(e) => setBalanceAmount(e.target.value)}
+                        className="flex-1"
+                      />
+                      <div className="flex gap-2">
+                        <Button 
+                          variant="outline" 
+                          size="icon"
+                          onClick={() => setBalanceAction('add')}
+                          className={balanceAction === 'add' ? 'bg-green-100 border-green-500' : ''}
+                        >
+                          <Plus className="h-4 w-4" />
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          size="icon"
+                          onClick={() => setBalanceAction('remove')}
+                          className={balanceAction === 'remove' ? 'bg-red-100 border-red-500' : ''}
+                        >
+                          <Minus className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </div>
                   </div>
+                  
+                  <div>
+                    <Label className="text-xs sm:text-sm">Observação (opcional)</Label>
+                    <Input
+                      placeholder="Ex: Bônus promocional, correção de erro..."
+                      value={balanceNote}
+                      onChange={(e) => setBalanceNote(e.target.value)}
+                      maxLength={100}
+                      className="mt-1"
+                    />
+                  </div>
+                  
+                  <Button onClick={handleBalanceChange} disabled={!balanceAmount} className="w-full">
+                    {balanceAction === 'add' ? 'Adicionar Saldo' : 'Remover Saldo'}
+                  </Button>
                 </div>
 
                 {/* Ban Button */}
