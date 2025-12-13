@@ -23,7 +23,7 @@ export function useOffers(city?: string) {
         .eq('active', true)
         .is('deleted_at', null)
         .gt('expires_at', new Date().toISOString())
-        .order('clicks_count', { ascending: false });
+        .order('leads_count', { ascending: false });
 
       if (city) {
         query = query.eq('city', city);

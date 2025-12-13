@@ -14,7 +14,7 @@ import { LineChart, Line, XAxis, YAxis, ResponsiveContainer } from 'recharts';
 interface DailyData {
   date: string;
   views: number;
-  clicks: number;
+  leads: number;
 }
 
 const chartConfig = {
@@ -22,9 +22,9 @@ const chartConfig = {
     label: 'Views',
     color: 'hsl(var(--muted-foreground))',
   },
-  clicks: {
-    label: 'Cliques',
-    color: 'hsl(var(--primary))',
+  leads: {
+    label: 'Leads',
+    color: 'hsl(var(--secondary))',
   },
 };
 
@@ -62,12 +62,13 @@ export default function PerformanceChart() {
       return;
     }
 
-    // Get clicks and views data in parallel
-    const [clicksResult, viewsResult] = await Promise.all([
+    // Get leads and views data in parallel
+    const [leadsResult, viewsResult] = await Promise.all([
       supabase
-        .from('offer_clicks')
-        .select('created_at, offer_id, click_type')
+        .from('leads')
+        .select('created_at, offer_id')
         .in('offer_id', myOfferIds)
+        .eq('is_valid', true)
         .gte('created_at', startDate.toISOString()),
       supabase
         .from('offer_views')
@@ -76,19 +77,18 @@ export default function PerformanceChart() {
         .gte('created_at', startDate.toISOString())
     ]);
 
-    if (clicksResult.error) {
-      console.error('Error fetching clicks:', clicksResult.error);
+    if (leadsResult.error) {
+      console.error('Error fetching leads:', leadsResult.error);
     }
     if (viewsResult.error) {
       console.error('Error fetching views:', viewsResult.error);
     }
 
-    // Filter MAIN clicks only
-    const myClicks = clicksResult.data?.filter(c => c.click_type === 'MAIN') || [];
+    const myLeads = leadsResult.data || [];
     const myViews = viewsResult.data || [];
 
     // Group by day using UTC dates consistently
-    const dailyMap: Record<string, { views: number; clicks: number }> = {};
+    const dailyMap: Record<string, { views: number; leads: number }> = {};
     
     // Initialize all days in period (use UTC)
     for (let i = period - 1; i >= 0; i--) {
@@ -96,15 +96,15 @@ export default function PerformanceChart() {
       date.setDate(date.getDate() - i);
       // Use local date string to match user's timezone
       const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-      dailyMap[key] = { views: 0, clicks: 0 };
+      dailyMap[key] = { views: 0, leads: 0 };
     }
 
-    // Count clicks by day (convert from UTC to local)
-    myClicks.forEach(click => {
-      const clickDate = new Date(click.created_at);
-      const key = `${clickDate.getFullYear()}-${String(clickDate.getMonth() + 1).padStart(2, '0')}-${String(clickDate.getDate()).padStart(2, '0')}`;
+    // Count leads by day (convert from UTC to local)
+    myLeads.forEach(lead => {
+      const leadDate = new Date(lead.created_at);
+      const key = `${leadDate.getFullYear()}-${String(leadDate.getMonth() + 1).padStart(2, '0')}-${String(leadDate.getDate()).padStart(2, '0')}`;
       if (dailyMap[key]) {
-        dailyMap[key].clicks += 1;
+        dailyMap[key].leads += 1;
       }
     });
 
@@ -126,7 +126,7 @@ export default function PerformanceChart() {
           month: '2-digit' 
         }),
         views: values.views,
-        clicks: values.clicks,
+        leads: values.leads,
       }));
 
     setData(chartData);
@@ -194,12 +194,12 @@ export default function PerformanceChart() {
                 />
                 <Line
                   type="monotone"
-                  dataKey="clicks"
-                  stroke="var(--color-clicks)"
+                  dataKey="leads"
+                  stroke="var(--color-leads)"
                   strokeWidth={2}
-                  dot={{ fill: 'hsl(var(--primary))', strokeWidth: 0, r: 3 }}
-                  activeDot={{ r: 5, fill: 'hsl(var(--primary))' }}
-                  name="Cliques"
+                  dot={{ fill: 'hsl(var(--secondary))', strokeWidth: 0, r: 3 }}
+                  activeDot={{ r: 5, fill: 'hsl(var(--secondary))' }}
+                  name="Leads"
                 />
               </LineChart>
             </ResponsiveContainer>
@@ -215,8 +215,8 @@ export default function PerformanceChart() {
             <span className="text-muted-foreground">Views</span>
           </div>
           <div className="flex items-center gap-1">
-            <div className="w-3 h-0.5 bg-primary rounded" />
-            <span className="text-muted-foreground">Cliques</span>
+            <div className="w-3 h-0.5 bg-secondary rounded" />
+            <span className="text-muted-foreground">Leads</span>
           </div>
         </div>
       </CardContent>

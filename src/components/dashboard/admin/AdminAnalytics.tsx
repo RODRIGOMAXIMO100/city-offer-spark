@@ -22,15 +22,17 @@ import { TrendingUp, TrendingDown, Users, MousePointerClick, DollarSign, Megapho
 import { formatCredits, CONFIG } from '@/types/database';
 
 interface AnalyticsData {
+  leadsByDay: { date: string; leads: number }[];
   clicksByDay: { date: string; clicks: number }[];
   usersByRole: { name: string; value: number; color: string }[];
   earningsByDay: { date: string; earnings: number }[];
   offersByDay: { date: string; offers: number }[];
   clicksByType: { name: string; value: number; color: string }[];
-  topOffers: { name: string; clicks: number }[];
+  topOffers: { name: string; leads: number }[];
   topAffiliates: { name: string; earnings: number }[];
   conversionRate: number;
   totalViews: number;
+  totalLeads: number;
 }
 
 const COLORS = {
@@ -45,6 +47,7 @@ const COLORS = {
 export default function AdminAnalytics() {
   const [period, setPeriod] = useState('30');
   const [data, setData] = useState<AnalyticsData>({
+    leadsByDay: [],
     clicksByDay: [],
     usersByRole: [],
     earningsByDay: [],
@@ -53,10 +56,12 @@ export default function AdminAnalytics() {
     topOffers: [],
     topAffiliates: [],
     conversionRate: 0,
-    totalViews: 0
+    totalViews: 0,
+    totalLeads: 0
   });
   const [loading, setLoading] = useState(true);
   const [comparison, setComparison] = useState({
+    leads: { current: 0, previous: 0 },
     clicks: { current: 0, previous: 0 },
     users: { current: 0, previous: 0 },
     earnings: { current: 0, previous: 0 },
@@ -75,7 +80,24 @@ export default function AdminAnalytics() {
     const previousStartDate = new Date(startDate.getTime() - days * 24 * 60 * 60 * 1000);
 
     try {
-      // Fetch ALL clicks (not just MAIN)
+      // Fetch leads
+      const { data: leads } = await supabase
+        .from('leads')
+        .select('created_at, affiliate_id, offer_id, is_valid')
+        .eq('is_valid', true)
+        .gte('created_at', startDate.toISOString());
+
+      const { data: prevLeads } = await supabase
+        .from('leads')
+        .select('created_at')
+        .eq('is_valid', true)
+        .gte('created_at', previousStartDate.toISOString())
+        .lt('created_at', startDate.toISOString());
+
+      const allLeads = leads || [];
+      const leadsByDay = groupByDayLeads(allLeads, 'created_at', days);
+
+      // Fetch ALL clicks (for tracking purposes only)
       const { data: clicks } = await supabase
         .from('offer_clicks')
         .select('created_at, click_type, affiliate_id, offer_id')
@@ -146,37 +168,39 @@ export default function AdminAnalytics() {
 
       const offersByDay = groupByDay(offers || [], 'created_at', days);
 
-      // Calculate earnings (platform fee per MAIN click only)
-      const currentPaidClicks = mainClicks.length;
-      const previousPaidClicks = prevPaidClicks.length;
-      const currentEarnings = currentPaidClicks * CONFIG.CPC_PLATFORM_PROFIT;
-      const previousEarnings = previousPaidClicks * CONFIG.CPC_PLATFORM_PROFIT;
+      // Calculate earnings based on leads (PPL model)
+      const CPL_AVERAGE = 200; // R$ 2.00 average CPL in cents
+      const PLATFORM_FEE = 0.40; // 40% platform fee
+      const currentLeadsCount = allLeads.length;
+      const previousLeadsCount = prevLeads?.length || 0;
+      const currentEarnings = Math.round(currentLeadsCount * CPL_AVERAGE * PLATFORM_FEE);
+      const previousEarnings = Math.round(previousLeadsCount * CPL_AVERAGE * PLATFORM_FEE);
 
-      const earningsByDay = clicksByDay.map(d => ({
+      const earningsByDay = leadsByDay.map(d => ({
         date: d.date,
-        earnings: d.clicks * CONFIG.CPC_PLATFORM_PROFIT
+        earnings: Math.round(d.leads * CPL_AVERAGE * PLATFORM_FEE)
       }));
 
-      // Fetch total views for conversion rate
+      // Fetch total views and leads for conversion rate
       const { data: allOffers } = await supabase
         .from('offers')
-        .select('views_count, clicks_count, title');
+        .select('views_count, leads_count, title');
 
       const totalViews = allOffers?.reduce((sum, o) => sum + o.views_count, 0) || 0;
-      const totalClicks = allOffers?.reduce((sum, o) => sum + o.clicks_count, 0) || 0;
-      const conversionRate = totalViews > 0 ? (totalClicks / totalViews) * 100 : 0;
+      const totalLeads = allOffers?.reduce((sum, o) => sum + (o.leads_count || 0), 0) || 0;
+      const conversionRate = totalViews > 0 ? (totalLeads / totalViews) * 100 : 0;
 
-      // Top 5 offers by clicks
+      // Top 5 offers by leads
       const topOffers = (allOffers || [])
-        .sort((a, b) => b.clicks_count - a.clicks_count)
+        .sort((a, b) => (b.leads_count || 0) - (a.leads_count || 0))
         .slice(0, 5)
-        .map(o => ({ name: o.title.substring(0, 25) + (o.title.length > 25 ? '...' : ''), clicks: o.clicks_count }));
+        .map(o => ({ name: o.title.substring(0, 25) + (o.title.length > 25 ? '...' : ''), leads: o.leads_count || 0 }));
 
-      // Top 5 affiliates by earnings
+      // Top 5 affiliates by earnings from leads
       const affiliateEarnings: Record<string, number> = {};
-      mainClicks.forEach(click => {
-        if (click.affiliate_id) {
-          affiliateEarnings[click.affiliate_id] = (affiliateEarnings[click.affiliate_id] || 0) + CONFIG.CPC_PAYOUT_AFFILIATE;
+      allLeads.forEach(lead => {
+        if (lead.affiliate_id) {
+          affiliateEarnings[lead.affiliate_id] = (affiliateEarnings[lead.affiliate_id] || 0) + Math.round(CPL_AVERAGE * 0.30);
         }
       });
 
@@ -201,6 +225,7 @@ export default function AdminAnalytics() {
       }
 
       setData({
+        leadsByDay,
         clicksByDay,
         usersByRole,
         earningsByDay,
@@ -209,11 +234,13 @@ export default function AdminAnalytics() {
         topOffers,
         topAffiliates,
         conversionRate,
-        totalViews
+        totalViews,
+        totalLeads
       });
 
       setComparison({
-        clicks: { current: currentPaidClicks, previous: previousPaidClicks },
+        leads: { current: currentLeadsCount, previous: previousLeadsCount },
+        clicks: { current: mainClicks.length, previous: prevPaidClicks.length },
         users: { current: newUsers?.length || 0, previous: prevUsers?.length || 0 },
         earnings: { current: currentEarnings, previous: previousEarnings },
         offers: { current: offers?.length || 0, previous: prevOffers?.length || 0 }
@@ -223,6 +250,31 @@ export default function AdminAnalytics() {
       console.error('Error fetching analytics:', error);
     }
     setLoading(false);
+  };
+
+  const groupByDayLeads = (items: { created_at: string }[], _field: string, days: number) => {
+    const result: Record<string, number> = {};
+    const now = new Date();
+    
+    // Initialize all days with 0
+    for (let i = days - 1; i >= 0; i--) {
+      const date = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
+      const key = date.toISOString().split('T')[0];
+      result[key] = 0;
+    }
+
+    // Count items per day
+    items.forEach(item => {
+      const date = new Date(item.created_at).toISOString().split('T')[0];
+      if (result[date] !== undefined) {
+        result[date]++;
+      }
+    });
+
+    return Object.entries(result).map(([date, count]) => ({
+      date: new Date(date).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }),
+      leads: count
+    }));
   };
 
   const groupByDay = (items: { created_at: string }[], _field: string, days: number) => {
@@ -316,9 +368,15 @@ export default function AdminAnalytics() {
       </div>
 
       {/* Comparison Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
         <ComparisonCard 
-          title="Cliques" 
+          title="Leads" 
+          current={comparison.leads.current} 
+          previous={comparison.leads.previous}
+          icon={Users}
+        />
+        <ComparisonCard 
+          title="Cliques (tracking)" 
           current={comparison.clicks.current} 
           previous={comparison.clicks.previous}
           icon={MousePointerClick}
@@ -330,7 +388,7 @@ export default function AdminAnalytics() {
           icon={Users}
         />
         <ComparisonCard 
-          title="Ganhos" 
+          title="Ganhos (PPL)" 
           current={comparison.earnings.current} 
           previous={comparison.earnings.previous}
           icon={DollarSign}
@@ -344,15 +402,27 @@ export default function AdminAnalytics() {
         />
       </div>
 
-      {/* Conversion Rate & Views */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {/* Conversion Rate & Leads */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">Total de Leads</p>
+                <p className="text-3xl font-bold text-secondary">{data.totalLeads.toLocaleString('pt-BR')}</p>
+                <p className="text-xs text-muted-foreground mt-1">Leads válidos gerados</p>
+              </div>
+              <Users className="h-10 w-10 text-secondary/50" />
+            </div>
+          </CardContent>
+        </Card>
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Taxa de Conversão</p>
                 <p className="text-3xl font-bold text-primary">{data.conversionRate.toFixed(2)}%</p>
-                <p className="text-xs text-muted-foreground mt-1">Views → Cliques</p>
+                <p className="text-xs text-muted-foreground mt-1">Views → Leads</p>
               </div>
               <Target className="h-10 w-10 text-primary/50" />
             </div>
@@ -374,14 +444,14 @@ export default function AdminAnalytics() {
 
       {/* Charts Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Clicks Over Time */}
+        {/* Leads Over Time */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Cliques por Dia</CardTitle>
+            <CardTitle className="text-base">Leads por Dia</CardTitle>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={250}>
-              <AreaChart data={data.clicksByDay}>
+              <AreaChart data={data.leadsByDay}>
                 <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
                 <XAxis dataKey="date" className="text-xs" tick={{ fill: 'hsl(var(--muted-foreground))' }} />
                 <YAxis className="text-xs" tick={{ fill: 'hsl(var(--muted-foreground))' }} />
@@ -394,10 +464,10 @@ export default function AdminAnalytics() {
                 />
                 <Area 
                   type="monotone" 
-                  dataKey="clicks" 
-                  stroke="hsl(var(--primary))" 
-                  fill="hsl(var(--primary) / 0.2)"
-                  name="Cliques"
+                  dataKey="leads" 
+                  stroke="hsl(var(--secondary))" 
+                  fill="hsl(var(--secondary) / 0.2)"
+                  name="Leads"
                 />
               </AreaChart>
             </ResponsiveContainer>
@@ -438,10 +508,10 @@ export default function AdminAnalytics() {
           </CardContent>
         </Card>
 
-        {/* Top 5 Offers */}
+        {/* Top 5 Offers by Leads */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Top 5 Ofertas por Cliques</CardTitle>
+            <CardTitle className="text-base">Top 5 Ofertas por Leads</CardTitle>
           </CardHeader>
           <CardContent>
             {data.topOffers.length === 0 ? (
@@ -467,10 +537,10 @@ export default function AdminAnalytics() {
                     }}
                   />
                   <Bar 
-                    dataKey="clicks" 
-                    fill="hsl(var(--primary))"
+                    dataKey="leads" 
+                    fill="hsl(var(--secondary))"
                     radius={[0, 4, 4, 0]}
-                    name="Cliques"
+                    name="Leads"
                   />
                 </BarChart>
               </ResponsiveContainer>
