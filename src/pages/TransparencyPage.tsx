@@ -31,14 +31,14 @@ const scoreComponents = [
     name: "Taxa de Conversão",
     weight: 40,
     description: "Taxa de leads vs visualizações comparada com a média da cidade",
-    tips: ["Crie títulos atrativos", "Ofereça descontos reais", "Use tags relevantes"],
+    tips: ["Crie títulos atrativos", "Ofereça descontos reais", "Adicione imagens de qualidade"],
     color: "bg-primary"
   },
   {
     name: "Qualidade da Oferta",
     weight: 35,
     description: "Baseado no percentual de desconto e completude da oferta",
-    tips: ["Desconto de 30%+ = máximo", "Adicione descrição completa", "Use pelo menos 3 tags"],
+    tips: ["Desconto de 30%+ = máximo", "Adicione descrição completa", "Preços claros e atrativos"],
     color: "bg-secondary"
   },
   {
