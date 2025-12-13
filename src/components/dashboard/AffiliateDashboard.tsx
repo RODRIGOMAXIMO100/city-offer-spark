@@ -285,129 +285,66 @@ function AffiliateDashboardContent() {
 
   return (
     <div className="min-h-screen bg-affiliate-muted pb-20">
-      {/* Header */}
+      {/* Header Compacto - 1 linha */}
       <header className="bg-card border-b border-border sticky top-0 z-10">
-        <div className="max-w-4xl mx-auto px-4 py-3">
-          {/* Top row: Logo + Name + Actions */}
-          <div className="flex justify-between items-center mb-2">
-            <div className="flex items-center gap-2 min-w-0">
-              <img src={logo} alt="clilin" className="h-8 shrink-0" />
-              <div className="min-w-0">
-                <p className="text-sm font-medium truncate">{profile?.name}</p>
-                <Badge variant="outline" className="text-affiliate border-affiliate text-[10px]">
-                  Divulgador
-                </Badge>
-              </div>
-            </div>
-            <div className="flex gap-1.5 items-center">
-              {/* Mobile: Menu dropdown */}
-              <div className="sm:hidden">
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button size="icon" variant="outline">
-                      <MoreVertical className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="bg-popover">
-                    <DropdownMenuItem onClick={() => setShowProfileSettings(true)}>
-                      <Settings className="h-4 w-4 mr-2" />
-                      Configurações
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => navigate('/ajuda')}>
-                      <BookOpen className="h-4 w-4 mr-2" />
-                      Central de Ajuda
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={startTour}>
-                      <HelpCircle className="h-4 w-4 mr-2" />
-                      Ver Tour Guiado
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
-
-              {/* Desktop: Botões individuais */}
-              <TooltipProvider>
-                <div className="hidden sm:flex gap-1.5">
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button 
-                        size="icon" 
-                        variant="outline" 
-                        onClick={() => setShowProfileSettings(true)} 
-                        className="shrink-0"
-                      >
-                        <Settings className="h-4 w-4" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Configurações</p>
-                    </TooltipContent>
-                  </Tooltip>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button 
-                        size="icon" 
-                        variant="outline" 
-                        onClick={() => navigate('/ajuda')} 
-                        className="shrink-0"
-                      >
-                        <BookOpen className="h-4 w-4" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Central de Ajuda</p>
-                    </TooltipContent>
-                  </Tooltip>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button 
-                        size="icon" 
-                        variant="outline" 
-                        onClick={startTour} 
-                        className="shrink-0"
-                      >
-                        <HelpCircle className="h-4 w-4" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Ver tour guiado</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </div>
-              </TooltipProvider>
-              <Button size="icon" variant="outline" onClick={signOut} className="shrink-0">
-                <LogOut className="h-4 w-4" />
-              </Button>
-            </div>
+        <div className="max-w-4xl mx-auto px-4 py-2 flex items-center justify-between gap-2">
+          {/* Logo + Nome */}
+          <div className="flex items-center gap-2 min-w-0">
+            <img src={logo} alt="clilin" className="h-7 shrink-0" />
+            <span className="text-sm font-medium truncate max-w-[100px] sm:max-w-none">{profile?.name}</span>
           </div>
           
-          {/* Balance row */}
-          <div data-tour="balance" className="flex items-center gap-2 bg-muted/50 rounded-lg p-2 mb-2">
-            <Banknote className="h-5 w-5 text-affiliate shrink-0" />
-            <div className="flex-1 min-w-0">
-              <p className="text-xs text-muted-foreground">Saldo disponível</p>
-              <p className="font-bold text-affiliate">
-                {formatCreditsToReal(profile?.balance || 0)}
-              </p>
-            </div>
-            <Button
-              data-tour="withdraw"
-              size="sm"
-              className="bg-affiliate hover:bg-affiliate/90 text-affiliate-foreground shrink-0"
+          {/* Saldo + Ações */}
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            {/* Saldo clicável para sacar */}
+            <Button 
+              data-tour="balance"
+              variant="ghost" 
+              size="sm" 
               onClick={handleWithdraw}
               disabled={withdrawing}
+              className="text-affiliate font-bold px-2 sm:px-3"
             >
               {withdrawing ? (
-                <Loader2 className="h-4 w-4 animate-spin sm:mr-2" />
-              ) : null}
-              Sacar
+                <Loader2 className="h-4 w-4 animate-spin mr-1" />
+              ) : (
+                <Banknote className="h-4 w-4 mr-1 shrink-0" />
+              )}
+              {formatCreditsToReal(profile?.balance || 0)}
             </Button>
-          </div>
-
-          {/* Action buttons row */}
-          <div className="flex gap-1.5 sm:gap-2 flex-wrap">
+            
+            {/* Dicas - botão compacto */}
             <AffiliateTutorial />
+            
+            {/* Notification inline */}
             {profile?.id && <NotificationBell userId={profile.id} />}
+            
+            {/* Menu unificado */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button size="icon" variant="outline" className="h-8 w-8">
+                  <MoreVertical className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="bg-popover">
+                <DropdownMenuItem onClick={() => setShowProfileSettings(true)}>
+                  <Settings className="h-4 w-4 mr-2" />
+                  Configurações
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => navigate('/ajuda')}>
+                  <BookOpen className="h-4 w-4 mr-2" />
+                  Central de Ajuda
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={startTour}>
+                  <HelpCircle className="h-4 w-4 mr-2" />
+                  Ver Tour Guiado
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={signOut} className="text-destructive">
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Sair
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </header>
