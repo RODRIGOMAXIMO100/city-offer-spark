@@ -92,12 +92,12 @@ export default function AdminWithdrawals() {
         .eq('affiliate_id', userId)
         .eq('click_type', 'MAIN');
 
-      // Get earnings
+      // Get earnings (CLICK_EARNING + LEAD_EARNING)
       const { data: earnings } = await supabase
         .from('transactions')
-        .select('amount')
+        .select('amount, type')
         .eq('user_id', userId)
-        .eq('type', 'CLICK_EARNING');
+        .in('type', ['CLICK_EARNING', 'LEAD_EARNING']);
 
       const uniqueOffers = new Set(clicks?.map(c => c.offer_id)).size;
       const uniqueIps = new Set(clicks?.map(c => c.client_ip)).size;

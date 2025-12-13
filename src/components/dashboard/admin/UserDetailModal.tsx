@@ -156,8 +156,10 @@ export default function UserDetailModal({ user, open, onOpenChange, onUserUpdate
   const getTransactionBadge = (type: string) => {
     const config: Record<string, { color: string, label: string }> = {
       'DEPOSIT': { color: 'bg-green-500', label: 'Depósito' },
-      'CLICK_COST': { color: 'bg-red-500', label: 'Custo Clique' },
-      'CLICK_EARNING': { color: 'bg-blue-500', label: 'Ganho Clique' },
+      'CLICK_COST': { color: 'bg-red-400', label: 'Custo Clique' },
+      'CLICK_EARNING': { color: 'bg-blue-400', label: 'Ganho Clique' },
+      'LEAD_COST': { color: 'bg-red-500', label: 'Custo Lead' },
+      'LEAD_EARNING': { color: 'bg-blue-500', label: 'Ganho Lead' },
       'WITHDRAW': { color: 'bg-orange-500', label: 'Saque' },
       'PLATFORM_FEE': { color: 'bg-purple-500', label: 'Taxa' }
     };
