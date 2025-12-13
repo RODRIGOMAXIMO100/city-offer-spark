@@ -171,10 +171,24 @@ export default function AdminLeads() {
 
   const fetchCompanies = async () => {
     try {
+      // First get user_ids of companies
+      const { data: rolesData } = await supabase
+        .from('user_roles')
+        .select('user_id')
+        .eq('role', 'COMPANY');
+      
+      const companyUserIds = rolesData?.map(r => r.user_id) || [];
+      
+      if (companyUserIds.length === 0) {
+        setCompanies([]);
+        return;
+      }
+      
+      // Then get profiles by user_id (not id)
       const { data } = await supabase
         .from('profiles')
-        .select('id, name')
-        .in('id', (await supabase.from('user_roles').select('user_id').eq('role', 'COMPANY')).data?.map(r => r.user_id) || []);
+        .select('id, name, user_id')
+        .in('user_id', companyUserIds);
       
       setCompanies(data?.map(p => ({ id: p.id, name: p.name })) || []);
     } catch (error) {
