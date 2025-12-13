@@ -8,7 +8,13 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Banknote, LogOut, Share2, Copy, Check, TrendingUp, Loader2, MapPin, Instagram, Clock, History, Coins, HelpCircle, BookOpen, Settings, LayoutDashboard, BarChart3, ShoppingBag, Search } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Banknote, LogOut, Share2, Copy, Check, TrendingUp, Loader2, MapPin, Instagram, Clock, History, Coins, HelpCircle, BookOpen, Settings, LayoutDashboard, BarChart3, ShoppingBag, Search, MoreVertical } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import PaymentDataModal from './PaymentDataModal';
@@ -293,53 +299,81 @@ function AffiliateDashboardContent() {
                 </Badge>
               </div>
             </div>
-            <div className="flex gap-1.5">
+            <div className="flex gap-1.5 items-center">
+              {/* Mobile: Menu dropdown */}
+              <div className="sm:hidden">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button size="icon" variant="outline">
+                      <MoreVertical className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="bg-popover">
+                    <DropdownMenuItem onClick={() => setShowProfileSettings(true)}>
+                      <Settings className="h-4 w-4 mr-2" />
+                      Configurações
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => navigate('/ajuda')}>
+                      <BookOpen className="h-4 w-4 mr-2" />
+                      Central de Ajuda
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={startTour}>
+                      <HelpCircle className="h-4 w-4 mr-2" />
+                      Ver Tour Guiado
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+
+              {/* Desktop: Botões individuais */}
               <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button 
-                      size="icon" 
-                      variant="outline" 
-                      onClick={() => setShowProfileSettings(true)} 
-                      className="shrink-0"
-                    >
-                      <Settings className="h-4 w-4" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Configurações</p>
-                  </TooltipContent>
-                </Tooltip>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button 
-                      size="icon" 
-                      variant="outline" 
-                      onClick={() => navigate('/ajuda')} 
-                      className="shrink-0"
-                    >
-                      <BookOpen className="h-4 w-4" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Central de Ajuda</p>
-                  </TooltipContent>
-                </Tooltip>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button 
-                      size="icon" 
-                      variant="outline" 
-                      onClick={startTour} 
-                      className="shrink-0"
-                    >
-                      <HelpCircle className="h-4 w-4" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Ver tour guiado</p>
-                  </TooltipContent>
-                </Tooltip>
+                <div className="hidden sm:flex gap-1.5">
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button 
+                        size="icon" 
+                        variant="outline" 
+                        onClick={() => setShowProfileSettings(true)} 
+                        className="shrink-0"
+                      >
+                        <Settings className="h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Configurações</p>
+                    </TooltipContent>
+                  </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button 
+                        size="icon" 
+                        variant="outline" 
+                        onClick={() => navigate('/ajuda')} 
+                        className="shrink-0"
+                      >
+                        <BookOpen className="h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Central de Ajuda</p>
+                    </TooltipContent>
+                  </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button 
+                        size="icon" 
+                        variant="outline" 
+                        onClick={startTour} 
+                        className="shrink-0"
+                      >
+                        <HelpCircle className="h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Ver tour guiado</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </div>
               </TooltipProvider>
               <Button size="icon" variant="outline" onClick={signOut} className="shrink-0">
                 <LogOut className="h-4 w-4" />
@@ -404,20 +438,20 @@ function AffiliateDashboardContent() {
 
             {/* Info Card - Earnings Explanation */}
             <Card className="bg-gradient-to-r from-affiliate to-affiliate/80 text-affiliate-foreground border-0">
-              <CardContent className="p-4">
-                <div className="flex items-start gap-3">
-                  <div className="bg-white/20 p-3 rounded-full shrink-0">
-                    <Share2 className="h-6 w-6" />
+              <CardContent className="p-3 sm:p-4">
+                <div className="flex items-start gap-2 sm:gap-3">
+                  <div className="bg-white/20 p-2 sm:p-3 rounded-full shrink-0">
+                    <Share2 className="h-5 w-5 sm:h-6 sm:w-6" />
                   </div>
-                  <div className="space-y-2">
-                    <p className="font-bold text-lg">💰 Ganhe por Lead Qualificado!</p>
-                    <ul className="text-sm opacity-95 space-y-1">
-                      <li>• <strong>Ganhe R$ 0,30 a R$ 1,50 por lead</strong> (pessoa que preenche nome + WhatsApp)</li>
-                      <li>• <strong>Comissão começa em 30%</strong> - suba de nível e ganhe mais!</li>
-                      <li>• <strong>Bronze (0-99 leads/mês):</strong> 30% | <strong>Prata (100-499):</strong> 40% | <strong>Ouro (500+):</strong> 50%</li>
-                      <li>• <strong>⚠️ Metas zeram dia 1</strong> - comece do Bronze e evolua todo mês!</li>
-                      <li>• <strong>Saque mínimo: R$ 100,00</strong> via PIX instantâneo</li>
-                      <li>• <strong><a href="/transparencia" className="underline">Veja como funciona →</a></strong></li>
+                  <div className="space-y-1.5 sm:space-y-2 min-w-0">
+                    <p className="font-bold text-base sm:text-lg">💰 Ganhe por Lead!</p>
+                    <ul className="text-xs sm:text-sm opacity-95 space-y-0.5 sm:space-y-1">
+                      <li>• <strong>R$ 0,30 a R$ 1,50/lead</strong><span className="hidden sm:inline"> (pessoa que preenche nome + WhatsApp)</span></li>
+                      <li>• <strong>Comissão 30%</strong><span className="hidden sm:inline"> - suba de nível e ganhe mais!</span></li>
+                      <li className="hidden sm:list-item">• <strong>Bronze:</strong> 30% | <strong>Prata:</strong> 40% | <strong>Ouro:</strong> 50%</li>
+                      <li>• <strong>Metas zeram dia 1</strong><span className="hidden sm:inline"> - evolua todo mês!</span></li>
+                      <li>• <strong>Saque mín: R$ 100</strong> <span className="hidden sm:inline">via PIX</span></li>
+                      <li>• <a href="/transparencia" className="underline font-medium">Ver detalhes →</a></li>
                     </ul>
                   </div>
                 </div>
