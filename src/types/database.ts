@@ -110,9 +110,10 @@ export const CONFIG = {
   DEFAULT_CPC: 70,       // R$ 0,70 em centavos
   
   // CPL (lead) - modelo novo
-  MIN_CPL: 100,          // R$ 1,00 em centavos
-  MAX_CPL: 300,          // R$ 3,00 em centavos
-  DEFAULT_CPL: 150,      // R$ 1,50 em centavos
+  // Fórmula: CPL = 15 centavos × (14 - Nota)
+  MIN_CPL: 60,           // R$ 0,60 em centavos (Nota 10)
+  MAX_CPL: 150,          // R$ 1,50 em centavos (Nota 4)
+  DEFAULT_CPL: 105,      // R$ 1,05 em centavos (Nota 7)
   
   AFFILIATE_SHARE: 0.30, // 30% base para divulgador (pode chegar a 50% com níveis)
   MAX_AFFILIATE_SHARE: 0.50, // 50% máximo no nível Ouro
@@ -120,8 +121,8 @@ export const CONFIG = {
   // Para analytics admin - estimativas médias em centavos
   CPC_PLATFORM_PROFIT: 49,  // ~70% do CPC médio (base 30% para afiliado)
   CPC_PAYOUT_AFFILIATE: 21, // ~30% do CPC médio (base)
-  CPL_PLATFORM_PROFIT: 105, // ~70% do CPL médio
-  CPL_PAYOUT_AFFILIATE: 45, // ~30% do CPL médio
+  CPL_PLATFORM_PROFIT: 74, // ~70% do CPL médio (R$ 1,05)
+  CPL_PAYOUT_AFFILIATE: 31, // ~30% do CPL médio
   
   MIN_WITHDRAW_BRL: 100.00, // R$ 100 (valor em reais para comparação)
   MIN_DEPOSIT_BRL: 100.00,  // R$ 100 (valor em reais para comparação)
