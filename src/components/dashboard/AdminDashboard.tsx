@@ -23,7 +23,8 @@ import {
   BarChart3,
   Banknote,
   FileText,
-  CreditCard
+  CreditCard,
+  Phone
 } from 'lucide-react';
 import { AdminBlog } from './admin/AdminBlog';
 import { formatBalance, CONFIG } from '@/types/database';
@@ -37,6 +38,7 @@ import UserDetailModal from './admin/UserDetailModal';
 import { exportUsers, exportOffers, exportTransactions } from './admin/AdminExport';
 import AdminPayments from './admin/AdminPayments';
 import AdminFraudManagement from './admin/AdminFraudManagement';
+import AdminLeads from './admin/AdminLeads';
 
 interface Stats {
   totalCompanies: number;
@@ -381,7 +383,7 @@ export default function AdminDashboard() {
         {/* Tabs */}
         <Tabs defaultValue="users" className="space-y-4" onValueChange={resetFilters}>
           <div className="overflow-x-auto -mx-3 px-3 sm:mx-0 sm:px-0">
-            <TabsList className="inline-flex w-auto min-w-full sm:grid sm:w-full sm:grid-cols-9">
+            <TabsList className="inline-flex w-auto min-w-full sm:grid sm:w-full sm:grid-cols-10">
               <TabsTrigger value="users" className="flex-1 sm:flex-none text-xs sm:text-sm">
                 <Users className="h-4 w-4 sm:mr-2" />
                 <span className="hidden sm:inline">Usuários</span>
@@ -389,6 +391,10 @@ export default function AdminDashboard() {
               <TabsTrigger value="offers" className="flex-1 sm:flex-none text-xs sm:text-sm">
                 <Megaphone className="h-4 w-4 sm:mr-2" />
                 <span className="hidden sm:inline">Ofertas</span>
+              </TabsTrigger>
+              <TabsTrigger value="leads" className="flex-1 sm:flex-none text-xs sm:text-sm">
+                <Phone className="h-4 w-4 sm:mr-2" />
+                <span className="hidden sm:inline">Leads</span>
               </TabsTrigger>
               <TabsTrigger value="transactions" className="flex-1 sm:flex-none text-xs sm:text-sm">
                 <DollarSign className="h-4 w-4 sm:mr-2" />
@@ -644,6 +650,11 @@ export default function AdminDashboard() {
           {/* Analytics Tab */}
           <TabsContent value="analytics">
             <AdminAnalytics />
+          </TabsContent>
+
+          {/* Leads Tab */}
+          <TabsContent value="leads">
+            <AdminLeads />
           </TabsContent>
         </Tabs>
       </main>
