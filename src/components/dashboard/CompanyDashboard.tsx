@@ -735,9 +735,9 @@ function CompanyDashboardContent() {
                                   <Eye className="h-3 w-3" />
                                   {offer.views_count}
                                 </span>
-                                <span className="flex items-center gap-1">
-                                  <MousePointer className="h-3 w-3" />
-                                  {offer.clicks_count}
+                              <span className="flex items-center gap-1">
+                                  <Users className="h-3 w-3" />
+                                  {(offer as any).leads_count || 0}
                                 </span>
                                 <Badge variant={offer.active && !isExpired ? 'default' : 'secondary'} className="text-[10px]">
                                   {isExpired ? 'Expirada' : offer.active ? 'Ativa' : 'Pausada'}

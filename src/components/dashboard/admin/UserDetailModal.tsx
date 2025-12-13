@@ -47,7 +47,7 @@ interface Transaction {
 interface Offer {
   id: string;
   title: string;
-  clicks_count: number;
+  leads_count: number;
   views_count: number;
   active: boolean;
   created_at: string;
@@ -101,7 +101,7 @@ export default function UserDetailModal({ user, open, onOpenChange, onUserUpdate
       if (user.role === 'COMPANY') {
         const { data: offerData } = await supabase
           .from('offers')
-          .select('id, title, clicks_count, views_count, active, created_at')
+          .select('id, title, leads_count, views_count, active, created_at')
           .eq('company_id', user.id)
           .order('created_at', { ascending: false });
 
@@ -446,8 +446,8 @@ export default function UserDetailModal({ user, open, onOpenChange, onUserUpdate
                       <Table>
                         <TableHeader>
                           <TableRow>
-                            <TableHead className="min-w-[120px]">Título</TableHead>
-                            <TableHead>Cliques</TableHead>
+                          <TableHead className="min-w-[120px]">Título</TableHead>
+                            <TableHead>Leads</TableHead>
                             <TableHead className="hidden sm:table-cell">Views</TableHead>
                             <TableHead>Status</TableHead>
                             <TableHead className="hidden md:table-cell">Criada</TableHead>
@@ -456,8 +456,8 @@ export default function UserDetailModal({ user, open, onOpenChange, onUserUpdate
                         <TableBody>
                           {offers.map((offer) => (
                             <TableRow key={offer.id}>
-                              <TableCell className="font-medium max-w-[120px] sm:max-w-[200px] truncate text-sm">{offer.title}</TableCell>
-                              <TableCell className="text-sm">{offer.clicks_count}</TableCell>
+                            <TableCell className="font-medium max-w-[120px] sm:max-w-[200px] truncate text-sm">{offer.title}</TableCell>
+                              <TableCell className="text-sm">{offer.leads_count || 0}</TableCell>
                               <TableCell className="text-sm hidden sm:table-cell">{offer.views_count}</TableCell>
                               <TableCell>
                                 <Badge variant={offer.active ? 'default' : 'secondary'} className="text-xs">

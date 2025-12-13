@@ -62,7 +62,7 @@ export default function AffiliateTutorial() {
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-lg">
             <Lightbulb className="h-5 w-5 text-yellow-500" />
-            Como Ganhar Mais com Cliques
+            Como Ganhar Mais com Leads
           </DialogTitle>
         </DialogHeader>
 
@@ -350,7 +350,7 @@ function EscolhaOfertas() {
   const criterios = [
     {
       titulo: 'Alto Desconto',
-      descricao: 'Ofertas com 40%+ de desconto atraem mais cliques',
+      descricao: 'Ofertas com 40%+ de desconto geram mais leads',
       icone: '💰',
     },
     {
@@ -393,10 +393,10 @@ function EscolhaOfertas() {
       </div>
 
       <div className="bg-muted rounded-lg p-3">
-        <p className="text-sm font-medium mb-2">📊 Observe o CTR</p>
+        <p className="text-sm font-medium mb-2">📊 Observe a Taxa de Conversão</p>
         <p className="text-xs text-muted-foreground">
-          O CTR (taxa de cliques) mostra quais ofertas estão performando bem. 
-          Ofertas com CTR alto já estão comprovadas - aproveite!
+          A taxa de conversão mostra quais ofertas estão gerando mais leads. 
+          Ofertas com conversão alta já estão comprovadas - aproveite!
         </p>
       </div>
 

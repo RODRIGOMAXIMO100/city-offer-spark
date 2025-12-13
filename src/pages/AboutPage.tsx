@@ -67,7 +67,7 @@ const AboutPage = () => {
               <h3 className="text-xl font-semibold text-foreground mb-3">Para Empresas</h3>
               <p className="text-muted-foreground">
                 Crie ofertas atrativas e alcance clientes locais através de uma rede de divulgadores. 
-                Pague apenas por resultados reais com nosso modelo de Custo Por Clique (CPC).
+                Pague apenas por resultados reais com nosso modelo de Custo Por Lead (CPL).
               </p>
             </div>
             
@@ -78,7 +78,7 @@ const AboutPage = () => {
               <h3 className="text-xl font-semibold text-foreground mb-3">Para Divulgadores</h3>
               <p className="text-muted-foreground">
                 Ganhe comissões compartilhando ofertas da sua cidade nas suas redes sociais. 
-                Quanto mais pessoas clicarem nos seus links, mais você ganha.
+                Quanto mais leads você gerar pelos seus links, mais você ganha.
               </p>
             </div>
             
