@@ -101,33 +101,108 @@ export default function TermsPage() {
               <li>Tentar burlar ou testar os sistemas de segurança da plataforma.</li>
               <li>Qualquer outra ação que prejudique a integridade do sistema.</li>
             </ul>
+
+            <h3 className="text-xl font-display font-semibold mt-6 mb-3">5.2. Cadastros Suspeitos ou Falsos</h3>
+            <p className="text-muted-foreground leading-relaxed">
+              São considerados cadastros suspeitos e estão sujeitos a análise e penalidades:
+            </p>
+            <ul className="list-disc pl-6 mt-4 space-y-2 text-muted-foreground">
+              <li>Dados pessoais inconsistentes ou comprovadamente falsos (CPF, nome, endereço).</li>
+              <li>Múltiplas contas com dados similares ou originadas do mesmo dispositivo/IP.</li>
+              <li>Cadastros realizados através de VPN, proxy ou IPs suspeitos.</li>
+              <li>Padrão de comportamento atípico imediatamente após o cadastro.</li>
+              <li>Dados bancários (PIX) incompatíveis com o titular da conta.</li>
+              <li>Informações que não podem ser verificadas ou confirmadas.</li>
+            </ul>
           </section>
 
           <section>
             <h2 className="text-2xl font-display font-semibold mb-4">6. Penalidades por Fraude</h2>
             <p className="text-muted-foreground leading-relaxed">
-              Em caso de detecção de atividade fraudulenta, a plataforma reserva-se o direito de aplicar as seguintes penalidades:
+              Em caso de detecção de atividade fraudulenta ou suspeita, a plataforma reserva-se o direito de aplicar as seguintes penalidades:
             </p>
             <ul className="list-disc pl-6 mt-4 space-y-2 text-muted-foreground">
               <li><strong>Advertência:</strong> Para infrações leves ou primeira ocorrência.</li>
-              <li><strong>Congelamento de Saldo:</strong> Bloqueio temporário do saldo para análise detalhada.</li>
+              <li><strong>Congelamento de Saldo:</strong> Bloqueio preventivo do saldo para análise detalhada.</li>
               <li><strong>Suspensão Temporária:</strong> Bloqueio do acesso à conta por período determinado.</li>
               <li><strong>Banimento Permanente:</strong> Exclusão definitiva da plataforma.</li>
               <li><strong>Confisco de Saldo:</strong> Perda total dos créditos acumulados em casos graves.</li>
               <li><strong>Inclusão em Blacklist:</strong> CPF, email e dados bancários são bloqueados permanentemente.</li>
             </ul>
-            <p className="text-muted-foreground leading-relaxed mt-4">
-              <strong>Importante:</strong> O clilin se reserva ao direito de reter saques por até 7 dias úteis para análise de fraude. 
-              Usuários com comportamento suspeito terão seus saques submetidos a verificação manual adicional.
+
+            <h3 className="text-xl font-display font-semibold mt-6 mb-3">6.1. Processo de Análise e Penalização</h3>
+            <p className="text-muted-foreground leading-relaxed">
+              Ao detectar comportamento suspeito, a plataforma seguirá o seguinte processo:
+            </p>
+            <ul className="list-decimal pl-6 mt-4 space-y-3 text-muted-foreground">
+              <li>
+                <strong>Bloqueio Preventivo de Saldo:</strong> Ao identificar atividade suspeita, o saldo do usuário 
+                será imediatamente bloqueado para análise detalhada. O usuário será notificado sobre o bloqueio.
+              </li>
+              <li>
+                <strong>Período de Análise:</strong> A equipe de segurança realizará análise completa do histórico 
+                de cliques, padrões de comportamento, dados cadastrais e qualquer evidência relevante.
+              </li>
+              <li>
+                <strong>Decisão Final:</strong>
+                <ul className="list-disc pl-6 mt-2 space-y-1">
+                  <li>Se a fraude for confirmada: <strong>BANIMENTO PERMANENTE</strong> e confisco total do saldo.</li>
+                  <li>Se for falso positivo: Desbloqueio do saldo e continuidade normal da conta.</li>
+                </ul>
+              </li>
+              <li>
+                <strong>Comunicação:</strong> O usuário será notificado por email e/ou notificação na plataforma 
+                sobre a decisão final e as razões da mesma.
+              </li>
+            </ul>
+
+            <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-4 mt-6">
+              <h4 className="font-semibold text-destructive mb-2">⚠️ BANIMENTO IMEDIATO</h4>
+              <p className="text-muted-foreground text-sm leading-relaxed">
+                Em casos de fraude evidente ou grave, a plataforma reserva-se o direito de aplicar 
+                <strong> banimento imediato SEM período de análise prévia</strong>, incluindo:
+              </p>
+              <ul className="list-disc pl-6 mt-2 space-y-1 text-muted-foreground text-sm">
+                <li>Uso comprovado de bots, scripts ou automação.</li>
+                <li>Múltiplas contas confirmadas do mesmo usuário.</li>
+                <li>Dados cadastrais comprovadamente falsos ou de terceiros.</li>
+                <li>Tentativas deliberadas de burlar os sistemas de segurança.</li>
+                <li>Reincidência após advertência ou suspensão anterior.</li>
+              </ul>
+            </div>
+
+            <p className="text-muted-foreground leading-relaxed mt-6">
+              <strong>Retenção de Saques:</strong> O clilin reserva-se o direito de reter saques por até 
+              <strong> 30 dias úteis</strong> para análise de fraude. Usuários com comportamento suspeito ou 
+              score de fraude elevado terão seus saques submetidos a verificação manual adicional.
             </p>
             <p className="text-muted-foreground leading-relaxed mt-4">
-              Em casos de fraude comprovada, a plataforma pode tomar medidas legais cabíveis, incluindo 
-              notificação às autoridades competentes e ações judiciais para recuperação de valores.
+              <strong>Medidas Legais:</strong> Em casos de fraude comprovada, a plataforma pode tomar medidas 
+              legais cabíveis, incluindo notificação às autoridades competentes, registro de boletim de 
+              ocorrência e ações judiciais para recuperação de valores e danos.
             </p>
           </section>
 
           <section>
-            <h2 className="text-2xl font-display font-semibold mb-4">7. Responsabilidades das Empresas</h2>
+            <h2 className="text-2xl font-display font-semibold mb-4">7. Direitos da Plataforma</h2>
+            <p className="text-muted-foreground leading-relaxed">
+              A plataforma clilin reserva-se os seguintes direitos para proteção do ecossistema:
+            </p>
+            <ul className="list-disc pl-6 mt-4 space-y-2 text-muted-foreground">
+              <li>Bloquear saldos preventivamente sempre que houver suspeita de fraude ou irregularidade.</li>
+              <li>Reter solicitações de saque por até 30 dias para análise e verificação.</li>
+              <li>Banir usuários sem aviso prévio em casos de fraude evidente ou grave.</li>
+              <li>Invalidar cliques e leads considerados fraudulentos, mesmo após creditados.</li>
+              <li>Compartilhar informações com autoridades competentes em caso de crime ou investigação.</li>
+              <li>Adicionar CPF, email, telefone, dados PIX e dispositivos em lista negra permanente.</li>
+              <li>Solicitar documentação adicional para verificação de identidade a qualquer momento.</li>
+              <li>Recusar saques sem justificativa detalhada em casos de investigação ativa.</li>
+              <li>Alterar limites de saque, valores mínimos e regras de comissionamento a qualquer momento.</li>
+            </ul>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-display font-semibold mb-4">8. Responsabilidades das Empresas</h2>
             <p className="text-muted-foreground leading-relaxed">
               As empresas são responsáveis por:
             </p>
@@ -140,7 +215,7 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-display font-semibold mb-4">8. Responsabilidades dos Divulgadores</h2>
+            <h2 className="text-2xl font-display font-semibold mb-4">9. Responsabilidades dos Divulgadores</h2>
             <p className="text-muted-foreground leading-relaxed">
               Os divulgadores são responsáveis por:
             </p>
@@ -153,7 +228,7 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-display font-semibold mb-4">9. Limitação de Responsabilidade</h2>
+            <h2 className="text-2xl font-display font-semibold mb-4">10. Limitação de Responsabilidade</h2>
             <p className="text-muted-foreground leading-relaxed">
               O clilin atua como intermediário e não se responsabiliza pela qualidade, segurança ou 
               legalidade das ofertas publicadas, nem pela capacidade das empresas de cumpri-las. 
@@ -162,7 +237,7 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-display font-semibold mb-4">10. Modificações nos Termos</h2>
+            <h2 className="text-2xl font-display font-semibold mb-4">11. Modificações nos Termos</h2>
             <p className="text-muted-foreground leading-relaxed">
               Reservamo-nos o direito de modificar estes termos a qualquer momento. Alterações 
               significativas serão comunicadas por e-mail ou através da plataforma. O uso continuado 
@@ -171,7 +246,7 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-display font-semibold mb-4">11. Contato</h2>
+            <h2 className="text-2xl font-display font-semibold mb-4">12. Contato</h2>
             <p className="text-muted-foreground leading-relaxed">
               Para dúvidas sobre estes Termos de Uso, entre em contato através do e-mail:{' '}
               <a href="mailto:contato@clilin.com" className="text-primary hover:underline">
