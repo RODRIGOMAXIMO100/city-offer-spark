@@ -8,7 +8,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Banknote, LogOut, Share2, Copy, Check, TrendingUp, Loader2, MapPin, Instagram, Clock, History, Coins, HelpCircle, BookOpen, Settings, LayoutDashboard, BarChart3 } from 'lucide-react';
+import { Banknote, LogOut, Share2, Copy, Check, TrendingUp, Loader2, MapPin, Instagram, Clock, History, Coins, HelpCircle, BookOpen, Settings, LayoutDashboard, BarChart3, ShoppingBag, Search } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import PaymentDataModal from './PaymentDataModal';
@@ -361,20 +361,24 @@ function AffiliateDashboardContent() {
       </header>
 
       <div className="max-w-4xl mx-auto px-4 py-6">
-        <Tabs defaultValue="principal" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 mb-6">
-            <TabsTrigger value="principal" className="flex items-center gap-2">
+        <Tabs defaultValue="inicio" className="w-full">
+          <TabsList className="grid w-full grid-cols-3 mb-6">
+            <TabsTrigger value="inicio" className="flex items-center gap-2">
               <LayoutDashboard className="h-4 w-4" />
-              <span>Ofertas</span>
+              <span className="hidden sm:inline">Início</span>
+            </TabsTrigger>
+            <TabsTrigger value="ofertas" className="flex items-center gap-2">
+              <ShoppingBag className="h-4 w-4" />
+              <span className="hidden sm:inline">Ofertas</span>
             </TabsTrigger>
             <TabsTrigger value="historico" className="flex items-center gap-2">
               <BarChart3 className="h-4 w-4" />
-              <span>Histórico</span>
+              <span className="hidden sm:inline">Histórico</span>
             </TabsTrigger>
           </TabsList>
 
-          {/* Tab Principal - Ofertas */}
-          <TabsContent value="principal" className="space-y-6">
+          {/* Tab Início - Stats, Nível e Ranking */}
+          <TabsContent value="inicio" className="space-y-6">
             {/* Affiliate Level Card */}
             {profile?.id && (
               <AffiliateLevel affiliateId={profile.id} />
@@ -402,6 +406,19 @@ function AffiliateDashboardContent() {
               </CardContent>
             </Card>
 
+            {/* Ranking Section */}
+            {profile?.id && (
+              <AffiliateRanking currentAffiliateId={profile.id} />
+            )}
+
+            {/* Monthly History */}
+            {profile?.id && (
+              <AffiliateMonthlyHistory affiliateId={profile.id} />
+            )}
+          </TabsContent>
+
+          {/* Tab Ofertas - Lista dedicada de ofertas */}
+          <TabsContent value="ofertas" className="space-y-6">
             {/* Location */}
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <MapPin className="h-4 w-4" />
@@ -411,7 +428,7 @@ function AffiliateDashboardContent() {
             {/* Offers List */}
             <div data-tour="offers">
               <h2 className="text-sm font-bold text-muted-foreground uppercase tracking-wider mb-4">
-                Ofertas Disponíveis
+                {sortedOffers.length} Ofertas Disponíveis
               </h2>
 
               {loading ? (
@@ -447,7 +464,7 @@ function AffiliateDashboardContent() {
             </div>
           </TabsContent>
 
-          {/* Tab Histórico - Ganhos, Saques e Ranking */}
+          {/* Tab Histórico - Ganhos e Saques */}
           <TabsContent value="historico" className="space-y-6">
             {/* Earnings History */}
             <Card>
@@ -508,16 +525,6 @@ function AffiliateDashboardContent() {
                 )}
               </CardContent>
             </Card>
-
-            {/* Monthly History */}
-            {profile?.id && (
-              <AffiliateMonthlyHistory affiliateId={profile.id} />
-            )}
-
-            {/* Ranking Section */}
-            {profile?.id && (
-              <AffiliateRanking currentAffiliateId={profile.id} />
-            )}
           </TabsContent>
         </Tabs>
       </div>
