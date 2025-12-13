@@ -42,48 +42,9 @@ export default function AuthCallbackPage() {
           return;
         }
 
-        // New user - create profile with COMPANY role (Google login is only for companies)
-        setStatus('Criando perfil...');
-        
-        const userName = session.user.user_metadata?.full_name || 
-                        session.user.user_metadata?.name || 
-                        session.user.email?.split('@')[0] || 
-                        'Usuário';
-
-        // Create profile
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .insert({
-            user_id: session.user.id,
-            name: userName,
-            city: '',
-            balance: 100, // Bônus inicial para empresas
-          });
-
-        if (profileError) {
-          console.error('Profile creation error:', profileError);
-          toast.error('Erro ao criar perfil');
-          navigate('/auth');
-          return;
-        }
-
-        // Create COMPANY role
-        const { error: roleError } = await supabase
-          .from('user_roles')
-          .insert({
-            user_id: session.user.id,
-            role: 'COMPANY',
-          });
-
-        if (roleError) {
-          console.error('Role creation error:', roleError);
-          toast.error('Erro ao definir perfil de empresa');
-          navigate('/auth');
-          return;
-        }
-
-        toast.success('Conta criada com sucesso! Bem-vindo!');
-        navigate('/dashboard');
+        // New user - redirect to complete signup page to choose role
+        setStatus('Redirecionando para completar cadastro...');
+        navigate('/complete-signup');
       } catch (error) {
         console.error('Callback error:', error);
         toast.error('Erro inesperado na autenticação');
