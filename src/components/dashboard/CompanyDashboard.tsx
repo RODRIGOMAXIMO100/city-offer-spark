@@ -177,9 +177,9 @@ function CompanyDashboardContent() {
     }
   };
   // Calculate totals
-  const totalClicks = offers.reduce((acc, o) => acc + o.clicks_count, 0);
   const totalViews = offers.reduce((acc, o) => acc + o.views_count, 0);
   const totalLeads = offers.reduce((acc, o) => acc + ((o as any).leads_count || 0), 0);
+  const conversionRate = totalViews > 0 ? ((totalLeads / totalViews) * 100).toFixed(1) : '0.0';
 
   const handleOfferCreated = async () => {
     setShowCreateModal(false);
@@ -471,18 +471,16 @@ function CompanyDashboardContent() {
           </Card>
           <Card>
             <CardContent className="p-2 sm:p-4 text-center">
-              <MousePointer className="h-4 w-4 sm:h-5 sm:w-5 mx-auto mb-1 text-muted-foreground" />
-              <p className="text-lg sm:text-2xl font-bold">{totalClicks}</p>
-              <p className="text-[10px] sm:text-xs text-muted-foreground">Cliques</p>
+              <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5 mx-auto mb-1 text-green-500" />
+              <p className="text-lg sm:text-2xl font-bold text-green-500">{conversionRate}%</p>
+              <p className="text-[10px] sm:text-xs text-muted-foreground">Conversão</p>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="p-2 sm:p-4 text-center">
-              <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5 mx-auto mb-1 text-muted-foreground" />
-              <p className="text-lg sm:text-2xl font-bold">
-                {totalViews > 0 ? ((totalLeads / totalViews) * 100).toFixed(1) : 0}%
-              </p>
-              <p className="text-[10px] sm:text-xs text-muted-foreground">Conversão</p>
+              <Banknote className="h-4 w-4 sm:h-5 sm:w-5 mx-auto mb-1 text-company" />
+              <p className="text-lg sm:text-2xl font-bold text-company">{formatBalance(profile?.balance || 0)}</p>
+              <p className="text-[10px] sm:text-xs text-muted-foreground">Saldo</p>
             </CardContent>
           </Card>
         </div>

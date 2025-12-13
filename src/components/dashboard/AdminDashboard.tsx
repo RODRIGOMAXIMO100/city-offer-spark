@@ -73,6 +73,7 @@ interface OfferData {
   city: string;
   clicks_count: number;
   views_count: number;
+  leads_count: number;
   active: boolean;
   expires_at: string;
   company_name?: string;
@@ -273,6 +274,8 @@ export default function AdminDashboard() {
       'DEPOSIT': { color: 'bg-green-500', label: 'Depósito' },
       'CLICK_COST': { color: 'bg-red-500', label: 'Custo Clique' },
       'CLICK_EARNING': { color: 'bg-blue-500', label: 'Ganho Clique' },
+      'LEAD_COST': { color: 'bg-red-600', label: 'Custo Lead' },
+      'LEAD_EARNING': { color: 'bg-blue-600', label: 'Ganho Lead' },
       'WITHDRAW': { color: 'bg-orange-500', label: 'Saque' },
       'PLATFORM_FEE': { color: 'bg-purple-500', label: 'Taxa Plataforma' }
     };

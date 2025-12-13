@@ -99,10 +99,11 @@ export function AffiliateOfferCard({ offer, profileId, index }: AffiliateOfferCa
 
   const discount = Math.round((1 - offer.price_new / offer.price_old) * 100);
   const offerScore = offer.current_offer_score || 5;
-  const cpcCents = (14 - offerScore) * 10;
-  const affiliateEarning = (cpcCents * 0.30) / 100; // Base 30% commission
-  const ctr = offer.views_count > 0 ? ((offer.clicks_count / offer.views_count) * 100).toFixed(1) : "0";
-  const isHot = parseFloat(ctr) > 5;
+  // CPL calculation: R$ 1.00 to R$ 3.00 based on score
+  const cplCents = Math.round((14 - offerScore) * 33.33);
+  const affiliateEarning = (cplCents * 0.30) / 100; // Base 30% commission
+  const leadRate = offer.views_count > 0 ? (((offer as any).leads_count || 0) / offer.views_count * 100).toFixed(1) : "0";
+  const isHot = parseFloat(leadRate) > 2;
 
   const getExpirationInfo = () => {
     const now = new Date();
@@ -273,7 +274,7 @@ export function AffiliateOfferCard({ offer, profileId, index }: AffiliateOfferCa
                     <DollarSign className="h-4 w-4 text-affiliate" />
                   </div>
                   <div>
-                    <p className="text-xs text-muted-foreground">Seu ganho por clique</p>
+                    <p className="text-xs text-muted-foreground">Seu ganho por lead</p>
                     <p className="font-bold text-affiliate text-sm sm:text-base leading-tight">
                       R$ {affiliateEarning.toFixed(2)}
                     </p>
@@ -282,7 +283,7 @@ export function AffiliateOfferCard({ offer, profileId, index }: AffiliateOfferCa
                 <div className="text-right shrink-0">
                   <div className="flex items-center gap-1 text-xs text-muted-foreground">
                     <TrendingUp className="h-3 w-3" />
-                    CTR: {ctr}%
+                    Taxa: {leadRate}%
                   </div>
                 </div>
               </div>
@@ -291,7 +292,7 @@ export function AffiliateOfferCard({ offer, profileId, index }: AffiliateOfferCa
               <p className="font-bold mb-2">Como seu ganho é calculado</p>
               <div className="space-y-1 text-xs">
                 <p>📊 Nota da oferta: <strong>{offerScore.toFixed(1)}</strong></p>
-                <p>💰 CPC total: R$ {(cpcCents / 100).toFixed(2)}</p>
+                <p>💰 CPL total: R$ {(cplCents / 100).toFixed(2)}</p>
                 <p>✨ Sua parte (30% base): <strong className="text-affiliate">R$ {affiliateEarning.toFixed(2)}</strong></p>
               </div>
               <p className="text-[10px] mt-2 text-muted-foreground border-t border-border pt-2">

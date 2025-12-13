@@ -15,6 +15,7 @@ interface ExportableOffer {
   city: string;
   clicks_count: number;
   views_count: number;
+  leads_count: number;
   active: boolean;
   expires_at: string;
 }
@@ -49,6 +50,8 @@ const translateTransactionType = (type: string) => {
     'DEPOSIT': 'Depósito',
     'CLICK_COST': 'Custo Clique',
     'CLICK_EARNING': 'Ganho Clique',
+    'LEAD_COST': 'Custo Lead',
+    'LEAD_EARNING': 'Ganho Lead',
     'WITHDRAW': 'Saque',
     'PLATFORM_FEE': 'Taxa Plataforma'
   };
@@ -97,13 +100,14 @@ export const exportUsers = (users: ExportableUser[]) => {
 };
 
 export const exportOffers = (offers: ExportableOffer[]) => {
-  const headers = ['Título', 'Empresa', 'Cidade', 'Cliques', 'Views', 'Status', 'Expira em'];
+  const headers = ['Título', 'Empresa', 'Cidade', 'Leads', 'Views', 'Cliques', 'Status', 'Expira em'];
   const rows = offers.map(offer => [
     offer.title,
     offer.company_name || '',
     offer.city,
-    String(offer.clicks_count),
+    String(offer.leads_count || 0),
     String(offer.views_count),
+    String(offer.clicks_count),
     offer.active ? 'Ativa' : 'Inativa',
     formatDate(offer.expires_at)
   ]);
