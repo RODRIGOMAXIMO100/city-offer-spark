@@ -121,6 +121,7 @@ export default function AffiliateLevel({ affiliateId }: AffiliateLevelProps) {
   const getRealCommission = () => {
     if (!currentLevel) return { percent: '30%', perLead: 'R$ 0,30 - R$ 0,90' };
     // Base is 30%, multiplier increases it (1.0 = 30%, 1.33 = 40%, 1.67 = 50%)
+    // CPL range is R$ 1,00 to R$ 3,00, so base affiliate earning is R$ 0,30 to R$ 0,90
     const basePercent = 30 * currentLevel.commission_multiplier;
     const minPerLead = (0.30 * currentLevel.commission_multiplier).toFixed(2).replace('.', ',');
     const maxPerLead = (0.90 * currentLevel.commission_multiplier).toFixed(2).replace('.', ',');
@@ -236,6 +237,7 @@ export default function AffiliateLevel({ affiliateId }: AffiliateLevelProps) {
                 const isUnlocked = (stats?.total_clicks || 0) >= level.min_clicks;
                 const isCurrent = level.id === currentLevel?.id;
                 const levelPercent = Math.round(30 * level.commission_multiplier);
+                // CPL médio R$ 2,00, 30% base = R$ 0,60
                 const levelPerLead = (0.60 * level.commission_multiplier).toFixed(2).replace('.', ',');
                 
                 return (

@@ -99,7 +99,7 @@ export function AffiliateOfferCard({ offer, profileId, index }: AffiliateOfferCa
 
   const discount = Math.round((1 - offer.price_new / offer.price_old) * 100);
   const offerScore = offer.current_offer_score || 5;
-  // CPL calculation: R$ 1.00 to R$ 3.00 based on score
+  // CPL calculation: R$ 1.00 to R$ 3.00 based on score (formula: (14 - score) * 33.33 cents)
   const cplCents = Math.round((14 - offerScore) * 33.33);
   const affiliateEarning = (cplCents * 0.30) / 100; // Base 30% commission
   const leadRate = offer.views_count > 0 ? (((offer as any).leads_count || 0) / offer.views_count * 100).toFixed(1) : "0";
