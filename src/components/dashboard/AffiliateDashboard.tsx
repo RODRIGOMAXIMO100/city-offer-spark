@@ -206,8 +206,8 @@ function AffiliateDashboardContent() {
   };
 
   const sortedOffers = [...offers].sort((a, b) => {
-    const scoreA = a.views_count > 0 ? (a.clicks_count / a.views_count) * 100 : 0;
-    const scoreB = b.views_count > 0 ? (b.clicks_count / b.views_count) * 100 : 0;
+    const scoreA = a.views_count > 0 ? (((a as any).leads_count || 0) / a.views_count) * 100 : 0;
+    const scoreB = b.views_count > 0 ? (((b as any).leads_count || 0) / b.views_count) * 100 : 0;
     return scoreB - scoreA;
   });
 
@@ -242,7 +242,7 @@ function AffiliateDashboardContent() {
 
   const getScore = (offer: typeof offers[0]) => {
     if (offer.views_count === 0) return 0;
-    return ((offer.clicks_count / offer.views_count) * 100).toFixed(1);
+    return ((((offer as any).leads_count || 0) / offer.views_count) * 100).toFixed(1);
   };
 
   const getExpirationInfo = (expiresAt: string) => {
