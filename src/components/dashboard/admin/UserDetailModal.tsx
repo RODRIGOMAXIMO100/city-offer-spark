@@ -68,6 +68,13 @@ export default function UserDetailModal({ user, open, onOpenChange, onUserUpdate
   const [balanceAction, setBalanceAction] = useState<'add' | 'remove'>('add');
   const [balanceNote, setBalanceNote] = useState('');
   const [banModalOpen, setBanModalOpen] = useState(false);
+  const [currentBalance, setCurrentBalance] = useState<number>(user?.balance ?? 0);
+
+  useEffect(() => {
+    if (user) {
+      setCurrentBalance(user.balance);
+    }
+  }, [user]);
 
   useEffect(() => {
     if (user && open) {
@@ -116,7 +123,7 @@ export default function UserDetailModal({ user, open, onOpenChange, onUserUpdate
     }
 
     const finalAmount = balanceAction === 'add' ? amount : -amount;
-    const newBalance = user.balance + finalAmount;
+    const newBalance = currentBalance + finalAmount;
 
     if (newBalance < 0) {
       toast.error('Saldo não pode ficar negativo');
@@ -151,6 +158,7 @@ export default function UserDetailModal({ user, open, onOpenChange, onUserUpdate
       toast.success(`Saldo ${balanceAction === 'add' ? 'adicionado' : 'removido'} com sucesso`);
       setBalanceAmount('');
       setBalanceNote('');
+      setCurrentBalance(newBalance);
       onUserUpdated();
       fetchUserData();
     } catch (error) {
@@ -320,7 +328,7 @@ export default function UserDetailModal({ user, open, onOpenChange, onUserUpdate
               <CardContent className="pt-4 sm:pt-6">
                 <div className="mb-4">
                   <Label className="text-muted-foreground text-xs sm:text-sm">Saldo Atual</Label>
-                  <p className="text-xl sm:text-2xl font-bold">{formatCentsToBRL(user.balance)}</p>
+                  <p className="text-xl sm:text-2xl font-bold">{formatCentsToBRL(currentBalance)}</p>
                 </div>
 
                 <div className="space-y-3">
@@ -471,7 +479,7 @@ export default function UserDetailModal({ user, open, onOpenChange, onUserUpdate
 
         {/* Ban User Modal */}
         <BanUserModal
-          user={user}
+          user={{ ...user, balance: currentBalance }}
           open={banModalOpen}
           onOpenChange={setBanModalOpen}
           onUserBanned={onUserUpdated}
