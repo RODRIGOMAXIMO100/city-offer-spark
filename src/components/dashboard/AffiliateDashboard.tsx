@@ -50,9 +50,7 @@ function AffiliateDashboardContent() {
   const [showProfileSettings, setShowProfileSettings] = useState(false);
   const [withdrawing, setWithdrawing] = useState(false);
   const [withdrawals, setWithdrawals] = useState<Withdrawal[]>([]);
-  const [showWithdrawals, setShowWithdrawals] = useState(false);
   const [earnings, setEarnings] = useState<Earning[]>([]);
-  const [showEarnings, setShowEarnings] = useState(false);
 
   // Fetch withdrawal history
   useEffect(() => {
@@ -358,80 +356,7 @@ function AffiliateDashboardContent() {
           <div className="flex gap-1.5 sm:gap-2 flex-wrap">
             <AffiliateTutorial />
             {profile?.id && <NotificationBell userId={profile.id} />}
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => { setShowEarnings(!showEarnings); setShowWithdrawals(false); }}
-              className="flex-1 sm:flex-none min-w-0"
-            >
-              <Coins className="h-4 w-4 sm:mr-1.5 shrink-0" />
-              <span className="hidden sm:inline">Ganhos</span>
-            </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => { setShowWithdrawals(!showWithdrawals); setShowEarnings(false); }}
-              className="flex-1 sm:flex-none min-w-0"
-            >
-              <History className="h-4 w-4 sm:mr-1.5 shrink-0" />
-              <span className="hidden sm:inline">Saques</span>
-            </Button>
           </div>
-
-          {/* Earnings History */}
-          {showEarnings && (
-            <div className="mt-3 bg-affiliate/10 rounded-lg p-2 sm:p-3">
-              <div className="flex justify-between items-center mb-2 gap-2">
-                <p className="text-xs sm:text-sm font-medium flex items-center gap-1.5">
-                  <Coins className="h-4 w-4 text-affiliate shrink-0" />
-                  <span className="truncate">Histórico de Ganhos</span>
-                </p>
-                <p className="text-xs text-muted-foreground whitespace-nowrap">
-                  Total: <strong className="text-affiliate">{formatCreditsToReal(earnings.reduce((sum, e) => sum + e.amount, 0))}</strong>
-                </p>
-              </div>
-              {earnings.length === 0 ? (
-                <p className="text-sm text-muted-foreground text-center py-4">Nenhum ganho registrado ainda.</p>
-              ) : (
-                <div className="space-y-1.5 max-h-48 overflow-y-auto">
-                  {earnings.map((e) => (
-                    <div key={e.id} className="flex justify-between items-center text-sm bg-background rounded p-2 gap-2">
-                      <div className="min-w-0 flex-1">
-                        <p className="font-medium text-affiliate">{formatCreditsToReal(e.amount)}</p>
-                        <p className="text-xs text-muted-foreground truncate">
-                          {e.offer_title || 'Oferta'}
-                        </p>
-                      </div>
-                      <p className="text-[10px] sm:text-xs text-muted-foreground whitespace-nowrap">{formatDate(e.created_at)}</p>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Withdrawal History */}
-          {showWithdrawals && withdrawals.length > 0 && (
-            <div className="mt-3 bg-muted/30 rounded-lg p-2 sm:p-3">
-              <p className="text-xs sm:text-sm font-medium mb-2">Histórico de Saques</p>
-              <div className="space-y-1.5 max-h-40 overflow-y-auto">
-                {withdrawals.map((w) => (
-                  <div key={w.id} className="flex justify-between items-center text-sm bg-background rounded p-2 gap-2">
-                    <div className="min-w-0">
-                      <p className="font-medium">R$ {w.amount_brl.toFixed(2)}</p>
-                      <p className="text-[10px] sm:text-xs text-muted-foreground">{formatDate(w.requested_at)}</p>
-                    </div>
-                    <div className="text-right shrink-0">
-                      {getStatusBadge(w.status)}
-                      {w.rejection_reason && (
-                        <p className="text-[10px] sm:text-xs text-destructive mt-1 max-w-[120px] truncate">{w.rejection_reason}</p>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
       </header>
 
@@ -522,8 +447,68 @@ function AffiliateDashboardContent() {
             </div>
           </TabsContent>
 
-          {/* Tab Histórico - Ganhos e Ranking */}
+          {/* Tab Histórico - Ganhos, Saques e Ranking */}
           <TabsContent value="historico" className="space-y-6">
+            {/* Earnings History */}
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex justify-between items-center mb-3 gap-2">
+                  <p className="text-sm font-medium flex items-center gap-2">
+                    <Coins className="h-4 w-4 text-affiliate" />
+                    Histórico de Ganhos
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    Total: <strong className="text-affiliate">{formatCreditsToReal(earnings.reduce((sum, e) => sum + e.amount, 0))}</strong>
+                  </p>
+                </div>
+                {earnings.length === 0 ? (
+                  <p className="text-sm text-muted-foreground text-center py-4">Nenhum ganho registrado ainda.</p>
+                ) : (
+                  <div className="space-y-2 max-h-64 overflow-y-auto">
+                    {earnings.map((e) => (
+                      <div key={e.id} className="flex justify-between items-center text-sm bg-muted/50 rounded-lg p-3 gap-2">
+                        <div className="min-w-0 flex-1">
+                          <p className="font-medium text-affiliate">{formatCreditsToReal(e.amount)}</p>
+                          <p className="text-xs text-muted-foreground truncate">{e.offer_title || 'Oferta'}</p>
+                        </div>
+                        <p className="text-xs text-muted-foreground whitespace-nowrap">{formatDate(e.created_at)}</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Withdrawal History */}
+            <Card>
+              <CardContent className="p-4">
+                <p className="text-sm font-medium flex items-center gap-2 mb-3">
+                  <History className="h-4 w-4 text-muted-foreground" />
+                  Histórico de Saques
+                </p>
+                {withdrawals.length === 0 ? (
+                  <p className="text-sm text-muted-foreground text-center py-4">Nenhum saque solicitado ainda.</p>
+                ) : (
+                  <div className="space-y-2 max-h-64 overflow-y-auto">
+                    {withdrawals.map((w) => (
+                      <div key={w.id} className="flex justify-between items-center text-sm bg-muted/50 rounded-lg p-3 gap-2">
+                        <div className="min-w-0">
+                          <p className="font-medium">R$ {w.amount_brl.toFixed(2)}</p>
+                          <p className="text-xs text-muted-foreground">{formatDate(w.requested_at)}</p>
+                        </div>
+                        <div className="text-right shrink-0">
+                          {getStatusBadge(w.status)}
+                          {w.rejection_reason && (
+                            <p className="text-xs text-destructive mt-1 max-w-[120px] truncate">{w.rejection_reason}</p>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
             {/* Monthly History */}
             {profile?.id && (
               <AffiliateMonthlyHistory affiliateId={profile.id} />
