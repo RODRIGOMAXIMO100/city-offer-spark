@@ -39,7 +39,7 @@ const formatDateTime = (dateStr: string) => {
 const translateRole = (role?: string) => {
   const map: Record<string, string> = {
     'COMPANY': 'Empresa',
-    'AFFILIATE': 'Afiliado',
+    'AFFILIATE': 'Divulgador',
     'CLIENT': 'Cliente'
   };
   return map[role || ''] || role || 'N/A';

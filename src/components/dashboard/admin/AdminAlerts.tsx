@@ -113,7 +113,7 @@ export default function AdminAlerts() {
             newAlerts.push({
               id: `affiliate-${p.id}`,
               type: 'affiliate',
-              title: 'Afiliado Alto Duplicado',
+              title: 'Divulgador Alto Duplicado',
               description: `${p.name} - ${rate}% duplicados`,
               severity: rate > 50 ? 'high' : 'medium',
               timestamp: now

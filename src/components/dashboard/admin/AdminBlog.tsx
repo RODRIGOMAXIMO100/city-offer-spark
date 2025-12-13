@@ -46,7 +46,7 @@ interface BlogTheme {
 
 const CATEGORIES = [
   { value: 'empresas', label: 'Para Empresas' },
-  { value: 'afiliados', label: 'Para Afiliados' },
+  { value: 'afiliados', label: 'Para Divulgadores' },
   { value: 'clientes', label: 'Para Clientes' },
   { value: 'geral', label: 'Geral' },
 ];
