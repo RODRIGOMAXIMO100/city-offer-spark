@@ -51,15 +51,25 @@ import { AdminNiches } from './admin/AdminNiches';
 import AdminFinanceiro from './admin/AdminFinanceiro';
 
 interface Stats {
-  totalCompanies: number;
-  totalAffiliates: number;
-  totalClients: number;
-  totalOffers: number;
-  totalLeads: number;
-  totalViews: number;
-  conversionRate: number;
-  platformEarnings: number;
-  blockedIPs: number;
+  // Financeiro
+  receita: number;           // LEAD_COST (o que empresas pagaram)
+  custos: number;            // LEAD_EARNING (o que afiliados receberam)
+  margem: number;            // receita - custos
+  margemPercent: number;     // (margem/receita) * 100
+  
+  // Volume
+  leads: number;             // Leads no período
+  conversao: number;         // (leads/views) * 100
+  
+  // Atividade
+  empresasAtivas: number;    // Empresas que receberam leads no período
+  divulgadoresAtivos: number; // Divulgadores que geraram leads no período
+  
+  // Caixa
+  depositos: number;         // DEPOSIT no período
+  saquesPendentes: number;   // Saques PENDING + APPROVED
+  saldoEmpresas: number;     // Soma balance de COMPANY
+  saldoAfiliados: number;    // Soma balance de AFFILIATE
 }
 
 interface UserProfile {
@@ -114,15 +124,18 @@ interface RateLimitData {
 export default function AdminDashboard() {
   const { signOut, profile } = useAuth();
   const [stats, setStats] = useState<Stats>({
-    totalCompanies: 0,
-    totalAffiliates: 0,
-    totalClients: 0,
-    totalOffers: 0,
-    totalLeads: 0,
-    totalViews: 0,
-    conversionRate: 0,
-    platformEarnings: 0,
-    blockedIPs: 0
+    receita: 0,
+    custos: 0,
+    margem: 0,
+    margemPercent: 0,
+    leads: 0,
+    conversao: 0,
+    empresasAtivas: 0,
+    divulgadoresAtivos: 0,
+    depositos: 0,
+    saquesPendentes: 0,
+    saldoEmpresas: 0,
+    saldoAfiliados: 0
   });
   const [users, setUsers] = useState<UserProfile[]>([]);
   const [offers, setOffers] = useState<OfferData[]>([]);
@@ -171,27 +184,40 @@ export default function AdminDashboard() {
       const startDate = statsDateRange?.from?.toISOString();
       const endDate = statsDateRange?.to?.toISOString();
       
-      // Contagem total de usuários (sempre totais)
-      const { data: roles } = await supabase.from('user_roles').select('role');
-      const companies = roles?.filter(r => r.role === 'COMPANY').length || 0;
-      const affiliates = roles?.filter(r => r.role === 'AFFILIATE').length || 0;
-      const clients = roles?.filter(r => r.role === 'CLIENT').length || 0;
-
-      // Ofertas no período
-      let offersQuery = supabase.from('offers').select('*', { count: 'exact', head: true });
+      // Transações no período
+      let txQuery = supabase.from('transactions').select('amount, type');
       if (startDate && endDate) {
-        offersQuery = offersQuery.gte('created_at', startDate).lte('created_at', endDate);
+        txQuery = txQuery.gte('created_at', startDate).lte('created_at', endDate);
       }
-      const { count: offersCount } = await offersQuery;
+      const { data: txData } = await txQuery;
+      
+      // Receita = LEAD_COST (valor absoluto)
+      const receita = txData
+        ?.filter(t => t.type === 'LEAD_COST')
+        .reduce((sum, t) => sum + Math.abs(t.amount), 0) || 0;
+      
+      // Custos = LEAD_EARNING
+      const custos = txData
+        ?.filter(t => t.type === 'LEAD_EARNING')
+        .reduce((sum, t) => sum + t.amount, 0) || 0;
+      
+      // Margem
+      const margem = receita - custos;
+      const margemPercent = receita > 0 ? (margem / receita) * 100 : 0;
+      
+      // Depósitos no período
+      const depositos = txData
+        ?.filter(t => t.type === 'DEPOSIT')
+        .reduce((sum, t) => sum + t.amount, 0) || 0;
       
       // Leads no período
-      let leadsQuery = supabase.from('leads').select('*', { count: 'exact', head: true }).eq('is_valid', true);
+      let leadsQuery = supabase.from('leads').select('offer_id, affiliate_id', { count: 'exact' }).eq('is_valid', true);
       if (startDate && endDate) {
         leadsQuery = leadsQuery.gte('created_at', startDate).lte('created_at', endDate);
       }
-      const { count: leadsCount } = await leadsQuery;
+      const { data: leadsData, count: leadsCount } = await leadsQuery;
       
-      // Views no período (via offer_views table)
+      // Views no período
       let viewsQuery = supabase.from('offer_views').select('*', { count: 'exact', head: true });
       if (startDate && endDate) {
         viewsQuery = viewsQuery.gte('created_at', startDate).lte('created_at', endDate);
@@ -199,39 +225,65 @@ export default function AdminDashboard() {
       const { count: viewsCount } = await viewsQuery;
       const totalViews = viewsCount || 0;
       
-      // Calcular ganhos baseado em transações LEAD_COST no período
-      let txQuery = supabase.from('transactions').select('amount, type');
-      if (startDate && endDate) {
-        txQuery = txQuery.gte('created_at', startDate).lte('created_at', endDate);
-      }
-      const { data: transactions } = await txQuery;
-      
-      const platformEarnings = transactions
-        ?.filter(t => t.type === 'LEAD_COST')
-        .reduce((sum, t) => sum + Math.abs(t.amount), 0) || 0;
-      
-      // Subtrair pagamentos aos afiliados para ter margem
-      const affiliatePayments = transactions
-        ?.filter(t => t.type === 'LEAD_EARNING')
-        .reduce((sum, t) => sum + t.amount, 0) || 0;
-      
-      const netEarnings = platformEarnings - affiliatePayments;
-      
       // Taxa de conversão
-      const conversionRate = totalViews > 0 ? ((leadsCount || 0) / totalViews) * 100 : 0;
+      const conversao = totalViews > 0 ? ((leadsCount || 0) / totalViews) * 100 : 0;
       
-      const { count: blockedCount } = await supabase.from('click_rate_limits').select('*', { count: 'exact', head: true }).eq('blocked', true);
+      // Empresas ativas (únicas que receberam leads no período)
+      const offerIds = [...new Set(leadsData?.map(l => l.offer_id) || [])];
+      let empresasAtivas = 0;
+      if (offerIds.length > 0) {
+        const { data: offersWithCompany } = await supabase
+          .from('offers')
+          .select('company_id')
+          .in('id', offerIds);
+        empresasAtivas = new Set(offersWithCompany?.map(o => o.company_id)).size;
+      }
+      
+      // Divulgadores ativos (únicos que geraram leads no período)
+      const affiliateIds = leadsData?.map(l => l.affiliate_id).filter(Boolean) || [];
+      const divulgadoresAtivos = new Set(affiliateIds).size;
+      
+      // Saques pendentes (PENDING + APPROVED)
+      const { data: pendingWithdrawals } = await supabase
+        .from('withdrawals')
+        .select('amount')
+        .in('status', ['PENDING', 'APPROVED']);
+      const saquesPendentes = pendingWithdrawals?.reduce((sum, w) => sum + w.amount, 0) || 0;
+      
+      // Saldo por tipo de usuário
+      const { data: profiles } = await supabase.from('profiles').select('id, balance');
+      const { data: roles } = await supabase.from('user_roles').select('user_id, role');
+      
+      const profileUserMap = new Map(profiles?.map(p => [p.id, p.balance]) || []);
+      const userProfileMap = new Map<string, string>();
+      
+      // Criar mapa user_id -> profile.id
+      const { data: profilesWithUserId } = await supabase.from('profiles').select('id, user_id');
+      profilesWithUserId?.forEach(p => userProfileMap.set(p.user_id, p.id));
+      
+      let saldoEmpresas = 0;
+      let saldoAfiliados = 0;
+      
+      roles?.forEach(r => {
+        const profileId = userProfileMap.get(r.user_id);
+        const balance = profileId ? (profileUserMap.get(profileId) || 0) : 0;
+        if (r.role === 'COMPANY') saldoEmpresas += balance;
+        if (r.role === 'AFFILIATE') saldoAfiliados += balance;
+      });
 
       setStats({
-        totalCompanies: companies,
-        totalAffiliates: affiliates,
-        totalClients: clients,
-        totalOffers: offersCount || 0,
-        totalLeads: leadsCount || 0,
-        totalViews,
-        conversionRate,
-        platformEarnings: netEarnings,
-        blockedIPs: blockedCount || 0
+        receita,
+        custos,
+        margem,
+        margemPercent,
+        leads: leadsCount || 0,
+        conversao,
+        empresasAtivas,
+        divulgadoresAtivos,
+        depositos,
+        saquesPendentes,
+        saldoEmpresas,
+        saldoAfiliados
       });
     } catch (error) {
       console.error('Error fetching stats:', error);
@@ -466,64 +518,159 @@ export default function AdminDashboard() {
           </Popover>
         </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2 sm:gap-4 mb-4 sm:mb-6">
-          <Card className="hover:shadow-lg transition-shadow">
-            <CardContent className="p-3 sm:p-4 text-center">
-              <Building2 className="h-5 w-5 sm:h-6 sm:w-6 mx-auto mb-1 sm:mb-2 text-company" />
-              <p className="text-xl sm:text-2xl font-bold">{stats.totalCompanies}</p>
-              <p className="text-[10px] sm:text-xs text-muted-foreground">Empresas</p>
-            </CardContent>
-          </Card>
-          <Card className="hover:shadow-lg transition-shadow">
-            <CardContent className="p-3 sm:p-4 text-center">
-              <UserCheck className="h-5 w-5 sm:h-6 sm:w-6 mx-auto mb-1 sm:mb-2 text-affiliate" />
-              <p className="text-xl sm:text-2xl font-bold">{stats.totalAffiliates}</p>
-              <p className="text-[10px] sm:text-xs text-muted-foreground">Divulgadores</p>
-            </CardContent>
-          </Card>
-          <Card className="hover:shadow-lg transition-shadow">
-            <CardContent className="p-3 sm:p-4 text-center">
-              <Users className="h-5 w-5 sm:h-6 sm:w-6 mx-auto mb-1 sm:mb-2 text-client" />
-              <p className="text-xl sm:text-2xl font-bold">{stats.totalClients}</p>
-              <p className="text-[10px] sm:text-xs text-muted-foreground">Clientes</p>
-            </CardContent>
-          </Card>
-          <Card className="hover:shadow-lg transition-shadow">
-            <CardContent className="p-3 sm:p-4 text-center">
-              <Megaphone className="h-5 w-5 sm:h-6 sm:w-6 mx-auto mb-1 sm:mb-2 text-primary" />
-              <p className="text-xl sm:text-2xl font-bold">{stats.totalOffers}</p>
-              <p className="text-[10px] sm:text-xs text-muted-foreground">Ofertas</p>
-            </CardContent>
-          </Card>
-          <Card className="hover:shadow-lg transition-shadow">
-            <CardContent className="p-3 sm:p-4 text-center">
-              <Phone className="h-5 w-5 sm:h-6 sm:w-6 mx-auto mb-1 sm:mb-2 text-secondary" />
-              <p className="text-xl sm:text-2xl font-bold">{stats.totalLeads}</p>
-              <p className="text-[10px] sm:text-xs text-muted-foreground">Leads</p>
-            </CardContent>
-          </Card>
-          <Card className="hover:shadow-lg transition-shadow">
-            <CardContent className="p-3 sm:p-4 text-center">
-              <Eye className="h-5 w-5 sm:h-6 sm:w-6 mx-auto mb-1 sm:mb-2 text-muted-foreground" />
-              <p className="text-xl sm:text-2xl font-bold">{stats.totalViews.toLocaleString('pt-BR')}</p>
-              <p className="text-[10px] sm:text-xs text-muted-foreground">Views</p>
-            </CardContent>
-          </Card>
-          <Card className="hover:shadow-lg transition-shadow">
-            <CardContent className="p-3 sm:p-4 text-center">
-              <TrendingUp className="h-5 w-5 sm:h-6 sm:w-6 mx-auto mb-1 sm:mb-2 text-green-500" />
-              <p className="text-xl sm:text-2xl font-bold">{formatBalance(stats.platformEarnings)}</p>
-              <p className="text-[10px] sm:text-xs text-muted-foreground">Ganhos (PPL)</p>
-            </CardContent>
-          </Card>
-          <Card className="hover:shadow-lg transition-shadow col-span-2 sm:col-span-1">
-            <CardContent className="p-3 sm:p-4 text-center">
-              <Ban className="h-5 w-5 sm:h-6 sm:w-6 mx-auto mb-1 sm:mb-2 text-destructive" />
-              <p className="text-xl sm:text-2xl font-bold">{stats.blockedIPs}</p>
-              <p className="text-[10px] sm:text-xs text-muted-foreground">IPs Bloqueados</p>
-            </CardContent>
-          </Card>
+        {/* Stats Cards - Linha 1: Financeiro */}
+        <div className="space-y-3 mb-4 sm:mb-6">
+          <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">💰 Financeiro</h3>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4">
+            <Card className="hover:shadow-lg transition-shadow border-l-4 border-l-green-500">
+              <CardContent className="p-3 sm:p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-[10px] sm:text-xs text-muted-foreground mb-1">Receita</p>
+                    <p className="text-lg sm:text-2xl font-bold text-green-600">{formatBalance(stats.receita)}</p>
+                  </div>
+                  <DollarSign className="h-8 w-8 text-green-500/20" />
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="hover:shadow-lg transition-shadow border-l-4 border-l-red-500">
+              <CardContent className="p-3 sm:p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-[10px] sm:text-xs text-muted-foreground mb-1">Custos (Afiliados)</p>
+                    <p className="text-lg sm:text-2xl font-bold text-red-600">{formatBalance(stats.custos)}</p>
+                  </div>
+                  <TrendingUp className="h-8 w-8 text-red-500/20 rotate-180" />
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="hover:shadow-lg transition-shadow border-l-4 border-l-blue-500">
+              <CardContent className="p-3 sm:p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-[10px] sm:text-xs text-muted-foreground mb-1">Margem Bruta</p>
+                    <p className={cn("text-lg sm:text-2xl font-bold", stats.margem >= 0 ? "text-blue-600" : "text-red-600")}>
+                      {formatBalance(stats.margem)}
+                    </p>
+                  </div>
+                  <BarChart3 className="h-8 w-8 text-blue-500/20" />
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="hover:shadow-lg transition-shadow border-l-4 border-l-purple-500">
+              <CardContent className="p-3 sm:p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-[10px] sm:text-xs text-muted-foreground mb-1">Margem %</p>
+                    <p className={cn("text-lg sm:text-2xl font-bold", stats.margemPercent >= 30 ? "text-green-600" : stats.margemPercent >= 0 ? "text-yellow-600" : "text-red-600")}>
+                      {stats.margemPercent.toFixed(1)}%
+                    </p>
+                  </div>
+                  <TrendingUp className="h-8 w-8 text-purple-500/20" />
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+          
+          {/* Linha 2: Volume e Atividade */}
+          <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mt-4">📊 Volume e Atividade</h3>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4">
+            <Card className="hover:shadow-lg transition-shadow">
+              <CardContent className="p-3 sm:p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-[10px] sm:text-xs text-muted-foreground mb-1">Leads Gerados</p>
+                    <p className="text-lg sm:text-2xl font-bold">{stats.leads}</p>
+                  </div>
+                  <Phone className="h-8 w-8 text-muted-foreground/20" />
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="hover:shadow-lg transition-shadow">
+              <CardContent className="p-3 sm:p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-[10px] sm:text-xs text-muted-foreground mb-1">Taxa de Conversão</p>
+                    <p className="text-lg sm:text-2xl font-bold">{stats.conversao.toFixed(2)}%</p>
+                  </div>
+                  <TrendingUp className="h-8 w-8 text-muted-foreground/20" />
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="hover:shadow-lg transition-shadow">
+              <CardContent className="p-3 sm:p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-[10px] sm:text-xs text-muted-foreground mb-1">Empresas Ativas</p>
+                    <p className="text-lg sm:text-2xl font-bold text-company">{stats.empresasAtivas}</p>
+                  </div>
+                  <Building2 className="h-8 w-8 text-company/20" />
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="hover:shadow-lg transition-shadow">
+              <CardContent className="p-3 sm:p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-[10px] sm:text-xs text-muted-foreground mb-1">Divulgadores Ativos</p>
+                    <p className="text-lg sm:text-2xl font-bold text-affiliate">{stats.divulgadoresAtivos}</p>
+                  </div>
+                  <UserCheck className="h-8 w-8 text-affiliate/20" />
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+          
+          {/* Linha 3: Fluxo de Caixa */}
+          <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mt-4">🏦 Fluxo de Caixa</h3>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4">
+            <Card className="hover:shadow-lg transition-shadow">
+              <CardContent className="p-3 sm:p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-[10px] sm:text-xs text-muted-foreground mb-1">Depósitos Recebidos</p>
+                    <p className="text-lg sm:text-2xl font-bold text-green-600">{formatBalance(stats.depositos)}</p>
+                  </div>
+                  <CreditCard className="h-8 w-8 text-green-500/20" />
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="hover:shadow-lg transition-shadow border border-orange-200 dark:border-orange-900">
+              <CardContent className="p-3 sm:p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-[10px] sm:text-xs text-muted-foreground mb-1">⚠️ Saques Pendentes</p>
+                    <p className="text-lg sm:text-2xl font-bold text-orange-600">{formatBalance(stats.saquesPendentes)}</p>
+                  </div>
+                  <Banknote className="h-8 w-8 text-orange-500/20" />
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="hover:shadow-lg transition-shadow">
+              <CardContent className="p-3 sm:p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-[10px] sm:text-xs text-muted-foreground mb-1">Saldo Empresas</p>
+                    <p className="text-lg sm:text-2xl font-bold">{formatBalance(stats.saldoEmpresas)}</p>
+                    <p className="text-[9px] text-muted-foreground">(passivo)</p>
+                  </div>
+                  <Building2 className="h-8 w-8 text-muted-foreground/20" />
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="hover:shadow-lg transition-shadow">
+              <CardContent className="p-3 sm:p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-[10px] sm:text-xs text-muted-foreground mb-1">Saldo Afiliados</p>
+                    <p className="text-lg sm:text-2xl font-bold">{formatBalance(stats.saldoAfiliados)}</p>
+                    <p className="text-[9px] text-muted-foreground">(passivo)</p>
+                  </div>
+                  <UserCheck className="h-8 w-8 text-muted-foreground/20" />
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </div>
 
         {/* Tabs */}
