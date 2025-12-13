@@ -8,7 +8,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { Banknote, PlusCircle, LogOut, Eye, MousePointer, TrendingUp, Loader2, Instagram, Check, Clock, Trash2, Info, Star, ExternalLink, AlertTriangle, Pencil, Image, HelpCircle, BookOpen, Users, Settings } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Banknote, PlusCircle, LogOut, Eye, MousePointer, TrendingUp, Loader2, Instagram, Check, Clock, Trash2, Info, Star, ExternalLink, AlertTriangle, Pencil, Image, HelpCircle, BookOpen, Users, Settings, LayoutDashboard } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import CreateOfferModal from './CreateOfferModal';
 import PerformanceChart from './PerformanceChart';
@@ -377,6 +378,25 @@ function CompanyDashboardContent() {
       </header>
 
       <div className="max-w-2xl mx-auto px-3 sm:px-4 py-4 sm:py-6 space-y-4 sm:space-y-6">
+        {/* Tab Navigation */}
+        <Tabs defaultValue="panel" className="w-full">
+          <TabsList className="grid w-full grid-cols-2 mb-4">
+            <TabsTrigger value="panel" className="flex items-center gap-2">
+              <LayoutDashboard className="h-4 w-4" />
+              Painel
+            </TabsTrigger>
+            <TabsTrigger value="leads" className="flex items-center gap-2">
+              <Users className="h-4 w-4" />
+              Leads
+              {totalLeads > 0 && (
+                <Badge variant="secondary" className="ml-1 h-5 px-1.5 text-xs">
+                  {totalLeads}
+                </Badge>
+              )}
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="panel" className="space-y-4 sm:space-y-6 mt-0">
         {/* Company Logo Section */}
         <Card data-tour="company-logo">
           <CardHeader className="pb-2 sm:pb-3 px-3 sm:px-6 pt-3 sm:pt-6">
@@ -500,9 +520,6 @@ function CompanyDashboardContent() {
             </CardContent>
           </Card>
         </div>
-
-        {/* Leads List */}
-        <CompanyLeadsList />
 
         {/* Performance Chart */}
         <PerformanceChart />
@@ -747,6 +764,12 @@ function CompanyDashboardContent() {
             </div>
           )}
         </div>
+          </TabsContent>
+
+          <TabsContent value="leads" className="mt-0">
+            <CompanyLeadsList />
+          </TabsContent>
+        </Tabs>
       </div>
 
       <Footer />
