@@ -1586,6 +1586,7 @@ export type Database = {
         | "PLATFORM_FEE"
         | "LEAD_COST"
         | "LEAD_EARNING"
+        | "ADMIN_ADJUSTMENT"
       withdrawal_status:
         | "PENDING"
         | "APPROVED"
@@ -1729,6 +1730,7 @@ export const Constants = {
         "PLATFORM_FEE",
         "LEAD_COST",
         "LEAD_EARNING",
+        "ADMIN_ADJUSTMENT",
       ],
       withdrawal_status: [
         "PENDING",

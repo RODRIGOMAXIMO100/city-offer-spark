@@ -137,8 +137,8 @@ export default function UserDetailModal({ user, open, onOpenChange, onUserUpdate
         .insert({
           user_id: user.id,
           amount: Math.abs(finalAmount),
-          type: balanceAction === 'add' ? 'DEPOSIT' : 'WITHDRAW',
-          description: `Ajuste manual pelo admin: ${balanceAction === 'add' ? 'adição' : 'remoção'} de ${formatCentsToBRL(Math.abs(finalAmount))}`
+          type: 'ADMIN_ADJUSTMENT' as any,
+          description: `Ajuste manual: ${balanceAction === 'add' ? '+' : '-'}${formatCentsToBRL(Math.abs(finalAmount))}`
         });
 
       if (txError) throw txError;
@@ -161,7 +161,8 @@ export default function UserDetailModal({ user, open, onOpenChange, onUserUpdate
       'LEAD_COST': { color: 'bg-red-500', label: 'Custo Lead' },
       'LEAD_EARNING': { color: 'bg-blue-500', label: 'Ganho Lead' },
       'WITHDRAW': { color: 'bg-orange-500', label: 'Saque' },
-      'PLATFORM_FEE': { color: 'bg-purple-500', label: 'Taxa' }
+      'PLATFORM_FEE': { color: 'bg-purple-500', label: 'Taxa' },
+      'ADMIN_ADJUSTMENT': { color: 'bg-slate-600', label: 'Ajuste Manual' }
     };
     const c = config[type] || { color: 'bg-muted', label: type };
     return <Badge className={`${c.color} text-white`}>{c.label}</Badge>;
