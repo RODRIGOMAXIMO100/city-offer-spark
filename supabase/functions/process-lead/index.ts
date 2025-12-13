@@ -491,8 +491,7 @@ serve(async (req) => {
       created_at: new Date().toISOString(),
     }, { onConflict: 'phone_hash,offer_id' });
 
-    // Increment leads count
-    await supabase.rpc("increment_offer_leads", { offer_id: offerId });
+    // Note: leads_count is updated automatically by trigger update_offer_leads_count
 
     console.log(`Lead processed successfully - CPL: ${cplCents}, Affiliate earnings: ${affiliateEarnings}`);
 
