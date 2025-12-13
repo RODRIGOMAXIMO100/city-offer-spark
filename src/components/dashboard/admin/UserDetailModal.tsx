@@ -170,7 +170,7 @@ export default function UserDetailModal({ user, open, onOpenChange, onUserUpdate
   const getRoleBadge = (role?: string) => {
     const variants: Record<string, { variant: 'default' | 'secondary' | 'outline', label: string }> = {
       'COMPANY': { variant: 'default', label: 'Empresa' },
-      'AFFILIATE': { variant: 'secondary', label: 'Afiliado' },
+      'AFFILIATE': { variant: 'secondary', label: 'Divulgador' },
       'CLIENT': { variant: 'outline', label: 'Cliente' }
     };
     const config = variants[role || ''] || { variant: 'outline', label: role || 'N/A' };

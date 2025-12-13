@@ -309,7 +309,7 @@ export default function AdminWithdrawals() {
       <div className="flex flex-col sm:flex-row justify-between gap-4">
         <div>
           <h2 className="text-xl font-bold">Solicitações de Saque</h2>
-          <p className="text-sm text-muted-foreground">Gerencie as solicitações de saque dos afiliados</p>
+          <p className="text-sm text-muted-foreground">Gerencie as solicitações de saque dos divulgadores</p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" size="sm" onClick={fetchWithdrawals}>
@@ -349,7 +349,7 @@ export default function AdminWithdrawals() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="min-w-[120px]">Afiliado</TableHead>
+                    <TableHead className="min-w-[120px]">Divulgador</TableHead>
                     <TableHead>Valor</TableHead>
                     <TableHead className="hidden sm:table-cell">PIX</TableHead>
                     <TableHead className="hidden md:table-cell">Fraud Score</TableHead>
@@ -494,7 +494,7 @@ export default function AdminWithdrawals() {
               {/* User Info */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <h4 className="font-semibold mb-2">Dados do Afiliado</h4>
+                  <h4 className="font-semibold mb-2">Dados do Divulgador</h4>
                   <div className="space-y-1 text-sm">
                     <p><strong>Nome:</strong> {selectedWithdrawal.nome_completo}</p>
                     <p><strong>CPF:</strong> {selectedWithdrawal.cpf}</p>
@@ -518,7 +518,7 @@ export default function AdminWithdrawals() {
               {/* Affiliate Stats */}
               {affiliateStats && (
                 <div>
-                  <h4 className="font-semibold mb-2">Estatísticas do Afiliado</h4>
+                  <h4 className="font-semibold mb-2">Estatísticas do Divulgador</h4>
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                     <div className="bg-muted p-3 rounded-lg text-center">
                       <p className="text-lg font-bold">{affiliateStats.totalClicks}</p>
@@ -578,7 +578,7 @@ export default function AdminWithdrawals() {
           <DialogHeader>
             <DialogTitle>Rejeitar Saque</DialogTitle>
             <DialogDescription>
-              O saldo será devolvido ao afiliado. Informe o motivo da rejeição.
+              O saldo será devolvido ao divulgador. Informe o motivo da rejeição.
             </DialogDescription>
           </DialogHeader>
 

@@ -264,7 +264,7 @@ export default function AdminSecurityAdvanced() {
             </div>
             <div>
               <p className="text-2xl font-bold">{stats.suspiciousAffiliates}</p>
-              <p className="text-sm text-muted-foreground">Afiliados Suspeitos</p>
+              <p className="text-sm text-muted-foreground">Divulgadores Suspeitos</p>
             </div>
           </CardContent>
         </Card>
@@ -290,7 +290,7 @@ export default function AdminSecurityAdvanced() {
             </TabsTrigger>
             <TabsTrigger value="suspicious" className="flex-1 sm:flex-none text-xs sm:text-sm">
               <AlertTriangle className="h-4 w-4 sm:mr-2" />
-              <span className="hidden sm:inline">Afiliados</span>
+              <span className="hidden sm:inline">Divulgadores</span>
               <span className="hidden sm:inline ml-1">({suspiciousAffiliates.length})</span>
             </TabsTrigger>
           </TabsList>
@@ -449,20 +449,20 @@ export default function AdminSecurityAdvanced() {
             <CardHeader>
               <CardTitle className="text-base flex items-center gap-2">
                 <AlertTriangle className="h-5 w-5" />
-                Afiliados com Padrões Suspeitos
+                Divulgadores com Padrões Suspeitos
               </CardTitle>
             </CardHeader>
             <CardContent>
               {suspiciousAffiliates.length === 0 ? (
                 <div className="text-center py-8 text-muted-foreground">
-                  Nenhum afiliado suspeito detectado
+                  Nenhum divulgador suspeito detectado
                 </div>
               ) : (
                 <>
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>Afiliado</TableHead>
+                        <TableHead>Divulgador</TableHead>
                         <TableHead>Total Cliques</TableHead>
                         <TableHead>Duplicados</TableHead>
                         <TableHead>Taxa Duplicados</TableHead>

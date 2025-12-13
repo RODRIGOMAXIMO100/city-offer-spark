@@ -138,7 +138,7 @@ export default function AdminAnalytics() {
 
       const usersByRole = [
         { name: 'Empresas', value: companies, color: COLORS.company },
-        { name: 'Afiliados', value: affiliates, color: COLORS.affiliate },
+        { name: 'Divulgadores', value: affiliates, color: COLORS.affiliate },
         { name: 'Clientes', value: clients, color: COLORS.client }
       ];
 
@@ -551,7 +551,7 @@ export default function AdminAnalytics() {
         {/* Top 5 Affiliates */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Top 5 Afiliados por Ganhos</CardTitle>
+            <CardTitle className="text-base">Top 5 Divulgadores por Ganhos</CardTitle>
           </CardHeader>
           <CardContent>
             {data.topAffiliates.length === 0 ? (

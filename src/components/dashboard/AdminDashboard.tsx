@@ -261,7 +261,7 @@ export default function AdminDashboard() {
   const getRoleBadge = (role: string) => {
     const variants: Record<string, { variant: 'default' | 'secondary' | 'outline' | 'destructive', label: string }> = {
       'COMPANY': { variant: 'default', label: 'Empresa' },
-      'AFFILIATE': { variant: 'secondary', label: 'Afiliado' },
+      'AFFILIATE': { variant: 'secondary', label: 'Divulgador' },
       'CLIENT': { variant: 'outline', label: 'Cliente' },
       'ADMIN': { variant: 'destructive', label: 'Admin' }
     };
@@ -338,7 +338,7 @@ export default function AdminDashboard() {
             <CardContent className="p-3 sm:p-4 text-center">
               <UserCheck className="h-5 w-5 sm:h-6 sm:w-6 mx-auto mb-1 sm:mb-2 text-affiliate" />
               <p className="text-xl sm:text-2xl font-bold">{stats.totalAffiliates}</p>
-              <p className="text-[10px] sm:text-xs text-muted-foreground">Afiliados</p>
+              <p className="text-[10px] sm:text-xs text-muted-foreground">Divulgadores</p>
             </CardContent>
           </Card>
           <Card className="hover:shadow-lg transition-shadow">

@@ -63,7 +63,7 @@ export default function AdminFilters({
           <SelectContent>
             <SelectItem value="all">Todos</SelectItem>
             <SelectItem value="COMPANY">Empresas</SelectItem>
-            <SelectItem value="AFFILIATE">Afiliados</SelectItem>
+            <SelectItem value="AFFILIATE">Divulgadores</SelectItem>
             <SelectItem value="CLIENT">Clientes</SelectItem>
           </SelectContent>
         </Select>
