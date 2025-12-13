@@ -59,6 +59,7 @@ export function Footer() {
               {[
                 { label: "Central de Ajuda", to: "/ajuda" },
                 { label: "Blog", to: "/blog" },
+                { label: "Sobre o App", to: "/sobre" },
                 { label: "Transparência", to: "/transparencia" },
                 { label: "Termos de Uso", to: "/termos" },
                 { label: "Privacidade", to: "/privacidade" },
