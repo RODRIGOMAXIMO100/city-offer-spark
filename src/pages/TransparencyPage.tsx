@@ -50,12 +50,15 @@ const scoreComponents = [
   }
 ];
 
-// Exemplos de CPL automático baseado na nota (R$ 1,00 a R$ 3,00)
-// Fórmula: CPL = (14 - Nota) × R$ 0,33
-const cplExamples = [
-  { score: 10, cpl: 100, position: 1, reason: "Nota máxima = CPL mínimo" },
-  { score: 7, cpl: 200, position: 2, reason: "Nota inicial padrão" },
-  { score: 4, cpl: 300, position: 3, reason: "Nota mínima = CPL máximo" },
+// Tabela visual de CPL por nota - escala completa para fácil entendimento
+const cplScale = [
+  { score: 10, cpl: "R$ 1,00", highlight: "best", label: "⭐ Melhor custo!", color: "text-secondary" },
+  { score: 9, cpl: "R$ 1,33", highlight: null, label: null, color: "text-secondary" },
+  { score: 8, cpl: "R$ 1,67", highlight: null, label: null, color: "text-primary" },
+  { score: 7, cpl: "R$ 2,00", highlight: "default", label: "📌 Nota inicial", color: "text-primary" },
+  { score: 6, cpl: "R$ 2,33", highlight: null, label: null, color: "text-yellow-600" },
+  { score: 5, cpl: "R$ 2,67", highlight: null, label: null, color: "text-yellow-600" },
+  { score: 4, cpl: "R$ 3,00", highlight: "worst", label: "⚠️ Maior custo", color: "text-destructive" },
 ];
 
 // Exemplos corrigidos: 30% base para afiliados (Plataforma 70%, Afiliado 30%)
@@ -176,70 +179,116 @@ export default function TransparencyPage() {
                 </div>
               </div>
 
-              {/* Formula Card */}
-              <Card className="bg-gradient-to-r from-primary/10 to-accent/10 border-primary/20">
-                <CardContent className="p-8">
-                  <div className="flex flex-col md:flex-row items-center justify-center gap-4 text-center">
-                    <div className="bg-card rounded-xl p-4 shadow-lg">
-                      <p className="text-sm text-muted-foreground mb-1">(14 − Nota)</p>
-                      <p className="text-2xl font-bold text-primary">(14 − 7)</p>
+              {/* Visual CPL Scale - Substituindo a fórmula confusa */}
+              <Card className="bg-gradient-to-br from-secondary/5 via-primary/5 to-destructive/5 border-primary/20">
+                <CardHeader className="text-center pb-2">
+                  <CardTitle className="flex items-center justify-center gap-2">
+                    <BarChart3 className="h-5 w-5 text-primary" />
+                    Tabela de Custo por Lead
+                  </CardTitle>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Veja exatamente quanto você paga por cada nota
+                  </p>
+                </CardHeader>
+                <CardContent className="p-6">
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead>
+                        <tr className="border-b-2 border-border">
+                          <th className="text-center py-3 px-4 text-sm font-semibold">Nota da Oferta</th>
+                          <th className="text-center py-3 px-4 text-sm font-semibold">Custo por Lead</th>
+                          <th className="text-left py-3 px-4 text-sm font-semibold hidden sm:table-cell">Observação</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {cplScale.map((item, i) => (
+                          <tr 
+                            key={i} 
+                            className={`border-b border-border/50 transition-colors ${
+                              item.highlight === 'best' ? 'bg-secondary/10' : 
+                              item.highlight === 'default' ? 'bg-primary/10' : 
+                              item.highlight === 'worst' ? 'bg-destructive/10' : 
+                              'hover:bg-muted/30'
+                            }`}
+                          >
+                            <td className="text-center py-3 px-4">
+                              <span className={`text-lg font-bold ${item.color}`}>{item.score}</span>
+                            </td>
+                            <td className="text-center py-3 px-4">
+                              <span className={`text-lg font-bold ${item.color}`}>{item.cpl}</span>
+                            </td>
+                            <td className="py-3 px-4 hidden sm:table-cell">
+                              {item.label && (
+                                <span className={`text-sm font-medium ${item.color}`}>{item.label}</span>
+                              )}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                  
+                  {/* Simple explanation */}
+                  <div className="mt-6 p-4 bg-muted/50 rounded-xl space-y-3">
+                    <div className="flex items-start gap-3">
+                      <TrendingUp className="h-5 w-5 text-secondary mt-0.5 shrink-0" />
+                      <div>
+                        <p className="font-medium text-sm">Cada ponto extra na nota = R$ 0,33 a menos</p>
+                        <p className="text-xs text-muted-foreground">Melhore sua oferta para economizar em cada lead</p>
+                      </div>
                     </div>
-                    <span className="text-2xl font-bold text-muted-foreground">×</span>
-                    <div className="bg-card rounded-xl p-4 shadow-lg">
-                      <p className="text-sm text-muted-foreground mb-1">Constante</p>
-                      <p className="text-2xl font-bold text-secondary">R$ 0,33</p>
+                    <div className="flex items-start gap-3">
+                      <Target className="h-5 w-5 text-primary mt-0.5 shrink-0" />
+                      <div>
+                        <p className="font-medium text-sm">Ofertas novas começam com Nota 7 (R$ 2,00/lead)</p>
+                        <p className="text-xs text-muted-foreground">Você pode chegar em R$ 1,00 melhorando a qualidade</p>
+                      </div>
                     </div>
-                    <span className="text-2xl font-bold text-muted-foreground">=</span>
-                    <div className="bg-card rounded-xl p-4 shadow-lg border-2 border-accent">
-                      <p className="text-sm text-muted-foreground mb-1">CPL</p>
-                      <p className="text-2xl font-bold text-accent">R$ 2,31</p>
+                    <div className="flex items-start gap-3">
+                      <Zap className="h-5 w-5 text-accent mt-0.5 shrink-0" />
+                      <div>
+                        <p className="font-medium text-sm">100% automático - sem lances manuais</p>
+                        <p className="text-xs text-muted-foreground">Foque em qualidade, nós calculamos o preço justo</p>
+                      </div>
                     </div>
                   </div>
-                  <p className="text-center mt-6 text-muted-foreground">
-                    Quanto maior sua nota, menor o custo por lead!
-                  </p>
                 </CardContent>
               </Card>
 
-              {/* How CPL Works */}
+              {/* Por que isso faz sentido? */}
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Calculator className="h-5 w-5 text-primary" />
-                    Custo por Lead = (14 − Nota) × R$ 0,33
+                    <Info className="h-5 w-5 text-primary" />
+                    Por que ofertas melhores pagam menos?
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <p className="text-muted-foreground">
-                    O custo por lead é calculado automaticamente. Não há lances manuais! 
-                    Sua única tarefa é <strong>melhorar a qualidade da oferta</strong> para pagar menos por cada lead qualificado.
+                    Parece contra-intuitivo, mas faz total sentido para você:
                   </p>
-                  
-                  <div className="bg-muted/50 rounded-xl p-4">
-                    <p className="text-sm font-medium mb-3">Tabela de Custo por Nota:</p>
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-sm">
-                        <thead>
-                        <tr className="border-b border-border">
-                            <th className="text-center py-2 px-3">Nota</th>
-                            <th className="text-center py-2 px-3">Custo por Lead</th>
-                            <th className="text-left py-2 px-3">Significado</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {cplExamples.map((ex, i) => (
-                            <tr key={i} className={i === 0 ? "bg-secondary/10" : ""}>
-                              <td className="text-center py-2 px-3 font-bold">{ex.score}</td>
-                              <td className="text-center py-2 px-3 text-secondary font-bold">R$ {(ex.cpl / 100).toFixed(2).replace('.', ',')}</td>
-                              <td className="py-2 px-3 text-muted-foreground">{ex.reason}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
+                  <div className="grid sm:grid-cols-3 gap-4">
+                    <div className="p-4 bg-muted/50 rounded-xl text-center">
+                      <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-2">
+                        <span className="text-lg">1️⃣</span>
+                      </div>
+                      <p className="text-sm font-medium mb-1">Ofertas melhores atraem mais</p>
+                      <p className="text-xs text-muted-foreground">Mais pessoas se interessam naturalmente</p>
                     </div>
-                    <p className="text-xs text-muted-foreground mt-3">
-                      💡 Ofertas novas começam com Nota 7. Melhore sua oferta para pagar menos!
-                    </p>
+                    <div className="p-4 bg-muted/50 rounded-xl text-center">
+                      <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-2">
+                        <span className="text-lg">2️⃣</span>
+                      </div>
+                      <p className="text-sm font-medium mb-1">Mais volume = menor custo</p>
+                      <p className="text-xs text-muted-foreground">Operamos com mais eficiência</p>
+                    </div>
+                    <div className="p-4 bg-muted/50 rounded-xl text-center">
+                      <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-2">
+                        <span className="text-lg">3️⃣</span>
+                      </div>
+                      <p className="text-sm font-medium mb-1">Repassamos a economia</p>
+                      <p className="text-xs text-muted-foreground">Você paga menos por lead qualificado</p>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
