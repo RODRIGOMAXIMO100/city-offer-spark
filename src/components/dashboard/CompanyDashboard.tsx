@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { Banknote, PlusCircle, LogOut, Eye, MousePointer, TrendingUp, Loader2, Instagram, Check, Clock, Trash2, Info, Star, ExternalLink, AlertTriangle, Pencil, Image, HelpCircle, BookOpen } from 'lucide-react';
+import { Banknote, PlusCircle, LogOut, Eye, MousePointer, TrendingUp, Loader2, Instagram, Check, Clock, Trash2, Info, Star, ExternalLink, AlertTriangle, Pencil, Image, HelpCircle, BookOpen, Users } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import CreateOfferModal from './CreateOfferModal';
 import PerformanceChart from './PerformanceChart';
@@ -35,6 +35,7 @@ import {
 } from '@/components/ui/tooltip';
 import { OnboardingProvider, useOnboarding } from '@/contexts/OnboardingContext';
 import { WelcomeModal, OnboardingTour, OnboardingChecklist } from '@/components/onboarding';
+import CompanyLeadsList from './CompanyLeadsList';
 
 const MAX_ACTIVE_OFFERS = 3;
 
@@ -178,6 +179,7 @@ function CompanyDashboardContent() {
   // Calculate totals
   const totalClicks = offers.reduce((acc, o) => acc + o.clicks_count, 0);
   const totalViews = offers.reduce((acc, o) => acc + o.views_count, 0);
+  const totalLeads = offers.reduce((acc, o) => acc + ((o as any).leads_count || 0), 0);
 
   const handleOfferCreated = async () => {
     setShowCreateModal(false);
@@ -452,12 +454,19 @@ function CompanyDashboardContent() {
         </Card>
 
         {/* Stats */}
-        <div className="grid grid-cols-3 gap-2 sm:gap-3" data-tour="performance">
+        <div className="grid grid-cols-4 gap-2 sm:gap-3" data-tour="performance">
           <Card>
             <CardContent className="p-2 sm:p-4 text-center">
               <Eye className="h-4 w-4 sm:h-5 sm:w-5 mx-auto mb-1 text-muted-foreground" />
               <p className="text-lg sm:text-2xl font-bold">{totalViews}</p>
-              <p className="text-[10px] sm:text-xs text-muted-foreground">Visualizações</p>
+              <p className="text-[10px] sm:text-xs text-muted-foreground">Views</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-2 sm:p-4 text-center">
+              <Users className="h-4 w-4 sm:h-5 sm:w-5 mx-auto mb-1 text-secondary" />
+              <p className="text-lg sm:text-2xl font-bold text-secondary">{totalLeads}</p>
+              <p className="text-[10px] sm:text-xs text-muted-foreground">Leads</p>
             </CardContent>
           </Card>
           <Card>
@@ -471,12 +480,15 @@ function CompanyDashboardContent() {
             <CardContent className="p-2 sm:p-4 text-center">
               <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5 mx-auto mb-1 text-muted-foreground" />
               <p className="text-lg sm:text-2xl font-bold">
-                {totalViews > 0 ? ((totalClicks / totalViews) * 100).toFixed(1) : 0}%
+                {totalViews > 0 ? ((totalLeads / totalViews) * 100).toFixed(1) : 0}%
               </p>
-              <p className="text-[10px] sm:text-xs text-muted-foreground">CTR</p>
+              <p className="text-[10px] sm:text-xs text-muted-foreground">Conversão</p>
             </CardContent>
           </Card>
         </div>
+
+        {/* Leads List */}
+        <CompanyLeadsList />
 
         {/* Performance Chart */}
         <PerformanceChart />

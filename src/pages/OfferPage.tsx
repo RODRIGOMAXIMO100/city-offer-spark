@@ -5,8 +5,10 @@ import { Offer, CONFIG } from '@/types/database';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, Clock, MessageCircle, Globe, FileText, MapPin, Sparkles, Instagram, ChevronLeft, ChevronRight, ArrowLeft, Search } from 'lucide-react';
+import { Loader2, Clock, MessageCircle, Globe, FileText, MapPin, Sparkles, Instagram, ChevronLeft, ChevronRight, ArrowLeft, User, Phone } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import logo from '@/assets/logo.png';
 
 // Generate persistent device ID
@@ -106,6 +108,11 @@ export default function OfferPage() {
   const [sessionToken, setSessionToken] = useState<string | null>(null);
   const [fingerprint, setFingerprint] = useState<object | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  
+  // Lead form states
+  const [leadName, setLeadName] = useState('');
+  const [leadPhone, setLeadPhone] = useState('');
+  const [formError, setFormError] = useState<string | null>(null);
 
   const sessionStarted = useRef(false);
 
@@ -213,41 +220,68 @@ export default function OfferPage() {
     return () => clearInterval(interval);
   }, [offer]);
 
-  const handleClick = async () => {
+  // Format phone as user types
+  const formatPhoneInput = (value: string): string => {
+    const digits = value.replace(/\D/g, '');
+    if (digits.length <= 2) return digits;
+    if (digits.length <= 7) return `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
+    if (digits.length <= 11) return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
+    return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7, 11)}`;
+  };
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatPhoneInput(e.target.value);
+    setLeadPhone(formatted);
+    setFormError(null);
+  };
+
+  const validateForm = (): boolean => {
+    // Validate name (at least 2 words)
+    const nameParts = leadName.trim().split(/\s+/).filter(w => w.length >= 2);
+    if (nameParts.length < 2) {
+      setFormError('Por favor, informe seu nome completo');
+      return false;
+    }
+
+    // Validate phone
+    const phoneDigits = leadPhone.replace(/\D/g, '');
+    if (phoneDigits.length < 10 || phoneDigits.length > 11) {
+      setFormError('Número de WhatsApp inválido');
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleSubmitLead = async () => {
     if (!buttonReady || !offer || processing) return;
+    
+    if (!validateForm()) return;
 
     setProcessing(true);
+    setFormError(null);
 
     try {
-      // Get timezone info for geolocation verification
       const timezoneOffset = new Date().getTimezoneOffset();
-      const browserTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-      const { data, error } = await supabase.functions.invoke('process-click', {
+      const { data, error } = await supabase.functions.invoke('process-lead', {
         body: {
           offerId: offer.id,
           affiliateId,
+          name: leadName.trim(),
+          phoneWhatsapp: leadPhone.replace(/\D/g, ''),
           fingerprint: fingerprint ? hashFingerprint(fingerprint) : null,
           userAgent: navigator.userAgent,
-          clickType: 'MAIN',
           sessionToken,
           deviceId: getDeviceId(),
-          advancedFingerprint: fingerprint,
           timezoneOffset,
-          browserTimezone,
         },
       });
 
-      if (error) {
-        throw error;
-      }
+      if (error) throw error;
 
       if (data.error) {
-        toast({
-          title: 'Erro',
-          description: data.error,
-          variant: 'destructive',
-        });
+        setFormError(data.error);
         setProcessing(false);
         return;
       }
@@ -255,7 +289,7 @@ export default function OfferPage() {
       // Redirect to destination
       window.location.href = data.redirectUrl;
     } catch (err) {
-      console.error('Error processing click:', err);
+      console.error('Error processing lead:', err);
       toast({
         title: 'Erro ao processar',
         description: 'Tente novamente em alguns segundos.',
@@ -511,12 +545,56 @@ export default function OfferPage() {
             {offer.city}
           </div>
 
+          {/* Lead Capture Form */}
+          <div className="bg-muted/30 rounded-xl p-4 space-y-3">
+            <p className="text-sm font-medium text-center text-foreground">
+              Preencha para acessar a oferta
+            </p>
+            
+            <div className="space-y-2">
+              <Label htmlFor="leadName" className="text-xs text-muted-foreground">
+                Seu nome completo
+              </Label>
+              <div className="relative">
+                <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="leadName"
+                  placeholder="Ex: Maria Silva"
+                  value={leadName}
+                  onChange={(e) => { setLeadName(e.target.value); setFormError(null); }}
+                  className="pl-10"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="leadPhone" className="text-xs text-muted-foreground">
+                Seu WhatsApp
+              </Label>
+              <div className="relative">
+                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="leadPhone"
+                  placeholder="(00) 00000-0000"
+                  value={leadPhone}
+                  onChange={handlePhoneChange}
+                  className="pl-10"
+                  maxLength={16}
+                />
+              </div>
+            </div>
+
+            {formError && (
+              <p className="text-xs text-destructive text-center">{formError}</p>
+            )}
+          </div>
+
           {/* CTA Button */}
           <Button
-            onClick={handleClick}
-            disabled={!buttonReady || processing}
+            onClick={handleSubmitLead}
+            disabled={!buttonReady || processing || !leadName.trim() || !leadPhone}
             className={`w-full py-6 text-lg font-bold transition-all ${
-              buttonReady && !processing
+              buttonReady && !processing && leadName.trim() && leadPhone
                 ? 'bg-secondary hover:bg-secondary/90 shadow-lg hover:shadow-xl'
                 : 'bg-muted text-muted-foreground'
             }`}
@@ -543,7 +621,7 @@ export default function OfferPage() {
           <div className="flex items-center justify-center gap-4 text-xs text-muted-foreground">
             <span>✓ Oferta verificada</span>
             <span>•</span>
-            <span>{offer.clicks_count} pessoas aproveitaram</span>
+            <span>{(offer as any).leads_count || offer.clicks_count} pessoas aproveitaram</span>
           </div>
         </CardContent>
       </Card>

@@ -400,6 +400,102 @@ export type Database = {
           },
         ]
       }
+      lead_rate_limits: {
+        Row: {
+          created_at: string | null
+          id: string
+          offer_id: string
+          phone_hash: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          offer_id: string
+          phone_hash: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          offer_id?: string
+          phone_hash?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_rate_limits_offer_id_fkey"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "offers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      leads: {
+        Row: {
+          affiliate_id: string | null
+          client_ip: string | null
+          created_at: string | null
+          device_id: string | null
+          fingerprint_hash: string | null
+          id: string
+          is_valid: boolean | null
+          name: string
+          offer_id: string
+          phone_whatsapp: string
+          session_token: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          affiliate_id?: string | null
+          client_ip?: string | null
+          created_at?: string | null
+          device_id?: string | null
+          fingerprint_hash?: string | null
+          id?: string
+          is_valid?: boolean | null
+          name: string
+          offer_id: string
+          phone_whatsapp: string
+          session_token?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          affiliate_id?: string | null
+          client_ip?: string | null
+          created_at?: string | null
+          device_id?: string | null
+          fingerprint_hash?: string | null
+          id?: string
+          is_valid?: boolean | null
+          name?: string
+          offer_id?: string
+          phone_whatsapp?: string
+          session_token?: string | null
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "leads_affiliate_id_fkey"
+            columns: ["affiliate_id"]
+            isOneToOne: false
+            referencedRelation: "company_public_info"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "leads_affiliate_id_fkey"
+            columns: ["affiliate_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "leads_offer_id_fkey"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "offers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notifications: {
         Row: {
           created_at: string | null
@@ -607,6 +703,7 @@ export type Database = {
           expires_at: string
           id: string
           images: string[] | null
+          leads_count: number | null
           link_destination: string
           link_type: Database["public"]["Enums"]["link_type"]
           max_cpc_bid: number
@@ -629,6 +726,7 @@ export type Database = {
           expires_at?: string
           id?: string
           images?: string[] | null
+          leads_count?: number | null
           link_destination: string
           link_type?: Database["public"]["Enums"]["link_type"]
           max_cpc_bid?: number
@@ -651,6 +749,7 @@ export type Database = {
           expires_at?: string
           id?: string
           images?: string[] | null
+          leads_count?: number | null
           link_destination?: string
           link_type?: Database["public"]["Enums"]["link_type"]
           max_cpc_bid?: number
@@ -1316,6 +1415,10 @@ export type Database = {
         Args: { p_city: string; p_offer_id: string }
         Returns: number
       }
+      calculate_real_cpl: {
+        Args: { p_city: string; p_offer_id: string }
+        Returns: number
+      }
       cleanup_old_rate_limits: { Args: never; Returns: undefined }
       cleanup_old_sessions: { Args: never; Returns: undefined }
       cleanup_old_signup_rate_limits: { Args: never; Returns: undefined }
@@ -1352,6 +1455,7 @@ export type Database = {
         Returns: boolean
       }
       increment_offer_clicks: { Args: { offer_id: string }; Returns: undefined }
+      increment_offer_leads: { Args: { offer_id: string }; Returns: undefined }
       increment_offer_views: { Args: { offer_id: string }; Returns: undefined }
       recalculate_affiliate_stats: {
         Args: { affiliate_profile_id: string }
@@ -1368,6 +1472,10 @@ export type Database = {
         Args: { affiliate_profile_id: string; earnings: number }
         Returns: undefined
       }
+      update_affiliate_stats_lead: {
+        Args: { affiliate_profile_id: string; earnings: number }
+        Returns: undefined
+      }
     }
     Enums: {
       app_role: "COMPANY" | "AFFILIATE" | "CLIENT" | "ADMIN"
@@ -1378,6 +1486,8 @@ export type Database = {
         | "CLICK_EARNING"
         | "WITHDRAW"
         | "PLATFORM_FEE"
+        | "LEAD_COST"
+        | "LEAD_EARNING"
       withdrawal_status:
         | "PENDING"
         | "APPROVED"
@@ -1519,6 +1629,8 @@ export const Constants = {
         "CLICK_EARNING",
         "WITHDRAW",
         "PLATFORM_FEE",
+        "LEAD_COST",
+        "LEAD_EARNING",
       ],
       withdrawal_status: [
         "PENDING",
