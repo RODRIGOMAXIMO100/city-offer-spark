@@ -8,11 +8,12 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { Banknote, PlusCircle, LogOut, Eye, MousePointer, TrendingUp, Loader2, Instagram, Check, Clock, Trash2, Info, Star, ExternalLink, AlertTriangle, Pencil, Image, HelpCircle, BookOpen, Users } from 'lucide-react';
+import { Banknote, PlusCircle, LogOut, Eye, MousePointer, TrendingUp, Loader2, Instagram, Check, Clock, Trash2, Info, Star, ExternalLink, AlertTriangle, Pencil, Image, HelpCircle, BookOpen, Users, Settings } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import CreateOfferModal from './CreateOfferModal';
 import PerformanceChart from './PerformanceChart';
 import FiscalDataModal from './FiscalDataModal';
+import ProfileSettingsModal from './ProfileSettingsModal';
 import { AddCreditsModal } from './AddCreditsModal';
 import { Footer } from '@/components/landing/Footer';
 import logo from '@/assets/logo.png';
@@ -54,7 +55,7 @@ function CompanyDashboardContent() {
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(profile?.avatar_url || null);
   const [showCreditsModal, setShowCreditsModal] = useState(false);
-  
+  const [showProfileSettings, setShowProfileSettings] = useState(false);
   // Track bonuses already claimed to avoid duplicate calls
   const bonusClaimedRef = useRef<Record<string, boolean>>({});
 
@@ -318,6 +319,21 @@ function CompanyDashboardContent() {
             >
               <PlusCircle className="h-3 w-3 sm:h-4 sm:w-4" />
             </Button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  onClick={() => setShowProfileSettings(true)}
+                  className="h-8 w-8 sm:h-9 sm:w-9"
+                >
+                  <Settings className="h-3 w-3 sm:h-4 sm:w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Configurações</p>
+              </TooltipContent>
+            </Tooltip>
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button
@@ -757,6 +773,12 @@ function CompanyDashboardContent() {
         userCpfCnpj={profile?.cnpj || profile?.cpf}
         userName={profile?.name}
         userEmail={profile?.email}
+      />
+
+      <ProfileSettingsModal
+        open={showProfileSettings}
+        onClose={() => setShowProfileSettings(false)}
+        userType="COMPANY"
       />
       
       <WelcomeModal />
