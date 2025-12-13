@@ -7,7 +7,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip';
 import { Badge } from '@/components/ui/badge';
-import { Banknote, LogOut, Share2, Copy, Check, TrendingUp, Loader2, MapPin, Instagram, Clock, History, Coins, HelpCircle, BookOpen, Settings } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Banknote, LogOut, Share2, Copy, Check, TrendingUp, Loader2, MapPin, Instagram, Clock, History, Coins, HelpCircle, BookOpen, Settings, LayoutDashboard, BarChart3 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import PaymentDataModal from './PaymentDataModal';
@@ -434,87 +435,106 @@ function AffiliateDashboardContent() {
         </div>
       </header>
 
-      <div className="max-w-4xl mx-auto px-4 py-6 space-y-6">
-        {/* Affiliate Level Card */}
-        {profile?.id && (
-          <AffiliateLevel affiliateId={profile.id} />
-        )}
+      <div className="max-w-4xl mx-auto px-4 py-6">
+        <Tabs defaultValue="principal" className="w-full">
+          <TabsList className="grid w-full grid-cols-2 mb-6">
+            <TabsTrigger value="principal" className="flex items-center gap-2">
+              <LayoutDashboard className="h-4 w-4" />
+              <span>Ofertas</span>
+            </TabsTrigger>
+            <TabsTrigger value="historico" className="flex items-center gap-2">
+              <BarChart3 className="h-4 w-4" />
+              <span>Histórico</span>
+            </TabsTrigger>
+          </TabsList>
 
-        {/* Monthly History */}
-        {profile?.id && (
-          <AffiliateMonthlyHistory affiliateId={profile.id} />
-        )}
+          {/* Tab Principal - Ofertas */}
+          <TabsContent value="principal" className="space-y-6">
+            {/* Affiliate Level Card */}
+            {profile?.id && (
+              <AffiliateLevel affiliateId={profile.id} />
+            )}
 
-        {/* Ranking Section */}
-        {profile?.id && (
-          <AffiliateRanking currentAffiliateId={profile.id} />
-        )}
-
-        {/* Info Card - Earnings Explanation */}
-        <Card className="bg-gradient-to-r from-affiliate to-affiliate/80 text-affiliate-foreground border-0">
-          <CardContent className="p-4">
-            <div className="flex items-start gap-3">
-              <div className="bg-white/20 p-3 rounded-full shrink-0">
-                <Share2 className="h-6 w-6" />
-              </div>
-              <div className="space-y-2">
-                <p className="font-bold text-lg">💰 Ganhe por Lead Qualificado!</p>
-                <ul className="text-sm opacity-95 space-y-1">
-                  <li>• <strong>Ganhe R$ 0,30 a R$ 1,50 por lead</strong> (pessoa que preenche nome + WhatsApp)</li>
-                  <li>• <strong>Comissão começa em 30%</strong> - suba de nível e ganhe mais!</li>
-                  <li>• <strong>Bronze (0-99 leads/mês):</strong> 30% | <strong>Prata (100-499):</strong> 40% | <strong>Ouro (500+):</strong> 50%</li>
-                  <li>• <strong>⚠️ Metas zeram dia 1</strong> - comece do Bronze e evolua todo mês!</li>
-                  <li>• <strong>Saque mínimo: R$ 100,00</strong> via PIX instantâneo</li>
-                  <li>• <strong><a href="/transparencia" className="underline">Veja como funciona →</a></strong></li>
-                </ul>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Location */}
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <MapPin className="h-4 w-4" />
-          <span>Ofertas em <strong>{profile?.city}</strong></span>
-        </div>
-
-        {/* Offers List */}
-        <div data-tour="offers">
-          <h2 className="text-sm font-bold text-muted-foreground uppercase tracking-wider mb-4">
-            Ofertas Disponíveis
-          </h2>
-
-          {loading ? (
-            <div className="text-center py-8">
-              <Loader2 className="h-6 w-6 animate-spin mx-auto text-muted-foreground" />
-            </div>
-          ) : sortedOffers.length === 0 ? (
-            <Card>
-              <CardContent className="p-8 text-center">
-                <p className="text-muted-foreground">
-                  Nenhuma oferta disponível em {profile?.city} no momento.
-                </p>
+            {/* Info Card - Earnings Explanation */}
+            <Card className="bg-gradient-to-r from-affiliate to-affiliate/80 text-affiliate-foreground border-0">
+              <CardContent className="p-4">
+                <div className="flex items-start gap-3">
+                  <div className="bg-white/20 p-3 rounded-full shrink-0">
+                    <Share2 className="h-6 w-6" />
+                  </div>
+                  <div className="space-y-2">
+                    <p className="font-bold text-lg">💰 Ganhe por Lead Qualificado!</p>
+                    <ul className="text-sm opacity-95 space-y-1">
+                      <li>• <strong>Ganhe R$ 0,30 a R$ 1,50 por lead</strong> (pessoa que preenche nome + WhatsApp)</li>
+                      <li>• <strong>Comissão começa em 30%</strong> - suba de nível e ganhe mais!</li>
+                      <li>• <strong>Bronze (0-99 leads/mês):</strong> 30% | <strong>Prata (100-499):</strong> 40% | <strong>Ouro (500+):</strong> 50%</li>
+                      <li>• <strong>⚠️ Metas zeram dia 1</strong> - comece do Bronze e evolua todo mês!</li>
+                      <li>• <strong>Saque mínimo: R$ 100,00</strong> via PIX instantâneo</li>
+                      <li>• <strong><a href="/transparencia" className="underline">Veja como funciona →</a></strong></li>
+                    </ul>
+                  </div>
+                </div>
               </CardContent>
             </Card>
-          ) : (
-            <div className="grid gap-4 grid-cols-1 sm:grid-cols-2">
-              {sortedOffers.map((offer, index) => (
-                <AffiliateOfferCard
-                  key={offer.id}
-                  offer={{
-                    ...offer,
-                    current_offer_score: (offer as any).current_offer_score,
-                    ctr_score: (offer as any).ctr_score,
-                    quality_score: (offer as any).quality_score,
-                    reputation_score: (offer as any).reputation_score,
-                  }}
-                  profileId={profile?.id || ''}
-                  index={index}
-                />
-              ))}
+
+            {/* Location */}
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <MapPin className="h-4 w-4" />
+              <span>Ofertas em <strong>{profile?.city}</strong></span>
             </div>
-          )}
-        </div>
+
+            {/* Offers List */}
+            <div data-tour="offers">
+              <h2 className="text-sm font-bold text-muted-foreground uppercase tracking-wider mb-4">
+                Ofertas Disponíveis
+              </h2>
+
+              {loading ? (
+                <div className="text-center py-8">
+                  <Loader2 className="h-6 w-6 animate-spin mx-auto text-muted-foreground" />
+                </div>
+              ) : sortedOffers.length === 0 ? (
+                <Card>
+                  <CardContent className="p-8 text-center">
+                    <p className="text-muted-foreground">
+                      Nenhuma oferta disponível em {profile?.city} no momento.
+                    </p>
+                  </CardContent>
+                </Card>
+              ) : (
+                <div className="grid gap-4 grid-cols-1 sm:grid-cols-2">
+                  {sortedOffers.map((offer, index) => (
+                    <AffiliateOfferCard
+                      key={offer.id}
+                      offer={{
+                        ...offer,
+                        current_offer_score: (offer as any).current_offer_score,
+                        ctr_score: (offer as any).ctr_score,
+                        quality_score: (offer as any).quality_score,
+                        reputation_score: (offer as any).reputation_score,
+                      }}
+                      profileId={profile?.id || ''}
+                      index={index}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+          </TabsContent>
+
+          {/* Tab Histórico - Ganhos e Ranking */}
+          <TabsContent value="historico" className="space-y-6">
+            {/* Monthly History */}
+            {profile?.id && (
+              <AffiliateMonthlyHistory affiliateId={profile.id} />
+            )}
+
+            {/* Ranking Section */}
+            {profile?.id && (
+              <AffiliateRanking currentAffiliateId={profile.id} />
+            )}
+          </TabsContent>
+        </Tabs>
       </div>
 
       {/* Payment Data Modal */}
