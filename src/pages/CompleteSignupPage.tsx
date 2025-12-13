@@ -58,8 +58,12 @@ export default function CompleteSignupPage() {
   const cities = selectedState ? getCitiesByState(selectedState) : [];
 
   useEffect(() => {
+    let mounted = true;
+    
     const checkSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!mounted) return;
       
       if (!session?.user) {
         navigate('/auth');
@@ -72,6 +76,8 @@ export default function CompleteSignupPage() {
         .select('id')
         .eq('user_id', session.user.id)
         .maybeSingle();
+
+      if (!mounted) return;
 
       if (existingProfile) {
         navigate('/dashboard');
@@ -88,6 +94,10 @@ export default function CompleteSignupPage() {
     };
 
     checkSession();
+    
+    return () => {
+      mounted = false;
+    };
   }, [navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
