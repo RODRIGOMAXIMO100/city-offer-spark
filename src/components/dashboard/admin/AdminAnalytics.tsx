@@ -1,7 +1,11 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Calendar } from '@/components/ui/calendar';
 import { supabase } from '@/integrations/supabase/client';
+import { format, subDays, startOfMonth, endOfMonth, subMonths } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 import { 
   AreaChart, 
   Area, 
@@ -18,8 +22,10 @@ import {
   LineChart,
   Line
 } from 'recharts';
-import { TrendingUp, TrendingDown, Users, MousePointerClick, DollarSign, Megaphone, Eye, Target, Shield } from 'lucide-react';
+import { TrendingUp, TrendingDown, Users, MousePointerClick, DollarSign, Megaphone, Eye, Target, Shield, CalendarIcon } from 'lucide-react';
 import { formatCredits, CONFIG } from '@/types/database';
+import { cn } from '@/lib/utils';
+import { DateRange } from 'react-day-picker';
 
 interface AnalyticsData {
   leadsByDay: { date: string; leads: number }[];
@@ -45,7 +51,10 @@ const COLORS = {
 };
 
 export default function AdminAnalytics() {
-  const [period, setPeriod] = useState('30');
+  const [dateRange, setDateRange] = useState<DateRange | undefined>({
+    from: subDays(new Date(), 30),
+    to: new Date()
+  });
   const [data, setData] = useState<AnalyticsData>({
     leadsByDay: [],
     clicksByDay: [],
@@ -69,14 +78,40 @@ export default function AdminAnalytics() {
   });
 
   useEffect(() => {
-    fetchAnalytics();
-  }, [period]);
+    if (dateRange?.from && dateRange?.to) {
+      fetchAnalytics();
+    }
+  }, [dateRange]);
+
+  const setPreset = (preset: string) => {
+    const now = new Date();
+    switch (preset) {
+      case '7d':
+        setDateRange({ from: subDays(now, 7), to: now });
+        break;
+      case '30d':
+        setDateRange({ from: subDays(now, 30), to: now });
+        break;
+      case 'thisMonth':
+        setDateRange({ from: startOfMonth(now), to: now });
+        break;
+      case 'lastMonth':
+        const lastMonth = subMonths(now, 1);
+        setDateRange({ from: startOfMonth(lastMonth), to: endOfMonth(lastMonth) });
+        break;
+      case '90d':
+        setDateRange({ from: subDays(now, 90), to: now });
+        break;
+    }
+  };
 
   const fetchAnalytics = async () => {
+    if (!dateRange?.from || !dateRange?.to) return;
+    
     setLoading(true);
-    const days = parseInt(period);
-    const now = new Date();
-    const startDate = new Date(now.getTime() - days * 24 * 60 * 60 * 1000);
+    const now = dateRange.to;
+    const startDate = dateRange.from;
+    const days = Math.ceil((now.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
     const previousStartDate = new Date(startDate.getTime() - days * 24 * 60 * 60 * 1000);
 
     try {
@@ -353,18 +388,44 @@ export default function AdminAnalytics() {
 
   return (
     <div className="space-y-6">
-      {/* Period Selector */}
-      <div className="flex justify-end">
-        <Select value={period} onValueChange={setPeriod}>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Período" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="7">Últimos 7 dias</SelectItem>
-            <SelectItem value="30">Últimos 30 dias</SelectItem>
-            <SelectItem value="90">Últimos 90 dias</SelectItem>
-          </SelectContent>
-        </Select>
+      {/* Date Range Picker */}
+      <div className="flex flex-wrap items-center gap-2">
+        <div className="flex gap-1">
+          <Button variant="outline" size="sm" onClick={() => setPreset('7d')}>7 dias</Button>
+          <Button variant="outline" size="sm" onClick={() => setPreset('30d')}>30 dias</Button>
+          <Button variant="outline" size="sm" onClick={() => setPreset('thisMonth')}>Este mês</Button>
+          <Button variant="outline" size="sm" onClick={() => setPreset('lastMonth')}>Mês passado</Button>
+          <Button variant="outline" size="sm" onClick={() => setPreset('90d')}>90 dias</Button>
+        </div>
+        
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button variant="outline" size="sm" className="ml-auto">
+              <CalendarIcon className="h-4 w-4 mr-2" />
+              {dateRange?.from ? (
+                dateRange.to ? (
+                  <>
+                    {format(dateRange.from, 'dd/MM/yy', { locale: ptBR })} - {format(dateRange.to, 'dd/MM/yy', { locale: ptBR })}
+                  </>
+                ) : (
+                  format(dateRange.from, 'dd/MM/yyyy', { locale: ptBR })
+                )
+              ) : (
+                'Selecionar período'
+              )}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0" align="end">
+            <Calendar
+              mode="range"
+              selected={dateRange}
+              onSelect={setDateRange}
+              numberOfMonths={2}
+              locale={ptBR}
+              className={cn("p-3 pointer-events-auto")}
+            />
+          </PopoverContent>
+        </Popover>
       </div>
 
       {/* Comparison Cards */}

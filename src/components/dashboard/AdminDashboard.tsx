@@ -24,7 +24,8 @@ import {
   FileText,
   CreditCard,
   Phone,
-  Tags
+  Tags,
+  Landmark
 } from 'lucide-react';
 import { AdminBlog } from './admin/AdminBlog';
 import { formatBalance, CONFIG } from '@/types/database';
@@ -40,6 +41,7 @@ import AdminPayments from './admin/AdminPayments';
 import AdminFraudManagement from './admin/AdminFraudManagement';
 import AdminLeads from './admin/AdminLeads';
 import { AdminNiches } from './admin/AdminNiches';
+import AdminFinanceiro from './admin/AdminFinanceiro';
 
 interface Stats {
   totalCompanies: number;
@@ -407,7 +409,7 @@ export default function AdminDashboard() {
         {/* Tabs */}
         <Tabs defaultValue="users" className="space-y-4" onValueChange={resetFilters}>
           <div className="overflow-x-auto -mx-3 px-3 sm:mx-0 sm:px-0">
-            <TabsList className="inline-flex w-auto min-w-full sm:grid sm:w-full sm:grid-cols-11">
+            <TabsList className="inline-flex w-auto min-w-full sm:grid sm:w-full sm:grid-cols-12">
               <TabsTrigger value="users" className="flex-1 sm:flex-none text-xs sm:text-sm">
                 <Users className="h-4 w-4 sm:mr-2" />
                 <span className="hidden sm:inline">Usuários</span>
@@ -431,6 +433,10 @@ export default function AdminDashboard() {
               <TabsTrigger value="payments" className="flex-1 sm:flex-none text-xs sm:text-sm">
                 <CreditCard className="h-4 w-4 sm:mr-2" />
                 <span className="hidden sm:inline">Pagamentos</span>
+              </TabsTrigger>
+              <TabsTrigger value="financeiro" className="flex-1 sm:flex-none text-xs sm:text-sm">
+                <Landmark className="h-4 w-4 sm:mr-2" />
+                <span className="hidden sm:inline">Financeiro</span>
               </TabsTrigger>
               <TabsTrigger value="withdrawals" className="flex-1 sm:flex-none text-xs sm:text-sm">
                 <Banknote className="h-4 w-4 sm:mr-2" />
@@ -680,6 +686,11 @@ export default function AdminDashboard() {
           {/* Security Tab */}
           <TabsContent value="security">
             <AdminSecurityAdvanced />
+          </TabsContent>
+
+          {/* Financeiro Tab */}
+          <TabsContent value="financeiro">
+            <AdminFinanceiro />
           </TabsContent>
 
           {/* Analytics Tab */}
