@@ -183,7 +183,7 @@ export default function AffiliateRanking({ currentAffiliateId }: AffiliateRankin
               
               <div className="text-right shrink-0">
                 <p className="font-bold">{entry.clicks}</p>
-                <p className="text-xs text-muted-foreground">cliques</p>
+                <p className="text-xs text-muted-foreground">leads</p>
               </div>
             </div>
           );
@@ -207,7 +207,7 @@ export default function AffiliateRanking({ currentAffiliateId }: AffiliateRankin
       <CardHeader className="pb-3">
         <div className="flex items-center gap-2">
           <Trophy className="h-5 w-5 text-yellow-500" />
-          <CardTitle className="text-lg">Ranking de Afiliados</CardTitle>
+          <CardTitle className="text-lg">Ranking de Divulgadores</CardTitle>
         </div>
         {currentPosition.weekly && (
           <div className="flex items-center gap-2 text-sm text-affiliate">
