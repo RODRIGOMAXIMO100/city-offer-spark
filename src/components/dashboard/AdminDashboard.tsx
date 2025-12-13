@@ -6,8 +6,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Calendar } from '@/components/ui/calendar';
 import { toast } from 'sonner';
-import { 
+import { format, subDays, startOfMonth, endOfMonth, subMonths } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+import { cn } from '@/lib/utils';
+import { DateRange } from 'react-day-picker';
+import {
   LogOut, 
   Users, 
   Building2, 
@@ -25,7 +31,8 @@ import {
   CreditCard,
   Phone,
   Tags,
-  Landmark
+  Landmark,
+  CalendarIcon
 } from 'lucide-react';
 import { AdminBlog } from './admin/AdminBlog';
 import { formatBalance, CONFIG } from '@/types/database';
@@ -127,6 +134,12 @@ export default function AdminDashboard() {
   const [roleFilter, setRoleFilter] = useState('all');
   const [cityFilter, setCityFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
+  
+  // Date range for stats
+  const [statsDateRange, setStatsDateRange] = useState<DateRange | undefined>({
+    from: subDays(new Date(), 30),
+    to: new Date()
+  });
 
   // Modal state
   const [selectedUser, setSelectedUser] = useState<UserProfile | null>(null);
@@ -135,6 +148,12 @@ export default function AdminDashboard() {
   useEffect(() => {
     fetchAllData();
   }, []);
+
+  useEffect(() => {
+    if (statsDateRange?.from && statsDateRange?.to) {
+      fetchStats();
+    }
+  }, [statsDateRange]);
 
   const fetchAllData = async () => {
     setLoading(true);
@@ -149,20 +168,54 @@ export default function AdminDashboard() {
 
   const fetchStats = async () => {
     try {
+      const startDate = statsDateRange?.from?.toISOString();
+      const endDate = statsDateRange?.to?.toISOString();
+      
+      // Contagem total de usuários (sempre totais)
       const { data: roles } = await supabase.from('user_roles').select('role');
       const companies = roles?.filter(r => r.role === 'COMPANY').length || 0;
       const affiliates = roles?.filter(r => r.role === 'AFFILIATE').length || 0;
       const clients = roles?.filter(r => r.role === 'CLIENT').length || 0;
 
-      const { count: offersCount } = await supabase.from('offers').select('*', { count: 'exact', head: true });
+      // Ofertas no período
+      let offersQuery = supabase.from('offers').select('*', { count: 'exact', head: true });
+      if (startDate && endDate) {
+        offersQuery = offersQuery.gte('created_at', startDate).lte('created_at', endDate);
+      }
+      const { count: offersCount } = await offersQuery;
       
-      // Buscar leads válidos e views para métricas CPL
-      const { count: leadsCount } = await supabase.from('leads').select('*', { count: 'exact', head: true }).eq('is_valid', true);
-      const { data: offersData } = await supabase.from('offers').select('views_count');
-      const totalViews = offersData?.reduce((sum, o) => sum + o.views_count, 0) || 0;
+      // Leads no período
+      let leadsQuery = supabase.from('leads').select('*', { count: 'exact', head: true }).eq('is_valid', true);
+      if (startDate && endDate) {
+        leadsQuery = leadsQuery.gte('created_at', startDate).lte('created_at', endDate);
+      }
+      const { count: leadsCount } = await leadsQuery;
       
-      // Calcular ganhos baseado em CPL (modelo novo)
-      const platformEarnings = (leadsCount || 0) * CONFIG.CPL_PLATFORM_PROFIT;
+      // Views no período (via offer_views table)
+      let viewsQuery = supabase.from('offer_views').select('*', { count: 'exact', head: true });
+      if (startDate && endDate) {
+        viewsQuery = viewsQuery.gte('created_at', startDate).lte('created_at', endDate);
+      }
+      const { count: viewsCount } = await viewsQuery;
+      const totalViews = viewsCount || 0;
+      
+      // Calcular ganhos baseado em transações LEAD_COST no período
+      let txQuery = supabase.from('transactions').select('amount, type');
+      if (startDate && endDate) {
+        txQuery = txQuery.gte('created_at', startDate).lte('created_at', endDate);
+      }
+      const { data: transactions } = await txQuery;
+      
+      const platformEarnings = transactions
+        ?.filter(t => t.type === 'LEAD_COST')
+        .reduce((sum, t) => sum + Math.abs(t.amount), 0) || 0;
+      
+      // Subtrair pagamentos aos afiliados para ter margem
+      const affiliatePayments = transactions
+        ?.filter(t => t.type === 'LEAD_EARNING')
+        .reduce((sum, t) => sum + t.amount, 0) || 0;
+      
+      const netEarnings = platformEarnings - affiliatePayments;
       
       // Taxa de conversão
       const conversionRate = totalViews > 0 ? ((leadsCount || 0) / totalViews) * 100 : 0;
@@ -177,11 +230,37 @@ export default function AdminDashboard() {
         totalLeads: leadsCount || 0,
         totalViews,
         conversionRate,
-        platformEarnings,
+        platformEarnings: netEarnings,
         blockedIPs: blockedCount || 0
       });
     } catch (error) {
       console.error('Error fetching stats:', error);
+    }
+  };
+
+  const setStatsPreset = (preset: string) => {
+    const now = new Date();
+    switch (preset) {
+      case 'today':
+        const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        setStatsDateRange({ from: startOfToday, to: now });
+        break;
+      case '7d':
+        setStatsDateRange({ from: subDays(now, 7), to: now });
+        break;
+      case '30d':
+        setStatsDateRange({ from: subDays(now, 30), to: now });
+        break;
+      case 'thisMonth':
+        setStatsDateRange({ from: startOfMonth(now), to: now });
+        break;
+      case 'lastMonth':
+        const lastMonth = subMonths(now, 1);
+        setStatsDateRange({ from: startOfMonth(lastMonth), to: endOfMonth(lastMonth) });
+        break;
+      case 'all':
+        setStatsDateRange({ from: new Date('2020-01-01'), to: now });
+        break;
     }
   };
 
@@ -346,6 +425,47 @@ export default function AdminDashboard() {
       </header>
 
       <main className="container mx-auto px-3 sm:px-4 py-4 sm:py-6">
+        {/* Stats Date Filter */}
+        <div className="flex flex-wrap items-center gap-2 mb-4">
+          <span className="text-sm text-muted-foreground">Período:</span>
+          <div className="flex gap-1 flex-wrap">
+            <Button variant="outline" size="sm" onClick={() => setStatsPreset('today')}>Hoje</Button>
+            <Button variant="outline" size="sm" onClick={() => setStatsPreset('7d')}>7 dias</Button>
+            <Button variant="outline" size="sm" onClick={() => setStatsPreset('30d')}>30 dias</Button>
+            <Button variant="outline" size="sm" onClick={() => setStatsPreset('thisMonth')}>Este mês</Button>
+            <Button variant="outline" size="sm" onClick={() => setStatsPreset('all')}>Geral</Button>
+          </div>
+          
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="outline" size="sm" className="ml-auto">
+                <CalendarIcon className="h-4 w-4 mr-2" />
+                {statsDateRange?.from ? (
+                  statsDateRange.to ? (
+                    <>
+                      {format(statsDateRange.from, 'dd/MM/yy', { locale: ptBR })} - {format(statsDateRange.to, 'dd/MM/yy', { locale: ptBR })}
+                    </>
+                  ) : (
+                    format(statsDateRange.from, 'dd/MM/yyyy', { locale: ptBR })
+                  )
+                ) : (
+                  'Período'
+                )}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="end">
+              <Calendar
+                mode="range"
+                selected={statsDateRange}
+                onSelect={setStatsDateRange}
+                numberOfMonths={2}
+                locale={ptBR}
+                className={cn("p-3 pointer-events-auto")}
+              />
+            </PopoverContent>
+          </Popover>
+        </div>
+
         {/* Stats Cards */}
         <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2 sm:gap-4 mb-4 sm:mb-6">
           <Card className="hover:shadow-lg transition-shadow">
