@@ -617,6 +617,18 @@ export default function OfferPage() {
             )}
           </Button>
 
+          {/* Nota de aceite */}
+          <p className="text-xs text-center text-muted-foreground">
+            Ao enviar, você concorda com nossos{' '}
+            <a href="/terms" target="_blank" className="text-primary hover:underline">
+              Termos de Uso
+            </a>{' '}
+            e{' '}
+            <a href="/privacy" target="_blank" className="text-primary hover:underline">
+              Política de Privacidade
+            </a>.
+          </p>
+
           {/* Trust indicators */}
           <div className="flex items-center justify-center gap-4 text-xs text-muted-foreground">
             <span>✓ Oferta verificada</span>
