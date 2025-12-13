@@ -54,9 +54,9 @@ export function ForCompanies() {
             </h2>
             
             <p className="text-lg text-muted-foreground mb-10 leading-relaxed">
-              Mais que cliques: sua empresa entra na conversa da cidade. Seja encontrado por IA quando 
-              perguntarem "onde comer?" ou indicado por pessoas reais da comunidade. Cliente vai 
-              direto pro seu canal — você fideliza.
+              Mais que visibilidade: sua empresa entra na conversa da cidade. Seja encontrado por IA quando 
+              perguntarem "onde comer?" ou indicado por pessoas reais da comunidade. Receba leads qualificados 
+              direto no seu WhatsApp — você fideliza.
             </p>
 
             {/* Benefits */}

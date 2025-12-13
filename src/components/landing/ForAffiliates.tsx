@@ -33,9 +33,9 @@ const benefits = [
 ];
 
 const earnings = [
-  { level: "Bronze (30%)", offers: "10 ofertas", clicks: "~50 cliques/dia", value: "R$ 315", period: "/mês" },
-  { level: "Prata (40%)", offers: "25 ofertas", clicks: "~150 cliques/dia", value: "R$ 1.260", period: "/mês" },
-  { level: "Ouro (50%)", offers: "50 ofertas", clicks: "~300 cliques/dia", value: "R$ 3.150", period: "/mês" },
+  { level: "Bronze (30%)", offers: "10 ofertas", clicks: "~15 leads/dia", value: "R$ 270", period: "/mês" },
+  { level: "Prata (40%)", offers: "25 ofertas", clicks: "~40 leads/dia", value: "R$ 960", period: "/mês" },
+  { level: "Ouro (50%)", offers: "50 ofertas", clicks: "~80 leads/dia", value: "R$ 2.400", period: "/mês" },
 ];
 
 export function ForAffiliates() {
