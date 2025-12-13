@@ -41,6 +41,51 @@ export type Database = {
         }
         Relationships: []
       }
+      affiliate_monthly_history: {
+        Row: {
+          affiliate_id: string
+          created_at: string | null
+          earnings: number | null
+          id: string
+          leads_count: number | null
+          level_achieved: string | null
+          month_year: string
+        }
+        Insert: {
+          affiliate_id: string
+          created_at?: string | null
+          earnings?: number | null
+          id?: string
+          leads_count?: number | null
+          level_achieved?: string | null
+          month_year: string
+        }
+        Update: {
+          affiliate_id?: string
+          created_at?: string | null
+          earnings?: number | null
+          id?: string
+          leads_count?: number | null
+          level_achieved?: string | null
+          month_year?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "affiliate_monthly_history_affiliate_id_fkey"
+            columns: ["affiliate_id"]
+            isOneToOne: false
+            referencedRelation: "company_public_info"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "affiliate_monthly_history_affiliate_id_fkey"
+            columns: ["affiliate_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       affiliate_stats: {
         Row: {
           affiliate_id: string
@@ -1410,6 +1455,7 @@ export type Database = {
       }
     }
     Functions: {
+      archive_and_reset_monthly_stats: { Args: never; Returns: undefined }
       calculate_offer_score: { Args: { p_offer_id: string }; Returns: number }
       calculate_real_cpc: {
         Args: { p_city: string; p_offer_id: string }
@@ -1438,6 +1484,10 @@ export type Database = {
         Returns: boolean
       }
       get_affiliate_level: { Args: { total_clicks: number }; Returns: number }
+      get_affiliate_level_monthly: {
+        Args: { monthly_leads: number }
+        Returns: number
+      }
       get_commission_multiplier: {
         Args: { affiliate_profile_id: string }
         Returns: number
@@ -1462,6 +1512,7 @@ export type Database = {
         Returns: undefined
       }
       recalculate_all_affiliate_stats: { Args: never; Returns: undefined }
+      recalculate_all_monthly_levels: { Args: never; Returns: undefined }
       recalculate_all_offer_scores: { Args: never; Returns: undefined }
       reset_weekly_clicks: { Args: never; Returns: undefined }
       update_affiliate_fraud_score: {
