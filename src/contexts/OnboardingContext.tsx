@@ -41,26 +41,20 @@ export const TOUR_STEPS: Record<string, TourStep[]> = {
   AFFILIATE: [
     {
       target: '[data-tour="balance"]',
-      title: 'Seu Saldo',
-      content: 'Aqui você vê quanto já ganhou divulgando ofertas. Cada clique válido te dá comissão!',
-      position: 'bottom',
-    },
-    {
-      target: '[data-tour="withdraw"]',
-      title: 'Sacar Dinheiro',
-      content: 'Com R$100 ou mais, você pode sacar via PIX instantâneo. Complete seus dados para habilitar.',
+      title: 'Seu Saldo e Saque',
+      content: 'Aqui você vê quanto ganhou. Clique para sacar via PIX quando tiver R$100 ou mais!',
       position: 'bottom',
     },
     {
       target: '[data-tour="level"]',
       title: 'Seu Nível',
-      content: 'Quanto mais cliques você gera, maior seu nível e maior sua comissão! Suba de nível para ganhar mais.',
-      position: 'top',
+      content: 'Quanto mais leads você gera, maior seu nível e maior sua comissão! Suba de nível para ganhar mais.',
+      position: 'bottom',
     },
     {
       target: '[data-tour="offers"]',
       title: 'Ofertas Disponíveis',
-      content: 'Copie o link das ofertas e compartilhe nas redes sociais para ganhar comissão por cada clique.',
+      content: 'Copie o link das ofertas e compartilhe nas redes sociais para ganhar comissão por cada lead.',
       position: 'top',
     },
   ],
@@ -68,13 +62,7 @@ export const TOUR_STEPS: Record<string, TourStep[]> = {
     {
       target: '[data-tour="balance"]',
       title: 'Seus Créditos',
-      content: 'Adicione créditos para suas ofertas aparecerem. Você só paga por cliques reais!',
-      position: 'bottom',
-    },
-    {
-      target: '[data-tour="company-logo"]',
-      title: 'Logo da Empresa',
-      content: 'Adicione a logo da sua empresa para aparecer nas ofertas e ganhar credibilidade.',
+      content: 'Veja seus créditos e adicione mais clicando aqui. Você só paga por cliques e leads reais!',
       position: 'bottom',
     },
     {
