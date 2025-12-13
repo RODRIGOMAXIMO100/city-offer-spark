@@ -674,13 +674,20 @@ export default function AdminDashboard() {
         </div>
 
         {/* Tabs */}
-        <Tabs defaultValue="users" className="space-y-4" onValueChange={resetFilters}>
+        <Tabs defaultValue="analytics" className="space-y-4" onValueChange={resetFilters}>
           <div className="overflow-x-auto -mx-3 px-3 sm:mx-0 sm:px-0">
             <TabsList className="inline-flex w-auto min-w-full sm:grid sm:w-full sm:grid-cols-12">
+              {/* 1. Visão Geral */}
+              <TabsTrigger value="analytics" className="flex-1 sm:flex-none text-xs sm:text-sm">
+                <BarChart3 className="h-4 w-4 sm:mr-2" />
+                <span className="hidden sm:inline">Analytics</span>
+              </TabsTrigger>
+              {/* 2. Gestão */}
               <TabsTrigger value="users" className="flex-1 sm:flex-none text-xs sm:text-sm">
                 <Users className="h-4 w-4 sm:mr-2" />
                 <span className="hidden sm:inline">Usuários</span>
               </TabsTrigger>
+              {/* 3-4. Operacional */}
               <TabsTrigger value="offers" className="flex-1 sm:flex-none text-xs sm:text-sm">
                 <Megaphone className="h-4 w-4 sm:mr-2" />
                 <span className="hidden sm:inline">Ofertas</span>
@@ -689,10 +696,7 @@ export default function AdminDashboard() {
                 <Phone className="h-4 w-4 sm:mr-2" />
                 <span className="hidden sm:inline">Leads</span>
               </TabsTrigger>
-              <TabsTrigger value="niches" className="flex-1 sm:flex-none text-xs sm:text-sm">
-                <Tags className="h-4 w-4 sm:mr-2" />
-                <span className="hidden sm:inline">Nichos</span>
-              </TabsTrigger>
+              {/* 5-8. Financeiro */}
               <TabsTrigger value="transactions" className="flex-1 sm:flex-none text-xs sm:text-sm">
                 <DollarSign className="h-4 w-4 sm:mr-2" />
                 <span className="hidden sm:inline">Transações</span>
@@ -701,29 +705,31 @@ export default function AdminDashboard() {
                 <CreditCard className="h-4 w-4 sm:mr-2" />
                 <span className="hidden sm:inline">Pagamentos</span>
               </TabsTrigger>
-              <TabsTrigger value="financeiro" className="flex-1 sm:flex-none text-xs sm:text-sm">
-                <Landmark className="h-4 w-4 sm:mr-2" />
-                <span className="hidden sm:inline">Financeiro</span>
-              </TabsTrigger>
               <TabsTrigger value="withdrawals" className="flex-1 sm:flex-none text-xs sm:text-sm">
                 <Banknote className="h-4 w-4 sm:mr-2" />
                 <span className="hidden sm:inline">Saques</span>
               </TabsTrigger>
+              <TabsTrigger value="financeiro" className="flex-1 sm:flex-none text-xs sm:text-sm">
+                <Landmark className="h-4 w-4 sm:mr-2" />
+                <span className="hidden sm:inline">Financeiro</span>
+              </TabsTrigger>
+              {/* 9-10. Segurança */}
               <TabsTrigger value="fraud" className="flex-1 sm:flex-none text-xs sm:text-sm">
                 <Ban className="h-4 w-4 sm:mr-2" />
                 <span className="hidden sm:inline">Anti-Fraude</span>
-              </TabsTrigger>
-              <TabsTrigger value="blog" className="flex-1 sm:flex-none text-xs sm:text-sm">
-                <FileText className="h-4 w-4 sm:mr-2" />
-                <span className="hidden sm:inline">Blog</span>
               </TabsTrigger>
               <TabsTrigger value="security" className="flex-1 sm:flex-none text-xs sm:text-sm">
                 <Shield className="h-4 w-4 sm:mr-2" />
                 <span className="hidden sm:inline">Segurança</span>
               </TabsTrigger>
-              <TabsTrigger value="analytics" className="flex-1 sm:flex-none text-xs sm:text-sm">
-                <BarChart3 className="h-4 w-4 sm:mr-2" />
-                <span className="hidden sm:inline">Analytics</span>
+              {/* 11-12. Configurações */}
+              <TabsTrigger value="niches" className="flex-1 sm:flex-none text-xs sm:text-sm">
+                <Tags className="h-4 w-4 sm:mr-2" />
+                <span className="hidden sm:inline">Nichos</span>
+              </TabsTrigger>
+              <TabsTrigger value="blog" className="flex-1 sm:flex-none text-xs sm:text-sm">
+                <FileText className="h-4 w-4 sm:mr-2" />
+                <span className="hidden sm:inline">Blog</span>
               </TabsTrigger>
             </TabsList>
           </div>
