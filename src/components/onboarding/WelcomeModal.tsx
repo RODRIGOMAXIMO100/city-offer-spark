@@ -30,7 +30,7 @@ export function WelcomeModal() {
   const getRoleDescription = () => {
     switch (role) {
       case 'AFFILIATE':
-        return 'Compartilhe ofertas e ganhe comissão por cada clique válido!';
+        return 'Compartilhe ofertas e ganhe comissão por cada lead válido!';
       case 'COMPANY':
         return 'Divulgue suas ofertas e atraia novos clientes para seu negócio!';
       case 'CLIENT':

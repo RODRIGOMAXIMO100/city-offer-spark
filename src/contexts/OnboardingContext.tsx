@@ -22,16 +22,16 @@ export const ONBOARDING_BONUSES: Record<string, BonusMap> = {
   AFFILIATE: {
     tour_completed: { amount: 100, label: 'Completar o tour' }, // R$1,00
     first_link_copied: { amount: 100, label: 'Copiar primeiro link' }, // R$1,00
-    first_click: { amount: 100, label: 'Primeiro clique válido' }, // R$1,00
+    first_lead: { amount: 100, label: 'Primeiro lead válido' }, // R$1,00
     payment_data_filled: { amount: 100, label: 'Preencher dados PIX' }, // R$1,00
-    ten_clicks: { amount: 100, label: 'Atingir 10 cliques' }, // R$1,00
+    ten_leads: { amount: 100, label: 'Atingir 10 leads' }, // R$1,00
   }, // Total: R$5,00
   COMPANY: {
     tour_completed: { amount: 100, label: 'Completar o tour' }, // R$1,00
     logo_added: { amount: 100, label: 'Adicionar logo' }, // R$1,00
     instagram_connected: { amount: 100, label: 'Conectar Instagram' }, // R$1,00
     first_offer: { amount: 100, label: 'Criar primeira oferta' }, // R$1,00
-    first_click: { amount: 100, label: 'Receber primeiro clique' }, // R$1,00
+    first_lead: { amount: 100, label: 'Receber primeiro lead' }, // R$1,00
   }, // Total: R$5,00
   CLIENT: {}, // Cliente não tem bônus
 };
@@ -62,7 +62,7 @@ export const TOUR_STEPS: Record<string, TourStep[]> = {
     {
       target: '[data-tour="balance"]',
       title: 'Seus Créditos',
-      content: 'Veja seus créditos e adicione mais clicando no "+". Você só paga por cliques e leads reais!',
+      content: 'Veja seus créditos e adicione mais clicando no "+". Você só paga por leads reais!',
       position: 'bottom',
     },
     {
