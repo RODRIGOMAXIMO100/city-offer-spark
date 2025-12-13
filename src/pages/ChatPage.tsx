@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import ReactMarkdown from 'react-markdown';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -575,7 +576,9 @@ export default function ChatPage() {
                   </div>
                 )}
                 
-                <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.content}</p>
+                <div className="text-sm leading-relaxed prose prose-sm dark:prose-invert max-w-none">
+                  <ReactMarkdown>{msg.content}</ReactMarkdown>
+                </div>
 
                 {/* Suggested Offers */}
                 {msg.suggestedOffers && msg.suggestedOffers.length > 0 && (
