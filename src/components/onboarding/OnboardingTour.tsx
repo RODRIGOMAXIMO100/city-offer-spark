@@ -100,9 +100,15 @@ export function OnboardingTour() {
         element.scrollIntoView({ behavior: 'smooth', block: 'center' });
         setTimeout(updatePositions, 100);
       } else {
-        updatePositions();
+        // Elemento não encontrado - pular para próximo step
+        console.warn(`Tour: elemento ${currentStepData.target} não encontrado, pulando step`);
+        if (!isLastStep) {
+          nextStep();
+        } else {
+          completeTour();
+        }
       }
-    }, 50);
+    }, 150);
 
     window.addEventListener('resize', updatePositions);
     window.addEventListener('scroll', updatePositions);
@@ -112,7 +118,7 @@ export function OnboardingTour() {
       window.removeEventListener('resize', updatePositions);
       window.removeEventListener('scroll', updatePositions);
     };
-  }, [showTour, tourCurrentStep, currentStepData?.target, updatePositions]);
+  }, [showTour, tourCurrentStep, currentStepData?.target, updatePositions, isLastStep, nextStep, completeTour]);
 
   if (!showTour || !currentStepData) return null;
 
