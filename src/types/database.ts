@@ -1,6 +1,6 @@
 export type AppRole = 'COMPANY' | 'AFFILIATE' | 'CLIENT' | 'ADMIN';
 export type LinkType = 'WHATSAPP' | 'MENU' | 'SITE';
-export type TransactionType = 'DEPOSIT' | 'CLICK_COST' | 'CLICK_EARNING' | 'WITHDRAW' | 'PLATFORM_FEE';
+export type TransactionType = 'DEPOSIT' | 'CLICK_COST' | 'CLICK_EARNING' | 'WITHDRAW' | 'PLATFORM_FEE' | 'LEAD_COST' | 'LEAD_EARNING';
 
 export interface Profile {
   id: string;
@@ -46,6 +46,7 @@ export interface Offer {
   city: string;
   views_count: number;
   clicks_count: number;
+  leads_count?: number;
   active: boolean;
   expires_at: string;
   created_at: string;
@@ -59,6 +60,25 @@ export interface Offer {
     name: string;
     instagram_url?: string;
     avatar_url?: string;
+  };
+}
+
+export interface Lead {
+  id: string;
+  offer_id: string;
+  affiliate_id: string | null;
+  name: string;
+  phone_whatsapp: string;
+  client_ip?: string;
+  user_agent?: string;
+  device_id?: string;
+  fingerprint_hash?: string;
+  session_token?: string;
+  is_valid: boolean;
+  created_at: string;
+  // Joined fields
+  offers?: {
+    title: string;
   };
 }
 
@@ -84,14 +104,25 @@ export interface OfferClick {
 
 // Business constants - TODOS OS VALORES MONETÁRIOS EM CENTAVOS
 export const CONFIG = {
+  // CPC (clique) - modelo antigo, mantido para compatibilidade
   MIN_CPC: 40,           // R$ 0,40 em centavos
   MAX_CPC: 100,          // R$ 1,00 em centavos
   DEFAULT_CPC: 70,       // R$ 0,70 em centavos
+  
+  // CPL (lead) - modelo novo
+  MIN_CPL: 100,          // R$ 1,00 em centavos
+  MAX_CPL: 300,          // R$ 3,00 em centavos
+  DEFAULT_CPL: 150,      // R$ 1,50 em centavos
+  
   AFFILIATE_SHARE: 0.30, // 30% base para divulgador (pode chegar a 50% com níveis)
   MAX_AFFILIATE_SHARE: 0.50, // 50% máximo no nível Ouro
+  
   // Para analytics admin - estimativas médias em centavos
   CPC_PLATFORM_PROFIT: 49,  // ~70% do CPC médio (base 30% para afiliado)
   CPC_PAYOUT_AFFILIATE: 21, // ~30% do CPC médio (base)
+  CPL_PLATFORM_PROFIT: 105, // ~70% do CPL médio
+  CPL_PAYOUT_AFFILIATE: 45, // ~30% do CPL médio
+  
   MIN_WITHDRAW_BRL: 100.00, // R$ 100 (valor em reais para comparação)
   MIN_DEPOSIT_BRL: 100.00,  // R$ 100 (valor em reais para comparação)
   MIN_WITHDRAW_CENTS: 10000, // R$ 100 em centavos
