@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useOnboarding } from '@/contexts/OnboardingContext';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { CheckCircle2, Circle, Gift, ChevronDown, ChevronUp, Sparkles, X } from 'lucide-react';
 import { formatCentsToBRL } from '@/types/database';
 import { cn } from '@/lib/utils';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 export function OnboardingChecklist() {
   const {
@@ -19,7 +20,14 @@ export function OnboardingChecklist() {
     dismissOnboarding,
   } = useOnboarding();
 
-  const [isExpanded, setIsExpanded] = useState(true);
+  const isMobile = useIsMobile();
+  // Começa colapsado no mobile
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  // Atualiza estado quando detecta se é mobile
+  useEffect(() => {
+    setIsExpanded(!isMobile);
+  }, [isMobile]);
 
   const bonuses = getBonuses();
   const progress = getChecklistProgress();
@@ -32,8 +40,26 @@ export function OnboardingChecklist() {
   // Não mostrar se todas as tarefas foram completadas
   if (allCompleted) return null;
 
+  // Mobile: Versão mini quando colapsado (FAB discreto)
+  if (isMobile && !isExpanded) {
+    return (
+      <div className="fixed bottom-20 right-4 z-50 animate-fade-in">
+        <button
+          onClick={() => setIsExpanded(true)}
+          className="bg-card border border-border rounded-full p-3 shadow-lg flex items-center gap-2 hover:bg-muted transition-colors"
+        >
+          <Sparkles className="h-4 w-4 text-primary" />
+          <span className="text-xs font-medium">{progress.completed}/{progress.total}</span>
+        </button>
+      </div>
+    );
+  }
+
   return (
-    <div className="fixed bottom-4 right-4 z-50 w-80 animate-fade-in">
+    <div className={cn(
+      "fixed z-50 animate-fade-in",
+      isMobile ? "bottom-20 right-4 left-4" : "bottom-4 right-4 w-80"
+    )}>
       <div className="bg-card border border-border rounded-lg shadow-xl overflow-hidden">
         {/* Header */}
         <div
@@ -79,7 +105,7 @@ export function OnboardingChecklist() {
 
         {/* Content */}
         {isExpanded && (
-          <div className="p-3 space-y-2 max-h-80 overflow-y-auto">
+          <div className="p-3 space-y-2 max-h-60 overflow-y-auto">
             {/* Tour button se não completou */}
             {!tourCompleted && (
               <Button
