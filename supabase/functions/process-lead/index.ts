@@ -228,8 +228,7 @@ serve(async (req) => {
         link_destination,
         active,
         city,
-        current_offer_score,
-        profiles!offers_company_id_fkey(id, balance, user_id)
+        current_offer_score
       `)
       .eq("id", offerId)
       .single();
@@ -249,7 +248,22 @@ serve(async (req) => {
       );
     }
 
-    const companyProfile = offer.profiles as any;
+    // Get company profile separately (fix for missing FK)
+    const { data: companyProfile, error: companyError } = await supabase
+      .from("profiles")
+      .select("id, balance, user_id, banned, balance_frozen")
+      .eq("id", offer.company_id)
+      .single();
+
+    if (companyError || !companyProfile) {
+      console.error("Company profile not found:", companyError, "company_id:", offer.company_id);
+      return new Response(
+        JSON.stringify({ error: "Empresa não encontrada" }),
+        { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    console.log(`Company profile found: id=${companyProfile.id}, balance=${companyProfile.balance}, banned=${companyProfile.banned}`);
 
     // ========== IP VERIFICATION ==========
     const ipCheck = await checkIPWithLite(clientIp);
