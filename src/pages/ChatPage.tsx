@@ -25,6 +25,7 @@ interface SuggestedOffer {
   price_new: number;
   discount: number;
   instagram_url?: string;
+  images?: string[];
 }
 
 interface Message {
@@ -586,40 +587,48 @@ export default function ChatPage() {
                     {msg.suggestedOffers.map((offer) => (
                       <Card
                         key={offer.id}
-                        className="cursor-pointer hover:shadow-md transition-all hover:scale-[1.01] bg-background"
+                        className="cursor-pointer hover:shadow-md transition-all hover:scale-[1.01] bg-background overflow-hidden"
                         onClick={() => navigate(`/offer/${offer.id}`)}
                       >
-                        <CardContent className="p-4">
-                          <div className="flex justify-between items-start mb-2">
-                            <p className="font-bold text-foreground">{offer.company}</p>
+                        {/* Imagem da oferta */}
+                        {offer.images?.[0] && (
+                          <img 
+                            src={offer.images[0]} 
+                            alt={offer.title}
+                            className="w-full h-28 object-cover"
+                          />
+                        )}
+                        <CardContent className="p-3">
+                          <div className="flex justify-between items-start mb-1">
+                            <p className="font-bold text-sm text-foreground">{offer.company}</p>
                             <Badge variant="destructive" className="text-xs">
                               -{offer.discount}%
                             </Badge>
                           </div>
-                          <p className="text-sm text-muted-foreground mb-3">{offer.title}</p>
+                          <p className="text-xs text-muted-foreground mb-2 line-clamp-2">{offer.title}</p>
                           
                           {offer.instagram_url && (
                             <Button
                               variant="outline"
                               size="sm"
-                              className="w-full mb-3 text-pink-500 border-pink-500/30 hover:bg-pink-500/10"
+                              className="w-full mb-2 text-pink-500 border-pink-500/30 hover:bg-pink-500/10 text-xs h-8"
                               onClick={(e) => openInstagram(offer.instagram_url!, e)}
                             >
-                              <Instagram className="mr-2 h-4 w-4" />
-                              Conhecer no Instagram
+                              <Instagram className="mr-1.5 h-3.5 w-3.5" />
+                              Ver no Instagram
                             </Button>
                           )}
 
                           <div className="flex justify-between items-center">
-                            <div>
-                              <span className="text-sm line-through text-muted-foreground mr-2">
+                            <div className="flex flex-col">
+                              <span className="text-xs line-through text-muted-foreground">
                                 R$ {offer.price_old.toFixed(2)}
                               </span>
-                              <span className="font-bold text-lg text-secondary">
+                              <span className="font-bold text-secondary">
                                 R$ {offer.price_new.toFixed(2)}
                               </span>
                             </div>
-                            <Button size="sm" variant="secondary">
+                            <Button size="sm" variant="secondary" className="text-xs h-8">
                               Ver Oferta
                             </Button>
                           </div>
