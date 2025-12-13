@@ -41,9 +41,10 @@ interface AffiliateOfferCardProps {
   offer: Offer;
   profileId: string;
   index: number;
+  commissionMultiplier?: number; // 1.00 = Bronze, 1.33 = Prata, 1.67 = Ouro
 }
 
-export function AffiliateOfferCard({ offer, profileId, index }: AffiliateOfferCardProps) {
+export function AffiliateOfferCard({ offer, profileId, index, commissionMultiplier = 1.00 }: AffiliateOfferCardProps) {
   const [copied, setCopied] = useState(false);
   const [shortLink, setShortLink] = useState<string | null>(null);
   const [isLoadingLink, setIsLoadingLink] = useState(true);
@@ -101,7 +102,8 @@ export function AffiliateOfferCard({ offer, profileId, index }: AffiliateOfferCa
   const offerScore = offer.current_offer_score || 5;
   // CPL calculation: R$ 1.00 to R$ 3.00 based on score (formula: (14 - score) * 33.33 cents)
   const cplCents = Math.round((14 - offerScore) * 33.33);
-  const affiliateEarning = (cplCents * 0.30) / 100; // Base 30% commission
+  // Base 30% commission × nível multiplicador (Bronze=1.00, Prata=1.33, Ouro=1.67)
+  const affiliateEarning = (cplCents * 0.30 * commissionMultiplier) / 100;
   const leadRate = offer.views_count > 0 ? (((offer as any).leads_count || 0) / offer.views_count * 100).toFixed(1) : "0";
   const isHot = parseFloat(leadRate) > 2;
 
@@ -293,11 +295,10 @@ export function AffiliateOfferCard({ offer, profileId, index }: AffiliateOfferCa
               <div className="space-y-1 text-xs">
                 <p>📊 Nota da oferta: <strong>{offerScore.toFixed(1)}</strong></p>
                 <p>💰 CPL total: R$ {(cplCents / 100).toFixed(2)}</p>
-                <p>✨ Sua parte (30% base): <strong className="text-affiliate">R$ {affiliateEarning.toFixed(2)}</strong></p>
+                <p>🎯 Comissão base: 30%</p>
+                <p>⭐ Seu bônus de nível: <strong>×{commissionMultiplier.toFixed(2)}</strong></p>
+                <p>✨ Seu ganho: <strong className="text-affiliate">R$ {affiliateEarning.toFixed(2)}</strong></p>
               </div>
-              <p className="text-[10px] mt-2 text-muted-foreground border-t border-border pt-2">
-                💡 Seu bônus de nível pode aumentar esse valor em até 50%!
-              </p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
