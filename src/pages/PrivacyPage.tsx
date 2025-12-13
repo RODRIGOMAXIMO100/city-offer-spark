@@ -81,7 +81,7 @@ export default function PrivacyPage() {
               <li><strong>User Agent</strong> (informações do navegador e dispositivo)</li>
               <li><strong>Fingerprint do dispositivo</strong> (para prevenção de fraudes)</li>
               <li><strong>Timezone do navegador</strong> (para verificação de localização)</li>
-              <li><strong>Histórico de cliques e interações</strong> (para cálculo de comissões)</li>
+              <li><strong>Histórico de leads e interações</strong> (para cálculo de comissões)</li>
               <li><strong>Data, hora e duração de acesso</strong></li>
               <li><strong>Páginas visitadas e ofertas visualizadas</strong></li>
             </ul>
@@ -113,7 +113,7 @@ export default function PrivacyPage() {
                 <h4 className="font-semibold">Execução de Contrato (Art. 7º, V)</h4>
                 <p className="text-sm text-muted-foreground">
                   Para prestação dos serviços da plataforma: cadastro, exibição de ofertas, 
-                  processamento de cliques, cálculo e pagamento de comissões.
+                  processamento de leads qualificados, cálculo e pagamento de comissões.
                 </p>
               </div>
               <div className="border-l-4 border-primary pl-4">
@@ -148,7 +148,7 @@ export default function PrivacyPage() {
             <ul className="list-disc pl-6 mt-4 space-y-2 text-muted-foreground">
               <li><strong>Prestação do Serviço:</strong> Operar a plataforma, conectar usuários e processar transações.</li>
               <li><strong>Identificação e Autenticação:</strong> Verificar sua identidade e proteger sua conta.</li>
-              <li><strong>Prevenção de Fraudes:</strong> Detectar e prevenir cliques fraudulentos, múltiplas contas e uso indevido.</li>
+              <li><strong>Prevenção de Fraudes:</strong> Detectar e prevenir leads fraudulentos, múltiplas contas e uso indevido.</li>
               <li><strong>Processamento Financeiro:</strong> Gerenciar créditos, calcular comissões e processar saques.</li>
               <li><strong>Comunicação:</strong> Enviar notificações sobre transações, ofertas e atualizações importantes.</li>
               <li><strong>Melhoria Contínua:</strong> Analisar uso para aprimorar a experiência e desenvolver novos recursos.</li>

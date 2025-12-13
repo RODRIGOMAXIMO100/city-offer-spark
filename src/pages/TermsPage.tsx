@@ -60,30 +60,30 @@ export default function TermsPage() {
           <section>
             <h2 className="text-2xl font-display font-semibold mb-4">4. Sistema de Créditos</h2>
             <p className="text-muted-foreground leading-relaxed">
-              O clilin opera com um sistema de créditos:
+              O clilin opera com um sistema de créditos baseado em leads qualificados:
             </p>
             <ul className="list-disc pl-6 mt-4 space-y-2 text-muted-foreground">
-              <li>Empresas adquirem créditos para publicar ofertas e pagar por cliques.</li>
-              <li>Divulgadores ganham créditos por cliques válidos em suas divulgações.</li>
+              <li>Empresas adquirem créditos para publicar ofertas e pagar por leads qualificados.</li>
+              <li>Divulgadores ganham créditos por leads válidos gerados através de suas divulgações.</li>
               <li>Créditos podem ser convertidos em valores monetários conforme as regras da plataforma.</li>
-              <li>A plataforma implementa sistemas anti-fraude para garantir a integridade dos cliques.</li>
+              <li>A plataforma implementa sistemas anti-fraude para garantir a integridade dos leads.</li>
             </ul>
           </section>
 
           <section>
             <h2 className="text-2xl font-display font-semibold mb-4">5. Política Anti-Fraude</h2>
             <p className="text-muted-foreground leading-relaxed">
-              O clilin utiliza sistemas automatizados avançados para detectar e prevenir fraudes, incluindo:
+              O clilin utiliza sistemas automatizados avançados para detectar e prevenir fraudes em leads, incluindo:
             </p>
             <ul className="list-disc pl-6 mt-4 space-y-2 text-muted-foreground">
-              <li>Limite de 1 clique válido por IP por oferta a cada 24 horas.</li>
-              <li>Detecção de auto-cliques por divulgadores.</li>
-              <li>Limite de taxa global de 50 cliques por hora para prevenir ataques de bots.</li>
-              <li>Verificação de geolocalização (apenas cliques do Brasil são válidos).</li>
+              <li>Limite de 1 lead válido por telefone por oferta a cada 7 dias.</li>
+              <li>Detecção de auto-cadastros por divulgadores (leads próprios).</li>
+              <li>Validação de formato e consistência de telefone brasileiro.</li>
+              <li>Verificação de geolocalização (apenas leads do Brasil são válidos).</li>
               <li>Bloqueio de VPNs, proxies e IPs de data centers suspeitos.</li>
-              <li>Análise de padrões de comportamento suspeito (intervalos regulares, concentração de cliques).</li>
+              <li>Análise de padrões de comportamento suspeito (cadastros em massa, dados repetidos).</li>
               <li>Verificação de timezone do navegador para detectar falsificação de localização.</li>
-              <li>Fingerprinting de dispositivo para detectar múltiplos cliques do mesmo aparelho.</li>
+              <li>Validação de sessão mínima na página antes do cadastro.</li>
               <li>Score de fraude automático para solicitações de saque.</li>
             </ul>
             
@@ -92,12 +92,12 @@ export default function TermsPage() {
               São expressamente proibidos e resultarão em penalidades:
             </p>
             <ul className="list-disc pl-6 mt-4 space-y-2 text-muted-foreground">
-              <li>Clicar em seus próprios links de afiliado ou solicitar que terceiros cliquem.</li>
+              <li>Cadastrar-se como lead em suas próprias ofertas ou solicitar que terceiros façam cadastros falsos.</li>
               <li>Usar VPN, proxy ou qualquer ferramenta para mascarar localização.</li>
-              <li>Utilizar bots, scripts ou automação para gerar cliques.</li>
+              <li>Utilizar bots, scripts ou automação para gerar leads falsos.</li>
               <li>Criar múltiplas contas para obter vantagens indevidas.</li>
               <li>Fazer spam ou divulgação enganosa de ofertas.</li>
-              <li>Falsificar informações de cadastro (CPF, dados bancários, etc).</li>
+              <li>Falsificar informações de cadastro (CPF, telefone, dados bancários, etc).</li>
               <li>Tentar burlar ou testar os sistemas de segurança da plataforma.</li>
               <li>Qualquer outra ação que prejudique a integridade do sistema.</li>
             </ul>
@@ -141,7 +141,7 @@ export default function TermsPage() {
               </li>
               <li>
                 <strong>Período de Análise:</strong> A equipe de segurança realizará análise completa do histórico 
-                de cliques, padrões de comportamento, dados cadastrais e qualquer evidência relevante.
+                de leads, padrões de comportamento, dados cadastrais e qualquer evidência relevante.
               </li>
               <li>
                 <strong>Decisão Final:</strong>
@@ -192,7 +192,7 @@ export default function TermsPage() {
               <li>Bloquear saldos preventivamente sempre que houver suspeita de fraude ou irregularidade.</li>
               <li>Reter solicitações de saque por até 30 dias para análise e verificação.</li>
               <li>Banir usuários sem aviso prévio em casos de fraude evidente ou grave.</li>
-              <li>Invalidar cliques e leads considerados fraudulentos, mesmo após creditados.</li>
+              <li>Invalidar leads considerados fraudulentos, mesmo após creditados.</li>
               <li>Compartilhar informações com autoridades competentes em caso de crime ou investigação.</li>
               <li>Adicionar CPF, email, telefone, dados PIX e dispositivos em lista negra permanente.</li>
               <li>Solicitar documentação adicional para verificação de identidade a qualquer momento.</li>
@@ -222,7 +222,7 @@ export default function TermsPage() {
             <ul className="list-disc pl-6 mt-4 space-y-2 text-muted-foreground">
               <li>Divulgar ofertas de forma ética e transparente.</li>
               <li>Não utilizar práticas enganosas ou spam.</li>
-              <li>Não gerar cliques artificiais ou fraudulentos.</li>
+              <li>Não gerar leads falsos ou fraudulentos.</li>
               <li>Identificar-se como divulgadores quando exigido por lei.</li>
             </ul>
           </section>
