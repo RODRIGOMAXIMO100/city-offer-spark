@@ -11,27 +11,27 @@ import { PRICING_DISCLAIMER } from "@/types/database";
 export const faqs = [
   {
     question: "Quanto custa para empresas?",
-    answer: `Não há mensalidade ou taxa fixa. Você só paga quando alguém clica na sua oferta. O custo por clique varia de R$ 0,40 a R$ 1,00, calculado automaticamente pela qualidade da sua oferta. Quanto melhor sua nota, menos você paga! ${PRICING_DISCLAIMER.short}`,
+    answer: `Não há mensalidade ou taxa fixa. Você só paga quando recebe um lead qualificado (nome + WhatsApp). O custo por lead varia de R$ 1,00 a R$ 3,00, calculado automaticamente pela qualidade da sua oferta. Quanto melhor sua nota, menos você paga! ${PRICING_DISCLAIMER.short}`,
   },
   {
     question: "Como recebo minha comissão como divulgador?",
-    answer: `Cada clique válido no seu link gera saldo na sua conta. Você começa ganhando 30% e pode chegar até 50% conforme sobe de nível (Bronze 30%, Prata 40%, Ouro 50%). Por exemplo, em uma oferta de R$ 0,70, você ganha de R$ 0,21 a R$ 0,35 por clique! Saque mínimo: R$ 100,00 via PIX. ${PRICING_DISCLAIMER.short}`,
+    answer: `Cada lead qualificado gerado pelo seu link (quando alguém preenche nome e WhatsApp) gera saldo na sua conta. Você começa ganhando 30% e pode chegar até 50% conforme sobe de nível (Bronze 30%, Prata 40%, Ouro 50%). Por exemplo, em um lead de R$ 2,00, você ganha de R$ 0,60 a R$ 1,00! Saque mínimo: R$ 100,00 via PIX. ${PRICING_DISCLAIMER.short}`,
   },
   {
     question: "Preciso ter CNPJ para cadastrar minha empresa?",
     answer: "Sim, o CNPJ é obrigatório para cadastrar ofertas. MEIs, microempresas e empresas de qualquer porte podem participar, desde que tenham CNPJ ativo.",
   },
   {
-    question: "Como funciona o custo por clique (CPC)?",
-    answer: `O CPC é automático! Ofertas novas começam com nota 7 e pagam R$ 0,70 por clique. Melhore a qualidade da oferta (bons descontos, descrição completa, Instagram vinculado) para aumentar sua nota e pagar menos. Nota 10 = R$ 0,40. Nota 4 = R$ 1,00. ${PRICING_DISCLAIMER.short}`,
+    question: "Como funciona o custo por lead (CPL)?",
+    answer: `O CPL é automático! Ofertas novas começam com nota 7 e pagam R$ 2,00 por lead qualificado. Melhore a qualidade da oferta (bons descontos, descrição completa, Instagram vinculado) para aumentar sua nota e pagar menos. Nota 10 = R$ 1,00. Nota 4 = R$ 3,00. ${PRICING_DISCLAIMER.short}`,
   },
   {
     question: "O que é a Nota da Oferta?",
-    answer: "É uma pontuação de 0 a 10 que avalia sua oferta. Considera: CTR/engajamento (40%), qualidade da oferta (35%) e reputação da empresa (25%). Ofertas novas começam com nota 7. Quanto maior sua nota, menor o custo por clique!",
+    answer: "É uma pontuação de 0 a 10 que avalia sua oferta. Considera: taxa de conversão (40%), qualidade da oferta (35%) e reputação da empresa (25%). Ofertas novas começam com nota 7. Quanto maior sua nota, menor o custo por lead!",
   },
   {
     question: "Como funciona a divisão de valores?",
-    answer: `Você começa ganhando 30% do valor pago pela empresa e pode chegar até 50% no nível Ouro! Por exemplo, se a empresa paga R$ 0,70 e você está no Bronze, ganha R$ 0,21. No Ouro, ganha R$ 0,35. Quanto mais você divulga, mais você ganha! ${PRICING_DISCLAIMER.short}`,
+    answer: `Você começa ganhando 30% do valor pago pela empresa e pode chegar até 50% no nível Ouro! Por exemplo, se a empresa paga R$ 2,00 por lead e você está no Bronze, ganha R$ 0,60. No Ouro, ganha R$ 1,00. Quanto mais você divulga, mais você ganha! ${PRICING_DISCLAIMER.short}`,
   },
 ];
 
