@@ -22,6 +22,7 @@ import AuthorPage from "./pages/AuthorPage";
 import HelpPage from "./pages/HelpPage";
 import NotFound from "./pages/NotFound";
 import AuthCallbackPage from "./pages/AuthCallbackPage";
+import CompleteSignupPage from "./pages/CompleteSignupPage";
 import WhatsAppButton from "./components/WhatsAppButton";
 
 const queryClient = new QueryClient();
@@ -64,6 +65,7 @@ const AppRoutes = () => (
     <Route path="/chat" element={<ChatPage />} />
     <Route path="/auth" element={<PublicRoute><AuthPage /></PublicRoute>} />
     <Route path="/auth/callback" element={<AuthCallbackPage />} />
+    <Route path="/complete-signup" element={<CompleteSignupPage />} />
     <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
     <Route path="/admin/login" element={<AdminLoginPage />} />
     <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
