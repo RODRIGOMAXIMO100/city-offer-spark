@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -41,6 +42,7 @@ const validatePhone = (phone: string) => {
 
 export default function CompleteSignupPage() {
   const navigate = useNavigate();
+  const { refreshProfile } = useAuth();
   const [loading, setLoading] = useState(false);
   const [checkingSession, setCheckingSession] = useState(true);
   const [email, setEmail] = useState('');
@@ -193,6 +195,9 @@ export default function CompleteSignupPage() {
         toast.error('Erro ao definir tipo de conta');
         return;
       }
+
+      // Atualiza o contexto de auth ANTES de navegar
+      await refreshProfile();
 
       toast.success('Conta criada com sucesso! Bem-vindo!');
       navigate('/dashboard');

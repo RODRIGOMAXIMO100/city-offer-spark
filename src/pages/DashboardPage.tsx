@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState, useRef } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Loader2 } from 'lucide-react';
 import CompanyDashboard from '@/components/dashboard/CompanyDashboard';
@@ -7,20 +7,37 @@ import AffiliateDashboard from '@/components/dashboard/AffiliateDashboard';
 import ClientDashboard from '@/components/dashboard/ClientDashboard';
 
 export default function DashboardPage() {
-  const { role, loading, user } = useAuth();
+  const { role, loading, user, refreshProfile } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const hasRefreshed = useRef(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) {
       navigate('/auth');
+      return;
     }
-    // Usuário autenticado mas sem role = novo usuário Google que precisa completar cadastro
-    if (!loading && user && !role) {
+    
+    // Se veio do complete-signup e não tem role, tenta refresh uma vez
+    if (!loading && user && !role && !hasRefreshed.current) {
+      hasRefreshed.current = true;
+      setIsRefreshing(true);
+      
+      // Tenta atualizar o perfil para pegar o role recém-criado
+      refreshProfile().finally(() => {
+        setIsRefreshing(false);
+      });
+      return;
+    }
+    
+    // Se depois do refresh ainda não tem role, redireciona
+    if (!loading && !isRefreshing && user && !role && hasRefreshed.current) {
       navigate('/complete-signup');
     }
-  }, [loading, user, role, navigate]);
+  }, [loading, user, role, navigate, refreshProfile, isRefreshing]);
 
-  if (loading) {
+  if (loading || isRefreshing) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
