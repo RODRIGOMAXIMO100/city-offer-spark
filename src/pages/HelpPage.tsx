@@ -73,56 +73,64 @@ const HelpPage = () => {
             </Card>
 
             <Accordion type="single" collapsible className="space-y-2">
-              <AccordionItem value="cpc" className="border rounded-lg px-4">
+              <AccordionItem value="cpl" className="border rounded-lg px-4 border-primary/30 bg-primary/5">
                 <AccordionTrigger className="hover:no-underline">
                   <div className="flex items-center gap-3">
                     <Calculator className="h-5 w-5 text-primary" />
-                    <span>Como funciona o Interesse Qualificado</span>
+                    <span className="font-bold">⭐ Como funciona o Pay-Per-Lead (PPL)</span>
                   </div>
                 </AccordionTrigger>
                 <AccordionContent className="space-y-4 pt-2">
                   <div className="p-3 rounded-lg bg-primary/10 border border-primary/20 mb-4">
                     <p className="text-sm font-medium text-primary mb-2">
-                      💡 O que é um Interesse Qualificado?
+                      💡 O que é um Lead Qualificado?
                     </p>
                     <p className="text-sm text-muted-foreground">
-                      Na Clilin, você paga apenas quando um cliente <strong>demonstra interesse real</strong> na sua oferta. 
-                      Isso acontece de duas formas:
+                      Na Clilin, você paga apenas quando um cliente <strong>deixa seus dados de contato</strong> (nome + WhatsApp) demonstrando interesse real na sua oferta.
                     </p>
                     <ul className="mt-2 space-y-1 text-sm text-muted-foreground">
                       <li className="flex items-start gap-2">
-                        <span>🤖</span>
-                        <span><strong>Via Assistente IA:</strong> O cliente pede ativamente por ofertas como a sua</span>
+                        <span>📝</span>
+                        <span><strong>Captação de Lead:</strong> O cliente preenche um formulário com nome e WhatsApp</span>
                       </li>
                       <li className="flex items-start gap-2">
-                        <span>👥</span>
-                        <span><strong>Via Divulgadores:</strong> Uma pessoa da sua cidade indica sua oferta</span>
+                        <span>✅</span>
+                        <span><strong>Validação:</strong> Sistema anti-fraude verifica se é um contato real</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span>📱</span>
+                        <span><strong>Você recebe:</strong> Lista de leads no seu dashboard para contato via WhatsApp</span>
                       </li>
                     </ul>
                     <p className="text-xs text-muted-foreground mt-2 italic">
-                      Em ambos os casos, é um contato LOCAL, SEGMENTADO e com INTERESSE DEMONSTRADO.
+                      Diferente de cliques simples, você recebe contatos reais de pessoas interessadas!
                     </p>
                   </div>
                   <p className="text-muted-foreground">
-                    O custo por interesse é calculado com base na nota da sua oferta. Quanto melhor a nota, menor o custo:
+                    O custo por lead (CPL) é calculado com base na nota da sua oferta. Quanto melhor a nota, menor o custo:
                   </p>
                   <div className="grid gap-3">
                     <div className="flex items-center justify-between p-3 rounded-lg bg-green-500/10 border border-green-500/20">
                       <span className="font-medium text-green-600">Nota 10 (Excelente)</span>
-                      <span className="font-bold text-green-600">R$ 0,40 por contato</span>
+                      <span className="font-bold text-green-600">R$ 0,60 por lead</span>
                     </div>
                     <div className="flex items-center justify-between p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
                       <span className="font-medium text-yellow-600">Nota 7 (Inicial)</span>
-                      <span className="font-bold text-yellow-600">R$ 0,70 por contato</span>
+                      <span className="font-bold text-yellow-600">R$ 1,05 por lead</span>
                     </div>
                     <div className="flex items-center justify-between p-3 rounded-lg bg-red-500/10 border border-red-500/20">
                       <span className="font-medium text-red-600">Nota 4 (Mínima)</span>
-                      <span className="font-bold text-red-600">R$ 1,00 por contato</span>
+                      <span className="font-bold text-red-600">R$ 1,50 por lead</span>
                     </div>
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    <strong>Fórmula:</strong> Custo = 14 centavos × (14 - Nota da Oferta)
+                    <strong>Fórmula:</strong> CPL = 15 centavos × (14 - Nota da Oferta)
                   </p>
+                  <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20 mt-4">
+                    <p className="text-sm text-blue-600">
+                      📊 <strong>Vantagem PPL:</strong> Você recebe dados de contato reais para fazer follow-up, diferente de sistemas que apenas redirecionam o cliente.
+                    </p>
+                  </div>
                 </AccordionContent>
               </AccordionItem>
 
@@ -135,16 +143,16 @@ const HelpPage = () => {
                 </AccordionTrigger>
                 <AccordionContent className="space-y-4 pt-2">
                   <p className="text-muted-foreground">
-                    Sua nota é calculada com base em 3 fatores:
+                    Sua nota é calculada com base em 3 fatores e influencia diretamente o custo por lead:
                   </p>
                   <div className="space-y-3">
                     <div className="p-3 rounded-lg bg-muted/50">
                       <div className="flex justify-between items-center mb-1">
-                        <span className="font-medium">CTR (Taxa de Cliques)</span>
+                        <span className="font-medium">Taxa de Conversão (Leads/Views)</span>
                         <span className="text-primary font-bold">40%</span>
                       </div>
                       <p className="text-sm text-muted-foreground">
-                        Proporção entre visualizações e cliques. Ofertas que atraem mais cliques têm nota maior.
+                        Proporção entre visualizações e leads gerados. Ofertas que convertem mais têm nota maior.
                       </p>
                     </div>
                     <div className="p-3 rounded-lg bg-muted/50">
@@ -220,7 +228,7 @@ const HelpPage = () => {
                     </li>
                     <li className="flex items-start gap-3">
                       <AlertCircle className="h-5 w-5 text-yellow-500 mt-0.5 flex-shrink-0" />
-                      <span>Créditos são descontados apenas em <strong>interesses válidos</strong></span>
+                      <span>Créditos são descontados apenas em <strong>leads válidos</strong> (nome + WhatsApp verificado)</span>
                     </li>
                   </ul>
                 </AccordionContent>
@@ -236,9 +244,15 @@ const HelpPage = () => {
                 <AccordionContent className="space-y-4 pt-2">
                   <div className="space-y-4">
                     <div>
-                      <p className="font-medium">O que é um interesse válido?</p>
+                      <p className="font-medium">O que é um lead válido?</p>
                       <p className="text-sm text-muted-foreground mt-1">
-                        Quando um usuário real é direcionado para seu WhatsApp, cardápio ou site. Acessos fraudulentos são automaticamente filtrados.
+                        Quando um usuário real preenche o formulário com nome e WhatsApp. Nosso sistema anti-fraude verifica automaticamente a autenticidade do contato.
+                      </p>
+                    </div>
+                    <div>
+                      <p className="font-medium">Como recebo os leads captados?</p>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        Todos os leads aparecem no seu dashboard com nome e WhatsApp. Você pode iniciar uma conversa diretamente ou exportar em CSV.
                       </p>
                     </div>
                     <div>
@@ -325,28 +339,33 @@ const HelpPage = () => {
                 <AccordionContent className="space-y-4 pt-2">
                   <div className="p-4 rounded-lg bg-green-500/10 border border-green-500/20">
                     <p className="text-center text-lg font-bold text-green-600 mb-2">
-                      Ganhe até 50% de Comissão! 🚀
+                      Ganhe até 50% por Lead Captado! 🚀
                     </p>
                     <p className="text-center text-sm text-muted-foreground">
                       Comece com 30% e evolua para 50% conforme sobe de nível
                     </p>
                   </div>
+                  <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20 mb-4">
+                    <p className="text-sm text-blue-600">
+                      📝 <strong>Modelo Pay-Per-Lead:</strong> Você ganha comissão quando o cliente preenche o formulário com nome e WhatsApp, não apenas por cliques!
+                    </p>
+                  </div>
                   <div className="grid gap-3 mt-4">
                     <div className="flex items-center justify-between p-3 rounded-lg bg-orange-500/10 border border-orange-500/20">
                       <span>Bronze (Base)</span>
-                      <span className="font-bold text-orange-600">30% → R$ 0,12 a R$ 0,30</span>
+                      <span className="font-bold text-orange-600">30% → R$ 0,18 a R$ 0,45 por lead</span>
                     </div>
                     <div className="flex items-center justify-between p-3 rounded-lg bg-slate-400/10 border border-slate-400/20">
-                      <span>Prata (100+ indicações)</span>
-                      <span className="font-bold text-slate-600">40% → R$ 0,16 a R$ 0,40</span>
+                      <span>Prata (100+ leads)</span>
+                      <span className="font-bold text-slate-600">40% → R$ 0,24 a R$ 0,60 por lead</span>
                     </div>
                     <div className="flex items-center justify-between p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
-                      <span>Ouro (500+ indicações)</span>
-                      <span className="font-bold text-yellow-600">50% → R$ 0,20 a R$ 0,50</span>
+                      <span>Ouro (500+ leads)</span>
+                      <span className="font-bold text-yellow-600">50% → R$ 0,30 a R$ 0,75 por lead</span>
                     </div>
                   </div>
                   <p className="text-sm text-muted-foreground mt-2">
-                    <strong>Dica:</strong> Quanto mais você divulga, mais rápido sobe de nível e maior é sua comissão!
+                    <strong>Dica:</strong> Quanto mais leads válidos você gerar, mais rápido sobe de nível e maior é sua comissão!
                   </p>
                 </AccordionContent>
               </AccordionItem>
@@ -360,7 +379,7 @@ const HelpPage = () => {
                 </AccordionTrigger>
                 <AccordionContent className="space-y-4 pt-2">
                   <p className="text-muted-foreground">
-                    Quanto mais indicações válidas você gerar, maior sua comissão:
+                    Quanto mais leads válidos você gerar, maior sua comissão por lead:
                   </p>
                   <div className="space-y-3">
                     <div className="flex items-center justify-between p-3 rounded-lg bg-orange-500/10 border border-orange-500/20">
@@ -368,7 +387,7 @@ const HelpPage = () => {
                         <span className="text-xl">🥉</span>
                         <div>
                           <span className="font-medium">Bronze</span>
-                          <p className="text-xs text-muted-foreground">0+ indicações</p>
+                          <p className="text-xs text-muted-foreground">0+ leads</p>
                         </div>
                       </div>
                       <span className="font-bold text-orange-600">30%</span>
@@ -378,7 +397,7 @@ const HelpPage = () => {
                         <span className="text-xl">🥈</span>
                         <div>
                           <span className="font-medium">Prata</span>
-                          <p className="text-xs text-muted-foreground">100+ indicações</p>
+                          <p className="text-xs text-muted-foreground">100+ leads</p>
                         </div>
                       </div>
                       <span className="font-bold text-slate-600">40%</span>
@@ -388,7 +407,7 @@ const HelpPage = () => {
                         <span className="text-xl">🥇</span>
                         <div>
                           <span className="font-medium">Ouro</span>
-                          <p className="text-xs text-muted-foreground">500+ indicações</p>
+                          <p className="text-xs text-muted-foreground">500+ leads</p>
                         </div>
                       </div>
                       <span className="font-bold text-yellow-600">50%</span>
@@ -397,34 +416,38 @@ const HelpPage = () => {
                 </AccordionContent>
               </AccordionItem>
 
-              <AccordionItem value="valid-clicks" className="border rounded-lg px-4">
+              <AccordionItem value="valid-leads" className="border rounded-lg px-4">
                 <AccordionTrigger className="hover:no-underline">
                   <div className="flex items-center gap-3">
                     <Shield className="h-5 w-5 text-blue-500" />
-                    <span>O que são Indicações Válidas</span>
+                    <span>O que são Leads Válidos</span>
                   </div>
                 </AccordionTrigger>
                 <AccordionContent className="space-y-4 pt-2">
                   <p className="text-muted-foreground">
-                    Para ser contabilizada, uma indicação precisa:
+                    Para ser contabilizado e gerar comissão, um lead precisa:
                   </p>
                   <ul className="space-y-3">
                     <li className="flex items-start gap-3">
                       <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-                      <span>Ser de um <strong>usuário único</strong> (1 acesso por pessoa/oferta/hora)</span>
+                      <span>Preencher <strong>nome e WhatsApp</strong> no formulário da oferta</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-                      <span>Vir de um <strong>dispositivo real</strong> (não bot ou emulador)</span>
+                      <span>Ser de um <strong>usuário único</strong> (1 lead por telefone/oferta)</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-                      <span>Ter <strong>comportamento natural</strong> (tempo mínimo na página)</span>
+                      <span>Passar pela <strong>validação anti-fraude</strong> (sessão válida, dispositivo real)</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
+                      <span>Ter <strong>telefone válido</strong> no formato brasileiro</span>
                     </li>
                   </ul>
                   <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 mt-4">
                     <p className="text-sm text-red-600">
-                      ⚠️ Acessos fraudulentos (auto-indicação, bots, VPN) são automaticamente bloqueados e podem resultar em banimento.
+                      ⚠️ Leads fraudulentos (dados falsos, auto-cadastro, bots) são automaticamente bloqueados e podem resultar em banimento.
                     </p>
                   </div>
                 </AccordionContent>
@@ -454,7 +477,7 @@ const HelpPage = () => {
                     <div>
                       <p className="font-medium">Como aumento meu nível?</p>
                       <p className="text-sm text-muted-foreground mt-1">
-                        Gerando indicações válidas! Quanto mais pessoas acessarem pelos seus links, mais rápido você sobe de nível.
+                        Gerando leads válidos! Quanto mais pessoas preencherem o formulário pelos seus links, mais rápido você sobe de nível.
                       </p>
                     </div>
                     <div>
