@@ -120,8 +120,13 @@ async function checkIPWithLite(ip: string): Promise<{
 
     const data: IPInfoLiteResponse = await response.json();
     
+    // Check for Brazil - accept both "BR" code and "Brazil" full name
+    const isFromBrazil = data.country === 'BR' || 
+                         data.country?.toLowerCase() === 'brazil' ||
+                         data.country_name?.toLowerCase() === 'brazil';
+    
     return {
-      isFromBrazil: data.country === 'BR',
+      isFromBrazil,
       isSuspiciousASN: SUSPICIOUS_ASNS.includes(data.asn),
       country: data.country || null,
       asn: data.asn || null,
