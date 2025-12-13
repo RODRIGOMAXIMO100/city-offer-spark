@@ -6,7 +6,7 @@ export function Footer() {
   return (
     <footer className="bg-card border-t border-border py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-8 md:gap-12">
           {/* Logo & Description */}
           <div className="col-span-2">
             <Link to="/" className="flex items-center mb-4">
@@ -61,8 +61,23 @@ export function Footer() {
                 { label: "Blog", to: "/blog" },
                 { label: "Sobre o App", to: "/sobre" },
                 { label: "Transparência", to: "/transparencia" },
+              ].map((link) => (
+                <li key={link.label}>
+                  <Link to={link.to} className="text-muted-foreground hover:text-foreground transition-colors">
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Legal */}
+          <div>
+            <h4 className="font-display font-semibold mb-4">Legal</h4>
+            <ul className="space-y-3">
+              {[
                 { label: "Termos de Uso", to: "/termos" },
-                { label: "Privacidade", to: "/privacidade" },
+                { label: "Política de Privacidade", to: "/privacidade" },
               ].map((link) => (
                 <li key={link.label}>
                   <Link to={link.to} className="text-muted-foreground hover:text-foreground transition-colors">
