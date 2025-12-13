@@ -42,9 +42,7 @@ const AboutPage = () => {
       {/* Hero Section */}
       <section className="py-16 bg-gradient-to-b from-primary/5 to-background">
         <div className="container mx-auto px-4 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
-            Sobre o Clilin
-          </h1>
+          <img src={logo} alt="Clilin" className="h-20 w-auto mx-auto mb-6" />
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             Plataforma de Ofertas Locais que conecta empresas, divulgadores e clientes em sua cidade
           </p>
