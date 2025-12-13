@@ -30,7 +30,7 @@ interface TurnstileProps {
 const TURNSTILE_SITE_KEY = '0x4AAAAAACGaRAy6os1CNP3H';
 
 const Turnstile = forwardRef<HTMLDivElement, TurnstileProps>(
-  ({ onVerify, onExpire, onError, className }, ref) => {
+  function Turnstile({ onVerify, onExpire, onError, className }, ref) {
     const containerRef = useRef<HTMLDivElement | null>(null);
     const widgetIdRef = useRef<string | null>(null);
     const scriptLoadedRef = useRef(false);
@@ -110,7 +110,5 @@ const Turnstile = forwardRef<HTMLDivElement, TurnstileProps>(
     return <div ref={setRefs} className={className} />;
   }
 );
-
-Turnstile.displayName = 'Turnstile';
 
 export default Turnstile;
