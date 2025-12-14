@@ -493,6 +493,21 @@ Use a função create_blog_post para retornar os dados estruturados.`;
 
     console.log("Post created:", newPost.id, newPost.title, "| Image:", featuredImageUrl ? "Yes" : "No");
 
+    // Trigger sitemap update in background
+    try {
+      const sitemapUrl = `${supabaseUrl}/functions/v1/update-sitemap-file`;
+      fetch(sitemapUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${Deno.env.get("SUPABASE_ANON_KEY")}`,
+        },
+      }).catch(err => console.error("Sitemap update trigger failed:", err));
+      console.log("Sitemap update triggered");
+    } catch (sitemapError) {
+      console.error("Failed to trigger sitemap update:", sitemapError);
+    }
+
     return new Response(
       JSON.stringify({
         success: true,
