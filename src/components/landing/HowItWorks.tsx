@@ -18,8 +18,8 @@ const steps = [
   {
     step: "03",
     icon: Sparkles,
-    title: "Lead qualificado no seu WhatsApp",
-    description: "Quando alguém se interessar, você recebe nome e WhatsApp direto. Cliente pronto para converter.",
+    title: "Lead qualificado direto pra você",
+    description: "Quando alguém se interessar, você recebe nome e contato direto — no WhatsApp, site ou cardápio. Cliente pronto para converter.",
     color: "client",
   },
 ];
