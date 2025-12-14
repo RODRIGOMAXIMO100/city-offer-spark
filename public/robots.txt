@@ -13,5 +13,5 @@ Allow: /
 User-agent: *
 Allow: /
 
-# Sitemap
-Sitemap: https://clilin.com/sitemap-live.xml
+# Sitemap (dynamic - edge function)
+Sitemap: https://sukvjgxxuzophzjcojvd.supabase.co/functions/v1/generate-sitemap
