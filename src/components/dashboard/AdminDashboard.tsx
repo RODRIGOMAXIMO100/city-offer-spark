@@ -32,8 +32,7 @@ import {
   Phone,
   Tags,
   Landmark,
-  CalendarIcon,
-  Globe
+  CalendarIcon
 } from 'lucide-react';
 import { AdminBlog } from './admin/AdminBlog';
 import { formatBalance, CONFIG } from '@/types/database';
@@ -50,7 +49,7 @@ import AdminFraudManagement from './admin/AdminFraudManagement';
 import AdminLeads from './admin/AdminLeads';
 import { AdminNiches } from './admin/AdminNiches';
 import AdminFinanceiro from './admin/AdminFinanceiro';
-import { AdminSitePages } from './admin/AdminSitePages';
+
 
 interface Stats {
   // Financeiro
@@ -698,7 +697,7 @@ export default function AdminDashboard() {
         {/* Tabs */}
         <Tabs defaultValue="analytics" className="space-y-4" onValueChange={resetFilters}>
           <div className="overflow-x-auto -mx-3 px-3 sm:mx-0 sm:px-0">
-            <TabsList className="inline-flex w-auto min-w-full sm:grid sm:w-full sm:grid-cols-12">
+            <TabsList className="inline-flex w-auto min-w-full sm:grid sm:w-full sm:grid-cols-11">
               {/* 1. Visão Geral */}
               <TabsTrigger value="analytics" className="flex-1 sm:flex-none text-xs sm:text-sm">
                 <BarChart3 className="h-4 w-4 sm:mr-2" />
@@ -752,10 +751,6 @@ export default function AdminDashboard() {
               <TabsTrigger value="blog" className="flex-1 sm:flex-none text-xs sm:text-sm">
                 <FileText className="h-4 w-4 sm:mr-2" />
                 <span className="hidden sm:inline">Blog</span>
-              </TabsTrigger>
-              <TabsTrigger value="sitemap" className="flex-1 sm:flex-none text-xs sm:text-sm">
-                <Globe className="h-4 w-4 sm:mr-2" />
-                <span className="hidden sm:inline">Sitemap</span>
               </TabsTrigger>
             </TabsList>
           </div>
@@ -1007,10 +1002,6 @@ export default function AdminDashboard() {
             <AdminNiches />
           </TabsContent>
 
-          {/* Sitemap Tab */}
-          <TabsContent value="sitemap">
-            <AdminSitePages />
-          </TabsContent>
         </Tabs>
       </main>
 
