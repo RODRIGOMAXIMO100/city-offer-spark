@@ -12,7 +12,7 @@ interface SEOHeadProps {
   noIndex?: boolean;
 }
 
-const BASE_URL = 'https://clilin.com.br';
+const BASE_URL = 'https://clilin.com';
 const DEFAULT_TITLE = 'Clilin - Ofertas Locais, Descontos e Programa de Afiliados';
 const DEFAULT_DESCRIPTION = 'Descubra as melhores ofertas e descontos de empresas locais. Ganhe dinheiro como afiliado divulgando promoções na sua cidade. Cadastre-se grátis!';
 const DEFAULT_OG_IMAGE = `${BASE_URL}/og-image.png`;
