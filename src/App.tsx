@@ -24,7 +24,6 @@ import HelpPage from "./pages/HelpPage";
 import NotFound from "./pages/NotFound";
 import AuthCallbackPage from "./pages/AuthCallbackPage";
 import CompleteSignupPage from "./pages/CompleteSignupPage";
-import SitemapPage from "./pages/SitemapPage";
 
 
 import WhatsAppButton from "./components/WhatsAppButton";
@@ -84,8 +83,6 @@ const AppRoutes = () => (
     <Route path="/blog/:slug" element={<BlogPostPage />} />
     <Route path="/autor/:slug" element={<AuthorPage />} />
     <Route path="/ajuda" element={<HelpPage />} />
-    <Route path="/sitemap.xml" element={<SitemapPage />} />
-    <Route path="/sitemap" element={<SitemapPage />} />
     
     <Route path="*" element={<NotFound />} />
   </Routes>

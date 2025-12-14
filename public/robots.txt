@@ -14,4 +14,4 @@ User-agent: *
 Allow: /
 
 # Sitemap
-Sitemap: https://clilin.com/sitemap
+Sitemap: https://clilin.com/sitemap.xml
