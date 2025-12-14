@@ -1,2 +1,2 @@
-# Proxy sitemap.xml to dynamic edge function
-/sitemap.xml https://sukvjgxxuzophzjcojvd.supabase.co/functions/v1/generate-sitemap 200
+# Redirect sitemap.xml to storage bucket (dynamic sitemap)
+/sitemap.xml https://sukvjgxxuzophzjcojvd.supabase.co/storage/v1/object/public/static-files/sitemap.xml 200
