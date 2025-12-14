@@ -493,6 +493,42 @@ serve(async (req) => {
 
     // Note: leads_count is updated automatically by trigger update_offer_leads_count
 
+    // ========== CHECK AND CREDIT FIRST LEAD BONUS ==========
+    // Count total valid leads for this company (across all offers)
+    const { count: totalCompanyLeads } = await supabase
+      .from("leads")
+      .select("id", { count: "exact", head: true })
+      .eq("is_valid", true)
+      .in("offer_id", 
+        supabase.from("offers").select("id").eq("company_id", companyProfile.id)
+      );
+
+    // If this is the first valid lead, credit onboarding bonus
+    if (totalCompanyLeads === 1) {
+      console.log(`First lead for company ${companyProfile.id}! Crediting bonus...`);
+      
+      const { data: bonusResult, error: bonusError } = await supabase.rpc("credit_onboarding_bonus", {
+        p_user_id: companyProfile.user_id,
+        p_bonus_type: "first_lead",
+        p_amount: 100, // R$ 1,00
+      });
+
+      if (bonusError) {
+        console.error("Error crediting first lead bonus:", bonusError);
+      } else if (bonusResult) {
+        console.log("First lead bonus credited successfully!");
+        
+        // Create notification for company
+        await supabase.from("notifications").insert({
+          user_id: companyProfile.id,
+          type: "BONUS",
+          title: "🎉 Parabéns! Primeiro lead recebido!",
+          message: `Você recebeu seu primeiro lead e ganhou R$ 1,00 de bônus! Continue divulgando suas ofertas.`,
+          data: { bonus_type: "first_lead", amount: 100 },
+        });
+      }
+    }
+
     console.log(`Lead processed successfully - CPL: ${cplCents}, Affiliate earnings: ${affiliateEarnings}`);
 
     const redirectUrl = getTrackedRedirectUrl(offer.link_destination, offer.link_type, offer.title, offerId, offer.city, name);
