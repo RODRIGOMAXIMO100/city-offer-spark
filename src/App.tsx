@@ -24,7 +24,9 @@ import HelpPage from "./pages/HelpPage";
 import NotFound from "./pages/NotFound";
 import AuthCallbackPage from "./pages/AuthCallbackPage";
 import CompleteSignupPage from "./pages/CompleteSignupPage";
-
+import ParaEmpresasPage from "./pages/ParaEmpresasPage";
+import ParaDivulgadoresPage from "./pages/ParaDivulgadoresPage";
+import ParaClientesPage from "./pages/ParaClientesPage";
 
 import WhatsAppButton from "./components/WhatsAppButton";
 
