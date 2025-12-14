@@ -20,6 +20,15 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Loader2, Wallet } from 'lucide-react';
+import { ValidatedInput } from '@/components/ui/validated-input';
+import { 
+  validateCPF, 
+  validateCNPJ, 
+  formatCPF, 
+  formatCNPJ, 
+  isCPFComplete,
+  isCNPJComplete 
+} from '@/lib/validators';
 
 interface PaymentDataModalProps {
   open: boolean;
@@ -46,26 +55,9 @@ export default function PaymentDataModal({ open, onClose, onSuccess }: PaymentDa
     pix_key: '',
   });
 
-  const formatCPF = (value: string) => {
-    const numbers = value.replace(/\D/g, '');
-    return numbers
-      .replace(/(\d{3})(\d)/, '$1.$2')
-      .replace(/(\d{3})(\d)/, '$1.$2')
-      .replace(/(\d{3})(\d{1,2})$/, '$1-$2')
-      .slice(0, 14);
-  };
-
   const formatPixKey = (value: string, type: string) => {
     if (type === 'CPF') return formatCPF(value);
-    if (type === 'CNPJ') {
-      const numbers = value.replace(/\D/g, '');
-      return numbers
-        .replace(/^(\d{2})(\d)/, '$1.$2')
-        .replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3')
-        .replace(/\.(\d{3})(\d)/, '.$1/$2')
-        .replace(/(\d{4})(\d)/, '$1-$2')
-        .slice(0, 18);
-    }
+    if (type === 'CNPJ') return formatCNPJ(value);
     if (type === 'TELEFONE') {
       const numbers = value.replace(/\D/g, '');
       return numbers
@@ -85,32 +77,24 @@ export default function PaymentDataModal({ open, onClose, onSuccess }: PaymentDa
     setFormData(prev => ({ ...prev, [field]: formatted }));
   };
 
-  const validateCPF = (cpf: string) => {
-    const numbers = cpf.replace(/\D/g, '');
-    if (numbers.length !== 11) return false;
-    
-    // Check for known invalid patterns
-    if (/^(\d)\1+$/.test(numbers)) return false;
-    
-    // Validate digits
-    let sum = 0;
-    for (let i = 0; i < 9; i++) {
-      sum += parseInt(numbers[i]) * (10 - i);
+  // Validation states for CPF
+  const cpfComplete = isCPFComplete(formData.cpf);
+  const cpfValid = cpfComplete ? validateCPF(formData.cpf) : null;
+
+  // Validation states for PIX key (when CPF or CNPJ type)
+  const getPixKeyValidation = () => {
+    if (formData.pix_tipo === 'CPF') {
+      const complete = isCPFComplete(formData.pix_key);
+      return { complete, valid: complete ? validateCPF(formData.pix_key) : null };
     }
-    let remainder = (sum * 10) % 11;
-    if (remainder === 10 || remainder === 11) remainder = 0;
-    if (remainder !== parseInt(numbers[9])) return false;
-    
-    sum = 0;
-    for (let i = 0; i < 10; i++) {
-      sum += parseInt(numbers[i]) * (11 - i);
+    if (formData.pix_tipo === 'CNPJ') {
+      const complete = isCNPJComplete(formData.pix_key);
+      return { complete, valid: complete ? validateCNPJ(formData.pix_key) : null };
     }
-    remainder = (sum * 10) % 11;
-    if (remainder === 10 || remainder === 11) remainder = 0;
-    if (remainder !== parseInt(numbers[10])) return false;
-    
-    return true;
+    return { complete: false, valid: null };
   };
+
+  const pixKeyValidation = getPixKeyValidation();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -118,7 +102,7 @@ export default function PaymentDataModal({ open, onClose, onSuccess }: PaymentDa
     if (!validateCPF(formData.cpf)) {
       toast({
         title: 'CPF inválido',
-        description: 'Por favor, insira um CPF válido.',
+        description: 'Por favor, verifique os dígitos do CPF informado.',
         variant: 'destructive',
       });
       return;
@@ -146,6 +130,25 @@ export default function PaymentDataModal({ open, onClose, onSuccess }: PaymentDa
       toast({
         title: 'Chave PIX obrigatória',
         description: 'Por favor, insira sua chave PIX.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    // Validate PIX key based on type
+    if (formData.pix_tipo === 'CPF' && !validateCPF(formData.pix_key)) {
+      toast({
+        title: 'Chave PIX (CPF) inválida',
+        description: 'O CPF informado como chave PIX é inválido.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    if (formData.pix_tipo === 'CNPJ' && !validateCNPJ(formData.pix_key)) {
+      toast({
+        title: 'Chave PIX (CNPJ) inválida',
+        description: 'O CNPJ informado como chave PIX é inválido.',
         variant: 'destructive',
       });
       return;
@@ -199,12 +202,15 @@ export default function PaymentDataModal({ open, onClose, onSuccess }: PaymentDa
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="cpf">CPF *</Label>
-            <Input
+            <ValidatedInput
               id="cpf"
               placeholder="000.000.000-00"
               value={formData.cpf}
               onChange={(e) => handleChange('cpf', e.target.value)}
               required
+              isValid={cpfValid}
+              showValidation={cpfComplete}
+              errorMessage="CPF inválido. Verifique os dígitos."
             />
           </div>
 
@@ -243,19 +249,33 @@ export default function PaymentDataModal({ open, onClose, onSuccess }: PaymentDa
 
           <div className="space-y-2">
             <Label htmlFor="pix_key">Chave PIX *</Label>
-            <Input
-              id="pix_key"
-              placeholder={
-                formData.pix_tipo === 'CPF' ? '000.000.000-00' :
-                formData.pix_tipo === 'EMAIL' ? 'email@exemplo.com' :
-                formData.pix_tipo === 'TELEFONE' ? '+55 00 00000-0000' :
-                formData.pix_tipo === 'CNPJ' ? '00.000.000/0000-00' :
-                'Cole sua chave aleatória'
-              }
-              value={formData.pix_key}
-              onChange={(e) => handleChange('pix_key', e.target.value)}
-              required
-            />
+            {(formData.pix_tipo === 'CPF' || formData.pix_tipo === 'CNPJ') ? (
+              <ValidatedInput
+                id="pix_key"
+                placeholder={
+                  formData.pix_tipo === 'CPF' ? '000.000.000-00' :
+                  '00.000.000/0000-00'
+                }
+                value={formData.pix_key}
+                onChange={(e) => handleChange('pix_key', e.target.value)}
+                required
+                isValid={pixKeyValidation.valid}
+                showValidation={pixKeyValidation.complete}
+                errorMessage={`${formData.pix_tipo} inválido. Verifique os dígitos.`}
+              />
+            ) : (
+              <Input
+                id="pix_key"
+                placeholder={
+                  formData.pix_tipo === 'EMAIL' ? 'email@exemplo.com' :
+                  formData.pix_tipo === 'TELEFONE' ? '+55 00 00000-0000' :
+                  'Cole sua chave aleatória'
+                }
+                value={formData.pix_key}
+                onChange={(e) => handleChange('pix_key', e.target.value)}
+                required
+              />
+            )}
           </div>
 
           <Button

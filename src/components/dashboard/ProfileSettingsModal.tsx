@@ -22,6 +22,15 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Loader2, User, Building2, Wallet, MapPin } from 'lucide-react';
+import { ValidatedInput } from '@/components/ui/validated-input';
+import { 
+  validateCPF, 
+  validateCNPJ, 
+  formatCPF, 
+  formatCNPJ, 
+  isCPFComplete,
+  isCNPJComplete 
+} from '@/lib/validators';
 
 interface ProfileSettingsModalProps {
   open: boolean;
@@ -92,16 +101,6 @@ export default function ProfileSettingsModal({ open, onClose, userType }: Profil
     }
   }, [profile, open]);
 
-  const formatCNPJ = (value: string) => {
-    const numbers = value.replace(/\D/g, '');
-    return numbers
-      .replace(/^(\d{2})(\d)/, '$1.$2')
-      .replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3')
-      .replace(/\.(\d{3})(\d)/, '.$1/$2')
-      .replace(/(\d{4})(\d)/, '$1-$2')
-      .slice(0, 18);
-  };
-
   const formatCEP = (value: string) => {
     const numbers = value.replace(/\D/g, '');
     return numbers.replace(/^(\d{5})(\d)/, '$1-$2').slice(0, 9);
@@ -120,15 +119,6 @@ export default function ProfileSettingsModal({ open, onClose, userType }: Profil
       .slice(0, 15);
   };
 
-  const formatCPF = (value: string) => {
-    const numbers = value.replace(/\D/g, '');
-    return numbers
-      .replace(/(\d{3})(\d)/, '$1.$2')
-      .replace(/(\d{3})(\d)/, '$1.$2')
-      .replace(/(\d{3})(\d{1,2})$/, '$1-$2')
-      .slice(0, 14);
-  };
-
   const formatPixKey = (value: string, type: string) => {
     if (type === 'CPF') return formatCPF(value);
     if (type === 'CNPJ') return formatCNPJ(value);
@@ -143,29 +133,26 @@ export default function ProfileSettingsModal({ open, onClose, userType }: Profil
     return value;
   };
 
-  const validateCPF = (cpf: string) => {
-    const numbers = cpf.replace(/\D/g, '');
-    if (numbers.length !== 11) return false;
-    if (/^(\d)\1+$/.test(numbers)) return false;
-    
-    let sum = 0;
-    for (let i = 0; i < 9; i++) {
-      sum += parseInt(numbers[i]) * (10 - i);
+  // Validation states
+  const cnpjComplete = isCNPJComplete(cnpj);
+  const cnpjValid = cnpjComplete ? validateCNPJ(cnpj) : null;
+  
+  const cpfComplete = isCPFComplete(cpf);
+  const cpfValid = cpfComplete ? validateCPF(cpf) : null;
+
+  const getPixKeyValidation = () => {
+    if (pixTipo === 'CPF') {
+      const complete = isCPFComplete(pixKey);
+      return { complete, valid: complete ? validateCPF(pixKey) : null };
     }
-    let remainder = (sum * 10) % 11;
-    if (remainder === 10 || remainder === 11) remainder = 0;
-    if (remainder !== parseInt(numbers[9])) return false;
-    
-    sum = 0;
-    for (let i = 0; i < 10; i++) {
-      sum += parseInt(numbers[i]) * (11 - i);
+    if (pixTipo === 'CNPJ') {
+      const complete = isCNPJComplete(pixKey);
+      return { complete, valid: complete ? validateCNPJ(pixKey) : null };
     }
-    remainder = (sum * 10) % 11;
-    if (remainder === 10 || remainder === 11) remainder = 0;
-    if (remainder !== parseInt(numbers[10])) return false;
-    
-    return true;
+    return { complete: false, valid: null };
   };
+
+  const pixKeyValidation = getPixKeyValidation();
 
   const handleSaveBasicData = async () => {
     if (!profile) return;
@@ -238,10 +225,10 @@ export default function ProfileSettingsModal({ open, onClose, userType }: Profil
   };
 
   const handleSaveFiscalData = async () => {
-    if (cnpj && cnpj.replace(/\D/g, '').length !== 14) {
+    if (cnpj && !validateCNPJ(cnpj)) {
       toast({
         title: 'CNPJ inválido',
-        description: 'Por favor, insira um CNPJ válido com 14 dígitos.',
+        description: 'Por favor, verifique os dígitos do CNPJ informado.',
         variant: 'destructive',
       });
       return;
@@ -280,7 +267,7 @@ export default function ProfileSettingsModal({ open, onClose, userType }: Profil
     if (cpf && !validateCPF(cpf)) {
       toast({
         title: 'CPF inválido',
-        description: 'Por favor, insira um CPF válido.',
+        description: 'Por favor, verifique os dígitos do CPF informado.',
         variant: 'destructive',
       });
       return;
@@ -290,6 +277,25 @@ export default function ProfileSettingsModal({ open, onClose, userType }: Profil
       toast({
         title: 'Nome incompleto',
         description: 'Por favor, insira nome e sobrenome.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    // Validate PIX key based on type
+    if (pixTipo === 'CPF' && pixKey && !validateCPF(pixKey)) {
+      toast({
+        title: 'Chave PIX (CPF) inválida',
+        description: 'O CPF informado como chave PIX é inválido.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    if (pixTipo === 'CNPJ' && pixKey && !validateCNPJ(pixKey)) {
+      toast({
+        title: 'Chave PIX (CNPJ) inválida',
+        description: 'O CNPJ informado como chave PIX é inválido.',
         variant: 'destructive',
       });
       return;
@@ -441,11 +447,14 @@ export default function ProfileSettingsModal({ open, onClose, userType }: Profil
             <TabsContent value="fiscal" className="space-y-4 mt-4">
               <div className="space-y-2">
                 <Label htmlFor="cnpj">CNPJ</Label>
-                <Input
+                <ValidatedInput
                   id="cnpj"
                   placeholder="00.000.000/0000-00"
                   value={cnpj}
                   onChange={(e) => setCnpj(formatCNPJ(e.target.value))}
+                  isValid={cnpjValid}
+                  showValidation={cnpjComplete}
+                  errorMessage="CNPJ inválido. Verifique os dígitos."
                 />
               </div>
 
@@ -501,11 +510,14 @@ export default function ProfileSettingsModal({ open, onClose, userType }: Profil
             <TabsContent value="payment" className="space-y-4 mt-4">
               <div className="space-y-2">
                 <Label htmlFor="cpf">CPF</Label>
-                <Input
+                <ValidatedInput
                   id="cpf"
                   placeholder="000.000.000-00"
                   value={cpf}
                   onChange={(e) => setCpf(formatCPF(e.target.value))}
+                  isValid={cpfValid}
+                  showValidation={cpfComplete}
+                  errorMessage="CPF inválido. Verifique os dígitos."
                 />
               </div>
 
@@ -543,18 +555,31 @@ export default function ProfileSettingsModal({ open, onClose, userType }: Profil
 
               <div className="space-y-2">
                 <Label htmlFor="pix_key">Chave PIX</Label>
-                <Input
-                  id="pix_key"
-                  placeholder={
-                    pixTipo === 'CPF' ? '000.000.000-00' :
-                    pixTipo === 'EMAIL' ? 'email@exemplo.com' :
-                    pixTipo === 'TELEFONE' ? '+55 00 00000-0000' :
-                    pixTipo === 'CNPJ' ? '00.000.000/0000-00' :
-                    'Cole sua chave aleatória'
-                  }
-                  value={pixKey}
-                  onChange={(e) => setPixKey(formatPixKey(e.target.value, pixTipo))}
-                />
+                {(pixTipo === 'CPF' || pixTipo === 'CNPJ') ? (
+                  <ValidatedInput
+                    id="pix_key"
+                    placeholder={
+                      pixTipo === 'CPF' ? '000.000.000-00' :
+                      '00.000.000/0000-00'
+                    }
+                    value={pixKey}
+                    onChange={(e) => setPixKey(formatPixKey(e.target.value, pixTipo))}
+                    isValid={pixKeyValidation.valid}
+                    showValidation={pixKeyValidation.complete}
+                    errorMessage={`${pixTipo} inválido. Verifique os dígitos.`}
+                  />
+                ) : (
+                  <Input
+                    id="pix_key"
+                    placeholder={
+                      pixTipo === 'EMAIL' ? 'email@exemplo.com' :
+                      pixTipo === 'TELEFONE' ? '+55 00 00000-0000' :
+                      'Cole sua chave aleatória'
+                    }
+                    value={pixKey}
+                    onChange={(e) => setPixKey(formatPixKey(e.target.value, pixTipo))}
+                  />
+                )}
               </div>
 
               <Button

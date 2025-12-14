@@ -13,6 +13,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Loader2, Building2 } from 'lucide-react';
+import { ValidatedInput } from '@/components/ui/validated-input';
+import { validateCNPJ, formatCNPJ, isCNPJComplete } from '@/lib/validators';
 
 interface FiscalDataModalProps {
   open: boolean;
@@ -31,16 +33,6 @@ export default function FiscalDataModal({ open, onClose, onSuccess }: FiscalData
     cep: '',
     telefone: '',
   });
-
-  const formatCNPJ = (value: string) => {
-    const numbers = value.replace(/\D/g, '');
-    return numbers
-      .replace(/^(\d{2})(\d)/, '$1.$2')
-      .replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3')
-      .replace(/\.(\d{3})(\d)/, '.$1/$2')
-      .replace(/(\d{4})(\d)/, '$1-$2')
-      .slice(0, 18);
-  };
 
   const formatCEP = (value: string) => {
     const numbers = value.replace(/\D/g, '');
@@ -69,10 +61,9 @@ export default function FiscalDataModal({ open, onClose, onSuccess }: FiscalData
     setFormData(prev => ({ ...prev, [field]: formatted }));
   };
 
-  const validateCNPJ = (cnpj: string) => {
-    const numbers = cnpj.replace(/\D/g, '');
-    return numbers.length === 14;
-  };
+  // Validation states
+  const cnpjComplete = isCNPJComplete(formData.cnpj);
+  const cnpjValid = cnpjComplete ? validateCNPJ(formData.cnpj) : null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -80,7 +71,7 @@ export default function FiscalDataModal({ open, onClose, onSuccess }: FiscalData
     if (!validateCNPJ(formData.cnpj)) {
       toast({
         title: 'CNPJ inválido',
-        description: 'Por favor, insira um CNPJ válido com 14 dígitos.',
+        description: 'Por favor, verifique os dígitos do CNPJ informado.',
         variant: 'destructive',
       });
       return;
@@ -144,12 +135,15 @@ export default function FiscalDataModal({ open, onClose, onSuccess }: FiscalData
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="cnpj">CNPJ *</Label>
-            <Input
+            <ValidatedInput
               id="cnpj"
               placeholder="00.000.000/0000-00"
               value={formData.cnpj}
               onChange={(e) => handleChange('cnpj', e.target.value)}
               required
+              isValid={cnpjValid}
+              showValidation={cnpjComplete}
+              errorMessage="CNPJ inválido. Verifique os dígitos."
             />
           </div>
 
