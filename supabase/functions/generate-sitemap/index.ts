@@ -33,22 +33,7 @@ serve(async (req) => {
 
     console.log(`Found ${posts?.length || 0} published blog posts`);
 
-    // Get active offers for sitemap
-    const { data: offers, error: offersError } = await supabase
-      .from("offers")
-      .select("id, updated_at")
-      .eq("active", true)
-      .is("deleted_at", null)
-      .order("created_at", { ascending: false })
-      .limit(500);
-
-    if (offersError) {
-      console.error("Error fetching offers:", offersError);
-    }
-
-    console.log(`Found ${offers?.length || 0} active offers`);
-
-    // Build XML sitemap (only dynamic content)
+    // Build XML sitemap (only blog posts - offers are local/temporary content)
     let sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 `;
@@ -62,19 +47,6 @@ serve(async (req) => {
     <lastmod>${new Date(lastmod).toISOString().split("T")[0]}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
-  </url>
-`;
-      }
-    }
-
-    // Add offer pages
-    if (offers && offers.length > 0) {
-      for (const offer of offers) {
-        sitemap += `  <url>
-    <loc>${BASE_URL}/offer/${offer.id}</loc>
-    <lastmod>${new Date(offer.updated_at).toISOString().split("T")[0]}</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
   </url>
 `;
       }

@@ -45,24 +45,9 @@ serve(async (req) => {
 
     console.log(`Found ${posts?.length || 0} published blog posts`);
 
-    // Get active offers
-    const { data: offers, error: offersError } = await supabase
-      .from("offers")
-      .select("id, updated_at")
-      .eq("active", true)
-      .is("deleted_at", null)
-      .order("created_at", { ascending: false })
-      .limit(500);
-
-    if (offersError) {
-      console.error("Error fetching offers:", offersError);
-    }
-
-    console.log(`Found ${offers?.length || 0} active offers`);
-
     const today = new Date().toISOString().split("T")[0];
 
-    // Build XML sitemap
+    // Build XML sitemap (static pages + blog posts only - offers are local/temporary)
     let sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 `;
@@ -92,19 +77,6 @@ serve(async (req) => {
       }
     }
 
-    // Add offer pages
-    if (offers && offers.length > 0) {
-      for (const offer of offers) {
-        sitemap += `  <url>
-    <loc>${BASE_URL}/offer/${offer.id}</loc>
-    <lastmod>${new Date(offer.updated_at).toISOString().split("T")[0]}</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-`;
-      }
-    }
-
     sitemap += `</urlset>`;
 
     // Convert to Uint8Array for upload
@@ -129,7 +101,7 @@ serve(async (req) => {
       .from("static-files")
       .getPublicUrl("sitemap.xml");
 
-    const totalUrls = STATIC_PAGES.length + (posts?.length || 0) + (offers?.length || 0);
+    const totalUrls = STATIC_PAGES.length + (posts?.length || 0);
 
     console.log(`Sitemap saved successfully with ${totalUrls} URLs`);
     console.log(`Public URL: ${publicUrlData.publicUrl}`);
@@ -140,7 +112,6 @@ serve(async (req) => {
         totalUrls,
         staticPages: STATIC_PAGES.length,
         blogPosts: posts?.length || 0,
-        offers: offers?.length || 0,
         publicUrl: publicUrlData.publicUrl,
       }),
       {
