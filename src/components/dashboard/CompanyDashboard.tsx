@@ -52,8 +52,9 @@ function CompanyDashboardContent() {
   const { offers, loading, fetchMyOffers, deleteOffer } = useOffers();
   const { toast } = useToast();
   const navigate = useNavigate();
-  const { claimBonus, hasClaimedBonus, startTour } = useOnboarding();
+  const { claimBonus, hasClaimedBonus, startTour, showTour } = useOnboarding();
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [activeTab, setActiveTab] = useState('panel');
   const [showFiscalModal, setShowFiscalModal] = useState(false);
   const [instagramUrl, setInstagramUrl] = useState(profile?.instagram_url || '');
   const [savingInstagram, setSavingInstagram] = useState(false);
@@ -102,6 +103,13 @@ function CompanyDashboardContent() {
   useEffect(() => {
     fetchMyOffers();
   }, []);
+
+  // Garantir aba "panel" ativa quando tour iniciar
+  useEffect(() => {
+    if (showTour) {
+      setActiveTab('panel');
+    }
+  }, [showTour]);
 
   useEffect(() => {
     setInstagramUrl(profile?.instagram_url || '');
@@ -417,7 +425,7 @@ function CompanyDashboardContent() {
 
       <div className="max-w-2xl mx-auto px-3 sm:px-4 py-4 sm:py-6 space-y-4 sm:space-y-6">
         {/* Tab Navigation */}
-        <Tabs defaultValue="panel" className="w-full">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full grid-cols-2 mb-4">
             <TabsTrigger value="panel" className="flex items-center gap-2">
               <LayoutDashboard className="h-4 w-4" />

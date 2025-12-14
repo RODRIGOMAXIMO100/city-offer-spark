@@ -93,28 +93,44 @@ export function OnboardingTour() {
   useEffect(() => {
     if (!showTour || !currentStepData?.target) return;
 
-    // Pequeno delay para garantir que DOM está pronto
-    const timer = setTimeout(() => {
+    let retryCount = 0;
+    const maxRetries = 8;
+    let retryTimer: NodeJS.Timeout;
+    let cancelled = false;
+
+    const findElement = () => {
+      if (cancelled) return;
+      
       const element = document.querySelector(currentStepData.target);
+      
       if (element) {
         element.scrollIntoView({ behavior: 'smooth', block: 'center' });
         setTimeout(updatePositions, 100);
+      } else if (retryCount < maxRetries) {
+        retryCount++;
+        console.log(`Tour: tentativa ${retryCount}/${maxRetries} para ${currentStepData.target}`);
+        retryTimer = setTimeout(findElement, 350);
       } else {
-        // Elemento não encontrado - pular para próximo step
-        console.warn(`Tour: elemento ${currentStepData.target} não encontrado, pulando step`);
+        // Após todas tentativas, pular para próximo step
+        console.warn(`Tour: elemento ${currentStepData.target} não encontrado após ${maxRetries} tentativas, pulando`);
         if (!isLastStep) {
           nextStep();
         } else {
           completeTour();
         }
       }
-    }, 150);
+    };
+
+    // Delay inicial maior para garantir renderização
+    const initialTimer = setTimeout(findElement, 400);
 
     window.addEventListener('resize', updatePositions);
     window.addEventListener('scroll', updatePositions);
 
     return () => {
-      clearTimeout(timer);
+      cancelled = true;
+      clearTimeout(initialTimer);
+      clearTimeout(retryTimer);
       window.removeEventListener('resize', updatePositions);
       window.removeEventListener('scroll', updatePositions);
     };
