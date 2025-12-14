@@ -1,4 +1,0 @@
-# Redirect sitemap to edge function (dynamic sitemap)
-# Using 200! to force rewrite even if file exists
-/sitemap.xml https://sukvjgxxuzophzjcojvd.supabase.co/functions/v1/generate-sitemap 200!
-/sitemap-live.xml https://sukvjgxxuzophzjcojvd.supabase.co/functions/v1/generate-sitemap 200!
