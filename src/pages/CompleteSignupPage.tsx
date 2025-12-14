@@ -14,13 +14,10 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
 import { Check, ChevronsUpDown } from 'lucide-react';
+import { ValidatedInput } from '@/components/ui/validated-input';
+import { validateCNPJ, formatCNPJ, isCNPJComplete } from '@/lib/validators';
 
 type UserRole = 'COMPANY' | 'AFFILIATE' | 'CLIENT';
-
-const formatCNPJ = (value: string) => {
-  const numbers = value.replace(/\D/g, '').slice(0, 14);
-  return numbers.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5');
-};
 
 const formatPhone = (value: string) => {
   const numbers = value.replace(/\D/g, '').slice(0, 11);
@@ -28,11 +25,6 @@ const formatPhone = (value: string) => {
     return numbers.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
   }
   return numbers.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
-};
-
-const validateCNPJ = (cnpj: string) => {
-  const numbers = cnpj.replace(/\D/g, '');
-  return numbers.length === 14;
 };
 
 const validatePhone = (phone: string) => {
@@ -58,6 +50,10 @@ export default function CompleteSignupPage() {
   const [cityOpen, setCityOpen] = useState(false);
   
   const cities = selectedState ? getCitiesByState(selectedState) : [];
+
+  // Validation states
+  const cnpjComplete = isCNPJComplete(cnpj);
+  const cnpjValid = cnpjComplete ? validateCNPJ(cnpj) : null;
 
   useEffect(() => {
     let mounted = true;
@@ -122,7 +118,7 @@ export default function CompleteSignupPage() {
         return;
       }
       if (!validateCNPJ(cnpj)) {
-        toast.error('CNPJ inválido');
+        toast.error('CNPJ inválido. Verifique os dígitos informados.');
         return;
       }
       if (!selectedState || !selectedCity) {
@@ -330,12 +326,15 @@ export default function CompleteSignupPage() {
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="cnpj">CNPJ</Label>
-                      <Input
+                      <ValidatedInput
                         id="cnpj"
                         value={cnpj}
                         onChange={(e) => setCnpj(formatCNPJ(e.target.value))}
                         placeholder="00.000.000/0000-00"
                         required
+                        isValid={cnpjValid}
+                        showValidation={cnpjComplete}
+                        errorMessage="CNPJ inválido. Verifique os dígitos."
                       />
                     </div>
                   </>
