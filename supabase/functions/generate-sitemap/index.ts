@@ -8,6 +8,17 @@ const corsHeaders = {
 
 const BASE_URL = "https://clilin.com";
 
+const STATIC_PAGES = [
+  { path: "/", changefreq: "weekly", priority: 1.0 },
+  { path: "/sobre", changefreq: "monthly", priority: 0.8 },
+  { path: "/blog", changefreq: "daily", priority: 0.9 },
+  { path: "/termos", changefreq: "yearly", priority: 0.5 },
+  { path: "/privacidade", changefreq: "yearly", priority: 0.5 },
+  { path: "/transparencia", changefreq: "monthly", priority: 0.6 },
+  { path: "/ajuda", changefreq: "monthly", priority: 0.7 },
+  { path: "/chat", changefreq: "weekly", priority: 0.6 },
+];
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -19,6 +30,8 @@ serve(async (req) => {
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     console.log("Generating dynamic sitemap...");
+
+    const today = new Date().toISOString().split("T")[0];
 
     // Get published blog posts
     const { data: posts, error: postsError } = await supabase
@@ -33,10 +46,23 @@ serve(async (req) => {
 
     console.log(`Found ${posts?.length || 0} published blog posts`);
 
-    // Build XML sitemap (only blog posts - offers are local/temporary content)
+    // Build XML sitemap
     let sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 `;
+
+    // Add static pages
+    for (const page of STATIC_PAGES) {
+      sitemap += `  <url>
+    <loc>${BASE_URL}${page.path}</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>${page.changefreq}</changefreq>
+    <priority>${page.priority}</priority>
+  </url>
+`;
+    }
+
+    console.log(`Added ${STATIC_PAGES.length} static pages`);
 
     // Add blog posts
     if (posts && posts.length > 0) {
