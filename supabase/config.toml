@@ -47,3 +47,6 @@ verify_jwt = false
 
 [functions.classify-company-niche]
 verify_jwt = true
+
+[functions.update-sitemap-file]
+verify_jwt = false
