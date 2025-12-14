@@ -8,6 +8,17 @@ const corsHeaders = {
 
 const BASE_URL = "https://clilin.com";
 
+const STATIC_PAGES = [
+  { path: "/", changefreq: "weekly", priority: 1.0 },
+  { path: "/sobre", changefreq: "monthly", priority: 0.8 },
+  { path: "/blog", changefreq: "daily", priority: 0.9 },
+  { path: "/termos", changefreq: "yearly", priority: 0.5 },
+  { path: "/privacidade", changefreq: "yearly", priority: 0.5 },
+  { path: "/transparencia", changefreq: "monthly", priority: 0.6 },
+  { path: "/ajuda", changefreq: "monthly", priority: 0.7 },
+  { path: "/chat", changefreq: "weekly", priority: 0.6 },
+];
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -53,9 +64,22 @@ serve(async (req) => {
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 `;
 
-    // Add pages from database
+    // Add static pages first (always included)
+    for (const page of STATIC_PAGES) {
+      sitemap += `  <url>
+    <loc>${BASE_URL}${page.path}</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>${page.changefreq}</changefreq>
+    <priority>${page.priority}</priority>
+  </url>
+`;
+    }
+
+    // Add additional pages from database (if any)
     if (pages && pages.length > 0) {
       for (const page of pages) {
+        // Skip if already in static pages
+        if (STATIC_PAGES.some(sp => sp.path === page.path)) continue;
         sitemap += `  <url>
     <loc>${BASE_URL}${page.path}</loc>
     <lastmod>${today}</lastmod>
@@ -104,9 +128,9 @@ serve(async (req) => {
       .from("static-files")
       .getPublicUrl("sitemap.xml");
 
-    const totalUrls = (pages?.length || 0) + (posts?.length || 0);
+    const totalUrls = STATIC_PAGES.length + (posts?.length || 0);
 
-    console.log(`Sitemap saved successfully with ${totalUrls} URLs`);
+    console.log(`Sitemap saved successfully with ${totalUrls} URLs (${STATIC_PAGES.length} static + ${posts?.length || 0} blog posts)`);
     console.log(`Public URL: ${publicUrlData.publicUrl}`);
 
     return new Response(
