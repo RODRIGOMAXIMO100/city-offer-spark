@@ -24,6 +24,7 @@ import HelpPage from "./pages/HelpPage";
 import NotFound from "./pages/NotFound";
 import AuthCallbackPage from "./pages/AuthCallbackPage";
 import CompleteSignupPage from "./pages/CompleteSignupPage";
+import SitemapDynamicPage from "./pages/SitemapDynamicPage";
 import WhatsAppButton from "./components/WhatsAppButton";
 
 const queryClient = new QueryClient();
@@ -81,6 +82,7 @@ const AppRoutes = () => (
     <Route path="/blog/:slug" element={<BlogPostPage />} />
     <Route path="/autor/:slug" element={<AuthorPage />} />
     <Route path="/ajuda" element={<HelpPage />} />
+    <Route path="/sitemap-dynamic.xml" element={<SitemapDynamicPage />} />
     <Route path="*" element={<NotFound />} />
   </Routes>
 );
