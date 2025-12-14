@@ -271,6 +271,17 @@ export function useOffers(city?: string) {
         description: "As alterações foram salvas com sucesso.",
       });
 
+      // Update sitemap in background (non-blocking)
+      supabase.functions.invoke('update-sitemap-file').then(({ error }) => {
+        if (error) {
+          console.log('Sitemap update skipped:', error.message);
+        } else {
+          console.log('Sitemap updated after offer update');
+        }
+      }).catch(err => {
+        console.log('Sitemap update error:', err);
+      });
+
       return data;
     } catch (err) {
       console.error('Error updating offer:', err);
