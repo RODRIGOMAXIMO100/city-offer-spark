@@ -1177,6 +1177,39 @@ export type Database = {
         }
         Relationships: []
       }
+      site_pages: {
+        Row: {
+          changefreq: string | null
+          created_at: string | null
+          id: string
+          include_in_sitemap: boolean | null
+          name: string
+          path: string
+          priority: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          changefreq?: string | null
+          created_at?: string | null
+          id?: string
+          include_in_sitemap?: boolean | null
+          name: string
+          path: string
+          priority?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          changefreq?: string | null
+          created_at?: string | null
+          id?: string
+          include_in_sitemap?: boolean | null
+          name?: string
+          path?: string
+          priority?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       transactions: {
         Row: {
           amount: number

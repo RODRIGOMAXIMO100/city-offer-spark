@@ -8,18 +8,6 @@ const corsHeaders = {
 
 const BASE_URL = "https://clilin.com";
 
-// Static pages that are always included
-const STATIC_PAGES = [
-  { loc: "/", changefreq: "daily", priority: "1.0" },
-  { loc: "/sobre", changefreq: "monthly", priority: "0.8" },
-  { loc: "/blog", changefreq: "daily", priority: "0.9" },
-  { loc: "/auth", changefreq: "monthly", priority: "0.5" },
-  { loc: "/ajuda", changefreq: "monthly", priority: "0.6" },
-  { loc: "/transparencia", changefreq: "monthly", priority: "0.6" },
-  { loc: "/termos", changefreq: "monthly", priority: "0.4" },
-  { loc: "/privacidade", changefreq: "monthly", priority: "0.4" },
-];
-
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -31,6 +19,19 @@ serve(async (req) => {
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     console.log("Generating and saving sitemap...");
+
+    // Get pages from database
+    const { data: pages, error: pagesError } = await supabase
+      .from("site_pages")
+      .select("path, changefreq, priority")
+      .eq("include_in_sitemap", true)
+      .order("priority", { ascending: false });
+
+    if (pagesError) {
+      console.error("Error fetching site pages:", pagesError);
+    }
+
+    console.log(`Found ${pages?.length || 0} site pages`);
 
     // Get published blog posts
     const { data: posts, error: postsError } = await supabase
@@ -47,20 +48,22 @@ serve(async (req) => {
 
     const today = new Date().toISOString().split("T")[0];
 
-    // Build XML sitemap (static pages + blog posts only - offers are local/temporary)
+    // Build XML sitemap
     let sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 `;
 
-    // Add static pages
-    for (const page of STATIC_PAGES) {
-      sitemap += `  <url>
-    <loc>${BASE_URL}${page.loc}</loc>
+    // Add pages from database
+    if (pages && pages.length > 0) {
+      for (const page of pages) {
+        sitemap += `  <url>
+    <loc>${BASE_URL}${page.path}</loc>
     <lastmod>${today}</lastmod>
     <changefreq>${page.changefreq}</changefreq>
     <priority>${page.priority}</priority>
   </url>
 `;
+      }
     }
 
     // Add blog posts
@@ -101,7 +104,7 @@ serve(async (req) => {
       .from("static-files")
       .getPublicUrl("sitemap.xml");
 
-    const totalUrls = STATIC_PAGES.length + (posts?.length || 0);
+    const totalUrls = (pages?.length || 0) + (posts?.length || 0);
 
     console.log(`Sitemap saved successfully with ${totalUrls} URLs`);
     console.log(`Public URL: ${publicUrlData.publicUrl}`);
@@ -110,7 +113,7 @@ serve(async (req) => {
       JSON.stringify({
         success: true,
         totalUrls,
-        staticPages: STATIC_PAGES.length,
+        sitePages: pages?.length || 0,
         blogPosts: posts?.length || 0,
         publicUrl: publicUrlData.publicUrl,
       }),
