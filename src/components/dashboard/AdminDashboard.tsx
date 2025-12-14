@@ -66,6 +66,8 @@ interface Stats {
   // Atividade
   empresasAtivas: number;    // Empresas que receberam leads no período
   divulgadoresAtivos: number; // Divulgadores que geraram leads no período
+  totalEmpresas: number;     // Total de empresas cadastradas
+  totalDivulgadores: number; // Total de divulgadores cadastrados
   
   // Caixa
   depositos: number;         // DEPOSIT no período
@@ -134,6 +136,8 @@ export default function AdminDashboard() {
     conversao: 0,
     empresasAtivas: 0,
     divulgadoresAtivos: 0,
+    totalEmpresas: 0,
+    totalDivulgadores: 0,
     depositos: 0,
     saquesPendentes: 0,
     saldoEmpresas: 0,
@@ -265,12 +269,20 @@ export default function AdminDashboard() {
       
       let saldoEmpresas = 0;
       let saldoAfiliados = 0;
+      let totalEmpresas = 0;
+      let totalDivulgadores = 0;
       
       roles?.forEach(r => {
         const profileId = userProfileMap.get(r.user_id);
         const balance = profileId ? (profileUserMap.get(profileId) || 0) : 0;
-        if (r.role === 'COMPANY') saldoEmpresas += balance;
-        if (r.role === 'AFFILIATE') saldoAfiliados += balance;
+        if (r.role === 'COMPANY') {
+          saldoEmpresas += balance;
+          totalEmpresas++;
+        }
+        if (r.role === 'AFFILIATE') {
+          saldoAfiliados += balance;
+          totalDivulgadores++;
+        }
       });
 
       setStats({
@@ -282,6 +294,8 @@ export default function AdminDashboard() {
         conversao,
         empresasAtivas,
         divulgadoresAtivos,
+        totalEmpresas,
+        totalDivulgadores,
         depositos,
         saquesPendentes,
         saldoEmpresas,
@@ -603,8 +617,11 @@ export default function AdminDashboard() {
               <CardContent className="p-3 sm:p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-[10px] sm:text-xs text-muted-foreground mb-1">Empresas Ativas</p>
-                    <p className="text-lg sm:text-2xl font-bold text-company">{stats.empresasAtivas}</p>
+                    <p className="text-[10px] sm:text-xs text-muted-foreground mb-1">Empresas</p>
+                    <p className="text-lg sm:text-2xl font-bold text-company">
+                      {stats.empresasAtivas}<span className="text-sm text-muted-foreground font-normal">/{stats.totalEmpresas}</span>
+                    </p>
+                    <p className="text-[9px] text-muted-foreground">ativas/total</p>
                   </div>
                   <Building2 className="h-8 w-8 text-company/20" />
                 </div>
@@ -614,8 +631,11 @@ export default function AdminDashboard() {
               <CardContent className="p-3 sm:p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-[10px] sm:text-xs text-muted-foreground mb-1">Divulgadores Ativos</p>
-                    <p className="text-lg sm:text-2xl font-bold text-affiliate">{stats.divulgadoresAtivos}</p>
+                    <p className="text-[10px] sm:text-xs text-muted-foreground mb-1">Divulgadores</p>
+                    <p className="text-lg sm:text-2xl font-bold text-affiliate">
+                      {stats.divulgadoresAtivos}<span className="text-sm text-muted-foreground font-normal">/{stats.totalDivulgadores}</span>
+                    </p>
+                    <p className="text-[9px] text-muted-foreground">ativos/total</p>
                   </div>
                   <UserCheck className="h-8 w-8 text-affiliate/20" />
                 </div>
