@@ -185,6 +185,17 @@ export function useOffers(city?: string) {
         console.log('Niche classification error:', err);
       });
 
+      // Update sitemap in background (non-blocking)
+      supabase.functions.invoke('update-sitemap-file').then(({ error }) => {
+        if (error) {
+          console.log('Sitemap update skipped:', error.message);
+        } else {
+          console.log('Sitemap updated with new offer');
+        }
+      }).catch(err => {
+        console.log('Sitemap update error:', err);
+      });
+
       return data;
     } catch (err) {
       console.error('Error creating offer:', err);
@@ -299,6 +310,17 @@ export function useOffers(city?: string) {
       toast({
         title: "Oferta deletada",
         description: "A oferta foi removida com sucesso.",
+      });
+
+      // Update sitemap in background (non-blocking)
+      supabase.functions.invoke('update-sitemap-file').then(({ error }) => {
+        if (error) {
+          console.log('Sitemap update skipped:', error.message);
+        } else {
+          console.log('Sitemap updated after offer deletion');
+        }
+      }).catch(err => {
+        console.log('Sitemap update error:', err);
       });
 
       await fetchMyOffers();
