@@ -85,6 +85,7 @@ const AppRoutes = () => (
     <Route path="/autor/:slug" element={<AuthorPage />} />
     <Route path="/ajuda" element={<HelpPage />} />
     <Route path="/sitemap.xml" element={<SitemapPage />} />
+    <Route path="/sitemap" element={<SitemapPage />} />
     
     <Route path="*" element={<NotFound />} />
   </Routes>
