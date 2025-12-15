@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import { SEOHead } from "@/components/seo/SEOHead";
 import { Footer } from "@/components/landing/Footer";
+import SignupForm from "@/components/auth/SignupForm";
 
 const ParaDivulgadoresPage = () => {
   const earnings = [
@@ -195,12 +196,14 @@ const ParaDivulgadoresPage = () => {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-              <Button asChild size="lg" className="text-lg px-8 py-6 bg-green-500 hover:bg-green-600 text-white shadow-lg shadow-green-500/25">
-                <Link to="/auth?type=affiliate">
-                  <DollarSign className="mr-2 w-5 h-5" />
-                  Começar a Ganhar Agora
-                  <ArrowRight className="ml-2 w-5 h-5" />
-                </Link>
+              <Button 
+                size="lg" 
+                className="text-lg px-8 py-6 bg-green-500 hover:bg-green-600 text-white shadow-lg shadow-green-500/25"
+                onClick={() => document.getElementById('cadastro')?.scrollIntoView({ behavior: 'smooth' })}
+              >
+                <DollarSign className="mr-2 w-5 h-5" />
+                Começar a Ganhar Agora
+                <ArrowRight className="ml-2 w-5 h-5" />
               </Button>
             </div>
 
@@ -596,36 +599,56 @@ const ParaDivulgadoresPage = () => {
         </div>
       </section>
 
-      {/* Final CTA */}
-      <section className="py-20">
+      {/* Signup Section */}
+      <section id="cadastro" className="py-20">
         <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto text-center">
-            <div className="bg-gradient-to-br from-green-500 to-emerald-600 rounded-3xl p-8 md:p-12 text-white relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
-              <div className="absolute bottom-0 left-0 w-48 h-48 bg-black/10 rounded-full blur-3xl" />
-              
-              <div className="relative z-10">
-                <Flame className="w-16 h-16 mx-auto mb-6 opacity-80" />
-                <h2 className="text-3xl md:text-5xl font-black mb-4">
-                  Comece a ganhar. Agora.
-                </h2>
-                <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
-                  Enquanto você lê isso, divulgadores na sua cidade estão ganhando dinheiro.
-                </p>
-                
-                <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <Button asChild size="lg" className="text-lg px-8 py-6 bg-white text-green-600 hover:bg-white/90">
-                    <Link to="/auth?type=affiliate">
-                      <DollarSign className="mr-2 w-5 h-5" />
-                      Criar Conta Grátis
-                      <ArrowRight className="ml-2 w-5 h-5" />
-                    </Link>
-                  </Button>
+          <div className="max-w-5xl mx-auto">
+            <div className="grid md:grid-cols-2 gap-12 items-center">
+              {/* Left: Benefits summary */}
+              <div>
+                <div className="inline-flex items-center gap-2 bg-green-500/10 border border-green-500/20 rounded-full px-4 py-2 mb-6">
+                  <Megaphone className="w-4 h-4 text-green-500" />
+                  <span className="text-sm font-bold text-green-500">Cadastro Gratuito</span>
                 </div>
-
-                <p className="mt-6 text-sm opacity-70">
-                  Sem investimento • Sem taxa • Começa a ganhar hoje
+                <h2 className="text-3xl md:text-4xl font-black mb-6">
+                  Comece a ganhar. <span className="text-green-500">Agora.</span>
+                </h2>
+                <ul className="space-y-4 mb-8">
+                  <li className="flex items-center gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0" />
+                    <span>Até R$ 1,50 por indicação</span>
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0" />
+                    <span>PIX em 24 horas</span>
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0" />
+                    <span>Zero investimento inicial</span>
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0" />
+                    <span>Não precisa criar conteúdo</span>
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0" />
+                    <span>Ganha só por indicar (não precisa vender)</span>
+                  </li>
+                </ul>
+                <p className="text-muted-foreground text-sm">
+                  Enquanto você lê isso, divulgadores na sua cidade estão ganhando.
                 </p>
+              </div>
+
+              {/* Right: Signup Form */}
+              <div className="bg-card border border-border rounded-2xl p-6 md:p-8 shadow-xl">
+                <SignupForm 
+                  role="AFFILIATE"
+                  title="Crie sua conta"
+                  description="Comece a ganhar dinheiro hoje mesmo"
+                  buttonText="Começar a Ganhar"
+                  compact
+                />
               </div>
             </div>
           </div>

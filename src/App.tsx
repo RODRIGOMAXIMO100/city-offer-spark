@@ -86,9 +86,13 @@ const AppRoutes = () => (
     <Route path="/autor/:slug" element={<AuthorPage />} />
     <Route path="/ajuda" element={<HelpPage />} />
     
-        <Route path="/para-empresas" element={<ParaEmpresasPage />} />
-        <Route path="/para-divulgadores" element={<ParaDivulgadoresPage />} />
-        <Route path="/para-clientes" element={<ParaClientesPage />} />
+        <Route path="/empresas" element={<ParaEmpresasPage />} />
+        <Route path="/divulgadores" element={<ParaDivulgadoresPage />} />
+        <Route path="/clientes" element={<ParaClientesPage />} />
+        {/* Redirects from old routes */}
+        <Route path="/para-empresas" element={<Navigate to="/empresas" replace />} />
+        <Route path="/para-divulgadores" element={<Navigate to="/divulgadores" replace />} />
+        <Route path="/para-clientes" element={<Navigate to="/clientes" replace />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
 );

@@ -45,16 +45,16 @@ export function Navbar() {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-1">
             <Link 
-              to="/para-empresas" 
+              to="/empresas" 
               className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground rounded-lg hover:bg-muted/50 transition-all"
             >
-              Para Empresas
+              Empresas
             </Link>
             <Link 
-              to="/para-divulgadores" 
+              to="/divulgadores" 
               className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground rounded-lg hover:bg-muted/50 transition-all"
             >
-              Para Divulgadores
+              Divulgadores
             </Link>
             <button 
               onClick={() => scrollToSection("como-funciona")} 
@@ -106,18 +106,18 @@ export function Navbar() {
           <div className="md:hidden py-4 border-t border-border animate-fade-in bg-background">
             <div className="flex flex-col gap-2">
               <Link 
-                to="/para-empresas" 
+                to="/empresas" 
                 onClick={() => setIsOpen(false)}
                 className="text-left px-4 py-3 text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-lg transition-colors"
               >
-                Para Empresas
+                Empresas
               </Link>
               <Link 
-                to="/para-divulgadores" 
+                to="/divulgadores" 
                 onClick={() => setIsOpen(false)}
                 className="text-left px-4 py-3 text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-lg transition-colors"
               >
-                Para Divulgadores
+                Divulgadores
               </Link>
               <button 
                 onClick={() => scrollToSection("como-funciona")} 

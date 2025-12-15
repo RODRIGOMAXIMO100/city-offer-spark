@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import { SEOHead } from "@/components/seo/SEOHead";
 import { Footer } from "@/components/landing/Footer";
+import SignupForm from "@/components/auth/SignupForm";
 
 const ParaEmpresasPage = () => {
   const tripleComparison = [
@@ -164,12 +165,14 @@ const ParaEmpresasPage = () => {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-              <Button asChild size="lg" className="text-lg px-8 py-6 bg-primary hover:bg-primary/90 shadow-lg shadow-primary/25">
-                <Link to="/auth?type=company">
-                  <Flame className="mr-2 w-5 h-5" />
-                  Parar de Queimar Dinheiro
-                  <ArrowRight className="ml-2 w-5 h-5" />
-                </Link>
+              <Button 
+                size="lg" 
+                className="text-lg px-8 py-6 bg-primary hover:bg-primary/90 shadow-lg shadow-primary/25"
+                onClick={() => document.getElementById('cadastro')?.scrollIntoView({ behavior: 'smooth' })}
+              >
+                <Flame className="mr-2 w-5 h-5" />
+                Parar de Queimar Dinheiro
+                <ArrowRight className="ml-2 w-5 h-5" />
               </Button>
             </div>
 
@@ -543,35 +546,56 @@ const ParaEmpresasPage = () => {
         </div>
       </section>
 
-      {/* Final CTA - Urgência */}
-      <section className="py-20">
+      {/* Signup Section */}
+      <section id="cadastro" className="py-20">
         <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto text-center">
-            <div className="bg-gradient-to-br from-primary to-primary/80 rounded-3xl p-8 md:p-12 text-primary-foreground relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
-              <div className="absolute bottom-0 left-0 w-48 h-48 bg-black/10 rounded-full blur-3xl" />
-              
-              <div className="relative z-10">
-                <Flame className="w-16 h-16 mx-auto mb-6 opacity-80" />
-                <h2 className="text-3xl md:text-5xl font-black mb-4">
-                  Pare de queimar dinheiro.
-                </h2>
-                <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
-                  Enquanto você pensa, seu concorrente já está recebendo clientes por R$ 2 cada.
-                </p>
-                
-                <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <Button asChild size="lg" className="text-lg px-8 py-6 bg-background text-foreground hover:bg-background/90">
-                    <Link to="/auth?type=company">
-                      Cadastrar Minha Empresa
-                      <ArrowRight className="ml-2 w-5 h-5" />
-                    </Link>
-                  </Button>
+          <div className="max-w-5xl mx-auto">
+            <div className="grid md:grid-cols-2 gap-12 items-center">
+              {/* Left: Benefits summary */}
+              <div>
+                <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 rounded-full px-4 py-2 mb-6">
+                  <Building2 className="w-4 h-4 text-primary" />
+                  <span className="text-sm font-bold text-primary">Cadastro Gratuito</span>
                 </div>
-
-                <p className="mt-6 text-sm opacity-70">
-                  Sem contrato • Sem mensalidade • Comece com R$ 50
+                <h2 className="text-3xl md:text-4xl font-black mb-6">
+                  Pare de queimar dinheiro. <span className="text-primary">Comece agora.</span>
+                </h2>
+                <ul className="space-y-4 mb-8">
+                  <li className="flex items-center gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0" />
+                    <span>R$ 1-3 por cliente real no seu WhatsApp</span>
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0" />
+                    <span>Zero taxa sobre vendas</span>
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0" />
+                    <span>Sem contrato, sem mensalidade</span>
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0" />
+                    <span>Comece com apenas R$ 50</span>
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0" />
+                    <span>IA + divulgadores locais trabalhando 24h</span>
+                  </li>
+                </ul>
+                <p className="text-muted-foreground text-sm">
+                  Enquanto você pensa, seu concorrente já está recebendo clientes.
                 </p>
+              </div>
+
+              {/* Right: Signup Form */}
+              <div className="bg-card border border-border rounded-2xl p-6 md:p-8 shadow-xl">
+                <SignupForm 
+                  role="COMPANY"
+                  title="Cadastre sua empresa"
+                  description="Crie sua conta e comece a receber clientes hoje"
+                  buttonText="Cadastrar Minha Empresa"
+                  compact
+                />
               </div>
             </div>
           </div>
