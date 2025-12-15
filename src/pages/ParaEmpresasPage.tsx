@@ -387,110 +387,110 @@ const ParaEmpresasPage = () => {
       </section>
 
       {/* Seção: Faça as Contas - EXPANDIDA */}
-      <section className="py-20 bg-muted/30">
+      <section className="py-12 md:py-20 bg-muted/30">
         <div className="container mx-auto px-4">
           <div className="max-w-5xl mx-auto">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-5xl font-black mb-4">
+            <div className="text-center mb-8 md:mb-12">
+              <h2 className="text-2xl md:text-5xl font-black mb-2 md:mb-4">
                 Faça as contas
               </h2>
-              <p className="text-xl text-muted-foreground">
+              <p className="text-base md:text-xl text-muted-foreground">
                 Cenário: Você quer <strong className="text-foreground">100 clientes</strong> esse mês
               </p>
             </div>
 
-            <div className="grid md:grid-cols-3 gap-6 mb-8">
+            <div className="grid md:grid-cols-3 gap-4 md:gap-6 mb-8">
               {/* Anúncios Online */}
-              <div className="bg-card border-2 border-destructive/30 rounded-2xl p-6">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-10 h-10 bg-destructive/20 rounded-full flex items-center justify-center">
-                    <XCircle className="w-5 h-5 text-destructive" />
+              <div className="bg-card border-2 border-destructive/30 rounded-xl md:rounded-2xl p-4 md:p-6">
+                <div className="flex items-center gap-2 md:gap-3 mb-4 md:mb-6">
+                  <div className="w-8 h-8 md:w-10 md:h-10 bg-destructive/20 rounded-full flex items-center justify-center">
+                    <XCircle className="w-4 h-4 md:w-5 md:h-5 text-destructive" />
                   </div>
-                  <h3 className="text-lg font-bold text-destructive">Anúncios Online</h3>
+                  <h3 className="text-sm md:text-lg font-bold text-destructive">Anúncios Online</h3>
                 </div>
                 
-                <div className="space-y-4 text-sm">
-                  <div className="flex justify-between items-center py-2 border-b border-border">
-                    <span className="text-muted-foreground">100 clientes ÷ 3% conversão</span>
+                <div className="space-y-2 md:space-y-4 text-xs md:text-sm">
+                  <div className="flex justify-between items-center py-1.5 md:py-2 border-b border-border">
+                    <span className="text-muted-foreground">100 clientes ÷ 3%</span>
                     <span className="font-mono font-bold">3.333 cliques</span>
                   </div>
-                  <div className="flex justify-between items-center py-2 border-b border-border">
-                    <span className="text-muted-foreground">3.333 × R$ 3/clique</span>
+                  <div className="flex justify-between items-center py-1.5 md:py-2 border-b border-border">
+                    <span className="text-muted-foreground">3.333 × R$ 3</span>
                     <span className="font-mono font-bold text-destructive">R$ 10.000</span>
                   </div>
-                  <div className="flex justify-between items-center py-3 bg-destructive/10 rounded-lg px-3 -mx-3">
-                    <span className="font-bold">Custo por cliente:</span>
-                    <span className="font-mono font-black text-destructive text-xl">R$ 100</span>
+                  <div className="flex justify-between items-center py-2 md:py-3 bg-destructive/10 rounded-lg px-2 md:px-3 -mx-2 md:-mx-3">
+                    <span className="font-bold text-xs md:text-sm">Por cliente:</span>
+                    <span className="font-mono font-black text-destructive text-base md:text-xl">R$ 100</span>
                   </div>
                 </div>
               </div>
 
               {/* App de Delivery */}
-              <div className="bg-card border-2 border-orange-500/30 rounded-2xl p-6">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-10 h-10 bg-orange-500/20 rounded-full flex items-center justify-center">
-                    <XCircle className="w-5 h-5 text-orange-500" />
+              <div className="bg-card border-2 border-orange-500/30 rounded-xl md:rounded-2xl p-4 md:p-6">
+                <div className="flex items-center gap-2 md:gap-3 mb-4 md:mb-6">
+                  <div className="w-8 h-8 md:w-10 md:h-10 bg-orange-500/20 rounded-full flex items-center justify-center">
+                    <XCircle className="w-4 h-4 md:w-5 md:h-5 text-orange-500" />
                   </div>
-                  <h3 className="text-lg font-bold text-orange-500">App de Delivery</h3>
+                  <h3 className="text-sm md:text-lg font-bold text-orange-500">App Delivery</h3>
                 </div>
                 
-                <div className="space-y-4 text-sm">
-                  <div className="flex justify-between items-center py-2 border-b border-border">
-                    <span className="text-muted-foreground">100 pedidos × R$ 80</span>
+                <div className="space-y-2 md:space-y-4 text-xs md:text-sm">
+                  <div className="flex justify-between items-center py-1.5 md:py-2 border-b border-border">
+                    <span className="text-muted-foreground">100 × R$ 80</span>
                     <span className="font-mono font-bold">R$ 8.000</span>
                   </div>
-                  <div className="flex justify-between items-center py-2 border-b border-border">
-                    <span className="text-muted-foreground">Taxa de 27%</span>
+                  <div className="flex justify-between items-center py-1.5 md:py-2 border-b border-border">
+                    <span className="text-muted-foreground">Taxa 27%</span>
                     <span className="font-mono font-bold text-orange-500">- R$ 2.160</span>
                   </div>
-                  <div className="flex justify-between items-center py-3 bg-orange-500/10 rounded-lg px-3 -mx-3">
-                    <span className="font-bold">Custo por cliente:</span>
-                    <span className="font-mono font-black text-orange-500 text-xl">R$ 21,60</span>
+                  <div className="flex justify-between items-center py-2 md:py-3 bg-orange-500/10 rounded-lg px-2 md:px-3 -mx-2 md:-mx-3">
+                    <span className="font-bold text-xs md:text-sm">Por cliente:</span>
+                    <span className="font-mono font-black text-orange-500 text-base md:text-xl">R$ 21,60</span>
                   </div>
                 </div>
-                <p className="text-xs text-muted-foreground mt-3 italic">
+                <p className="text-[10px] md:text-xs text-muted-foreground mt-2 md:mt-3 italic">
                   + cliente não é seu
                 </p>
               </div>
 
               {/* Clilin */}
-              <div className="bg-card border-2 border-primary rounded-2xl p-6 relative">
-                <div className="absolute -top-3 -right-3 bg-primary text-primary-foreground text-xs font-bold px-3 py-1 rounded-full shadow-lg">
+              <div className="bg-card border-2 border-primary rounded-xl md:rounded-2xl p-4 md:p-6 relative">
+                <div className="absolute -top-2 -right-2 md:-top-3 md:-right-3 bg-primary text-primary-foreground text-[10px] md:text-xs font-bold px-2 py-0.5 md:px-3 md:py-1 rounded-full shadow-lg">
                   ⚡ 50x MAIS BARATO
                 </div>
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center">
-                    <CheckCircle2 className="w-5 h-5 text-primary" />
+                <div className="flex items-center gap-2 md:gap-3 mb-4 md:mb-6">
+                  <div className="w-8 h-8 md:w-10 md:h-10 bg-primary/20 rounded-full flex items-center justify-center">
+                    <CheckCircle2 className="w-4 h-4 md:w-5 md:h-5 text-primary" />
                   </div>
-                  <h3 className="text-lg font-bold text-primary">Clilin</h3>
+                  <h3 className="text-sm md:text-lg font-bold text-primary">Clilin</h3>
                 </div>
                 
-                <div className="space-y-4 text-sm">
-                  <div className="flex justify-between items-center py-2 border-b border-border">
-                    <span className="text-muted-foreground">100 leads qualificados</span>
+                <div className="space-y-2 md:space-y-4 text-xs md:text-sm">
+                  <div className="flex justify-between items-center py-1.5 md:py-2 border-b border-border">
+                    <span className="text-muted-foreground">100 leads</span>
                     <span className="font-mono font-bold">100 clientes</span>
                   </div>
-                  <div className="flex justify-between items-center py-2 border-b border-border">
-                    <span className="text-muted-foreground">100 × R$ 2/lead</span>
+                  <div className="flex justify-between items-center py-1.5 md:py-2 border-b border-border">
+                    <span className="text-muted-foreground">100 × R$ 2</span>
                     <span className="font-mono font-bold text-primary">R$ 200</span>
                   </div>
-                  <div className="flex justify-between items-center py-3 bg-primary/10 rounded-lg px-3 -mx-3">
-                    <span className="font-bold">Custo por cliente:</span>
-                    <span className="font-mono font-black text-primary text-xl">R$ 2</span>
+                  <div className="flex justify-between items-center py-2 md:py-3 bg-primary/10 rounded-lg px-2 md:px-3 -mx-2 md:-mx-3">
+                    <span className="font-bold text-xs md:text-sm">Por cliente:</span>
+                    <span className="font-mono font-black text-primary text-base md:text-xl">R$ 2</span>
                   </div>
                 </div>
-                <p className="text-xs text-primary mt-3 font-medium">
+                <p className="text-[10px] md:text-xs text-primary mt-2 md:mt-3 font-medium">
                   ✓ Cliente vai pro SEU WhatsApp
                 </p>
               </div>
             </div>
 
             {/* Frase de impacto */}
-            <div className="bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/20 rounded-2xl p-8 text-center">
-              <p className="text-xl md:text-2xl font-bold mb-4">
-                "Enquanto seu concorrente joga <span className="text-destructive">R$ 10.000/mês</span> em anúncios torcendo pra converter 3%..."
+            <div className="bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/20 rounded-xl md:rounded-2xl p-4 md:p-8 text-center">
+              <p className="text-sm md:text-2xl font-bold mb-2 md:mb-4">
+                "Enquanto seu concorrente joga <span className="text-destructive">R$ 10.000/mês</span> em anúncios..."
               </p>
-              <p className="text-2xl md:text-3xl font-black text-primary">
+              <p className="text-lg md:text-3xl font-black text-primary">
                 Você paga R$ 200 e recebe 100 clientes no WhatsApp.
               </p>
             </div>
