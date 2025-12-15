@@ -308,19 +308,46 @@ const ParaEmpresasPage = () => {
       </section>
 
       {/* Tabela Comparativa Tripla */}
-      <section className="py-20">
+      <section className="py-12 md:py-20">
         <div className="container mx-auto px-4">
-          <div className="max-w-5xl mx-auto text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-black mb-6">
+          <div className="max-w-5xl mx-auto text-center mb-8 md:mb-12">
+            <h2 className="text-2xl md:text-4xl font-black mb-3 md:mb-6">
               Compare você mesmo
             </h2>
-            <p className="text-xl text-muted-foreground">
+            <p className="text-base md:text-xl text-muted-foreground">
               Números que falam por si
             </p>
           </div>
 
-          <div className="max-w-5xl mx-auto overflow-x-auto">
-            <div className="bg-card border border-border rounded-2xl overflow-hidden min-w-[600px]">
+          {/* Mobile: Cards empilhados */}
+          <div className="md:hidden space-y-4 max-w-sm mx-auto">
+            {tripleComparison.map((item, index) => (
+              <div key={index} className="bg-card border border-border rounded-xl p-4">
+                <div className="flex items-center gap-2 mb-3 pb-2 border-b border-border">
+                  <item.icon className="w-4 h-4 text-muted-foreground" />
+                  <span className="font-bold text-sm">{item.metric}</span>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center py-1.5 px-2 bg-destructive/5 rounded-lg">
+                    <span className="text-xs text-destructive font-medium">Anúncios</span>
+                    <span className="text-xs">{item.anuncios}</span>
+                  </div>
+                  <div className="flex justify-between items-center py-1.5 px-2 bg-orange-500/5 rounded-lg">
+                    <span className="text-xs text-orange-500 font-medium">Delivery</span>
+                    <span className="text-xs">{item.delivery}</span>
+                  </div>
+                  <div className="flex justify-between items-center py-1.5 px-2 bg-primary/10 rounded-lg">
+                    <span className="text-xs text-primary font-medium">Clilin</span>
+                    <span className="text-xs font-bold text-primary">{item.clilin}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Desktop: Tabela */}
+          <div className="hidden md:block max-w-5xl mx-auto">
+            <div className="bg-card border border-border rounded-2xl overflow-hidden">
               <div className="grid grid-cols-4 bg-muted/50">
                 <div className="p-4 font-semibold"></div>
                 <div className="p-4 font-semibold text-center text-destructive text-sm">
@@ -343,13 +370,13 @@ const ParaEmpresasPage = () => {
                     <item.icon className="w-4 h-4 text-muted-foreground flex-shrink-0" />
                     <span>{item.metric}</span>
                   </div>
-                  <div className="p-4 flex items-center justify-center gap-2 bg-destructive/5 text-center">
+                  <div className="p-4 flex items-center justify-center bg-destructive/5 text-center">
                     <span className="text-xs">{item.anuncios}</span>
                   </div>
-                  <div className="p-4 flex items-center justify-center gap-2 bg-orange-500/5 text-center">
+                  <div className="p-4 flex items-center justify-center bg-orange-500/5 text-center">
                     <span className="text-xs">{item.delivery}</span>
                   </div>
-                  <div className="p-4 flex items-center justify-center gap-2 bg-primary/5 text-center">
+                  <div className="p-4 flex items-center justify-center bg-primary/5 text-center">
                     <span className="text-xs font-bold text-primary">{item.clilin}</span>
                   </div>
                 </div>
