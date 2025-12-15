@@ -370,48 +370,85 @@ const ParaDivulgadoresPage = () => {
       </section>
 
       {/* Tabela de Ganhos */}
-      <section id="calculator" className="py-20">
+      <section id="calculator" className="py-12 md:py-20">
         <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-black mb-6">
+          <div className="max-w-4xl mx-auto text-center mb-8 md:mb-12">
+            <h2 className="text-2xl md:text-4xl font-black mb-3 md:mb-6">
               Quanto você pode ganhar?
             </h2>
-            <p className="text-xl text-muted-foreground">
+            <p className="text-base md:text-xl text-muted-foreground">
               Escolha seu perfil. Veja o resultado.
             </p>
           </div>
 
           <div className="max-w-4xl mx-auto">
-            <div className="bg-card border border-border rounded-2xl overflow-hidden">
-              <div className="grid grid-cols-5 bg-green-500/10">
-                <div className="p-4 font-bold text-center text-sm">Perfil</div>
-                <div className="p-4 font-bold text-center text-sm">Leads/dia</div>
-                <div className="p-4 font-bold text-center text-sm">Leads/mês</div>
-                <div className="p-4 font-bold text-center text-sm">Ganho</div>
-                <div className="p-4 font-bold text-center text-sm"></div>
-              </div>
-              
+            {/* Mobile: Cards empilhados */}
+            <div className="md:hidden space-y-3 max-w-sm mx-auto">
               {earnings.map((row, index) => (
                 <div 
                   key={index} 
-                  className={`grid grid-cols-5 border-t border-border ${
-                    row.highlight ? 'bg-green-500/10' : ''
+                  className={`bg-card border rounded-xl p-4 ${
+                    row.highlight ? 'border-green-500/50 bg-green-500/5' : 'border-border'
                   }`}
                 >
-                  <div className="p-4 text-center font-medium flex items-center justify-center gap-2">
-                    <span>{row.emoji}</span>
-                    <span className="text-sm">{row.perfil}</span>
+                  <div className="flex items-center justify-between mb-3 pb-2 border-b border-border">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xl">{row.emoji}</span>
+                      <span className="font-bold">{row.perfil}</span>
+                    </div>
+                    {row.highlight && <Star className="w-4 h-4 text-green-500" />}
                   </div>
-                  <div className="p-4 text-center text-sm">{row.leadsdia}</div>
-                  <div className="p-4 text-center text-sm">{row.leadsmes.toLocaleString()}</div>
-                  <div className={`p-4 text-center font-bold ${row.highlight ? 'text-green-500 text-lg' : ''}`}>
-                    {row.ganho}
-                  </div>
-                  <div className="p-4 text-center">
-                    {row.highlight && <Star className="w-5 h-5 text-green-500 mx-auto" />}
+                  <div className="grid grid-cols-3 gap-2 text-center">
+                    <div>
+                      <div className="text-xs text-muted-foreground">Leads/dia</div>
+                      <div className="font-bold text-sm">{row.leadsdia}</div>
+                    </div>
+                    <div>
+                      <div className="text-xs text-muted-foreground">Leads/mês</div>
+                      <div className="font-bold text-sm">{row.leadsmes.toLocaleString()}</div>
+                    </div>
+                    <div>
+                      <div className="text-xs text-muted-foreground">Ganho</div>
+                      <div className={`font-black ${row.highlight ? 'text-green-500' : ''}`}>{row.ganho}</div>
+                    </div>
                   </div>
                 </div>
               ))}
+            </div>
+
+            {/* Desktop: Tabela */}
+            <div className="hidden md:block">
+              <div className="bg-card border border-border rounded-2xl overflow-hidden">
+                <div className="grid grid-cols-5 bg-green-500/10">
+                  <div className="p-4 font-bold text-center text-sm">Perfil</div>
+                  <div className="p-4 font-bold text-center text-sm">Leads/dia</div>
+                  <div className="p-4 font-bold text-center text-sm">Leads/mês</div>
+                  <div className="p-4 font-bold text-center text-sm">Ganho</div>
+                  <div className="p-4 font-bold text-center text-sm"></div>
+                </div>
+                
+                {earnings.map((row, index) => (
+                  <div 
+                    key={index} 
+                    className={`grid grid-cols-5 border-t border-border ${
+                      row.highlight ? 'bg-green-500/10' : ''
+                    }`}
+                  >
+                    <div className="p-4 text-center font-medium flex items-center justify-center gap-2">
+                      <span>{row.emoji}</span>
+                      <span className="text-sm">{row.perfil}</span>
+                    </div>
+                    <div className="p-4 text-center text-sm">{row.leadsdia}</div>
+                    <div className="p-4 text-center text-sm">{row.leadsmes.toLocaleString()}</div>
+                    <div className={`p-4 text-center font-bold ${row.highlight ? 'text-green-500 text-lg' : ''}`}>
+                      {row.ganho}
+                    </div>
+                    <div className="p-4 text-center">
+                      {row.highlight && <Star className="w-5 h-5 text-green-500 mx-auto" />}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
 
             <p className="text-center text-muted-foreground mt-4 text-sm">
