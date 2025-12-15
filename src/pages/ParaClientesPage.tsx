@@ -148,21 +148,21 @@ const ParaClientesPage = () => {
       />
 
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      <section className="relative pt-20 pb-16 md:pt-28 md:pb-20 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-secondary/20 via-background to-background" />
         <div className="absolute inset-0 opacity-30">
           <div className="absolute top-20 left-1/4 w-72 h-72 bg-secondary/30 rounded-full blur-3xl animate-pulse" />
           <div className="absolute bottom-20 right-1/4 w-96 h-96 bg-primary/20 rounded-full blur-3xl animate-pulse delay-1000" />
         </div>
         
-        <div className="container mx-auto px-4 py-20 relative z-10">
+        <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-4xl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 bg-secondary/10 border border-secondary/20 rounded-full px-4 py-2 mb-8">
-              <Gift className="w-4 h-4 text-secondary" />
-              <span className="text-sm font-medium text-secondary">Para Clientes</span>
+            <div className="inline-flex items-center gap-2 bg-secondary/10 border border-secondary/20 rounded-full px-3 py-1.5 md:px-4 md:py-2 mb-6 md:mb-8">
+              <Gift className="w-3 h-3 md:w-4 md:h-4 text-secondary" />
+              <span className="text-xs md:text-sm font-medium text-secondary">Para Clientes</span>
             </div>
             
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-black mb-6 leading-tight">
+            <h1 className="text-3xl md:text-5xl lg:text-6xl font-black mb-4 md:mb-6 leading-tight">
               Ofertas{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-rose-500">
                 exclusivas
@@ -170,22 +170,22 @@ const ParaClientesPage = () => {
               que você não encontra em nenhum app
             </h1>
             
-            <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto">
+            <p className="text-base md:text-xl text-muted-foreground mb-6 md:mb-8 max-w-3xl mx-auto">
               Descontos de <strong className="text-foreground">20% a 70%</strong> em negócios da sua cidade. 
               Curados por IA. Indicados por vizinhos. <strong className="text-secondary">100% gratuito.</strong>
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-              <Button asChild size="lg" className="text-lg px-8 py-6 bg-secondary hover:bg-secondary/90 text-secondary-foreground">
+            <div className="flex flex-col sm:flex-row gap-3 justify-center mb-8 md:mb-12">
+              <Button asChild size="lg" className="text-base md:text-lg px-6 md:px-8 py-5 md:py-6 bg-secondary hover:bg-secondary/90 text-secondary-foreground">
                 <Link to="/chat">
                   Encontrar Ofertas
-                  <Sparkles className="ml-2 w-5 h-5" />
+                  <Sparkles className="ml-2 w-4 h-4 md:w-5 md:h-5" />
                 </Link>
               </Button>
               <Button 
                 variant="outline" 
                 size="lg" 
-                className="text-lg px-8 py-6"
+                className="text-base md:text-lg px-6 md:px-8 py-5 md:py-6"
                 onClick={() => document.getElementById('cadastro')?.scrollIntoView({ behavior: 'smooth' })}
               >
                 Criar conta grátis
@@ -193,18 +193,18 @@ const ParaClientesPage = () => {
             </div>
 
             {/* Quick Stats */}
-            <div className="grid grid-cols-3 gap-4 max-w-2xl mx-auto">
-              <div className="bg-card/50 backdrop-blur border border-border/50 rounded-xl p-4">
-                <div className="text-2xl md:text-3xl font-black text-secondary">70%</div>
-                <div className="text-sm text-muted-foreground">Desconto máx</div>
+            <div className="grid grid-cols-3 gap-2 md:gap-4 max-w-2xl mx-auto">
+              <div className="bg-card/50 backdrop-blur border border-border/50 rounded-xl p-3 md:p-4">
+                <div className="text-lg md:text-3xl font-black text-secondary">70%</div>
+                <div className="text-[10px] md:text-sm text-muted-foreground">Desconto máx</div>
               </div>
-              <div className="bg-card/50 backdrop-blur border border-border/50 rounded-xl p-4">
-                <div className="text-2xl md:text-3xl font-black text-secondary">0</div>
-                <div className="text-sm text-muted-foreground">Apps pra baixar</div>
+              <div className="bg-card/50 backdrop-blur border border-border/50 rounded-xl p-3 md:p-4">
+                <div className="text-lg md:text-3xl font-black text-secondary">0</div>
+                <div className="text-[10px] md:text-sm text-muted-foreground">Apps pra baixar</div>
               </div>
-              <div className="bg-card/50 backdrop-blur border border-border/50 rounded-xl p-4">
-                <div className="text-2xl md:text-3xl font-black text-secondary">R$ 0</div>
-                <div className="text-sm text-muted-foreground">Pra usar</div>
+              <div className="bg-card/50 backdrop-blur border border-border/50 rounded-xl p-3 md:p-4">
+                <div className="text-lg md:text-3xl font-black text-secondary">R$ 0</div>
+                <div className="text-[10px] md:text-sm text-muted-foreground">Pra usar</div>
               </div>
             </div>
           </div>

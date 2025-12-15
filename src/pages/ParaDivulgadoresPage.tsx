@@ -158,21 +158,21 @@ const ParaDivulgadoresPage = () => {
       />
 
       {/* Hero Section - AGRESSIVO */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      <section className="relative pt-20 pb-16 md:pt-28 md:pb-20 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-green-500/10 via-background to-background" />
         <div className="absolute inset-0 opacity-30">
           <div className="absolute top-20 right-10 w-72 h-72 bg-green-500/30 rounded-full blur-3xl animate-pulse" />
           <div className="absolute bottom-20 left-10 w-96 h-96 bg-accent/20 rounded-full blur-3xl animate-pulse delay-1000" />
         </div>
         
-        <div className="container mx-auto px-4 py-20 relative z-10">
+        <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-5xl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 bg-green-500/10 border border-green-500/30 rounded-full px-4 py-2 mb-8">
-              <Sparkles className="w-4 h-4 text-green-500" />
-              <span className="text-sm font-bold text-green-500">Oportunidade Real</span>
+            <div className="inline-flex items-center gap-2 bg-green-500/10 border border-green-500/30 rounded-full px-3 py-1.5 md:px-4 md:py-2 mb-6 md:mb-8">
+              <Sparkles className="w-3 h-3 md:w-4 md:h-4 text-green-500" />
+              <span className="text-xs md:text-sm font-bold text-green-500">Oportunidade Real</span>
             </div>
             
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-black mb-6 leading-tight">
+            <h1 className="text-3xl md:text-5xl lg:text-6xl font-black mb-4 md:mb-6 leading-tight">
               Enquanto você rola o feed, tem gente ganhando{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-500">
                 R$ 22.500/mês
@@ -180,46 +180,46 @@ const ParaDivulgadoresPage = () => {
               só indicando negócios
             </h1>
             
-            <div className="max-w-3xl mx-auto space-y-4 mb-8">
-              <p className="text-xl md:text-2xl text-muted-foreground">
+            <div className="max-w-3xl mx-auto space-y-2 md:space-y-4 mb-6 md:mb-8">
+              <p className="text-base md:text-xl text-muted-foreground">
                 ❌ Não precisa aparecer
               </p>
-              <p className="text-xl md:text-2xl text-muted-foreground">
+              <p className="text-base md:text-xl text-muted-foreground">
                 ❌ Não precisa criar conteúdo
               </p>
-              <p className="text-xl md:text-2xl text-muted-foreground">
+              <p className="text-base md:text-xl text-muted-foreground">
                 ❌ Não precisa vender <strong className="text-foreground">NADA</strong>
               </p>
-              <p className="text-xl md:text-2xl text-foreground font-bold mt-6">
+              <p className="text-base md:text-xl text-foreground font-bold mt-4 md:mt-6">
                 ✅ Só mandar um link. Cada clique = até <span className="text-green-500">R$ 1,50</span> na sua conta.
               </p>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+            <div className="flex flex-col sm:flex-row gap-3 justify-center mb-8 md:mb-12">
               <Button 
                 size="lg" 
-                className="text-lg px-8 py-6 bg-green-500 hover:bg-green-600 text-white shadow-lg shadow-green-500/25"
+                className="text-base md:text-lg px-6 md:px-8 py-5 md:py-6 bg-green-500 hover:bg-green-600 text-white shadow-lg shadow-green-500/25"
                 onClick={() => document.getElementById('cadastro')?.scrollIntoView({ behavior: 'smooth' })}
               >
-                <DollarSign className="mr-2 w-5 h-5" />
+                <DollarSign className="mr-2 w-4 h-4 md:w-5 md:h-5" />
                 Começar a Ganhar Agora
-                <ArrowRight className="ml-2 w-5 h-5" />
+                <ArrowRight className="ml-2 w-4 h-4 md:w-5 md:h-5" />
               </Button>
             </div>
 
             {/* Quick Stats */}
-            <div className="grid grid-cols-3 gap-4 max-w-2xl mx-auto">
-              <div className="bg-card/50 backdrop-blur border border-green-500/30 rounded-xl p-4">
-                <div className="text-2xl md:text-3xl font-black text-green-500">R$ 1,50</div>
-                <div className="text-sm text-muted-foreground">por clique</div>
+            <div className="grid grid-cols-3 gap-2 md:gap-4 max-w-2xl mx-auto">
+              <div className="bg-card/50 backdrop-blur border border-green-500/30 rounded-xl p-3 md:p-4">
+                <div className="text-lg md:text-3xl font-black text-green-500">R$ 1,50</div>
+                <div className="text-[10px] md:text-sm text-muted-foreground">por clique</div>
               </div>
-              <div className="bg-card/50 backdrop-blur border border-green-500/30 rounded-xl p-4">
-                <div className="text-2xl md:text-3xl font-black text-green-500">24h</div>
-                <div className="text-sm text-muted-foreground">PIX na conta</div>
+              <div className="bg-card/50 backdrop-blur border border-green-500/30 rounded-xl p-3 md:p-4">
+                <div className="text-lg md:text-3xl font-black text-green-500">24h</div>
+                <div className="text-[10px] md:text-sm text-muted-foreground">PIX na conta</div>
               </div>
-              <div className="bg-card/50 backdrop-blur border border-green-500/30 rounded-xl p-4">
-                <div className="text-2xl md:text-3xl font-black text-green-500">R$ 0</div>
-                <div className="text-sm text-muted-foreground">pra começar</div>
+              <div className="bg-card/50 backdrop-blur border border-green-500/30 rounded-xl p-3 md:p-4">
+                <div className="text-lg md:text-3xl font-black text-green-500">R$ 0</div>
+                <div className="text-[10px] md:text-sm text-muted-foreground">pra começar</div>
               </div>
             </div>
           </div>
