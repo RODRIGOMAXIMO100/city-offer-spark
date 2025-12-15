@@ -15,50 +15,80 @@ import {
   Smartphone,
   Share2,
   Award,
-  Calculator
+  Calculator,
+  AlertTriangle,
+  Flame,
+  MessageCircle,
+  Sparkles,
+  Timer
 } from "lucide-react";
 import { SEOHead } from "@/components/seo/SEOHead";
 import { Footer } from "@/components/landing/Footer";
 
 const ParaDivulgadoresPage = () => {
   const earnings = [
-    { perfil: "Iniciante", leadsdia: 10, leadsmes: 300, ganho: "R$ 450" },
-    { perfil: "Intermediário", leadsdia: 50, leadsmes: 1500, ganho: "R$ 2.250" },
-    { perfil: "Dedicado", leadsdia: 100, leadsmes: 3000, ganho: "R$ 4.500" },
-    { perfil: "Profissional", leadsdia: 200, leadsmes: 6000, ganho: "R$ 9.000", highlight: true },
-    { perfil: "Top Divulgador", leadsdia: 500, leadsmes: 15000, ganho: "R$ 22.500", highlight: true },
+    { perfil: "Casual", leadsdia: 10, leadsmes: 300, ganho: "R$ 450", emoji: "😊" },
+    { perfil: "Ativo", leadsdia: 50, leadsmes: 1500, ganho: "R$ 2.250", emoji: "💪" },
+    { perfil: "Dedicado", leadsdia: 100, leadsmes: 3000, ganho: "R$ 4.500", emoji: "🔥" },
+    { perfil: "Profissional", leadsdia: 200, leadsmes: 6000, ganho: "R$ 9.000", emoji: "🚀", highlight: true },
+    { perfil: "Top", leadsdia: 500, leadsmes: 15000, ganho: "R$ 22.500", emoji: "👑", highlight: true },
   ];
 
-  const comparisons = [
+  const truthVsLies = [
     { 
-      tradicional: "Comissão de 5-10% da venda", 
-      clilin: "Comissão de 30-50% do lead",
-      icon: DollarSign
-    },
-    { 
-      tradicional: "Pagamento em 30-60 dias", 
-      clilin: "PIX em 24h (mín R$ 100)",
-      icon: Clock
-    },
-    { 
-      tradicional: "Precisa criar conteúdo", 
-      clilin: "Só copiar e compartilhar link",
+      lie: "Crie conteúdo todo dia", 
+      truth: "Só compartilha link",
       icon: Share2
     },
     { 
-      tradicional: "Precisa ter audiência enorme", 
-      clilin: "Qualquer pessoa pode começar",
-      icon: Users
+      lie: "Construa audiência por 2 anos", 
+      truth: "Começa hoje, ganha hoje",
+      icon: Timer
     },
     { 
-      tradicional: "Depende de alguém comprar", 
-      clilin: "Ganha só por indicar interesse",
-      icon: TrendingUp
+      lie: "Espere 60 dias pra receber", 
+      truth: "PIX em 24h",
+      icon: Clock
     },
     { 
-      tradicional: "Programa complicado", 
-      clilin: "Cadastro em 2 minutos",
-      icon: Zap
+      lie: "Torça pro cliente comprar", 
+      truth: "Ganha SÓ POR INDICAR",
+      icon: DollarSign
+    },
+  ];
+
+  const realExamples = [
+    {
+      persona: "Mãe no grupo da escola",
+      action: "Compartilhou oferta de pizzaria",
+      result: "47 mães clicaram",
+      earning: "R$ 70,50",
+      time: "em uma tarde",
+      emoji: "👩‍👧‍👦"
+    },
+    {
+      persona: "Jovem no Instagram Stories",
+      action: "Postou link de barbearia",
+      result: "89 cliques",
+      earning: "R$ 133,50",
+      time: "em 24h",
+      emoji: "📱"
+    },
+    {
+      persona: "Tio no grupo do condomínio",
+      action: "Indicou mecânica de confiança",
+      result: "23 vizinhos clicaram",
+      earning: "R$ 34,50",
+      time: "no café da manhã",
+      emoji: "🏢"
+    },
+    {
+      persona: "Estudante no grupo da facul",
+      action: "Mandou oferta de hambúrguer",
+      result: "156 colegas clicaram",
+      earning: "R$ 234,00",
+      time: "em 2 dias",
+      emoji: "🎓"
     },
   ];
 
@@ -66,313 +96,450 @@ const ParaDivulgadoresPage = () => {
     {
       icon: DollarSign,
       title: "Até R$ 1,50 por indicação",
-      description: "Cada pessoa que clica no seu link e demonstra interesse = dinheiro no seu bolso. Automático."
+      description: "Cada clique = dinheiro. Automático. Sem depender de venda."
     },
     {
       icon: Zap,
       title: "PIX em 24 horas",
-      description: "Saque mínimo de R$ 100. Pediu, caiu na conta. Sem esperar 30-60 dias."
+      description: "Saque a partir de R$ 100. Sem esperar 30-60 dias."
     },
     {
       icon: Share2,
-      title: "Só compartilhar",
-      description: "Não precisa criar conteúdo. Não precisa convencer ninguém a comprar. Só indicar."
+      title: "Zero criação de conteúdo",
+      description: "Não precisa aparecer. Não precisa editar vídeo. Só mandar link."
     },
     {
       icon: Award,
       title: "Sistema de níveis",
-      description: "Quanto mais você divulga, maior sua comissão. Bronze 30%, Prata 40%, Ouro 50%."
+      description: "Bronze 30%, Prata 40%, Ouro 50%. Quanto mais divulga, mais ganha."
     },
     {
       icon: Smartphone,
-      title: "Ofertas locais",
-      description: "Indique pizzarias, mecânicas, salões da sua cidade. Coisas que sua rede realmente quer."
+      title: "Ofertas que sua rede quer",
+      description: "Pizzaria, mecânica, salão... Coisas locais que fazem sentido indicar."
     },
     {
       icon: Shield,
-      title: "Sem risco",
-      description: "Gratuito pra começar. Sem investimento. Sem taxa. Só cadastrar e divulgar."
+      title: "Risco literalmente zero",
+      description: "R$ 0 pra começar. Sem taxa. Sem pegadinha. Só cadastrar."
     }
   ];
 
   const faqs = [
     {
       question: "Preciso ter muitos seguidores?",
-      answer: "Não. Você pode divulgar no WhatsApp da família, grupos de amigos, vizinhos. Qualquer pessoa pode começar."
+      answer: "Não! Você pode divulgar no WhatsApp da família, grupos de amigos, vizinhos. Qualquer pessoa pode começar. Aliás, grupos de WhatsApp convertem melhor que redes sociais."
     },
     {
       question: "Como funciona a comissão?",
-      answer: "Você ganha de 30% a 50% do valor que a empresa paga por cada lead. Quanto mais você divulga, maior sua porcentagem."
+      answer: "Você ganha de 30% a 50% do valor que a empresa paga por cada lead. Começa com 30% e vai subindo conforme seu nível. 10 leads = Bronze, 50 = Prata, 100+ = Ouro."
     },
     {
       question: "Quando recebo o dinheiro?",
-      answer: "Assim que atingir R$ 100, pode sacar via PIX. O dinheiro cai em até 24h."
+      answer: "Assim que atingir R$ 100, pode sacar via PIX. O dinheiro cai em até 24h. Nada de esperar 30-60 dias como em outros programas."
     },
     {
       question: "Preciso vender alguma coisa?",
-      answer: "Não! Você ganha quando alguém demonstra interesse (clica no link). Não precisa vender nada."
+      answer: "NÃO! Essa é a grande diferença. Você ganha quando alguém demonstra interesse (clica no link). A venda é problema da empresa, não seu."
     },
     {
-      question: "É gratuito?",
-      answer: "Sim, 100% gratuito. Sem taxa de cadastro, sem mensalidade, sem pegadinha."
+      question: "É gratuito mesmo?",
+      answer: "100% gratuito. Sem taxa de cadastro, sem mensalidade, sem 'pegadinha'. Você não investe nada, só ganha."
     }
   ];
 
   return (
     <div className="min-h-screen bg-background">
       <SEOHead
-        title="Para Divulgadores | Clilin - Ganhe até R$ 22.500/mês indicando negócios"
-        description="Ganhe dinheiro indicando negócios da sua cidade. Comissão de até 50%. PIX em 24h. Sem precisar criar conteúdo ou ter milhões de seguidores."
-        keywords={["ganhar dinheiro online", "divulgador", "renda extra", "indicar negócios", "comissão por lead"]}
+        title="Para Divulgadores | Clilin - Ganhe R$ 22.500/mês só indicando"
+        description="Não precisa aparecer. Não precisa criar conteúdo. Não precisa vender NADA. Só mandar um link. Cada clique = até R$ 1,50 na sua conta. PIX em 24h."
+        keywords={["ganhar dinheiro online", "divulgador", "renda extra", "indicar negócios", "comissão por lead", "trabalho de casa"]}
       />
 
-      {/* Hero Section */}
+      {/* Hero Section - AGRESSIVO */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-accent/20 via-background to-background" />
+        <div className="absolute inset-0 bg-gradient-to-br from-green-500/10 via-background to-background" />
         <div className="absolute inset-0 opacity-30">
-          <div className="absolute top-20 right-10 w-72 h-72 bg-accent/30 rounded-full blur-3xl animate-pulse" />
-          <div className="absolute bottom-20 left-10 w-96 h-96 bg-primary/20 rounded-full blur-3xl animate-pulse delay-1000" />
+          <div className="absolute top-20 right-10 w-72 h-72 bg-green-500/30 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute bottom-20 left-10 w-96 h-96 bg-accent/20 rounded-full blur-3xl animate-pulse delay-1000" />
         </div>
         
         <div className="container mx-auto px-4 py-20 relative z-10">
-          <div className="max-w-4xl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 bg-accent/10 border border-accent/20 rounded-full px-4 py-2 mb-8">
-              <Megaphone className="w-4 h-4 text-accent" />
-              <span className="text-sm font-medium text-accent">Para Divulgadores</span>
+          <div className="max-w-5xl mx-auto text-center">
+            <div className="inline-flex items-center gap-2 bg-green-500/10 border border-green-500/30 rounded-full px-4 py-2 mb-8">
+              <Sparkles className="w-4 h-4 text-green-500" />
+              <span className="text-sm font-bold text-green-500">Oportunidade Real</span>
             </div>
             
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-black mb-6 leading-tight">
-              Ganhe{" "}
+              Enquanto você rola o feed, tem gente ganhando{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-500">
-                R$ 9.000/mês
+                R$ 22.500/mês
               </span>{" "}
-              indicando negócios da sua cidade
+              só indicando negócios
             </h1>
             
-            <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto">
-              Sem criar conteúdo. Sem ter milhões de seguidores. <strong className="text-foreground">Só indicar.</strong>{" "}
-              Comissão de até <strong className="text-accent">50%</strong> em PIX instantâneo.
-            </p>
+            <div className="max-w-3xl mx-auto space-y-4 mb-8">
+              <p className="text-xl md:text-2xl text-muted-foreground">
+                ❌ Não precisa aparecer
+              </p>
+              <p className="text-xl md:text-2xl text-muted-foreground">
+                ❌ Não precisa criar conteúdo
+              </p>
+              <p className="text-xl md:text-2xl text-muted-foreground">
+                ❌ Não precisa vender <strong className="text-foreground">NADA</strong>
+              </p>
+              <p className="text-xl md:text-2xl text-foreground font-bold mt-6">
+                ✅ Só mandar um link. Cada clique = até <span className="text-green-500">R$ 1,50</span> na sua conta.
+              </p>
+            </div>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-              <Button asChild size="lg" className="text-lg px-8 py-6 bg-accent hover:bg-accent/90 text-accent-foreground">
+              <Button asChild size="lg" className="text-lg px-8 py-6 bg-green-500 hover:bg-green-600 text-white shadow-lg shadow-green-500/25">
                 <Link to="/auth?type=affiliate">
+                  <DollarSign className="mr-2 w-5 h-5" />
                   Começar a Ganhar Agora
                   <ArrowRight className="ml-2 w-5 h-5" />
-                </Link>
-              </Button>
-              <Button asChild variant="outline" size="lg" className="text-lg px-8 py-6">
-                <Link to="#calculator">
-                  Calcular meus ganhos
-                  <Calculator className="ml-2 w-5 h-5" />
                 </Link>
               </Button>
             </div>
 
             {/* Quick Stats */}
             <div className="grid grid-cols-3 gap-4 max-w-2xl mx-auto">
-              <div className="bg-card/50 backdrop-blur border border-border/50 rounded-xl p-4">
-                <div className="text-2xl md:text-3xl font-black text-accent">50%</div>
-                <div className="text-sm text-muted-foreground">Comissão máx</div>
+              <div className="bg-card/50 backdrop-blur border border-green-500/30 rounded-xl p-4">
+                <div className="text-2xl md:text-3xl font-black text-green-500">R$ 1,50</div>
+                <div className="text-sm text-muted-foreground">por clique</div>
               </div>
-              <div className="bg-card/50 backdrop-blur border border-border/50 rounded-xl p-4">
-                <div className="text-2xl md:text-3xl font-black text-accent">24h</div>
+              <div className="bg-card/50 backdrop-blur border border-green-500/30 rounded-xl p-4">
+                <div className="text-2xl md:text-3xl font-black text-green-500">24h</div>
                 <div className="text-sm text-muted-foreground">PIX na conta</div>
               </div>
-              <div className="bg-card/50 backdrop-blur border border-border/50 rounded-xl p-4">
-                <div className="text-2xl md:text-3xl font-black text-accent">R$ 0</div>
-                <div className="text-sm text-muted-foreground">Pra começar</div>
+              <div className="bg-card/50 backdrop-blur border border-green-500/30 rounded-xl p-4">
+                <div className="text-2xl md:text-3xl font-black text-green-500">R$ 0</div>
+                <div className="text-sm text-muted-foreground">pra começar</div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Earnings Table */}
-      <section id="calculator" className="py-20 bg-accent/5">
+      {/* A VERDADE que ninguém conta */}
+      <section className="py-20 bg-foreground text-background">
+        <div className="container mx-auto px-4">
+          <div className="max-w-5xl mx-auto">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-5xl font-black mb-4">
+                A <span className="text-destructive">VERDADE</span> que ninguém conta
+              </h2>
+              <p className="text-xl opacity-80">
+                O que te vendem vs. A realidade Clilin
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-8">
+              {/* O que te vendem */}
+              <div className="bg-destructive/20 rounded-2xl p-6 border border-destructive/30">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-10 h-10 bg-destructive/30 rounded-full flex items-center justify-center">
+                    <XCircle className="w-5 h-5 text-destructive" />
+                  </div>
+                  <h3 className="text-xl font-bold text-destructive">O que te vendem</h3>
+                </div>
+                <ul className="space-y-4">
+                  {truthVsLies.map((item, i) => (
+                    <li key={i} className="flex items-center gap-3">
+                      <XCircle className="w-5 h-5 text-destructive flex-shrink-0" />
+                      <span className="opacity-80">{item.lie}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Realidade Clilin */}
+              <div className="bg-green-500/20 rounded-2xl p-6 border border-green-500/30">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-10 h-10 bg-green-500/30 rounded-full flex items-center justify-center">
+                    <CheckCircle2 className="w-5 h-5 text-green-400" />
+                  </div>
+                  <h3 className="text-xl font-bold text-green-400">Realidade Clilin</h3>
+                </div>
+                <ul className="space-y-4">
+                  {truthVsLies.map((item, i) => (
+                    <li key={i} className="flex items-center gap-3">
+                      <CheckCircle2 className="w-5 h-5 text-green-400 flex-shrink-0" />
+                      <span className="font-medium">{item.truth}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Por que funciona - Explicação Simples */}
+      <section className="py-20">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-black mb-6">
+              Por que funciona
+            </h2>
+            <p className="text-xl text-muted-foreground">
+              Matemática simples. Sem mágica.
+            </p>
+          </div>
+
+          <div className="max-w-3xl mx-auto space-y-6">
+            <div className="bg-card border border-border rounded-2xl p-6">
+              <div className="flex items-start gap-4">
+                <div className="text-4xl">💬</div>
+                <div>
+                  <p className="text-lg mb-2">
+                    Seu vizinho pergunta: <em>"Conhece uma pizzaria boa?"</em>
+                  </p>
+                  <p className="text-muted-foreground">
+                    Você manda o link. Ele clica. <strong className="text-green-500">R$ 1,50 no seu bolso.</strong> FIM.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-card border border-border rounded-2xl p-6">
+              <div className="flex items-start gap-4">
+                <div className="text-4xl">👨‍👩‍👧‍👦</div>
+                <div>
+                  <p className="text-lg mb-2">
+                    Grupo da família reclamando que tá caro comer fora?
+                  </p>
+                  <p className="text-muted-foreground">
+                    Manda oferta de 30% off. 15 pessoas clicam. <strong className="text-green-500">R$ 22,50 em 5 minutos.</strong>
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-gradient-to-r from-green-500/10 to-accent/10 border border-green-500/20 rounded-2xl p-6 text-center">
+              <p className="text-xl font-bold">
+                Não é mágica. É matemática:
+              </p>
+              <p className="text-2xl md:text-3xl font-black text-green-500 mt-2">
+                200 cliques/dia × R$ 1,50 = R$ 9.000/mês
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Exemplos Reais Identificáveis */}
+      <section className="py-20 bg-muted/30">
+        <div className="container mx-auto px-4">
+          <div className="max-w-5xl mx-auto text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-black mb-6">
+              Pessoas como você, ganhando
+            </h2>
+            <p className="text-xl text-muted-foreground">
+              Exemplos reais de quanto você pode ganhar
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+            {realExamples.map((example, index) => (
+              <div 
+                key={index}
+                className="bg-card border border-border rounded-2xl p-6 hover:border-green-500/50 transition-colors"
+              >
+                <div className="flex items-center gap-3 mb-4">
+                  <span className="text-3xl">{example.emoji}</span>
+                  <h3 className="text-lg font-bold">{example.persona}</h3>
+                </div>
+                <p className="text-muted-foreground mb-3">{example.action}</p>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <span className="text-sm text-muted-foreground">{example.result}</span>
+                    <span className="text-xs text-muted-foreground ml-2">{example.time}</span>
+                  </div>
+                  <div className="text-xl font-black text-green-500">{example.earning}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Tabela de Ganhos */}
+      <section id="calculator" className="py-20">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-black mb-6">
               Quanto você pode ganhar?
             </h2>
             <p className="text-xl text-muted-foreground">
-              Matemática simples. CPL R$ 3,00 x Comissão 50% = <strong className="text-foreground">R$ 1,50 por lead</strong>
+              Escolha seu perfil. Veja o resultado.
             </p>
           </div>
 
           <div className="max-w-4xl mx-auto">
             <div className="bg-card border border-border rounded-2xl overflow-hidden">
-              <div className="grid grid-cols-4 bg-accent/10">
-                <div className="p-4 font-bold text-center">Perfil</div>
-                <div className="p-4 font-bold text-center">Leads/dia</div>
-                <div className="p-4 font-bold text-center">Leads/mês</div>
-                <div className="p-4 font-bold text-center">Ganho Mensal</div>
+              <div className="grid grid-cols-5 bg-green-500/10">
+                <div className="p-4 font-bold text-center text-sm">Perfil</div>
+                <div className="p-4 font-bold text-center text-sm">Leads/dia</div>
+                <div className="p-4 font-bold text-center text-sm">Leads/mês</div>
+                <div className="p-4 font-bold text-center text-sm">Ganho</div>
+                <div className="p-4 font-bold text-center text-sm"></div>
               </div>
               
               {earnings.map((row, index) => (
                 <div 
                   key={index} 
-                  className={`grid grid-cols-4 border-t border-border ${
-                    row.highlight ? 'bg-accent/10' : ''
+                  className={`grid grid-cols-5 border-t border-border ${
+                    row.highlight ? 'bg-green-500/10' : ''
                   }`}
                 >
-                  <div className="p-4 text-center font-medium">
-                    {row.perfil}
-                    {row.highlight && <Star className="w-4 h-4 text-accent inline ml-2" />}
+                  <div className="p-4 text-center font-medium flex items-center justify-center gap-2">
+                    <span>{row.emoji}</span>
+                    <span className="text-sm">{row.perfil}</span>
                   </div>
-                  <div className="p-4 text-center">{row.leadsdia}</div>
-                  <div className="p-4 text-center">{row.leadsmes.toLocaleString()}</div>
-                  <div className={`p-4 text-center font-bold ${row.highlight ? 'text-accent text-lg' : ''}`}>
+                  <div className="p-4 text-center text-sm">{row.leadsdia}</div>
+                  <div className="p-4 text-center text-sm">{row.leadsmes.toLocaleString()}</div>
+                  <div className={`p-4 text-center font-bold ${row.highlight ? 'text-green-500 text-lg' : ''}`}>
                     {row.ganho}
+                  </div>
+                  <div className="p-4 text-center">
+                    {row.highlight && <Star className="w-5 h-5 text-green-500 mx-auto" />}
                   </div>
                 </div>
               ))}
             </div>
 
             <p className="text-center text-muted-foreground mt-4 text-sm">
-              *Baseado em CPL R$ 3,00 com comissão nível Ouro (50%)
+              *CPL R$ 3,00 × Comissão Ouro (50%) = R$ 1,50/lead
             </p>
           </div>
         </div>
       </section>
 
-      {/* How it works simple */}
+      {/* FOMO Section */}
+      <section className="py-20 bg-gradient-to-br from-amber-500/10 to-orange-500/10 border-y border-amber-500/20">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-12">
+              <div className="inline-flex items-center gap-2 bg-amber-500/20 border border-amber-500/30 rounded-full px-4 py-2 mb-6">
+                <AlertTriangle className="w-4 h-4 text-amber-500" />
+                <span className="text-sm font-bold text-amber-500">Atenção</span>
+              </div>
+              <h2 className="text-3xl md:text-4xl font-black mb-6">
+                Por que você deveria começar <span className="text-amber-500">AGORA</span>
+              </h2>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="bg-card border border-amber-500/30 rounded-xl p-6">
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 bg-amber-500/20 rounded-full flex items-center justify-center flex-shrink-0">
+                    <Users className="w-5 h-5 text-amber-500" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold mb-2">Menos concorrência = mais dinheiro</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Quanto menos divulgadores na sua cidade, mais você ganha por oferta.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-card border border-amber-500/30 rounded-xl p-6">
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 bg-amber-500/20 rounded-full flex items-center justify-center flex-shrink-0">
+                    <Award className="w-5 h-5 text-amber-500" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold mb-2">Quem chega primeiro sobe de nível</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Seus leads de hoje contam pro seu ranking. Comece antes de todo mundo.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-card border border-amber-500/30 rounded-xl p-6">
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 bg-amber-500/20 rounded-full flex items-center justify-center flex-shrink-0">
+                    <Zap className="w-5 h-5 text-amber-500" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold mb-2">Ofertas novas todo dia</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Empresas entram na plataforma diariamente. Oportunidade constante.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-card border border-amber-500/30 rounded-xl p-6">
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 bg-amber-500/20 rounded-full flex items-center justify-center flex-shrink-0">
+                    <Shield className="w-5 h-5 text-amber-500" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold mb-2">R$ 0 pra começar</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Literalmente zero risco. Se não funcionar pra você, não perdeu nada.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-8 text-center">
+              <p className="text-xl font-bold text-amber-500">
+                👉 Enquanto você pensa, alguém na sua cidade já está ganhando.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Como Funciona - 3 Passos */}
       <section className="py-20">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-black mb-6">
-              Como funciona
-            </h2>
-            <p className="text-xl text-muted-foreground">
               3 passos. Sem complicação.
-            </p>
+            </h2>
           </div>
 
           <div className="max-w-4xl mx-auto">
             <div className="grid md:grid-cols-3 gap-6">
               <div className="bg-card border border-border rounded-xl p-6 text-center relative">
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-8 h-8 bg-accent rounded-full flex items-center justify-center text-accent-foreground font-bold">
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white font-bold">
                   1
                 </div>
-                <Share2 className="w-12 h-12 text-accent mx-auto mb-4 mt-4" />
+                <Share2 className="w-12 h-12 text-green-500 mx-auto mb-4 mt-4" />
                 <h3 className="text-xl font-bold mb-2">Escolha uma oferta</h3>
-                <p className="text-muted-foreground">
-                  Pizzaria, mecânica, salão... Ofertas da sua cidade que sua rede vai querer.
+                <p className="text-muted-foreground text-sm">
+                  Pizzaria, mecânica, salão... Ofertas da sua cidade.
                 </p>
               </div>
 
               <div className="bg-card border border-border rounded-xl p-6 text-center relative">
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-8 h-8 bg-accent rounded-full flex items-center justify-center text-accent-foreground font-bold">
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white font-bold">
                   2
                 </div>
-                <Smartphone className="w-12 h-12 text-accent mx-auto mb-4 mt-4" />
-                <h3 className="text-xl font-bold mb-2">Compartilhe o link</h3>
-                <p className="text-muted-foreground">
-                  WhatsApp, Instagram, grupos... Onde preferir. Só copiar e mandar.
+                <Smartphone className="w-12 h-12 text-green-500 mx-auto mb-4 mt-4" />
+                <h3 className="text-xl font-bold mb-2">Compartilhe</h3>
+                <p className="text-muted-foreground text-sm">
+                  WhatsApp, Instagram, grupos... Só copiar e mandar.
                 </p>
               </div>
 
               <div className="bg-card border border-border rounded-xl p-6 text-center relative">
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-8 h-8 bg-accent rounded-full flex items-center justify-center text-accent-foreground font-bold">
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white font-bold">
                   3
                 </div>
-                <DollarSign className="w-12 h-12 text-accent mx-auto mb-4 mt-4" />
-                <h3 className="text-xl font-bold mb-2">Ganhe por cada clique</h3>
-                <p className="text-muted-foreground">
-                  Alguém clicou e demonstrou interesse? Até R$ 1,50 na sua conta. Automático.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Comparison Table */}
-      <section className="py-20 bg-muted/30">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-black mb-6">
-              Por que a Clilin é diferente
-            </h2>
-            <p className="text-xl text-muted-foreground">
-              Programas de afiliados tradicionais vs Divulgador Clilin
-            </p>
-          </div>
-
-          <div className="max-w-4xl mx-auto">
-            <div className="bg-card border border-border rounded-2xl overflow-hidden">
-              <div className="grid grid-cols-3 bg-muted/50">
-                <div className="p-4 font-semibold text-center"></div>
-                <div className="p-4 font-semibold text-center text-destructive">Modelo Tradicional</div>
-                <div className="p-4 font-semibold text-center text-accent">Divulgador Clilin</div>
-              </div>
-              
-              {comparisons.map((item, index) => (
-                <div key={index} className="grid grid-cols-3 border-t border-border">
-                  <div className="p-4 flex items-center gap-2">
-                    <item.icon className="w-5 h-5 text-muted-foreground" />
-                  </div>
-                  <div className="p-4 flex items-center gap-2 bg-destructive/5">
-                    <XCircle className="w-4 h-4 text-destructive flex-shrink-0" />
-                    <span className="text-sm">{item.tradicional}</span>
-                  </div>
-                  <div className="p-4 flex items-center gap-2 bg-accent/5">
-                    <CheckCircle2 className="w-4 h-4 text-accent flex-shrink-0" />
-                    <span className="text-sm font-medium">{item.clilin}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Key difference */}
-      <section className="py-20">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
-            <div className="bg-gradient-to-br from-accent/10 to-primary/10 border border-accent/20 rounded-2xl p-8 md:p-12">
-              <h2 className="text-3xl md:text-4xl font-black mb-8 text-center">
-                A diferença que muda tudo
-              </h2>
-              
-              <div className="grid md:grid-cols-2 gap-8">
-                <div className="bg-card/50 backdrop-blur rounded-xl p-6 border border-destructive/20">
-                  <h3 className="text-xl font-bold mb-4 text-destructive">Programas tradicionais</h3>
-                  <p className="text-lg mb-4">
-                    Você indica um produto de R$ 100
-                  </p>
-                  <p className="text-lg mb-4">
-                    A pessoa <strong>precisa comprar</strong>
-                  </p>
-                  <p className="text-lg">
-                    Você ganha 5% = <strong className="text-destructive">R$ 5</strong>
-                  </p>
-                  <p className="text-sm text-muted-foreground mt-4">
-                    (em 30-60 dias)
-                  </p>
-                </div>
-
-                <div className="bg-card/50 backdrop-blur rounded-xl p-6 border border-accent/20">
-                  <h3 className="text-xl font-bold mb-4 text-accent">Divulgador Clilin</h3>
-                  <p className="text-lg mb-4">
-                    Você indica uma pizzaria
-                  </p>
-                  <p className="text-lg mb-4">
-                    A pessoa <strong>só demonstra interesse</strong>
-                  </p>
-                  <p className="text-lg">
-                    Você ganha = <strong className="text-accent text-2xl">R$ 1,50</strong>
-                  </p>
-                  <p className="text-sm text-muted-foreground mt-4">
-                    (PIX em 24h)
-                  </p>
-                </div>
-              </div>
-
-              <div className="mt-8 text-center">
-                <p className="text-xl">
-                  <strong>Não precisa vender.</strong> Só indicar. A empresa fecha a venda, você ganha mesmo assim.
+                <DollarSign className="w-12 h-12 text-green-500 mx-auto mb-4 mt-4" />
+                <h3 className="text-xl font-bold mb-2">Ganhe</h3>
+                <p className="text-muted-foreground text-sm">
+                  Cada clique = até R$ 1,50. Automático. PIX em 24h.
                 </p>
               </div>
             </div>
@@ -393,71 +560,25 @@ const ParaDivulgadoresPage = () => {
             {benefits.map((benefit, index) => (
               <div 
                 key={index}
-                className="bg-card border border-border rounded-xl p-6 hover:border-accent/50 transition-colors"
+                className="bg-card border border-border rounded-xl p-6 hover:border-green-500/50 transition-colors"
               >
-                <div className="w-12 h-12 bg-accent/10 rounded-xl flex items-center justify-center mb-4">
-                  <benefit.icon className="w-6 h-6 text-accent" />
+                <div className="w-12 h-12 bg-green-500/10 rounded-xl flex items-center justify-center mb-4">
+                  <benefit.icon className="w-6 h-6 text-green-500" />
                 </div>
                 <h3 className="text-xl font-bold mb-2">{benefit.title}</h3>
-                <p className="text-muted-foreground">{benefit.description}</p>
+                <p className="text-muted-foreground text-sm">{benefit.description}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Real examples */}
-      <section className="py-20">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-black mb-6">
-              Exemplos reais
-            </h2>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-            <div className="bg-card border border-border rounded-xl p-6">
-              <div className="text-4xl mb-4">🍕</div>
-              <h3 className="font-bold mb-2">Pizzaria do bairro</h3>
-              <p className="text-muted-foreground text-sm mb-4">
-                Você manda no grupo da família: "Gente, pizzaria do João tá com 30% de desconto"
-              </p>
-              <p className="text-accent font-bold">
-                5 pessoas clicam = R$ 7,50
-              </p>
-            </div>
-
-            <div className="bg-card border border-border rounded-xl p-6">
-              <div className="text-4xl mb-4">🔧</div>
-              <h3 className="font-bold mb-2">Mecânica</h3>
-              <p className="text-muted-foreground text-sm mb-4">
-                Seu vizinho pergunta de mecânico. Você manda o link da oferta.
-              </p>
-              <p className="text-accent font-bold">
-                1 clique = R$ 1,50
-              </p>
-            </div>
-
-            <div className="bg-card border border-border rounded-xl p-6">
-              <div className="text-4xl mb-4">💇</div>
-              <h3 className="font-bold mb-2">Salão de beleza</h3>
-              <p className="text-muted-foreground text-sm mb-4">
-                Você posta no status: "Salão da Maria com 40% off"
-              </p>
-              <p className="text-accent font-bold">
-                20 pessoas clicam = R$ 30
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* FAQ Section */}
-      <section className="py-20 bg-muted/30">
+      <section className="py-20">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto">
             <h2 className="text-3xl md:text-4xl font-black mb-12 text-center">
-              Perguntas frequentes
+              Dúvidas comuns
             </h2>
 
             <div className="space-y-4">
@@ -467,7 +588,7 @@ const ParaDivulgadoresPage = () => {
                   className="bg-card border border-border rounded-xl p-6"
                 >
                   <h3 className="text-lg font-bold mb-2">{faq.question}</h3>
-                  <p className="text-muted-foreground">{faq.answer}</p>
+                  <p className="text-muted-foreground text-sm">{faq.answer}</p>
                 </div>
               ))}
             </div>
@@ -479,28 +600,33 @@ const ParaDivulgadoresPage = () => {
       <section className="py-20">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
-            <div className="bg-gradient-to-br from-accent to-accent/80 rounded-3xl p-8 md:p-12 text-accent-foreground">
-              <Star className="w-12 h-12 mx-auto mb-6 opacity-80" />
-              <h2 className="text-3xl md:text-4xl font-black mb-4">
-                500 leads por mês = R$ 22.500
-              </h2>
-              <p className="text-xl opacity-90 mb-4">
-                Não é promessa. É matemática.
-              </p>
-              <p className="text-lg opacity-80 mb-8 max-w-2xl mx-auto">
-                Cadastro gratuito. Sem investimento. Comece agora e receba seu primeiro PIX em 24h.
-              </p>
+            <div className="bg-gradient-to-br from-green-500 to-emerald-600 rounded-3xl p-8 md:p-12 text-white relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
+              <div className="absolute bottom-0 left-0 w-48 h-48 bg-black/10 rounded-full blur-3xl" />
               
-              <Button asChild size="lg" variant="secondary" className="text-lg px-8 py-6">
-                <Link to="/auth?type=affiliate">
-                  Quero Ser Divulgador
-                  <ArrowRight className="ml-2 w-5 h-5" />
-                </Link>
-              </Button>
+              <div className="relative z-10">
+                <Flame className="w-16 h-16 mx-auto mb-6 opacity-80" />
+                <h2 className="text-3xl md:text-5xl font-black mb-4">
+                  Comece a ganhar. Agora.
+                </h2>
+                <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
+                  Enquanto você lê isso, divulgadores na sua cidade estão ganhando dinheiro.
+                </p>
+                
+                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                  <Button asChild size="lg" className="text-lg px-8 py-6 bg-white text-green-600 hover:bg-white/90">
+                    <Link to="/auth?type=affiliate">
+                      <DollarSign className="mr-2 w-5 h-5" />
+                      Criar Conta Grátis
+                      <ArrowRight className="ml-2 w-5 h-5" />
+                    </Link>
+                  </Button>
+                </div>
 
-              <p className="mt-6 text-sm opacity-70">
-                Divulgadores na sua cidade já estão ganhando. Não fique de fora.
-              </p>
+                <p className="mt-6 text-sm opacity-70">
+                  Sem investimento • Sem taxa • Começa a ganhar hoje
+                </p>
+              </div>
             </div>
           </div>
         </div>

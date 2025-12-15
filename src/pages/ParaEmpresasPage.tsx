@@ -14,42 +14,58 @@ import {
   Clock,
   DollarSign,
   Target,
-  Smartphone
+  Smartphone,
+  AlertTriangle,
+  Flame,
+  MousePointer,
+  UserCheck
 } from "lucide-react";
 import { SEOHead } from "@/components/seo/SEOHead";
 import { Footer } from "@/components/landing/Footer";
 
 const ParaEmpresasPage = () => {
-  const comparisons = [
+  const tripleComparison = [
     { 
-      tradicional: "27% de taxa por venda", 
-      clilin: "R$ 1-3 por lead (0% da venda)",
+      metric: "Custo por cliente",
+      anuncios: "R$ 40 - R$ 100",
+      delivery: "R$ 21,60 (27%)",
+      clilin: "R$ 1 - R$ 3",
       icon: DollarSign
     },
     { 
-      tradicional: "Cliente é do marketplace", 
-      clilin: "Cliente é SEU no WhatsApp",
+      metric: "O que você paga",
+      anuncios: "Por clique (pode nem converter)",
+      delivery: "Porcentagem de cada venda",
+      clilin: "Por interesse real",
+      icon: MousePointer
+    },
+    { 
+      metric: "Cliente é de quem?",
+      anuncios: "Você captura (se conseguir)",
+      delivery: "Do marketplace",
+      clilin: "Seu, no WhatsApp",
       icon: Smartphone
     },
     { 
-      tradicional: "Compete com centenas de concorrentes", 
-      clilin: "Oferta destacada na sua região",
+      metric: "Conversão média",
+      anuncios: "2-5% dos cliques",
+      delivery: "100% (mas paga taxa)",
+      clilin: "100% interessados",
       icon: Target
     },
     { 
-      tradicional: "Depende de algoritmo da plataforma", 
-      clilin: "IA + divulgadores locais trabalham pra você",
+      metric: "Precisa de",
+      anuncios: "Especialista + verba alta",
+      delivery: "Aceitar regras do app",
+      clilin: "Só criar sua oferta",
       icon: Users
     },
     { 
-      tradicional: "Contrato e mensalidade obrigatórios", 
-      clilin: "Sem contrato, sem mensalidade",
-      icon: Shield
-    },
-    { 
-      tradicional: "Pagamento em 15-30 dias", 
-      clilin: "Cliente contata você na hora",
-      icon: Clock
+      metric: "Quem trabalha pra você",
+      anuncios: "Algoritmo que você não controla",
+      delivery: "Ninguém",
+      clilin: "IA + divulgadores locais",
+      icon: Zap
     },
   ];
 
@@ -57,32 +73,32 @@ const ParaEmpresasPage = () => {
     {
       icon: MessageSquare,
       title: "Cliente direto no WhatsApp",
-      description: "Sem intermediário. O cliente fala com você diretamente. Relacionamento é seu."
+      description: "Sem intermediário. Relacionamento é seu. Venda direta."
     },
     {
       icon: DollarSign,
-      title: "Pague só pelo interesse real",
-      description: "R$ 1 a R$ 3 por lead. Não importa se vende R$ 50 ou R$ 500. Taxa fixa."
+      title: "R$ 1 a R$ 3 por cliente",
+      description: "Taxa FIXA. Não importa se vende R$ 50 ou R$ 500."
     },
     {
       icon: TrendingUp,
-      title: "Aumente sua margem",
-      description: "Pizza de R$ 100 no app = R$ 27 de taxa. Na Clilin = R$ 2. Faça as contas."
+      title: "Margem intocada",
+      description: "Zero porcentagem da venda. 100% do lucro é seu."
     },
     {
       icon: Users,
-      title: "Divulgadores locais",
-      description: "Pessoas da sua cidade indicando seu negócio. Marketing boca a boca digital."
+      title: "Exército de divulgadores",
+      description: "Centenas de pessoas locais indicando seu negócio."
     },
     {
       icon: Zap,
-      title: "IA trabalhando 24h",
-      description: "Nossa inteligência artificial encontra clientes interessados no que você oferece."
+      title: "IA 24h por dia",
+      description: "Inteligência artificial encontrando clientes enquanto você dorme."
     },
     {
       icon: Shield,
-      title: "Sem risco",
-      description: "Sem contrato. Sem mensalidade. Deposita quanto quiser. Cancela quando quiser."
+      title: "Risco zero",
+      description: "Sem contrato. Sem mensalidade. Cancela quando quiser."
     }
   ];
 
@@ -92,7 +108,7 @@ const ParaEmpresasPage = () => {
       answer: "Você deposita quanto quiser. Mínimo de R$ 50. Cada lead custa entre R$ 1 e R$ 3 dependendo da sua cidade e categoria."
     },
     {
-      question: "Como funciona o lance por clique?",
+      question: "Como funciona o lance?",
       answer: "Você define quanto quer pagar por lead. Quanto maior seu lance, mais destaque sua oferta ganha. Simples assim."
     },
     {
@@ -101,10 +117,10 @@ const ParaEmpresasPage = () => {
     },
     {
       question: "Como recebo os clientes?",
-      answer: "Direto no seu WhatsApp. O cliente clica na oferta, abre conversa com você. Pronto. Venda."
+      answer: "Direto no seu WhatsApp. O cliente clica na oferta, abre conversa com você. Pronto."
     },
     {
-      question: "Funciona pra qualquer tipo de negócio?",
+      question: "Funciona pra qualquer negócio?",
       answer: "Sim. Restaurantes, salões, mecânicas, clínicas, lojas, serviços... Se é local, funciona."
     }
   ];
@@ -112,176 +128,226 @@ const ParaEmpresasPage = () => {
   return (
     <div className="min-h-screen bg-background">
       <SEOHead
-        title="Para Empresas | Clilin - Clientes no WhatsApp sem taxa por venda"
-        description="Receba clientes direto no WhatsApp. Sem comissão por venda. Sem mensalidade. Pague R$ 1 a R$ 3 apenas por quem demonstra interesse real no seu negócio."
-        keywords={["marketing local", "clientes whatsapp", "sem taxa delivery", "divulgação local", "leads qualificados"]}
+        title="Para Empresas | Clilin - Pare de queimar dinheiro com anúncios"
+        description="Enquanto você paga R$ 5 por clique que talvez vire cliente, empresas espertas pagam R$ 2 por cliente que JÁ QUER comprar. Sem taxa por venda."
+        keywords={["marketing local", "clientes whatsapp", "sem taxa delivery", "alternativa google ads", "leads qualificados", "custo por lead"]}
       />
 
-      {/* Hero Section */}
+      {/* Hero Section - Agressivo */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-background to-background" />
+        <div className="absolute inset-0 bg-gradient-to-br from-destructive/10 via-background to-background" />
         <div className="absolute inset-0 opacity-30">
-          <div className="absolute top-20 left-10 w-72 h-72 bg-primary/30 rounded-full blur-3xl animate-pulse" />
-          <div className="absolute bottom-20 right-10 w-96 h-96 bg-accent/20 rounded-full blur-3xl animate-pulse delay-1000" />
+          <div className="absolute top-20 left-10 w-72 h-72 bg-destructive/20 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute bottom-20 right-10 w-96 h-96 bg-primary/20 rounded-full blur-3xl animate-pulse delay-1000" />
         </div>
         
         <div className="container mx-auto px-4 py-20 relative z-10">
-          <div className="max-w-4xl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 rounded-full px-4 py-2 mb-8">
-              <Building2 className="w-4 h-4 text-primary" />
-              <span className="text-sm font-medium text-primary">Para Empresas Locais</span>
+          <div className="max-w-5xl mx-auto text-center">
+            <div className="inline-flex items-center gap-2 bg-destructive/10 border border-destructive/30 rounded-full px-4 py-2 mb-8 animate-pulse">
+              <AlertTriangle className="w-4 h-4 text-destructive" />
+              <span className="text-sm font-bold text-destructive">Você está perdendo dinheiro</span>
             </div>
             
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-black mb-6 leading-tight">
-              Cansado de dar{" "}
+              Você está{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-orange-500">
-                27% de cada venda
+                queimando dinheiro
               </span>{" "}
-              pra app de delivery?
+              com anúncios que não convertem?
             </h1>
             
-            <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto">
-              Receba clientes direto no seu WhatsApp. <strong className="text-foreground">Sem comissão por venda.</strong> Sem mensalidade. 
-              Pague <strong className="text-primary">R$ 1 a R$ 3</strong> apenas por quem demonstra interesse real.
+            <p className="text-xl md:text-2xl text-muted-foreground mb-4 max-w-4xl mx-auto">
+              Enquanto você paga <strong className="text-destructive">R$ 5 por cada CLIQUE</strong> que talvez vire cliente...
+            </p>
+            <p className="text-xl md:text-2xl mb-8 max-w-4xl mx-auto">
+              Empresas espertas pagam <strong className="text-primary">R$ 2 por cliente que JÁ QUER comprar.</strong>
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-              <Button asChild size="lg" className="text-lg px-8 py-6 bg-primary hover:bg-primary/90">
+              <Button asChild size="lg" className="text-lg px-8 py-6 bg-primary hover:bg-primary/90 shadow-lg shadow-primary/25">
                 <Link to="/auth?type=company">
-                  Cadastrar Minha Empresa
+                  <Flame className="mr-2 w-5 h-5" />
+                  Parar de Queimar Dinheiro
                   <ArrowRight className="ml-2 w-5 h-5" />
                 </Link>
               </Button>
-              <Button asChild variant="outline" size="lg" className="text-lg px-8 py-6">
-                <Link to="/chat">
-                  Ver como funciona
-                </Link>
-              </Button>
             </div>
 
-            {/* Quick Stats */}
-            <div className="grid grid-cols-3 gap-4 max-w-2xl mx-auto">
-              <div className="bg-card/50 backdrop-blur border border-border/50 rounded-xl p-4">
-                <div className="text-2xl md:text-3xl font-black text-primary">0%</div>
-                <div className="text-sm text-muted-foreground">Taxa por venda</div>
+            {/* Comparativo rápido */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl mx-auto">
+              <div className="bg-destructive/10 backdrop-blur border border-destructive/30 rounded-xl p-4">
+                <div className="text-sm text-destructive font-bold mb-1">ANÚNCIOS ONLINE</div>
+                <div className="text-2xl md:text-3xl font-black text-destructive">R$ 100</div>
+                <div className="text-xs text-muted-foreground">por cliente (média)</div>
               </div>
-              <div className="bg-card/50 backdrop-blur border border-border/50 rounded-xl p-4">
-                <div className="text-2xl md:text-3xl font-black text-primary">R$ 1-3</div>
-                <div className="text-sm text-muted-foreground">Por lead</div>
+              <div className="bg-orange-500/10 backdrop-blur border border-orange-500/30 rounded-xl p-4">
+                <div className="text-sm text-orange-500 font-bold mb-1">APPS DE DELIVERY</div>
+                <div className="text-2xl md:text-3xl font-black text-orange-500">27%</div>
+                <div className="text-xs text-muted-foreground">de cada venda</div>
               </div>
-              <div className="bg-card/50 backdrop-blur border border-border/50 rounded-xl p-4">
-                <div className="text-2xl md:text-3xl font-black text-primary">24h</div>
-                <div className="text-sm text-muted-foreground">IA trabalhando</div>
+              <div className="bg-primary/10 backdrop-blur border border-primary/30 rounded-xl p-4">
+                <div className="text-sm text-primary font-bold mb-1">CLILIN</div>
+                <div className="text-2xl md:text-3xl font-black text-primary">R$ 2</div>
+                <div className="text-xs text-muted-foreground">por cliente real</div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Problem Section */}
+      {/* Seção: Os 3 Inimigos do seu Lucro */}
       <section className="py-20 bg-destructive/5">
         <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-black mb-6">
-              O problema que você conhece bem
+          <div className="max-w-5xl mx-auto text-center mb-12">
+            <h2 className="text-3xl md:text-5xl font-black mb-6">
+              Os 3 <span className="text-destructive">ladrões</span> do seu lucro
             </h2>
             <p className="text-xl text-muted-foreground">
-              Se você usa apps de delivery ou marketplaces, essa conta você já fez:
+              Você provavelmente usa pelo menos um. E está pagando caro por isso.
             </p>
           </div>
 
-          <div className="max-w-3xl mx-auto">
-            <div className="bg-card border border-destructive/30 rounded-2xl p-8 mb-8">
-              <div className="flex items-center gap-4 mb-6">
-                <div className="w-12 h-12 bg-destructive/20 rounded-full flex items-center justify-center">
-                  <XCircle className="w-6 h-6 text-destructive" />
-                </div>
-                <h3 className="text-2xl font-bold">Modelo tradicional</h3>
+          <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto mb-12">
+            {/* Anúncios Online */}
+            <div className="bg-card border-2 border-destructive/30 rounded-2xl p-6">
+              <div className="w-12 h-12 bg-destructive/20 rounded-full flex items-center justify-center mb-4">
+                <MousePointer className="w-6 h-6 text-destructive" />
               </div>
-              
-              <div className="space-y-4 text-lg">
-                <div className="flex items-start gap-3">
-                  <XCircle className="w-5 h-5 text-destructive mt-1 flex-shrink-0" />
-                  <span>Pizza de <strong>R$ 100</strong> = <strong className="text-destructive">R$ 27 de taxa</strong> pro app</span>
-                </div>
-                <div className="flex items-start gap-3">
-                  <XCircle className="w-5 h-5 text-destructive mt-1 flex-shrink-0" />
-                  <span>Cliente <strong>não é seu</strong> — é do marketplace</span>
-                </div>
-                <div className="flex items-start gap-3">
-                  <XCircle className="w-5 h-5 text-destructive mt-1 flex-shrink-0" />
-                  <span>Você compete com <strong>500 concorrentes</strong> na mesma tela</span>
-                </div>
-                <div className="flex items-start gap-3">
-                  <XCircle className="w-5 h-5 text-destructive mt-1 flex-shrink-0" />
-                  <span>Depende do <strong>algoritmo</strong> pra aparecer</span>
-                </div>
+              <h3 className="text-xl font-bold mb-4 text-destructive">Plataformas de Anúncios</h3>
+              <ul className="space-y-3 text-sm">
+                <li className="flex items-start gap-2">
+                  <XCircle className="w-4 h-4 text-destructive mt-0.5 flex-shrink-0" />
+                  <span>Paga R$ 2-5 por <strong>clique</strong> — não por interesse</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <XCircle className="w-4 h-4 text-destructive mt-0.5 flex-shrink-0" />
+                  <span>Conversão média: <strong>2-5%</strong> dos cliques</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <XCircle className="w-4 h-4 text-destructive mt-0.5 flex-shrink-0" />
+                  <span>Precisa de <strong>especialista</strong> pra gerenciar</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <XCircle className="w-4 h-4 text-destructive mt-0.5 flex-shrink-0" />
+                  <span>Queima dinheiro <strong>testando público</strong></span>
+                </li>
+              </ul>
+              <div className="mt-6 p-3 bg-destructive/10 rounded-lg text-center">
+                <span className="text-sm text-muted-foreground">Custo real por cliente:</span>
+                <div className="text-2xl font-black text-destructive">R$ 40 - R$ 100</div>
               </div>
             </div>
 
-            <div className="bg-card border border-primary/30 rounded-2xl p-8">
-              <div className="flex items-center gap-4 mb-6">
-                <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center">
-                  <CheckCircle2 className="w-6 h-6 text-primary" />
-                </div>
-                <h3 className="text-2xl font-bold">Com a Clilin</h3>
+            {/* Apps de Delivery */}
+            <div className="bg-card border-2 border-orange-500/30 rounded-2xl p-6">
+              <div className="w-12 h-12 bg-orange-500/20 rounded-full flex items-center justify-center mb-4">
+                <Smartphone className="w-6 h-6 text-orange-500" />
               </div>
-              
-              <div className="space-y-4 text-lg">
-                <div className="flex items-start gap-3">
-                  <CheckCircle2 className="w-5 h-5 text-primary mt-1 flex-shrink-0" />
-                  <span>Mesma pizza de R$ 100 = <strong className="text-primary">R$ 2 por lead</strong> (taxa 0% da venda)</span>
-                </div>
-                <div className="flex items-start gap-3">
-                  <CheckCircle2 className="w-5 h-5 text-primary mt-1 flex-shrink-0" />
-                  <span>Cliente vai <strong>direto pro seu WhatsApp</strong></span>
-                </div>
-                <div className="flex items-start gap-3">
-                  <CheckCircle2 className="w-5 h-5 text-primary mt-1 flex-shrink-0" />
-                  <span>Oferta <strong>destacada</strong> na sua região</span>
-                </div>
-                <div className="flex items-start gap-3">
-                  <CheckCircle2 className="w-5 h-5 text-primary mt-1 flex-shrink-0" />
-                  <span>IA + divulgadores <strong>trabalham pra você</strong></span>
-                </div>
+              <h3 className="text-xl font-bold mb-4 text-orange-500">Apps de Delivery</h3>
+              <ul className="space-y-3 text-sm">
+                <li className="flex items-start gap-2">
+                  <XCircle className="w-4 h-4 text-orange-500 mt-0.5 flex-shrink-0" />
+                  <span>Taxa de <strong>27% por venda</strong></span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <XCircle className="w-4 h-4 text-orange-500 mt-0.5 flex-shrink-0" />
+                  <span>Cliente é <strong>do marketplace</strong>, não seu</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <XCircle className="w-4 h-4 text-orange-500 mt-0.5 flex-shrink-0" />
+                  <span>Compete com <strong>500 concorrentes</strong></span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <XCircle className="w-4 h-4 text-orange-500 mt-0.5 flex-shrink-0" />
+                  <span>Depende do <strong>algoritmo</strong> do app</span>
+                </li>
+              </ul>
+              <div className="mt-6 p-3 bg-orange-500/10 rounded-lg text-center">
+                <span className="text-sm text-muted-foreground">Pizza R$ 80 = você perde:</span>
+                <div className="text-2xl font-black text-orange-500">R$ 21,60</div>
+              </div>
+            </div>
+
+            {/* Clilin - Solução */}
+            <div className="bg-card border-2 border-primary rounded-2xl p-6 relative overflow-hidden">
+              <div className="absolute top-0 right-0 bg-primary text-primary-foreground text-xs font-bold px-3 py-1 rounded-bl-lg">
+                MELHOR OPÇÃO
+              </div>
+              <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center mb-4">
+                <CheckCircle2 className="w-6 h-6 text-primary" />
+              </div>
+              <h3 className="text-xl font-bold mb-4 text-primary">Clilin</h3>
+              <ul className="space-y-3 text-sm">
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                  <span>Paga <strong>só por interesse real</strong></span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                  <span>Cliente vai <strong>pro SEU WhatsApp</strong></span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                  <span><strong>Zero taxa</strong> sobre a venda</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                  <span>IA + divulgadores <strong>trabalham 24h</strong></span>
+                </li>
+              </ul>
+              <div className="mt-6 p-3 bg-primary/10 rounded-lg text-center">
+                <span className="text-sm text-muted-foreground">Custo por cliente:</span>
+                <div className="text-2xl font-black text-primary">R$ 1 - R$ 3</div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Comparison Table */}
+      {/* Tabela Comparativa Tripla */}
       <section className="py-20">
         <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto text-center mb-12">
+          <div className="max-w-5xl mx-auto text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-black mb-6">
               Compare você mesmo
             </h2>
             <p className="text-xl text-muted-foreground">
-              Veja a diferença entre o modelo tradicional e a Clilin
+              Números que falam por si
             </p>
           </div>
 
-          <div className="max-w-4xl mx-auto">
-            <div className="bg-card border border-border rounded-2xl overflow-hidden">
-              <div className="grid grid-cols-3 bg-muted/50">
-                <div className="p-4 font-semibold text-center"></div>
-                <div className="p-4 font-semibold text-center text-destructive">Modelo Tradicional</div>
-                <div className="p-4 font-semibold text-center text-primary">Clilin</div>
+          <div className="max-w-5xl mx-auto overflow-x-auto">
+            <div className="bg-card border border-border rounded-2xl overflow-hidden min-w-[600px]">
+              <div className="grid grid-cols-4 bg-muted/50">
+                <div className="p-4 font-semibold"></div>
+                <div className="p-4 font-semibold text-center text-destructive text-sm">
+                  <MousePointer className="w-4 h-4 mx-auto mb-1" />
+                  Anúncios Online
+                </div>
+                <div className="p-4 font-semibold text-center text-orange-500 text-sm">
+                  <Smartphone className="w-4 h-4 mx-auto mb-1" />
+                  Apps Delivery
+                </div>
+                <div className="p-4 font-semibold text-center text-primary text-sm">
+                  <CheckCircle2 className="w-4 h-4 mx-auto mb-1" />
+                  Clilin
+                </div>
               </div>
               
-              {comparisons.map((item, index) => (
-                <div key={index} className="grid grid-cols-3 border-t border-border">
-                  <div className="p-4 flex items-center gap-2">
-                    <item.icon className="w-5 h-5 text-muted-foreground" />
+              {tripleComparison.map((item, index) => (
+                <div key={index} className="grid grid-cols-4 border-t border-border">
+                  <div className="p-4 flex items-center gap-2 font-medium text-sm">
+                    <item.icon className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                    <span>{item.metric}</span>
                   </div>
-                  <div className="p-4 flex items-center gap-2 bg-destructive/5">
-                    <XCircle className="w-4 h-4 text-destructive flex-shrink-0" />
-                    <span className="text-sm">{item.tradicional}</span>
+                  <div className="p-4 flex items-center justify-center gap-2 bg-destructive/5 text-center">
+                    <span className="text-xs">{item.anuncios}</span>
                   </div>
-                  <div className="p-4 flex items-center gap-2 bg-primary/5">
-                    <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
-                    <span className="text-sm font-medium">{item.clilin}</span>
+                  <div className="p-4 flex items-center justify-center gap-2 bg-orange-500/5 text-center">
+                    <span className="text-xs">{item.delivery}</span>
+                  </div>
+                  <div className="p-4 flex items-center justify-center gap-2 bg-primary/5 text-center">
+                    <span className="text-xs font-bold text-primary">{item.clilin}</span>
                   </div>
                 </div>
               ))}
@@ -290,12 +356,150 @@ const ParaEmpresasPage = () => {
         </div>
       </section>
 
-      {/* Benefits Grid */}
+      {/* Seção: Faça as Contas - EXPANDIDA */}
       <section className="py-20 bg-muted/30">
+        <div className="container mx-auto px-4">
+          <div className="max-w-5xl mx-auto">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-5xl font-black mb-4">
+                Faça as contas
+              </h2>
+              <p className="text-xl text-muted-foreground">
+                Cenário: Você quer <strong className="text-foreground">100 clientes</strong> esse mês
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-6 mb-8">
+              {/* Anúncios Online */}
+              <div className="bg-card border-2 border-destructive/30 rounded-2xl p-6">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-10 h-10 bg-destructive/20 rounded-full flex items-center justify-center">
+                    <XCircle className="w-5 h-5 text-destructive" />
+                  </div>
+                  <h3 className="text-lg font-bold text-destructive">Anúncios Online</h3>
+                </div>
+                
+                <div className="space-y-4 text-sm">
+                  <div className="flex justify-between items-center py-2 border-b border-border">
+                    <span className="text-muted-foreground">100 clientes ÷ 3% conversão</span>
+                    <span className="font-mono font-bold">3.333 cliques</span>
+                  </div>
+                  <div className="flex justify-between items-center py-2 border-b border-border">
+                    <span className="text-muted-foreground">3.333 × R$ 3/clique</span>
+                    <span className="font-mono font-bold text-destructive">R$ 10.000</span>
+                  </div>
+                  <div className="flex justify-between items-center py-3 bg-destructive/10 rounded-lg px-3 -mx-3">
+                    <span className="font-bold">Custo por cliente:</span>
+                    <span className="font-mono font-black text-destructive text-xl">R$ 100</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* App de Delivery */}
+              <div className="bg-card border-2 border-orange-500/30 rounded-2xl p-6">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-10 h-10 bg-orange-500/20 rounded-full flex items-center justify-center">
+                    <XCircle className="w-5 h-5 text-orange-500" />
+                  </div>
+                  <h3 className="text-lg font-bold text-orange-500">App de Delivery</h3>
+                </div>
+                
+                <div className="space-y-4 text-sm">
+                  <div className="flex justify-between items-center py-2 border-b border-border">
+                    <span className="text-muted-foreground">100 pedidos × R$ 80</span>
+                    <span className="font-mono font-bold">R$ 8.000</span>
+                  </div>
+                  <div className="flex justify-between items-center py-2 border-b border-border">
+                    <span className="text-muted-foreground">Taxa de 27%</span>
+                    <span className="font-mono font-bold text-orange-500">- R$ 2.160</span>
+                  </div>
+                  <div className="flex justify-between items-center py-3 bg-orange-500/10 rounded-lg px-3 -mx-3">
+                    <span className="font-bold">Custo por cliente:</span>
+                    <span className="font-mono font-black text-orange-500 text-xl">R$ 21,60</span>
+                  </div>
+                </div>
+                <p className="text-xs text-muted-foreground mt-3 italic">
+                  + cliente não é seu
+                </p>
+              </div>
+
+              {/* Clilin */}
+              <div className="bg-card border-2 border-primary rounded-2xl p-6 relative">
+                <div className="absolute -top-3 -right-3 bg-primary text-primary-foreground text-xs font-bold px-3 py-1 rounded-full shadow-lg">
+                  ⚡ 50x MAIS BARATO
+                </div>
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center">
+                    <CheckCircle2 className="w-5 h-5 text-primary" />
+                  </div>
+                  <h3 className="text-lg font-bold text-primary">Clilin</h3>
+                </div>
+                
+                <div className="space-y-4 text-sm">
+                  <div className="flex justify-between items-center py-2 border-b border-border">
+                    <span className="text-muted-foreground">100 leads qualificados</span>
+                    <span className="font-mono font-bold">100 clientes</span>
+                  </div>
+                  <div className="flex justify-between items-center py-2 border-b border-border">
+                    <span className="text-muted-foreground">100 × R$ 2/lead</span>
+                    <span className="font-mono font-bold text-primary">R$ 200</span>
+                  </div>
+                  <div className="flex justify-between items-center py-3 bg-primary/10 rounded-lg px-3 -mx-3">
+                    <span className="font-bold">Custo por cliente:</span>
+                    <span className="font-mono font-black text-primary text-xl">R$ 2</span>
+                  </div>
+                </div>
+                <p className="text-xs text-primary mt-3 font-medium">
+                  ✓ Cliente vai pro SEU WhatsApp
+                </p>
+              </div>
+            </div>
+
+            {/* Frase de impacto */}
+            <div className="bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/20 rounded-2xl p-8 text-center">
+              <p className="text-xl md:text-2xl font-bold mb-4">
+                "Enquanto seu concorrente joga <span className="text-destructive">R$ 10.000/mês</span> em anúncios torcendo pra converter 3%..."
+              </p>
+              <p className="text-2xl md:text-3xl font-black text-primary">
+                Você paga R$ 200 e recebe 100 clientes no WhatsApp.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Frases de Impacto */}
+      <section className="py-16 bg-foreground text-background">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto">
+            <div className="grid md:grid-cols-2 gap-8">
+              <div className="text-center md:text-left">
+                <blockquote className="text-xl md:text-2xl font-bold italic mb-4">
+                  "Pagar por clique é <span className="text-destructive">apostar</span>."
+                </blockquote>
+                <p className="text-lg opacity-80">
+                  Pagar por lead é <span className="text-primary font-bold">investir</span>.
+                </p>
+              </div>
+              <div className="text-center md:text-left">
+                <blockquote className="text-xl md:text-2xl font-bold italic mb-4">
+                  "Seu funcionário mais barato:"
+                </blockquote>
+                <p className="text-lg opacity-80">
+                  Uma IA + centenas de divulgadores locais. <span className="text-primary font-bold">Custo? R$ 2 por cliente.</span>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Benefits Grid */}
+      <section className="py-20">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-black mb-6">
-              Por que empresas estão migrando pra Clilin
+              Por que empresas estão migrando
             </h2>
           </div>
 
@@ -312,65 +516,6 @@ const ParaEmpresasPage = () => {
                 <p className="text-muted-foreground">{benefit.description}</p>
               </div>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Math Section */}
-      <section className="py-20">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
-            <div className="bg-gradient-to-br from-primary/10 to-accent/10 border border-primary/20 rounded-2xl p-8 md:p-12">
-              <h2 className="text-3xl md:text-4xl font-black mb-8 text-center">
-                Faça as contas
-              </h2>
-              
-              <div className="grid md:grid-cols-2 gap-8">
-                <div className="bg-card/50 backdrop-blur rounded-xl p-6 border border-destructive/20">
-                  <h3 className="text-xl font-bold mb-4 text-destructive">App de Delivery</h3>
-                  <div className="space-y-3">
-                    <div className="flex justify-between">
-                      <span>Venda mensal:</span>
-                      <span className="font-bold">R$ 10.000</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Taxa (27%):</span>
-                      <span className="font-bold text-destructive">- R$ 2.700</span>
-                    </div>
-                    <div className="border-t border-border pt-3 flex justify-between">
-                      <span>Você fica com:</span>
-                      <span className="font-bold">R$ 7.300</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-card/50 backdrop-blur rounded-xl p-6 border border-primary/20">
-                  <h3 className="text-xl font-bold mb-4 text-primary">Clilin</h3>
-                  <div className="space-y-3">
-                    <div className="flex justify-between">
-                      <span>Venda mensal:</span>
-                      <span className="font-bold">R$ 10.000</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>100 leads x R$ 2:</span>
-                      <span className="font-bold text-primary">- R$ 200</span>
-                    </div>
-                    <div className="border-t border-border pt-3 flex justify-between">
-                      <span>Você fica com:</span>
-                      <span className="font-bold text-primary text-xl">R$ 9.800</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-8 text-center">
-                <div className="inline-block bg-primary/20 rounded-xl px-6 py-4">
-                  <span className="text-2xl md:text-3xl font-black text-primary">
-                    + R$ 2.500/mês no seu bolso
-                  </span>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </section>
@@ -398,30 +543,36 @@ const ParaEmpresasPage = () => {
         </div>
       </section>
 
-      {/* Final CTA */}
+      {/* Final CTA - Urgência */}
       <section className="py-20">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
-            <div className="bg-gradient-to-br from-primary to-primary/80 rounded-3xl p-8 md:p-12 text-primary-foreground">
-              <Star className="w-12 h-12 mx-auto mb-6 opacity-80" />
-              <h2 className="text-3xl md:text-4xl font-black mb-4">
-                Comece agora. Sem risco.
-              </h2>
-              <p className="text-xl opacity-90 mb-8 max-w-2xl mx-auto">
-                Sem contrato. Sem mensalidade. Deposite R$ 50 e veja como funciona. 
-                Não gostou? Pause quando quiser.
-              </p>
+            <div className="bg-gradient-to-br from-primary to-primary/80 rounded-3xl p-8 md:p-12 text-primary-foreground relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
+              <div className="absolute bottom-0 left-0 w-48 h-48 bg-black/10 rounded-full blur-3xl" />
               
-              <Button asChild size="lg" variant="secondary" className="text-lg px-8 py-6">
-                <Link to="/auth?type=company">
-                  Cadastrar Minha Empresa Grátis
-                  <ArrowRight className="ml-2 w-5 h-5" />
-                </Link>
-              </Button>
+              <div className="relative z-10">
+                <Flame className="w-16 h-16 mx-auto mb-6 opacity-80" />
+                <h2 className="text-3xl md:text-5xl font-black mb-4">
+                  Pare de queimar dinheiro.
+                </h2>
+                <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
+                  Enquanto você pensa, seu concorrente já está recebendo clientes por R$ 2 cada.
+                </p>
+                
+                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                  <Button asChild size="lg" className="text-lg px-8 py-6 bg-background text-foreground hover:bg-background/90">
+                    <Link to="/auth?type=company">
+                      Cadastrar Minha Empresa
+                      <ArrowRight className="ml-2 w-5 h-5" />
+                    </Link>
+                  </Button>
+                </div>
 
-              <p className="mt-6 text-sm opacity-70">
-                Milhares de empresas locais já pararam de dar lucro pra aplicativo.
-              </p>
+                <p className="mt-6 text-sm opacity-70">
+                  Sem contrato • Sem mensalidade • Comece com R$ 50
+                </p>
+              </div>
             </div>
           </div>
         </div>
