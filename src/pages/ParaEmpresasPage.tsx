@@ -106,7 +106,7 @@ const ParaEmpresasPage = () => {
   const faqs = [
     {
       question: "Quanto custa para começar?",
-      answer: "Você deposita quanto quiser. Mínimo de R$ 50. Cada lead custa entre R$ 1 e R$ 3 dependendo da sua cidade e categoria."
+      answer: "Você deposita quanto quiser. Mínimo de R$ 100. Cada lead custa entre R$ 1 e R$ 3 dependendo da sua cidade e categoria."
     },
     {
       question: "Como funciona o lance?",
@@ -135,21 +135,21 @@ const ParaEmpresasPage = () => {
       />
 
       {/* Hero Section - Agressivo */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      <section className="relative pt-20 pb-16 md:pt-28 md:pb-20 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-destructive/10 via-background to-background" />
         <div className="absolute inset-0 opacity-30">
           <div className="absolute top-20 left-10 w-72 h-72 bg-destructive/20 rounded-full blur-3xl animate-pulse" />
           <div className="absolute bottom-20 right-10 w-96 h-96 bg-primary/20 rounded-full blur-3xl animate-pulse delay-1000" />
         </div>
         
-        <div className="container mx-auto px-4 py-20 relative z-10">
+        <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-5xl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 bg-destructive/10 border border-destructive/30 rounded-full px-4 py-2 mb-8 animate-pulse">
-              <AlertTriangle className="w-4 h-4 text-destructive" />
-              <span className="text-sm font-bold text-destructive">Você está perdendo dinheiro</span>
+            <div className="inline-flex items-center gap-2 bg-destructive/10 border border-destructive/30 rounded-full px-3 py-1.5 md:px-4 md:py-2 mb-6 md:mb-8 animate-pulse">
+              <AlertTriangle className="w-3 h-3 md:w-4 md:h-4 text-destructive" />
+              <span className="text-xs md:text-sm font-bold text-destructive">Você está perdendo dinheiro</span>
             </div>
             
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-black mb-6 leading-tight">
+            <h1 className="text-3xl md:text-5xl lg:text-6xl font-black mb-4 md:mb-6 leading-tight">
               Você está{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-orange-500">
                 queimando dinheiro
@@ -157,41 +157,41 @@ const ParaEmpresasPage = () => {
               com anúncios que não convertem?
             </h1>
             
-            <p className="text-xl md:text-2xl text-muted-foreground mb-4 max-w-4xl mx-auto">
+            <p className="text-base md:text-xl text-muted-foreground mb-2 md:mb-4 max-w-4xl mx-auto">
               Enquanto você paga <strong className="text-destructive">R$ 5 por cada CLIQUE</strong> que talvez vire cliente...
             </p>
-            <p className="text-xl md:text-2xl mb-8 max-w-4xl mx-auto">
+            <p className="text-base md:text-xl mb-6 md:mb-8 max-w-4xl mx-auto">
               Empresas espertas pagam <strong className="text-primary">R$ 2 por cliente que JÁ QUER comprar.</strong>
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+            <div className="flex flex-col sm:flex-row gap-3 justify-center mb-8 md:mb-12">
               <Button 
                 size="lg" 
-                className="text-lg px-8 py-6 bg-primary hover:bg-primary/90 shadow-lg shadow-primary/25"
+                className="text-base md:text-lg px-6 md:px-8 py-5 md:py-6 bg-primary hover:bg-primary/90 shadow-lg shadow-primary/25"
                 onClick={() => document.getElementById('cadastro')?.scrollIntoView({ behavior: 'smooth' })}
               >
-                <Flame className="mr-2 w-5 h-5" />
+                <Flame className="mr-2 w-4 h-4 md:w-5 md:h-5" />
                 Parar de Queimar Dinheiro
-                <ArrowRight className="ml-2 w-5 h-5" />
+                <ArrowRight className="ml-2 w-4 h-4 md:w-5 md:h-5" />
               </Button>
             </div>
 
             {/* Comparativo rápido */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl mx-auto">
-              <div className="bg-destructive/10 backdrop-blur border border-destructive/30 rounded-xl p-4">
-                <div className="text-sm text-destructive font-bold mb-1">ANÚNCIOS ONLINE</div>
-                <div className="text-2xl md:text-3xl font-black text-destructive">R$ 100</div>
-                <div className="text-xs text-muted-foreground">por cliente (média)</div>
+            <div className="grid grid-cols-3 gap-2 md:gap-4 max-w-4xl mx-auto">
+              <div className="bg-destructive/10 backdrop-blur border border-destructive/30 rounded-xl p-3 md:p-4">
+                <div className="text-[10px] md:text-sm text-destructive font-bold mb-1">ANÚNCIOS</div>
+                <div className="text-lg md:text-3xl font-black text-destructive">R$ 100</div>
+                <div className="text-[10px] md:text-xs text-muted-foreground">por cliente</div>
               </div>
-              <div className="bg-orange-500/10 backdrop-blur border border-orange-500/30 rounded-xl p-4">
-                <div className="text-sm text-orange-500 font-bold mb-1">APPS DE DELIVERY</div>
-                <div className="text-2xl md:text-3xl font-black text-orange-500">27%</div>
-                <div className="text-xs text-muted-foreground">de cada venda</div>
+              <div className="bg-orange-500/10 backdrop-blur border border-orange-500/30 rounded-xl p-3 md:p-4">
+                <div className="text-[10px] md:text-sm text-orange-500 font-bold mb-1">DELIVERY</div>
+                <div className="text-lg md:text-3xl font-black text-orange-500">27%</div>
+                <div className="text-[10px] md:text-xs text-muted-foreground">por venda</div>
               </div>
-              <div className="bg-primary/10 backdrop-blur border border-primary/30 rounded-xl p-4">
-                <div className="text-sm text-primary font-bold mb-1">CLILIN</div>
-                <div className="text-2xl md:text-3xl font-black text-primary">R$ 2</div>
-                <div className="text-xs text-muted-foreground">por cliente real</div>
+              <div className="bg-primary/10 backdrop-blur border border-primary/30 rounded-xl p-3 md:p-4">
+                <div className="text-[10px] md:text-sm text-primary font-bold mb-1">CLILIN</div>
+                <div className="text-lg md:text-3xl font-black text-primary">R$ 2</div>
+                <div className="text-[10px] md:text-xs text-muted-foreground">por cliente</div>
               </div>
             </div>
           </div>
