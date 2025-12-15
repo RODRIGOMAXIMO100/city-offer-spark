@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { SEOHead } from "@/components/seo/SEOHead";
 import { Footer } from "@/components/landing/Footer";
+import SignupForm from "@/components/auth/SignupForm";
 
 const ParaClientesPage = () => {
   const comparisons = [
@@ -181,10 +182,13 @@ const ParaClientesPage = () => {
                   <Sparkles className="ml-2 w-5 h-5" />
                 </Link>
               </Button>
-              <Button asChild variant="outline" size="lg" className="text-lg px-8 py-6">
-                <Link to="#categories">
-                  Ver categorias
-                </Link>
+              <Button 
+                variant="outline" 
+                size="lg" 
+                className="text-lg px-8 py-6"
+                onClick={() => document.getElementById('cadastro')?.scrollIntoView({ behavior: 'smooth' })}
+              >
+                Criar conta grátis
               </Button>
             </div>
 
@@ -430,29 +434,59 @@ const ParaClientesPage = () => {
         </div>
       </section>
 
-      {/* Final CTA */}
-      <section className="py-20 bg-muted/30">
+      {/* Signup Section */}
+      <section id="cadastro" className="py-20 bg-muted/30">
         <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto text-center">
-            <div className="bg-gradient-to-br from-secondary to-secondary/80 rounded-3xl p-8 md:p-12 text-secondary-foreground">
-              <Gift className="w-12 h-12 mx-auto mb-6 opacity-80" />
-              <h2 className="text-3xl md:text-4xl font-black mb-4">
-                Ofertas que você não encontra em lugar nenhum
-              </h2>
-              <p className="text-xl opacity-90 mb-8 max-w-2xl mx-auto">
-                Gratuito. Sem app. Sem cadastro. É só perguntar.
-              </p>
-              
-              <Button asChild size="lg" variant="secondary" className="text-lg px-8 py-6 bg-background text-foreground hover:bg-background/90">
-                <Link to="/chat">
-                  Encontrar Ofertas Agora
-                  <Sparkles className="ml-2 w-5 h-5" />
-                </Link>
-              </Button>
+          <div className="max-w-5xl mx-auto">
+            <div className="grid md:grid-cols-2 gap-12 items-center">
+              {/* Left: Benefits summary */}
+              <div>
+                <div className="inline-flex items-center gap-2 bg-secondary/10 border border-secondary/20 rounded-full px-4 py-2 mb-6">
+                  <Gift className="w-4 h-4 text-secondary" />
+                  <span className="text-sm font-bold text-secondary">100% Gratuito</span>
+                </div>
+                <h2 className="text-3xl md:text-4xl font-black mb-6">
+                  Crie uma conta e <span className="text-secondary">salve suas ofertas favoritas</span>
+                </h2>
+                <ul className="space-y-4 mb-8">
+                  <li className="flex items-center gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-secondary flex-shrink-0" />
+                    <span>Descontos de 20% a 70%</span>
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-secondary flex-shrink-0" />
+                    <span>Ofertas exclusivas da sua cidade</span>
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-secondary flex-shrink-0" />
+                    <span>IA que entende o que você quer</span>
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-secondary flex-shrink-0" />
+                    <span>Salve favoritos e receba alertas</span>
+                  </li>
+                </ul>
+                <p className="text-muted-foreground text-sm">
+                  Ou use direto sem cadastro - é gratuito também!
+                </p>
+                <Button asChild variant="outline" className="mt-4">
+                  <Link to="/chat">
+                    Usar sem cadastro
+                    <ArrowRight className="ml-2 w-4 h-4" />
+                  </Link>
+                </Button>
+              </div>
 
-              <p className="mt-6 text-sm opacity-70">
-                Descontos de até 70% esperando por você.
-              </p>
+              {/* Right: Signup Form */}
+              <div className="bg-card border border-border rounded-2xl p-6 md:p-8 shadow-xl">
+                <SignupForm 
+                  role="CLIENT"
+                  title="Crie sua conta"
+                  description="Gratuito para sempre"
+                  buttonText="Criar Conta Grátis"
+                  compact
+                />
+              </div>
             </div>
           </div>
         </div>
