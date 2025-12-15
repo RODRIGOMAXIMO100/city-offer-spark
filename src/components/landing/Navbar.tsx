@@ -44,19 +44,24 @@ export function Navbar() {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-1">
-            {[
-              { label: "Como Funciona", id: "como-funciona" },
-              { label: "Empresas", id: "empresas" },
-              { label: "Divulgadores", id: "divulgadores" },
-            ].map((item) => (
-              <button 
-                key={item.id}
-                onClick={() => scrollToSection(item.id)} 
-                className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground rounded-lg hover:bg-muted/50 transition-all"
-              >
-                {item.label}
-              </button>
-            ))}
+            <Link 
+              to="/para-empresas" 
+              className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground rounded-lg hover:bg-muted/50 transition-all"
+            >
+              Para Empresas
+            </Link>
+            <Link 
+              to="/para-divulgadores" 
+              className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground rounded-lg hover:bg-muted/50 transition-all"
+            >
+              Para Divulgadores
+            </Link>
+            <button 
+              onClick={() => scrollToSection("como-funciona")} 
+              className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground rounded-lg hover:bg-muted/50 transition-all"
+            >
+              Como Funciona
+            </button>
             <Link 
               to="/chat" 
               className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground rounded-lg hover:bg-muted/50 transition-all whitespace-nowrap"
@@ -100,19 +105,26 @@ export function Navbar() {
         {isOpen && (
           <div className="md:hidden py-4 border-t border-border animate-fade-in bg-background">
             <div className="flex flex-col gap-2">
-              {[
-                { label: "Como Funciona", id: "como-funciona" },
-                { label: "Empresas", id: "empresas" },
-                { label: "Divulgadores", id: "divulgadores" },
-              ].map((item) => (
-                <button 
-                  key={item.id}
-                  onClick={() => scrollToSection(item.id)} 
-                  className="text-left px-4 py-3 text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-lg transition-colors"
-                >
-                  {item.label}
-                </button>
-              ))}
+              <Link 
+                to="/para-empresas" 
+                onClick={() => setIsOpen(false)}
+                className="text-left px-4 py-3 text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-lg transition-colors"
+              >
+                Para Empresas
+              </Link>
+              <Link 
+                to="/para-divulgadores" 
+                onClick={() => setIsOpen(false)}
+                className="text-left px-4 py-3 text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-lg transition-colors"
+              >
+                Para Divulgadores
+              </Link>
+              <button 
+                onClick={() => scrollToSection("como-funciona")} 
+                className="text-left px-4 py-3 text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-lg transition-colors"
+              >
+                Como Funciona
+              </button>
               <Link 
                 to="/chat" 
                 onClick={() => setIsOpen(false)}
