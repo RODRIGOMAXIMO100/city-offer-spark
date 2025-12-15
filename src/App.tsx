@@ -86,8 +86,11 @@ const AppRoutes = () => (
     <Route path="/autor/:slug" element={<AuthorPage />} />
     <Route path="/ajuda" element={<HelpPage />} />
     
-    <Route path="*" element={<NotFound />} />
-  </Routes>
+        <Route path="/para-empresas" element={<ParaEmpresasPage />} />
+        <Route path="/para-divulgadores" element={<ParaDivulgadoresPage />} />
+        <Route path="/para-clientes" element={<ParaClientesPage />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
 );
 
 const App = () => (
