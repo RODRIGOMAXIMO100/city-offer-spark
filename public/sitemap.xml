@@ -3,7 +3,7 @@
   <!-- Páginas Principais -->
   <url>
     <loc>https://clilin.com/</loc>
-    <lastmod>2025-12-14</lastmod>
+    <lastmod>2025-12-16</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
@@ -39,7 +39,7 @@
   </url>
   <url>
     <loc>https://clilin.com/blog</loc>
-    <lastmod>2025-12-14</lastmod>
+    <lastmod>2025-12-16</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
@@ -56,7 +56,87 @@
     <priority>0.7</priority>
   </url>
   
+  <!-- Páginas de Segmentos -->
+  <url>
+    <loc>https://clilin.com/empresas</loc>
+    <lastmod>2025-12-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://clilin.com/divulgadores</loc>
+    <lastmod>2025-12-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://clilin.com/clientes</loc>
+    <lastmod>2025-12-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  
   <!-- Posts do Blog -->
+  <url>
+    <loc>https://clilin.com/blog/gamificacao-marketing-local-2026-engajar-premiar-fidelizar-clientes-mj6teleq</loc>
+    <lastmod>2025-12-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://clilin.com/blog/economia-da-atencao-2026-como-comercios-locais-podem-competir-distracao-digital-mj6lzjb6</loc>
+    <lastmod>2025-12-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://clilin.com/blog/comunidades-digitais-hiperlocais-2026-como-negocios-podem-se-beneficiar-mj6fkj2m</loc>
+    <lastmod>2025-12-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://clilin.com/blog/tendencias-pagamentos-2026-pix-carteiras-digitais-bnpl-comercio-local-mj694vam</loc>
+    <lastmod>2025-12-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://clilin.com/blog/voice-commerce-2026-como-preparar-seu-negocio-local-pesquisa-compra-voz-mj62p2rv</loc>
+    <lastmod>2025-12-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://clilin.com/blog/marketing-geracional-2026-como-atingir-gen-z-millennials-gen-x-boomers-mj5wc1gd</loc>
+    <lastmod>2025-12-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://clilin.com/blog/dados-first-party-2026-como-negocios-locais-podem-coletar-usar-dados-proprios-mj5py8id</loc>
+    <lastmod>2025-12-14</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://clilin.com/blog/omnichannel-2026-integrando-online-offline-experiencia-unica-cliente-local-mj5jj7u3</loc>
+    <lastmod>2025-12-14</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://clilin.com/blog/storytelling-local-2026-como-contar-historia-do-seu-negocio-conectar-comunidade-mj5d40u3</loc>
+    <lastmod>2025-12-14</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://clilin.com/blog/previsoes-marketing-local-2026-tendencias-que-vao-dominar-mj56oyn0</loc>
+    <lastmod>2025-12-14</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
   <url>
     <loc>https://clilin.com/blog/hiperlocalizacao-2-0-marketing-proximidade-inteligente-2026-mj5us29s</loc>
     <lastmod>2025-12-14</lastmod>
