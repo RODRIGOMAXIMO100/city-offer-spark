@@ -52,33 +52,44 @@ export default function SignupForm({
   const [honeypot, setHoneypot] = useState('');
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   
-  // Available cities from database
-  const [availableCitiesFromDb, setAvailableCitiesFromDb] = useState<{id: string; state_code: string; city_name: string}[]>([]);
+  // Available cities from database (active ones)
+  const [activeCitiesFromDb, setActiveCitiesFromDb] = useState<{id: string; state_code: string; city_name: string; active: boolean}[]>([]);
+  // All cities from database (for waitlist lookup)
+  const [allCitiesFromDb, setAllCitiesFromDb] = useState<{id: string; state_code: string; city_name: string; active: boolean}[]>([]);
   const [loadingCities, setLoadingCities] = useState(true);
   const [waitlistModalOpen, setWaitlistModalOpen] = useState(false);
   const [selectedUnavailableCity, setSelectedUnavailableCity] = useState<{id: string; name: string; state: string} | null>(null);
 
-  // Fetch available cities from database
+  // Fetch cities from database
   useEffect(() => {
-    const fetchAvailableCities = async () => {
+    const fetchCities = async () => {
       try {
-        const { data, error } = await supabase
+        // Fetch active cities for signup validation
+        const { data: activeData, error: activeError } = await supabase
           .from('available_cities')
-          .select('id, state_code, city_name')
+          .select('id, state_code, city_name, active')
           .eq('active', true);
         
-        if (error) throw error;
-        setAvailableCitiesFromDb(data || []);
+        if (activeError) throw activeError;
+        setActiveCitiesFromDb(activeData || []);
+        
+        // Fetch ALL cities for waitlist lookup (when selecting unavailable city)
+        const { data: allData, error: allError } = await supabase
+          .from('available_cities')
+          .select('id, state_code, city_name, active');
+        
+        if (allError) throw allError;
+        setAllCitiesFromDb(allData || []);
       } catch (err) {
-        console.error('Error fetching available cities:', err);
-        // Fallback: allow all cities if database fails
-        setAvailableCitiesFromDb([]);
+        console.error('Error fetching cities:', err);
+        setActiveCitiesFromDb([]);
+        setAllCitiesFromDb([]);
       } finally {
         setLoadingCities(false);
       }
     };
 
-    fetchAvailableCities();
+    fetchCities();
   }, []);
 
   const handleTurnstileVerify = useCallback((token: string) => {
@@ -120,48 +131,65 @@ export default function SignupForm({
 
   const cnpjNumbers = cnpj.replace(/\D/g, '');
 
-  // Check if we should use database cities or fallback to static
-  const hasDbCities = availableCitiesFromDb.length > 0;
+  // Check if we have active cities from database
+  const hasActiveCities = activeCitiesFromDb.length > 0;
   
-  // Available states (only those with active cities in database)
-  const availableStatesFromDb = useMemo(() => {
-    if (!hasDbCities) return BRAZIL_STATES;
-    const activeStateCodes = new Set(availableCitiesFromDb.map(c => c.state_code));
-    return BRAZIL_STATES.filter(s => activeStateCodes.has(s.code));
-  }, [availableCitiesFromDb, hasDbCities]);
+  // Get set of active city names for quick lookup
+  const activeCityNamesSet = useMemo(() => {
+    return new Set(activeCitiesFromDb.map(c => `${c.state_code}:${c.city_name}`));
+  }, [activeCitiesFromDb]);
   
-  // Cities for selected state (from database or fallback)
-  const availableCities = useMemo(() => {
-    if (!state) return [];
-    
-    if (hasDbCities) {
-      // Use database cities
-      return availableCitiesFromDb
-        .filter(c => c.state_code === state)
-        .map(c => c.city_name)
-        .sort();
-    }
-    
-    // Fallback to static cities if database has no cities
-    return getCitiesByState(state).sort();
-  }, [state, availableCitiesFromDb, hasDbCities]);
+  // Check if a city is available
+  const isCityAvailable = useCallback((stateCode: string, cityName: string) => {
+    if (!hasActiveCities) return true; // Fallback if no db cities
+    return activeCityNamesSet.has(`${stateCode}:${cityName}`);
+  }, [activeCityNamesSet, hasActiveCities]);
   
-  // Check if selected city is available (for showing waitlist option)
+  // All Brazilian states (show all, not just those with active cities)
+  const availableStates = BRAZIL_STATES;
+  
+  // ALL cities for selected state (show all cities, marking availability)
   const allCitiesForState = useMemo(() => {
     if (!state) return [];
     return getCitiesByState(state).sort();
   }, [state]);
   
-  // Find unavailable city ID for waitlist
-  const findUnavailableCityId = async (cityName: string, stateCode: string) => {
-    const { data } = await supabase
-      .from('available_cities')
-      .select('id')
-      .eq('state_code', stateCode)
-      .eq('city_name', cityName)
-      .single();
-    return data?.id;
-  };
+  // Find city ID from database for waitlist
+  const findCityIdFromDb = useCallback((cityName: string, stateCode: string) => {
+    const city = allCitiesFromDb.find(c => c.state_code === stateCode && c.city_name === cityName);
+    return city?.id;
+  }, [allCitiesFromDb]);
+  
+  // Handle city selection - if unavailable, open waitlist modal
+  const handleCitySelect = useCallback((selectedCity: string) => {
+    if (!state) return;
+    
+    const isAvailable = isCityAvailable(state, selectedCity);
+    
+    if (isAvailable) {
+      // City is available - select it normally
+      setCity(selectedCity);
+      setOpenCityCombobox(false);
+    } else {
+      // City is NOT available - open waitlist modal
+      const cityId = findCityIdFromDb(selectedCity, state);
+      if (cityId) {
+        setSelectedUnavailableCity({
+          id: cityId,
+          name: selectedCity,
+          state: state
+        });
+        setWaitlistModalOpen(true);
+      } else {
+        // City not in database at all - show message
+        toast({
+          title: "Cidade não cadastrada",
+          description: "Esta cidade ainda não está em nossa base. Em breve estaremos aí! 💛",
+        });
+      }
+      setOpenCityCombobox(false);
+    }
+  }, [state, isCityAvailable, findCityIdFromDb, toast]);
 
   const formattedCity = useMemo(() => {
     if (!city || !state) return '';
@@ -371,18 +399,13 @@ export default function SignupForm({
                   <SelectValue placeholder="UF" />
                 </SelectTrigger>
                 <SelectContent>
-                  {availableStatesFromDb.map((s) => (
+                  {availableStates.map((s) => (
                     <SelectItem key={s.code} value={s.code}>
                       {s.code}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
-              {hasDbCities && availableStatesFromDb.length === 0 && (
-                <p className="text-xs text-muted-foreground">
-                  Em breve estaremos na sua região! 💛
-                </p>
-              )}
             </div>
 
             <div className="space-y-2">
@@ -396,43 +419,49 @@ export default function SignupForm({
                     className="w-full justify-between"
                     disabled={!state || loadingCities}
                   >
-                    {loadingCities ? "Carregando..." : city || "Selecione..."}
+                    {loadingCities ? "Carregando..." : city || "Selecione sua cidade..."}
                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-full p-0">
+                <PopoverContent className="w-full p-0" align="start">
                   <Command>
                     <CommandInput placeholder="Buscar cidade..." />
-                    <CommandEmpty>
-                      {hasDbCities ? "Cidade não disponível ainda" : "Nenhuma cidade encontrada."}
-                    </CommandEmpty>
+                    <CommandEmpty>Nenhuma cidade encontrada.</CommandEmpty>
                     <CommandGroup className="max-h-48 overflow-auto">
-                      {availableCities.map((c) => (
-                        <CommandItem
-                          key={c}
-                          value={c}
-                          onSelect={(currentValue) => {
-                            setCity(currentValue === city ? "" : currentValue);
-                            setOpenCityCombobox(false);
-                          }}
-                        >
-                          <Check
+                      {allCitiesForState.map((c) => {
+                        const isAvailable = isCityAvailable(state, c);
+                        return (
+                          <CommandItem
+                            key={c}
+                            value={c}
+                            onSelect={() => handleCitySelect(c)}
                             className={cn(
-                              "mr-2 h-4 w-4",
-                              city === c ? "opacity-100" : "opacity-0"
+                              !isAvailable && "opacity-60"
                             )}
-                          />
-                          {c}
-                        </CommandItem>
-                      ))}
+                          >
+                            <Check
+                              className={cn(
+                                "mr-2 h-4 w-4",
+                                city === c ? "opacity-100" : "opacity-0"
+                              )}
+                            />
+                            <span className="flex-1">{c}</span>
+                            {!isAvailable && (
+                              <span className="ml-2 text-xs bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 px-1.5 py-0.5 rounded">
+                                Em breve
+                              </span>
+                            )}
+                          </CommandItem>
+                        );
+                      })}
                     </CommandGroup>
                   </Command>
                 </PopoverContent>
               </Popover>
-              {hasDbCities && state && availableCities.length === 0 && (
-                <p className="text-xs text-amber-600">
-                  <MapPin className="inline h-3 w-3 mr-1" />
-                  Ainda não chegamos neste estado. Em breve! 💛
+              {city && (
+                <p className="text-xs text-green-600 dark:text-green-400 flex items-center gap-1">
+                  <Check className="h-3 w-3" />
+                  Cidade disponível!
                 </p>
               )}
             </div>
@@ -516,6 +545,18 @@ export default function SignupForm({
           Ao criar uma conta, você concorda com os Termos de Uso e Política de Privacidade.
         </p>
       </form>
+
+      {/* City Waitlist Modal */}
+      {selectedUnavailableCity && (
+        <CityWaitlistModal
+          open={waitlistModalOpen}
+          onOpenChange={setWaitlistModalOpen}
+          cityId={selectedUnavailableCity.id}
+          cityName={selectedUnavailableCity.name}
+          stateName={selectedUnavailableCity.state}
+          role={role}
+        />
+      )}
     </div>
   );
 }
