@@ -88,22 +88,38 @@ export function useAllCitiesAdmin() {
   const fetchAllCities = async () => {
     try {
       setLoading(true);
-      const { data, error } = await supabase
-        .from('available_cities')
-        .select('*')
-        .order('state_code')
-        .order('city_name');
 
-      if (error) throw error;
-      
-      const citiesData = data || [];
-      setCities(citiesData);
-      
+      // PostgREST tem limite padrão de 1000 linhas por request.
+      // Para garantir que o admin veja TODAS as cidades, buscamos em páginas.
+      const pageSize = 1000;
+      let from = 0;
+      let all: AvailableCity[] = [];
+
+      // eslint-disable-next-line no-constant-condition
+      while (true) {
+        const { data, error } = await supabase
+          .from('available_cities')
+          .select('*')
+          .order('state_code')
+          .order('city_name')
+          .range(from, from + pageSize - 1);
+
+        if (error) throw error;
+
+        const chunk = (data || []) as AvailableCity[];
+        all = all.concat(chunk);
+
+        if (chunk.length < pageSize) break;
+        from += pageSize;
+      }
+
+      setCities(all);
+
       setStats({
-        totalCities: citiesData.length,
-        activeCities: citiesData.filter(c => c.active).length,
-        scheduledCities: citiesData.filter(c => c.scheduled_activation).length,
-        totalWaitlist: citiesData.reduce((sum, c) => sum + (c.waitlist_count || 0), 0)
+        totalCities: all.length,
+        activeCities: all.filter(c => c.active).length,
+        scheduledCities: all.filter(c => c.scheduled_activation).length,
+        totalWaitlist: all.reduce((sum, c) => sum + (c.waitlist_count || 0), 0)
       });
     } catch (err) {
       console.error('Error fetching all cities:', err);
