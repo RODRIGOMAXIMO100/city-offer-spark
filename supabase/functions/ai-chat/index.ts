@@ -124,12 +124,17 @@ ${offersList}
 
 ⚠️ NÃO há ofertas em ${city} ainda.
 
+🔗 LINKS ÚTEIS:
+- Empresas: clilin.com/empresas
+- Divulgadores: clilin.com/divulgadores
+
 🎯 REGRAS:
 1. JSON: {"text": "...", "suggestedOfferIds": []}
-2. MÁXIMO 2 frases curtas
+2. MÁXIMO 2-3 frases curtas
 3. Diga que ainda não tem ofertas
-4. Sugira convidar negócios locais
+4. Se perguntarem COMO convidar/indicar: "É fácil! O negócio pode se cadastrar grátis em clilin.com/empresas 😊"
 5. NUNCA invente ofertas
+6. RESPONDA o que foi perguntado
 
 📤 JSON APENAS:
 {"text": "msg curta", "suggestedOfferIds": []}`;
