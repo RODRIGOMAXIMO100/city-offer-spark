@@ -131,7 +131,7 @@ ${offersList}
 🎯 REGRAS:
 1. JSON: {"text": "...", "suggestedOfferIds": []}
 2. MÁXIMO 2-3 frases curtas
-3. Diga que ainda não tem ofertas
+3. Resposta padrão: "Ainda não temos ofertas em ${city} 😢 Mas você pode indicar um negócio da sua cidade aqui: https://clilin.com/empresas 💪"
 4. Se perguntarem COMO convidar/indicar: "É fácil! O negócio pode se cadastrar grátis em https://clilin.com/empresas 😊"
 5. NUNCA invente ofertas
 6. RESPONDA o que foi perguntado
