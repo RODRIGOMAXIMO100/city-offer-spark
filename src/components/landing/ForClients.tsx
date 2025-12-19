@@ -12,23 +12,23 @@ import {
 const benefits = [
   {
     icon: Bot,
-    title: "IA personalizada",
-    description: "Nossa inteligência artificial aprende o que você gosta e sugere ofertas perfeitas.",
+    title: "IA que te entende",
+    description: "Nossa inteligência artificial entende o que você precisa e te conecta ao melhor.",
   },
   {
     icon: MapPin,
-    title: "Ofertas locais",
-    description: "Encontre descontos em estabelecimentos perto de você.",
+    title: "Tesouros locais",
+    description: "Descubra negócios incríveis da sua vizinhança — indicados por pessoas reais.",
   },
   {
     icon: Percent,
-    title: "Descontos exclusivos",
-    description: "Acesse ofertas que não estão disponíveis em outros lugares.",
+    title: "Ofertas exclusivas",
+    description: "Acesse descontos especiais de quem valoriza você como cliente.",
   },
   {
     icon: MessageCircle,
-    title: "Converse e encontre",
-    description: "Pergunte o que precisa e receba sugestões na hora.",
+    title: "Converse naturalmente",
+    description: "Pergunte como perguntaria a um amigo e encontre o que precisa.",
   },
 ];
 
@@ -49,13 +49,13 @@ export function ForClients() {
             </div>
             
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold mb-6">
-              Ofertas que a IA{" "}
-              <span className="text-client">encontra pra você</span>
+              Descubra os{" "}
+              <span className="text-client">tesouros da sua cidade</span>
             </h2>
             
             <p className="text-lg text-muted-foreground mb-10 leading-relaxed">
-              Diga o que você precisa e nossa IA encontra as melhores ofertas 
-              perto de você. Simples, rápido e gratuito.
+              Diga o que você precisa e nossa IA te conecta aos melhores negócios 
+              da sua vizinhança. Simples, rápido e gratuito.
             </p>
 
             {/* Benefits */}
@@ -99,7 +99,7 @@ export function ForClients() {
               {/* Chat Messages */}
               <div className="space-y-4 mb-6">
                 <div className="bg-muted rounded-2xl rounded-tl-sm p-4 max-w-[85%]">
-                  <p className="text-sm">Olá! 👋 O que você está procurando hoje?</p>
+                  <p className="text-sm">Que bom ter você aqui! 💛 O que você está procurando hoje?</p>
                 </div>
                 <div className="bg-client text-white rounded-2xl rounded-tr-sm p-4 max-w-[85%] ml-auto">
                   <p className="text-sm">Quero uma pizzaria com desconto perto de mim</p>

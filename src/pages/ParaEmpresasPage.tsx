@@ -73,33 +73,33 @@ const ParaEmpresasPage = () => {
   const benefits = [
     {
       icon: MessageSquare,
-      title: "Cliente direto no WhatsApp",
-      description: "Sem intermediário. Relacionamento é seu. Venda direta."
+      title: "Relacionamento direto",
+      description: "Cliente no seu WhatsApp. Você constrói o relacionamento. Clientes viram fãs."
     },
     {
       icon: DollarSign,
-      title: "R$ 1 a R$ 3 por cliente",
-      description: "Taxa FIXA. Não importa se vende R$ 50 ou R$ 500."
+      title: "Investimento justo",
+      description: "R$ 1 a R$ 3 por cliente interessado. Taxa fixa, sem surpresas."
     },
     {
       icon: TrendingUp,
-      title: "Margem intocada",
-      description: "Zero porcentagem da venda. 100% do lucro é seu."
+      title: "Seu lucro intocado",
+      description: "Zero porcentagem da venda. Tudo que você vende é seu."
     },
     {
       icon: Users,
-      title: "Exército de divulgadores",
-      description: "Centenas de pessoas locais indicando seu negócio."
+      title: "Comunidade que indica",
+      description: "Pessoas da sua cidade indicando seu negócio com genuinidade."
     },
     {
       icon: Zap,
-      title: "IA 24h por dia",
-      description: "Inteligência artificial encontrando clientes enquanto você dorme."
+      title: "IA trabalhando por você",
+      description: "Inteligência artificial conectando clientes ao seu negócio 24h."
     },
     {
       icon: Shield,
-      title: "Risco zero",
-      description: "Sem contrato. Sem mensalidade. Cancela quando quiser."
+      title: "Liberdade total",
+      description: "Sem contrato. Sem mensalidade. Você cresce no seu ritmo."
     }
   ];
 
@@ -144,24 +144,24 @@ const ParaEmpresasPage = () => {
         
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-5xl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 bg-destructive/10 border border-destructive/30 rounded-full px-3 py-1.5 md:px-4 md:py-2 mb-6 md:mb-8 animate-pulse">
-              <AlertTriangle className="w-3 h-3 md:w-4 md:h-4 text-destructive" />
-              <span className="text-xs md:text-sm font-bold text-destructive">Você está perdendo dinheiro</span>
+            <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/30 rounded-full px-3 py-1.5 md:px-4 md:py-2 mb-6 md:mb-8">
+              <Building2 className="w-3 h-3 md:w-4 md:h-4 text-primary" />
+              <span className="text-xs md:text-sm font-bold text-primary">Para Empresas</span>
             </div>
             
             <h1 className="text-3xl md:text-5xl lg:text-6xl font-black mb-4 md:mb-6 leading-tight">
-              Você está{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-orange-500">
-                queimando dinheiro
+              Sirva sua comunidade,{" "}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">
+                construa relacionamentos
               </span>{" "}
-              com anúncios que não convertem?
+              reais
             </h1>
             
             <p className="text-base md:text-xl text-muted-foreground mb-2 md:mb-4 max-w-4xl mx-auto">
-              Enquanto você paga <strong className="text-destructive">R$ 5 por cada CLIQUE</strong> que talvez vire cliente...
+              Seja encontrado por IA. Indicado por vizinhos. Conectado a clientes que <strong className="text-foreground">realmente querem você</strong>.
             </p>
             <p className="text-base md:text-xl mb-6 md:mb-8 max-w-4xl mx-auto">
-              Empresas espertas pagam <strong className="text-primary">R$ 2 por cliente que JÁ QUER comprar.</strong>
+              Receba clientes direto no WhatsApp. <strong className="text-primary">Construa relacionamentos, não apenas vendas.</strong>
             </p>
 
             <div className="flex flex-col sm:flex-row gap-3 justify-center mb-8 md:mb-12">
@@ -170,8 +170,8 @@ const ParaEmpresasPage = () => {
                 className="text-base md:text-lg px-6 md:px-8 py-5 md:py-6 bg-primary hover:bg-primary/90 shadow-lg shadow-primary/25"
                 onClick={() => document.getElementById('cadastro')?.scrollIntoView({ behavior: 'smooth' })}
               >
-                <Flame className="mr-2 w-4 h-4 md:w-5 md:h-5" />
-                Parar de Queimar Dinheiro
+                <Building2 className="mr-2 w-4 h-4 md:w-5 md:h-5" />
+                Começar a Servir
                 <ArrowRight className="ml-2 w-4 h-4 md:w-5 md:h-5" />
               </Button>
             </div>
@@ -529,7 +529,7 @@ const ParaEmpresasPage = () => {
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-black mb-6">
-              Por que empresas estão migrando
+              Por que empresas estão escolhendo a Clilin
             </h2>
           </div>
 
@@ -585,7 +585,7 @@ const ParaEmpresasPage = () => {
                   <span className="text-sm font-bold text-primary">Cadastro Gratuito</span>
                 </div>
                 <h2 className="text-3xl md:text-4xl font-black mb-6">
-                  Pare de queimar dinheiro. <span className="text-primary">Comece agora.</span>
+                  Sirva sua comunidade. <span className="text-primary">Cresça junto.</span>
                 </h2>
                 <ul className="space-y-4 mb-8">
                   <li className="flex items-center gap-3">
@@ -610,7 +610,7 @@ const ParaEmpresasPage = () => {
                   </li>
                 </ul>
                 <p className="text-muted-foreground text-sm">
-                  Enquanto você pensa, seu concorrente já está recebendo clientes.
+                  Enquanto você lê isso, negócios da sua cidade já estão se conectando com clientes.
                 </p>
               </div>
 

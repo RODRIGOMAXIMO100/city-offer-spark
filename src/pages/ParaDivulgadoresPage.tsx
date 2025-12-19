@@ -96,33 +96,33 @@ const ParaDivulgadoresPage = () => {
   const benefits = [
     {
       icon: DollarSign,
-      title: "Até R$ 1,50 por indicação",
-      description: "Cada clique = dinheiro. Automático. Sem depender de venda."
+      title: "Seja recompensado por ajudar",
+      description: "Cada indicação fortalece um negócio local e gera saldo na sua conta."
     },
     {
       icon: Zap,
       title: "PIX em 24 horas",
-      description: "Saque a partir de R$ 100. Sem esperar 30-60 dias."
+      description: "Saque a partir de R$ 100. Receba o fruto do seu trabalho rapidinho."
     },
     {
       icon: Share2,
       title: "Zero criação de conteúdo",
-      description: "Não precisa aparecer. Não precisa editar vídeo. Só mandar link."
+      description: "Não precisa aparecer. Não precisa editar vídeo. Só conectar pessoas."
     },
     {
       icon: Award,
-      title: "Sistema de níveis",
-      description: "Bronze 30%, Prata 40%, Ouro 50%. Quanto mais divulga, mais ganha."
+      title: "Cresça junto",
+      description: "Bronze 30%, Prata 40%, Ouro 50%. Quanto mais ajuda, mais cresce."
     },
     {
       icon: Smartphone,
-      title: "Ofertas que sua rede quer",
-      description: "Pizzaria, mecânica, salão... Coisas locais que fazem sentido indicar."
+      title: "Ofertas que fazem sentido",
+      description: "Pizzaria, mecânica, salão... Negócios locais que você conhece e confia."
     },
     {
       icon: Shield,
       title: "Risco literalmente zero",
-      description: "R$ 0 pra começar. Sem taxa. Sem pegadinha. Só cadastrar."
+      description: "R$ 0 pra começar. Sem taxa. Sem pegadinha. Só propósito."
     }
   ];
 
@@ -173,25 +173,25 @@ const ParaDivulgadoresPage = () => {
             </div>
             
             <h1 className="text-3xl md:text-5xl lg:text-6xl font-black mb-4 md:mb-6 leading-tight">
-              Enquanto você rola o feed, tem gente ganhando{" "}
+              Ajude negócios locais a crescer e{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-500">
-                R$ 22.500/mês
+                seja recompensado
               </span>{" "}
-              só indicando negócios
+              por isso
             </h1>
             
             <div className="max-w-3xl mx-auto space-y-2 md:space-y-4 mb-6 md:mb-8">
               <p className="text-base md:text-xl text-muted-foreground">
-                ❌ Não precisa aparecer
+                ✨ Você já é referência na sua comunidade
               </p>
               <p className="text-base md:text-xl text-muted-foreground">
-                ❌ Não precisa criar conteúdo
+                ✨ Agora pode fortalecer negócios locais
               </p>
               <p className="text-base md:text-xl text-muted-foreground">
-                ❌ Não precisa vender <strong className="text-foreground">NADA</strong>
+                ✨ E ser recompensado por cada conexão genuína
               </p>
               <p className="text-base md:text-xl text-foreground font-bold mt-4 md:mt-6">
-                ✅ Só mandar um link. Cada clique = até <span className="text-green-500">R$ 1,50</span> na sua conta.
+                💛 Cada indicação que ajuda alguém = até <span className="text-green-500">R$ 1,50</span> na sua conta.
               </p>
             </div>
 
@@ -202,7 +202,7 @@ const ParaDivulgadoresPage = () => {
                 onClick={() => document.getElementById('cadastro')?.scrollIntoView({ behavior: 'smooth' })}
               >
                 <DollarSign className="mr-2 w-4 h-4 md:w-5 md:h-5" />
-                Começar a Ganhar Agora
+                Começar a Ajudar
                 <ArrowRight className="ml-2 w-4 h-4 md:w-5 md:h-5" />
               </Button>
             </div>
@@ -648,12 +648,12 @@ const ParaDivulgadoresPage = () => {
                   <span className="text-sm font-bold text-green-500">Cadastro Gratuito</span>
                 </div>
                 <h2 className="text-3xl md:text-4xl font-black mb-6">
-                  Comece a ganhar. <span className="text-green-500">Agora.</span>
+                  Comece a ajudar. <span className="text-green-500">Seja recompensado.</span>
                 </h2>
                 <ul className="space-y-4 mb-8">
                   <li className="flex items-center gap-3">
                     <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0" />
-                    <span>Até R$ 1,50 por indicação</span>
+                    <span>Até R$ 1,50 por conexão genuína</span>
                   </li>
                   <li className="flex items-center gap-3">
                     <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0" />
@@ -669,11 +669,11 @@ const ParaDivulgadoresPage = () => {
                   </li>
                   <li className="flex items-center gap-3">
                     <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0" />
-                    <span>Ganha só por indicar (não precisa vender)</span>
+                    <span>Fortaleça negócios locais da sua comunidade</span>
                   </li>
                 </ul>
                 <p className="text-muted-foreground text-sm">
-                  Enquanto você lê isso, divulgadores na sua cidade estão ganhando.
+                  Enquanto você lê isso, divulgadores na sua cidade estão fazendo a diferença.
                 </p>
               </div>
 
@@ -682,8 +682,8 @@ const ParaDivulgadoresPage = () => {
                 <SignupForm 
                   role="AFFILIATE"
                   title="Crie sua conta"
-                  description="Comece a ganhar dinheiro hoje mesmo"
-                  buttonText="Começar a Ganhar"
+                  description="Comece a fortalecer sua comunidade hoje"
+                  buttonText="Começar a Ajudar"
                   compact
                 />
               </div>

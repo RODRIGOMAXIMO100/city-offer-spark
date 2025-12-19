@@ -35,7 +35,7 @@ const options = [
   {
     icon: Building2,
     title: "Empresa",
-    description: "Cadastre ofertas e pague apenas por interesse real",
+    description: "Sirva sua comunidade com ofertas que fazem a diferença",
     cta: "Começar como Empresa",
     ctaMobile: "Começar",
     color: "company" as ColorKey,
@@ -44,7 +44,7 @@ const options = [
   {
     icon: Users,
     title: "Divulgador",
-    description: "Ganhe comissão real compartilhando ofertas — pessoas reais da sua cidade divulgando para você",
+    description: "Ajude negócios locais a crescer e fortaleça sua comunidade",
     cta: "Começar como Divulgador",
     ctaMobile: "Começar",
     color: "affiliate" as ColorKey,
@@ -53,7 +53,7 @@ const options = [
   {
     icon: Sparkles,
     title: "Cliente",
-    description: "Encontre as melhores ofertas com ajuda da IA",
+    description: "Descubra o melhor da sua cidade com ajuda da IA",
     cta: "Descobrir Ofertas",
     ctaMobile: "Descobrir",
     color: "client" as ColorKey,
@@ -74,12 +74,12 @@ export function FinalCTA() {
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold mb-4">
             Pronto para{" "}
             <span className="bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
-              começar
+              fazer parte
             </span>
             ?
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Escolha como você quer participar do ecossistema clilin
+            Escolha como você quer crescer junto com a comunidade
           </p>
         </div>
 

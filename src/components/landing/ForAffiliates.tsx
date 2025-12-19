@@ -12,23 +12,23 @@ import {
 const benefits = [
   {
     icon: Banknote,
-    title: "Comissão por indicação",
-    description: "Cada indicação gera saldo real na sua conta.",
+    title: "Ajude e seja recompensado",
+    description: "Cada indicação fortalece um negócio local e gera saldo na sua conta.",
   },
   {
     icon: Share2,
-    title: "Use suas redes",
-    description: "WhatsApp, Instagram, TikTok. Compartilhe onde sua audiência está.",
+    title: "Use suas conexões",
+    description: "WhatsApp, Instagram, TikTok. Conecte pessoas a negócios que confiam.",
   },
   {
     icon: Wallet,
     title: "PIX instantâneo",
-    description: "Atingiu o mínimo? Saque direto para sua conta em segundos.",
+    description: "Atingiu o mínimo? Receba o fruto do seu trabalho em segundos.",
   },
   {
     icon: TrendingUp,
-    title: "Escale seus ganhos",
-    description: "Quanto mais você divulga, mais você ganha. Sem limites.",
+    title: "Cresça junto",
+    description: "Quanto mais negócios você ajuda, mais todos crescem juntos.",
   },
 ];
 
@@ -94,13 +94,13 @@ export function ForAffiliates() {
             </div>
             
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold mb-6">
-              Transforme alcance em{" "}
-              <span className="text-affiliate">renda</span>
+              Ajude sua comunidade a{" "}
+              <span className="text-affiliate">prosperar</span>
             </h2>
             
             <p className="text-lg text-muted-foreground mb-10 leading-relaxed">
-              Você já influencia pessoas na sua região. Agora pode ganhar dinheiro 
-              compartilhando ofertas que sua audiência vai adorar. <strong className="text-foreground">Comece ganhando 30% e chegue até 50% de comissão</strong> conforme sobe de nível — quanto mais você divulga, mais você ganha!
+              Você já é uma referência na sua região. Agora pode fortalecer negócios locais 
+              enquanto é recompensado por isso. <strong className="text-foreground">Comece ganhando 30% e chegue até 50% de comissão</strong> conforme cresce — quanto mais você ajuda, mais todos crescem!
             </p>
 
             {/* Benefits */}
@@ -120,7 +120,7 @@ export function ForAffiliates() {
 
             <Button size="lg" asChild className="bg-affiliate hover:bg-affiliate/90 shadow-xl shadow-affiliate/25 hover:shadow-2xl hover:shadow-affiliate/30 transition-all h-12 sm:h-14 px-6 sm:px-8 text-sm sm:text-base">
               <Link to="/auth?role=AFFILIATE">
-                Começar a Ganhar
+                Começar a Ajudar
                 <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
               </Link>
             </Button>

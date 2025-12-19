@@ -45,7 +45,7 @@ export function FAQ() {
             Perguntas frequentes
           </h2>
           <p className="text-lg text-muted-foreground">
-            Tire suas dúvidas sobre a plataforma
+            Estamos aqui para ajudar — tire suas dúvidas 💛
           </p>
         </div>
 

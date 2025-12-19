@@ -12,23 +12,23 @@ import {
 const benefits = [
   {
     icon: Sparkles,
-    title: "Apareça quando perguntarem",
-    description: "Sua oferta é sugerida pela IA quando alguém da cidade perguntar sobre seu tipo de negócio.",
+    title: "Seja encontrado naturalmente",
+    description: "Sua oferta aparece quando alguém da comunidade perguntar sobre o que você oferece.",
   },
   {
     icon: Users,
-    title: "Branding na comunidade",
-    description: "Divulgadores locais falando da sua marca. Marketing de confiança, não anúncios frios.",
+    title: "Conexões genuínas",
+    description: "Pessoas reais da sua cidade indicando seu negócio. Confiança que nenhum anúncio compra.",
   },
   {
     icon: MessageSquare,
-    title: "Cliente direto no seu canal",
-    description: "WhatsApp, site ou cardápio — você decide onde receber. Sem intermediários, sem taxa por venda.",
+    title: "Relacionamento direto",
+    description: "WhatsApp, site ou cardápio — você constrói o relacionamento. Sem intermediários.",
   },
   {
     icon: ShieldCheck,
-    title: "Sem dependência",
-    description: "Você não vira refém. Construa sua base de clientes, não a de uma plataforma.",
+    title: "Liberdade para servir",
+    description: "Sem dependência de plataformas. Você cresce com autonomia e dignidade.",
   },
 ];
 
@@ -49,14 +49,14 @@ export function ForCompanies() {
             </div>
             
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold mb-6">
-              Visibilidade que{" "}
-              <span className="text-company">constrói marca</span>
+              Sirva sua comunidade,{" "}
+              <span className="text-company">construa relacionamentos</span>
             </h2>
             
             <p className="text-lg text-muted-foreground mb-10 leading-relaxed">
-              Mais que visibilidade: sua empresa entra na conversa da cidade. Seja encontrado por IA quando 
-              perguntarem "onde comer?" ou indicado por pessoas reais da comunidade. Receba leads qualificados 
-              direto no seu WhatsApp — você fideliza.
+              Mais que visibilidade: sua empresa se torna parte da vida da cidade. Seja encontrado por IA quando 
+              perguntarem "onde comer?" ou indicado por vizinhos de confiança. Receba clientes interessados 
+              direto no seu WhatsApp — e transforme clientes em fãs.
             </p>
 
             {/* Benefits */}
