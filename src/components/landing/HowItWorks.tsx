@@ -5,21 +5,21 @@ const steps = [
     step: "01",
     icon: Building2,
     title: "Sua marca fica visível",
-    description: "Cadastre sua oferta e ela fica disponível para toda a cidade — via IA e divulgadores locais.",
+    description: "Cadastre sua oferta e ela fica disponível para toda a comunidade — via IA e pessoas que indicam de verdade.",
     color: "company",
   },
   {
     step: "02",
     icon: Share2,
     title: "Pessoas indicam você",
-    description: "Moradores da sua cidade compartilham sua oferta. Marketing de confiança, não anúncio frio.",
+    description: "Moradores da sua cidade compartilham sua oferta. Conexão genuína, não anúncio frio.",
     color: "affiliate",
   },
   {
     step: "03",
     icon: Sparkles,
-    title: "Lead qualificado direto pra você",
-    description: "Quando alguém se interessar, você recebe nome e contato direto — no WhatsApp, site ou cardápio. Cliente pronto para converter.",
+    title: "Todos crescem juntos",
+    description: "Quando alguém se interessar, você recebe nome e contato direto — no WhatsApp, site ou cardápio. Juntos, a comunidade prospera.",
     color: "client",
   },
 ];
@@ -34,7 +34,7 @@ export function HowItWorks() {
             Simples para todos
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Um ecossistema que beneficia empresas, divulgadores e clientes
+            Um ecossistema onde todos crescem juntos — empresas, divulgadores e clientes
           </p>
         </div>
 

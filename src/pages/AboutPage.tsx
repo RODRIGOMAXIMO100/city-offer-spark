@@ -43,8 +43,24 @@ const AboutPage = () => {
         <div className="container mx-auto px-4 text-center">
           <img src={logo} alt="Clilin" className="h-20 w-auto mx-auto mb-6" />
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Plataforma de Ofertas Locais que conecta empresas, divulgadores e clientes em sua cidade
+            Servindo comunidades locais — conectamos empresas, divulgadores e clientes para que todos cresçam juntos
           </p>
+        </div>
+      </section>
+
+      {/* Nossa Missão */}
+      <section className="py-12 bg-muted/30">
+        <div className="container mx-auto px-4">
+          <div className="max-w-3xl mx-auto text-center">
+            <h2 className="text-2xl font-bold text-foreground mb-4">Nossa Missão</h2>
+            <p className="text-lg text-muted-foreground leading-relaxed">
+              Acreditamos que negócios locais são o coração das comunidades. Nossa missão é 
+              <strong className="text-foreground"> servir quem serve</strong>, 
+              <strong className="text-foreground"> conectar quem quer ajudar</strong> e 
+              <strong className="text-foreground"> fortalecer quem busca o melhor para sua cidade</strong>. 
+              Crescemos juntos, com propósito e gratidão 💛
+            </p>
+          </div>
         </div>
       </section>
 
@@ -55,8 +71,8 @@ const AboutPage = () => {
             O que é o Clilin?
           </h2>
           <p className="text-lg text-muted-foreground text-center max-w-3xl mx-auto mb-12">
-            Clilin é uma plataforma inovadora que revoluciona a forma como ofertas locais são descobertas e compartilhadas. 
-            Conectamos três perfis diferentes em um ecossistema único e benéfico para todos.
+            Clilin é uma plataforma que fortalece a forma como ofertas locais são descobertas e compartilhadas. 
+            Conectamos três perfis diferentes em um ecossistema onde todos crescem juntos.
           </p>
           
           <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
@@ -133,9 +149,9 @@ const AboutPage = () => {
                 <div className="w-12 h-12 bg-primary text-primary-foreground rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold">
                   3
                 </div>
-                <h3 className="text-lg font-semibold text-foreground mb-2">Todos Ganham</h3>
+                <h3 className="text-lg font-semibold text-foreground mb-2">Todos Crescem Juntos</h3>
                 <p className="text-muted-foreground">
-                  Cliente encontra a oferta, empresa ganha cliente, divulgador ganha comissão.
+                  Cliente encontra a oferta, empresa cresce, divulgador prospera — a comunidade inteira se fortalece.
                 </p>
               </div>
             </div>
