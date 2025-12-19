@@ -231,12 +231,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
     setProfile(null);
     setRole(null);
-    
-    // Tenta fazer logout no servidor (ignora erros se sessão não existir)
+
+    // Garante que o storage local seja limpo mesmo se a sessão no servidor já expirou
+    // (isso evita “voltar logado” ao recarregar a página)
     try {
-      await supabase.auth.signOut();
-    } catch (error) {
-      console.log('[Auth] Logout error ignored:', error);
+      await supabase.auth.signOut({ scope: 'global' });
+    } catch {
+      // ignore
+    }
+
+    try {
+      await supabase.auth.signOut({ scope: 'local' });
+    } catch {
+      // ignore
     }
   };
 
