@@ -12,7 +12,8 @@ import {
   Tags, 
   FileText,
   ChevronDown,
-  LayoutDashboard
+  LayoutDashboard,
+  MapPin
 } from 'lucide-react';
 import {
   Sidebar,
@@ -41,6 +42,7 @@ export type AdminSection =
   | 'fraud' 
   | 'security' 
   | 'niches' 
+  | 'cities'
   | 'blog';
 
 interface AdminSidebarProps {
@@ -88,6 +90,7 @@ const menuGroups = [
     label: 'Configurações',
     icon: Tags,
     items: [
+      { id: 'cities' as AdminSection, label: 'Cidades', icon: MapPin },
       { id: 'niches' as AdminSection, label: 'Nichos', icon: Tags },
       { id: 'blog' as AdminSection, label: 'Blog', icon: FileText },
     ]
