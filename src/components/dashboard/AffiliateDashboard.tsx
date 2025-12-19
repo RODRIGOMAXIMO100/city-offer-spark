@@ -218,8 +218,8 @@ function AffiliateDashboardContent() {
       await navigator.clipboard.writeText(link);
       setCopiedId(offerId);
       toast({
-        title: 'Link copiado!',
-        description: 'Compartilhe com seus seguidores e ganhe comissão.',
+        title: 'Link copiado! 💛',
+        description: 'Compartilhe e ajude esse negócio local a crescer!',
       });
       setTimeout(() => setCopiedId(null), 2000);
       

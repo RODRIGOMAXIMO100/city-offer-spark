@@ -34,7 +34,10 @@ const HelpPage = () => {
           </Button>
           <div className="flex items-center gap-2">
             <HelpCircle className="h-6 w-6 text-primary" />
-            <h1 className="text-xl font-bold">Central de Ajuda</h1>
+            <div>
+              <h1 className="text-xl font-bold">Central de Ajuda</h1>
+              <p className="text-xs text-muted-foreground">Estamos aqui para te ajudar a crescer! 💛</p>
+            </div>
           </div>
         </div>
       </header>
@@ -67,7 +70,7 @@ const HelpPage = () => {
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground">
-                  Aprenda como criar ofertas irresistíveis, entenda o sistema de notas e maximize seus resultados na Clilin.
+                  Conecte-se com clientes da sua comunidade! Aqui você aprende como criar ofertas incríveis e fortalecer seu negócio local. 💛
                 </p>
               </CardContent>
             </Card>
@@ -290,7 +293,7 @@ const HelpPage = () => {
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground">
-                  Entenda como ganhar dinheiro divulgando ofertas, regras de saque e como subir de nível.
+                  Ajude negócios locais a crescerem e seja recompensado por isso! Entenda como funciona o sistema de comissões e níveis. 💛
                 </p>
               </CardContent>
             </Card>
@@ -503,7 +506,7 @@ const HelpPage = () => {
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground">
-                  Descubra como encontrar as melhores ofertas na sua cidade usando a Clilin.
+                  Descubra ofertas incríveis e apoie os negócios da sua comunidade! Aqui você aprende a usar a Clilin. 💛
                 </p>
               </CardContent>
             </Card>

@@ -178,8 +178,8 @@ function CompanyDashboardContent() {
       }
       
       toast({
-        title: 'Logo atualizada!',
-        description: 'Sua logo será exibida nas suas ofertas.',
+        title: 'Logo atualizada! 💛',
+        description: 'Agora os clientes vão conhecer melhor seu negócio!',
       });
     } catch (err: any) {
       console.error('Error uploading avatar:', err);
@@ -256,8 +256,8 @@ function CompanyDashboardContent() {
       }
       
       toast({
-        title: 'Instagram salvo!',
-        description: 'Os clientes poderão conhecer seu estabelecimento.',
+        title: 'Instagram conectado! 💛',
+        description: 'Agora os clientes podem conhecer melhor seu negócio!',
       });
       refreshProfile();
     }

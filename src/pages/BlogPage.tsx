@@ -186,9 +186,11 @@ export default function BlogPage() {
             <h1 className="text-4xl md:text-5xl font-bold mb-6 pb-2 bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent will-change-transform leading-normal">
               Blog Clilin
             </h1>
-            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              Dicas, estratégias e novidades sobre marketing local, programa de afiliados e como
-              aproveitar as melhores ofertas da sua cidade.
+            <p className="text-muted-foreground text-lg max-w-2xl mx-auto mb-2">
+              Compartilhando conhecimento para todos crescerem juntos 💛
+            </p>
+            <p className="text-muted-foreground text-sm max-w-2xl mx-auto">
+              Dicas, estratégias e novidades sobre marketing local e como fortalecer sua comunidade.
             </p>
           </div>
 

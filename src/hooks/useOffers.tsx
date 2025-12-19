@@ -168,8 +168,8 @@ export function useOffers(city?: string) {
       }
 
       toast({
-        title: "Oferta criada!",
-        description: "Sua oferta está ativa e visível para os divulgadores.",
+        title: "Oferta criada! 💛",
+        description: "Que legal! Sua oferta vai ajudar muita gente da comunidade!",
       });
 
       // Classify company niche in background (non-blocking)
@@ -257,8 +257,8 @@ export function useOffers(city?: string) {
       if (error) throw error;
 
       toast({
-        title: "Oferta atualizada!",
-        description: "As alterações foram salvas com sucesso.",
+        title: "Oferta atualizada! 💛",
+        description: "Pronto! As alterações já estão valendo.",
       });
 
 
