@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -88,6 +89,7 @@ interface TransactionData {
 
 export default function AdminDashboard() {
   const { signOut, profile } = useAuth();
+  const navigate = useNavigate();
   const [currentSection, setCurrentSection] = useState<AdminSection>('overview');
   const [stats, setStats] = useState<Stats>({
     receita: 0,
@@ -642,7 +644,10 @@ export default function AdminDashboard() {
             profileName={profile?.name}
             loading={loading}
             onRefresh={fetchAllData}
-            onSignOut={signOut}
+            onSignOut={async () => {
+              await signOut();
+              navigate('/', { replace: true });
+            }}
           />
           
           <main className="flex-1 p-4 overflow-auto">
