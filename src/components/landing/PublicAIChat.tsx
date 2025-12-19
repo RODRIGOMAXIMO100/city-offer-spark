@@ -81,21 +81,21 @@ export function PublicAIChat() {
             setMessages([{
               id: '1',
               role: 'assistant',
-              content: `Olá! 👋 Eu sou a Clilin AI. O que você está procurando hoje? Posso te ajudar a encontrar as melhores ofertas em ${urlCity}!`,
+              content: `Que bom ter você aqui! 💛 Eu sou a Clilin AI. Como posso te ajudar hoje? Vou encontrar ofertas incríveis dos negócios locais de ${urlCity}!`,
             }]);
           }
         } else {
           setMessages([{
             id: '1',
             role: 'assistant',
-            content: `Olá! 👋 Eu sou a Clilin AI. O que você está procurando hoje? Posso te ajudar a encontrar as melhores ofertas em ${urlCity}!`,
+            content: `Que bom ter você aqui! 💛 Eu sou a Clilin AI. Como posso te ajudar hoje? Vou encontrar ofertas incríveis dos negócios locais de ${urlCity}!`,
           }]);
         }
       } catch {
         setMessages([{
           id: '1',
           role: 'assistant',
-          content: `Olá! 👋 Eu sou a Clilin AI. O que você está procurando hoje? Posso te ajudar a encontrar as melhores ofertas em ${urlCity}!`,
+          content: `Que bom ter você aqui! 💛 Eu sou a Clilin AI. Como posso te ajudar hoje? Vou encontrar ofertas incríveis dos negócios locais de ${urlCity}!`,
         }]);
       }
     } else {
@@ -188,7 +188,7 @@ export function PublicAIChat() {
       {
         id: '1',
         role: 'assistant',
-        content: `Olá! 👋 Eu sou a Clilin AI. O que você está procurando hoje? Posso te ajudar a encontrar as melhores ofertas em ${selectedCity}!`,
+        content: `Que bom ter você aqui! 💛 Eu sou a Clilin AI. Como posso te ajudar hoje? Vou encontrar ofertas incríveis dos negócios locais de ${selectedCity}!`,
       },
     ]);
   };

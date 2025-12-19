@@ -88,7 +88,7 @@ export function Navbar() {
               <Link to="/auth">Entrar</Link>
             </Button>
             <Button asChild className="font-medium shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all">
-              <Link to="/auth">Começar Grátis</Link>
+              <Link to="/auth">Fazer Parte</Link>
             </Button>
           </div>
 
@@ -151,7 +151,7 @@ export function Navbar() {
                   <Link to="/auth">Entrar</Link>
                 </Button>
                 <Button asChild className="w-full">
-                  <Link to="/auth">Começar Grátis</Link>
+                  <Link to="/auth">Fazer Parte</Link>
                 </Button>
               </div>
             </div>

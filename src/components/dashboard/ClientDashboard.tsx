@@ -41,7 +41,7 @@ export default function ClientDashboard() {
     {
       id: '1',
       role: 'assistant',
-      content: `Olá${profile?.name ? `, ${profile.name.split(' ')[0]}` : ''}! 👋 Eu sou a Clilin AI. O que você está procurando hoje? Posso te ajudar a encontrar as melhores ofertas em ${profile?.city || 'sua cidade'}!`,
+      content: `Que bom ter você de volta${profile?.name ? `, ${profile.name.split(' ')[0]}` : ''}! 💛 Eu sou a Clilin AI. O que você está procurando hoje? Posso te ajudar a encontrar ofertas incríveis dos negócios locais de ${profile?.city || 'sua cidade'}!`,
     },
   ]);
   const [inputText, setInputText] = useState('');

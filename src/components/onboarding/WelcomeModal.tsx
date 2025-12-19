@@ -30,13 +30,13 @@ export function WelcomeModal() {
   const getRoleDescription = () => {
     switch (role) {
       case 'AFFILIATE':
-        return 'Compartilhe ofertas e ganhe comissão por cada lead válido!';
+        return 'Ajude negócios locais a crescerem e faça parte dessa comunidade! 💛';
       case 'COMPANY':
-        return 'Divulgue suas ofertas e atraia novos clientes para seu negócio!';
+        return 'Conecte-se com clientes da sua cidade e fortaleça seu negócio! 💛';
       case 'CLIENT':
-        return 'Descubra as melhores ofertas da sua cidade com nossa IA!';
+        return 'Descubra ofertas incríveis e apoie os negócios da sua comunidade! 💛';
       default:
-        return 'Bem-vindo à plataforma!';
+        return 'Bem-vindo à nossa comunidade!';
     }
   };
 
@@ -48,7 +48,7 @@ export function WelcomeModal() {
             <Rocket className="h-8 w-8 text-white" />
           </div>
           <DialogTitle className="text-2xl">
-            Bem-vindo, {profile?.name?.split(' ')[0] || getRoleTitle()}! 🎉
+            Que bom ter você aqui, {profile?.name?.split(' ')[0] || getRoleTitle()}! 💛
           </DialogTitle>
           <DialogDescription className="text-base mt-2">
             {getRoleDescription()}

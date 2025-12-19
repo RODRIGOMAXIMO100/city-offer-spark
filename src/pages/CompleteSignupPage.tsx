@@ -195,7 +195,7 @@ export default function CompleteSignupPage() {
       // Atualiza o contexto de auth ANTES de navegar
       await refreshProfile();
 
-      toast.success('Conta criada com sucesso! Bem-vindo!');
+      toast.success('Que bom ter você conosco! Bem-vindo à comunidade! 💛');
       navigate('/dashboard');
     } catch (error) {
       console.error('Signup error:', error);
@@ -217,9 +217,9 @@ export default function CompleteSignupPage() {
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <Card className="w-full max-w-lg">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl">Complete seu Cadastro</CardTitle>
+          <CardTitle className="text-2xl">Bem-vindo à Comunidade Clilin! 💛</CardTitle>
           <CardDescription>
-            Preencha as informações para finalizar sua conta
+            Vamos construir algo incrível juntos — preencha seus dados para começar
           </CardDescription>
         </CardHeader>
         <CardContent>
