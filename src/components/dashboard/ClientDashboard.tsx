@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { useAuth } from '@/hooks/useAuth';
 import { useOnboarding } from '@/contexts/OnboardingContext';
 import { OnboardingTour } from '@/components/onboarding/OnboardingTour';
@@ -183,7 +184,23 @@ export default function ClientDashboard() {
               )}
               
               <div className="text-sm leading-relaxed prose prose-sm dark:prose-invert max-w-none">
-                <ReactMarkdown>{msg.content}</ReactMarkdown>
+                <ReactMarkdown 
+                  remarkPlugins={[remarkGfm]}
+                  components={{
+                    a: ({ href, children }) => (
+                      <a 
+                        href={href?.startsWith('http') ? href : `https://${href}`} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-client underline hover:text-client/80"
+                      >
+                        {children}
+                      </a>
+                    )
+                  }}
+                >
+                  {msg.content}
+                </ReactMarkdown>
               </div>
 
               {/* Suggested Offers */}
