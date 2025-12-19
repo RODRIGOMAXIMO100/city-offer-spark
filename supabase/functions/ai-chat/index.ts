@@ -90,6 +90,9 @@ serve(async (req) => {
       };
     }) || [];
 
+    // Verificar se há ofertas disponíveis
+    const hasOffers = offersContext.length > 0;
+
     // Sort by popularity for the AI context
     const topOffers = [...offersContext].sort((a, b) => b.clicks - a.clicks).slice(0, 5);
     const topOfferIds = topOffers.slice(0, 3).map((o: any) => o.id);
@@ -99,7 +102,9 @@ serve(async (req) => {
       `[${index + 1}] ID: ${o.id} | ${o.company}: "${o.title}" | De R$${o.price_old} por R$${o.price_new} (${o.discount}% off) | Economia: R$${o.savings_reais}${o.is_popular ? ' | ⭐ POPULAR' : ''}${o.is_urgent ? ' | ⏰ URGENTE' : ''}`
     ).join('\n');
 
-    const systemPrompt = `Você é a Clilin, uma amiga animada que conhece TODAS as ofertas de ${city} e quer ajudar RÁPIDO! 😊
+    // Sistema de prompt condicional baseado na disponibilidade de ofertas
+    const systemPrompt = hasOffers 
+      ? `Você é a Clilin, uma amiga animada que conhece TODAS as ofertas de ${city} e quer ajudar RÁPIDO! 😊
 
 📊 OFERTAS DISPONÍVEIS (use os IDs exatos):
 ${offersList}
@@ -124,9 +129,31 @@ ${offersList}
 🎭 TOM: Amiga animada, mineirês leve (cê, uai), emojis moderados
 
 📤 RESPONDA APENAS COM JSON VÁLIDO, NADA MAIS:
-{"text": "sua mensagem aqui", "suggestedOfferIds": ["id1", "id2"]}`;
+{"text": "sua mensagem aqui", "suggestedOfferIds": ["id1", "id2"]}`
+      : `Você é a Clilin, uma assistente simpática de ${city}. 😊
 
-    console.log("AI Chat - City:", city, "Offers found:", offersContext.length, "Top IDs:", topOfferIds);
+⚠️ IMPORTANTE: Ainda NÃO existem ofertas cadastradas em ${city} no momento.
+
+🎯 INSTRUÇÕES OBRIGATÓRIAS:
+
+1. SEMPRE responda em formato JSON válido
+2. O JSON deve ter exatamente 2 campos: "text" (string) e "suggestedOfferIds" (array SEMPRE VAZIO [])
+
+**REGRAS:**
+- Informe gentilmente que ainda não há ofertas disponíveis em ${city}
+- Explique que a Clilin é nova na cidade e está chegando
+- Sugira que o usuário convide negócios locais (restaurantes, lojas, serviços) para a plataforma
+- Diga que assim que houver ofertas, elas aparecerão aqui automaticamente
+- Seja simpática e positiva, mantenha a esperança de que em breve terá ofertas
+- NUNCA prometa ofertas ou diga que tem ofertas disponíveis
+- NUNCA invente ofertas ou empresas
+
+🎭 TOM: Amiga simpática, honesta, positiva, mineirês leve
+
+📤 RESPONDA APENAS COM JSON VÁLIDO, NADA MAIS:
+{"text": "sua mensagem aqui", "suggestedOfferIds": []}`;
+
+    console.log("AI Chat - City:", city, "Offers found:", offersContext.length, "Has offers:", hasOffers, "Top IDs:", topOfferIds);
 
     const messages = [
       { role: "system", content: systemPrompt },
@@ -191,28 +218,35 @@ ${offersList}
         .trim();
       
       if (!cleanText) {
-        cleanText = "Encontrei algumas ofertas que podem te interessar! 😊";
+        cleanText = hasOffers 
+          ? "Encontrei algumas ofertas que podem te interessar! 😊"
+          : "Ainda não temos ofertas em " + city + ", mas logo teremos! 😊";
       }
       
       parsedResponse = { text: cleanText, suggestedOfferIds: [] };
     }
 
-    // FALLBACK INTELIGENTE: Se o usuário pediu ofertas mas a IA não retornou IDs
-    const userWantsOffers = /oferta|quero|mostre|mostra|tem algo|o que tem|ver|procur|preciso|busco|pizza|comida|servi|desconto|promo/i.test(message);
-    const isGreeting = /^(oi|olá|ola|eai|e ai|hey|hello|bom dia|boa tarde|boa noite|tudo bem)[\s!?.,]*$/i.test(message.trim());
-    
-    if (
-      !isGreeting &&
-      userWantsOffers &&
-      (!parsedResponse.suggestedOfferIds || parsedResponse.suggestedOfferIds.length === 0)
-    ) {
-      console.log("Fallback triggered - user wants offers but AI returned none");
-      parsedResponse.suggestedOfferIds = topOfferIds;
+    // FALLBACK INTELIGENTE: Só ativar se realmente houver ofertas disponíveis
+    if (hasOffers) {
+      const userWantsOffers = /oferta|quero|mostre|mostra|tem algo|o que tem|ver|procur|preciso|busco|pizza|comida|servi|desconto|promo/i.test(message);
+      const isGreeting = /^(oi|olá|ola|eai|e ai|hey|hello|bom dia|boa tarde|boa noite|tudo bem)[\s!?.,]*$/i.test(message.trim());
       
-      // Se o texto também não menciona ofertas, ajustar
-      if (!parsedResponse.text || parsedResponse.text.length < 10) {
-        parsedResponse.text = "Olha só o que separei pra você! 🔥";
+      if (
+        !isGreeting &&
+        userWantsOffers &&
+        (!parsedResponse.suggestedOfferIds || parsedResponse.suggestedOfferIds.length === 0)
+      ) {
+        console.log("Fallback triggered - user wants offers but AI returned none");
+        parsedResponse.suggestedOfferIds = topOfferIds;
+        
+        // Se o texto também não menciona ofertas, ajustar
+        if (!parsedResponse.text || parsedResponse.text.length < 10) {
+          parsedResponse.text = "Olha só o que separei pra você! 🔥";
+        }
       }
+    } else {
+      // Garantir que não retorne IDs quando não há ofertas
+      parsedResponse.suggestedOfferIds = [];
     }
 
     // Get full offer details for suggested offers
@@ -226,6 +260,7 @@ ${offersList}
       JSON.stringify({
         text: parsedResponse.text,
         suggestedOffers,
+        noOffers: !hasOffers, // Flag para o frontend saber que não há ofertas
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
