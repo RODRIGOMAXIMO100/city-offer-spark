@@ -226,9 +226,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signOut = async () => {
-    await supabase.auth.signOut();
+    // Limpa estado local primeiro para garantir logout mesmo com erros
+    setSession(null);
+    setUser(null);
     setProfile(null);
     setRole(null);
+    
+    // Tenta fazer logout no servidor (ignora erros se sessão não existir)
+    try {
+      await supabase.auth.signOut();
+    } catch (error) {
+      console.log('[Auth] Logout error ignored:', error);
+    }
   };
 
   const refreshProfile = async () => {
