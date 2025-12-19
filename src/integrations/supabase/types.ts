@@ -147,6 +147,42 @@ export type Database = {
           },
         ]
       }
+      available_cities: {
+        Row: {
+          activated_at: string | null
+          active: boolean | null
+          city_name: string
+          created_at: string | null
+          id: string
+          priority: number | null
+          scheduled_activation: string | null
+          state_code: string
+          waitlist_count: number | null
+        }
+        Insert: {
+          activated_at?: string | null
+          active?: boolean | null
+          city_name: string
+          created_at?: string | null
+          id?: string
+          priority?: number | null
+          scheduled_activation?: string | null
+          state_code: string
+          waitlist_count?: number | null
+        }
+        Update: {
+          activated_at?: string | null
+          active?: boolean | null
+          city_name?: string
+          created_at?: string | null
+          id?: string
+          priority?: number | null
+          scheduled_activation?: string | null
+          state_code?: string
+          waitlist_count?: number | null
+        }
+        Relationships: []
+      }
       blog_posts: {
         Row: {
           author_name: string | null
@@ -242,6 +278,47 @@ export type Database = {
           use_count?: number | null
         }
         Relationships: []
+      }
+      city_waitlist: {
+        Row: {
+          city_id: string | null
+          created_at: string | null
+          email: string
+          id: string
+          name: string
+          notified_at: string | null
+          phone: string | null
+          role: string
+        }
+        Insert: {
+          city_id?: string | null
+          created_at?: string | null
+          email: string
+          id?: string
+          name: string
+          notified_at?: string | null
+          phone?: string | null
+          role: string
+        }
+        Update: {
+          city_id?: string | null
+          created_at?: string | null
+          email?: string
+          id?: string
+          name?: string
+          notified_at?: string | null
+          phone?: string | null
+          role?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "city_waitlist_city_id_fkey"
+            columns: ["city_id"]
+            isOneToOne: false
+            referencedRelation: "available_cities"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       click_rate_limits: {
         Row: {
