@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
-import { Loader2, Building2, Megaphone, Star } from 'lucide-react';
+import { Loader2, Building2, Megaphone, Star, Clock } from 'lucide-react';
 import { BRAZIL_STATES, getCitiesByState } from '@/data/brazilLocations';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -16,8 +16,17 @@ import { cn } from '@/lib/utils';
 import { Check, ChevronsUpDown } from 'lucide-react';
 import { ValidatedInput } from '@/components/ui/validated-input';
 import { validateCNPJ, formatCNPJ, isCNPJComplete } from '@/lib/validators';
+import CityWaitlistModal from '@/components/auth/CityWaitlistModal';
+import { Badge } from '@/components/ui/badge';
 
 type UserRole = 'COMPANY' | 'AFFILIATE' | 'CLIENT';
+
+interface CityFromDb {
+  id: string;
+  state_code: string;
+  city_name: string;
+  active: boolean;
+}
 
 const formatPhone = (value: string) => {
   const numbers = value.replace(/\D/g, '').slice(0, 11);
@@ -49,11 +58,59 @@ export default function CompleteSignupPage() {
   const [selectedCity, setSelectedCity] = useState('');
   const [cityOpen, setCityOpen] = useState(false);
   
+  // City validation states
+  const [activeCities, setActiveCities] = useState<CityFromDb[]>([]);
+  const [allCitiesFromDb, setAllCitiesFromDb] = useState<CityFromDb[]>([]);
+  const [waitlistModalOpen, setWaitlistModalOpen] = useState(false);
+  const [selectedUnavailableCity, setSelectedUnavailableCity] = useState<{id: string; name: string; state: string} | null>(null);
+  
   const cities = selectedState ? getCitiesByState(selectedState) : [];
 
   // Validation states
   const cnpjComplete = isCNPJComplete(cnpj);
   const cnpjValid = cnpjComplete ? validateCNPJ(cnpj) : null;
+
+  // Fetch cities from database
+  useEffect(() => {
+    const fetchCities = async () => {
+      const { data: activeData } = await supabase
+        .from('available_cities')
+        .select('id, state_code, city_name, active')
+        .eq('active', true);
+      setActiveCities(activeData || []);
+      
+      const { data: allData } = await supabase
+        .from('available_cities')
+        .select('id, state_code, city_name, active');
+      setAllCitiesFromDb(allData || []);
+    };
+    fetchCities();
+  }, []);
+
+  // Check if city is available
+  const isCityAvailable = (stateCode: string, cityName: string) => {
+    return activeCities.some(c => c.state_code === stateCode && c.city_name === cityName);
+  };
+
+  // Handle city selection with validation
+  const handleCitySelect = (cityName: string) => {
+    if (isCityAvailable(selectedState, cityName)) {
+      setSelectedCity(cityName);
+      setCityOpen(false);
+    } else {
+      // Find city in database to get ID
+      const cityFromDb = allCitiesFromDb.find(c => c.state_code === selectedState && c.city_name === cityName);
+      if (cityFromDb) {
+        setSelectedUnavailableCity({ id: cityFromDb.id, name: cityName, state: selectedState });
+        setWaitlistModalOpen(true);
+        setCityOpen(false);
+      } else {
+        // City not in DB at all - show toast
+        toast.error('Cidade não disponível ainda. Em breve chegaremos aí!');
+        setCityOpen(false);
+      }
+    }
+  };
 
   useEffect(() => {
     let mounted = true;
@@ -125,11 +182,21 @@ export default function CompleteSignupPage() {
         toast.error('Selecione estado e cidade');
         return;
       }
+      // Validate city is active
+      if (!isCityAvailable(selectedState, selectedCity)) {
+        toast.error('Esta cidade ainda não está disponível. Entre na lista de espera!');
+        return;
+      }
     }
 
     if (selectedRole === 'AFFILIATE') {
       if (!selectedState || !selectedCity) {
         toast.error('Selecione estado e cidade');
+        return;
+      }
+      // Validate city is active
+      if (!isCityAvailable(selectedState, selectedCity)) {
+        toast.error('Esta cidade ainda não está disponível. Entre na lista de espera!');
         return;
       }
     }
@@ -385,24 +452,31 @@ export default function CompleteSignupPage() {
                             <CommandList>
                               <CommandEmpty>Nenhuma cidade encontrada.</CommandEmpty>
                               <CommandGroup>
-                                {cities.map((city) => (
-                                  <CommandItem
-                                    key={city}
-                                    value={city}
-                                    onSelect={() => {
-                                      setSelectedCity(city);
-                                      setCityOpen(false);
-                                    }}
-                                  >
-                                    <Check
-                                      className={cn(
-                                        "mr-2 h-4 w-4",
-                                        selectedCity === city ? "opacity-100" : "opacity-0"
+                                {cities.map((city) => {
+                                  const isAvailable = isCityAvailable(selectedState, city);
+                                  return (
+                                    <CommandItem
+                                      key={city}
+                                      value={city}
+                                      onSelect={() => handleCitySelect(city)}
+                                      className={cn(!isAvailable && "opacity-70")}
+                                    >
+                                      <Check
+                                        className={cn(
+                                          "mr-2 h-4 w-4",
+                                          selectedCity === city ? "opacity-100" : "opacity-0"
+                                        )}
+                                      />
+                                      <span className="flex-1">{city}</span>
+                                      {!isAvailable && (
+                                        <Badge variant="outline" className="ml-2 text-[10px] px-1.5 py-0 bg-muted">
+                                          <Clock className="w-2.5 h-2.5 mr-1" />
+                                          Em breve
+                                        </Badge>
                                       )}
-                                    />
-                                    {city}
-                                  </CommandItem>
-                                ))}
+                                    </CommandItem>
+                                  );
+                                })}
                               </CommandGroup>
                             </CommandList>
                           </Command>
@@ -445,6 +519,18 @@ export default function CompleteSignupPage() {
           </form>
         </CardContent>
       </Card>
+
+      {/* City Waitlist Modal */}
+      {selectedUnavailableCity && (
+        <CityWaitlistModal
+          open={waitlistModalOpen}
+          onOpenChange={setWaitlistModalOpen}
+          cityId={selectedUnavailableCity.id}
+          cityName={selectedUnavailableCity.name}
+          stateName={selectedUnavailableCity.state}
+          role={selectedRole || 'CLIENT'}
+        />
+      )}
     </div>
   );
 }
