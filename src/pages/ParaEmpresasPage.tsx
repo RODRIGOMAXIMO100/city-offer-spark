@@ -198,109 +198,124 @@ const ParaEmpresasPage = () => {
         </div>
       </section>
 
-      {/* Seção: Os 3 Inimigos do seu Lucro */}
-      <section className="py-20 bg-destructive/5">
+      {/* Seção: O custo das opções tradicionais */}
+      <section className="py-20 bg-muted/30">
         <div className="container mx-auto px-4">
           <div className="max-w-5xl mx-auto text-center mb-12">
             <h2 className="text-3xl md:text-5xl font-black mb-6">
-              Os 3 <span className="text-destructive">ladrões</span> do seu lucro
+              O custo das <span className="text-muted-foreground">opções tradicionais</span>
             </h2>
             <p className="text-xl text-muted-foreground">
-              Você provavelmente usa pelo menos um. E está pagando caro por isso.
+              Cada caminho tem seu preço. Veja o que você pode estar pagando.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto mb-12">
+          <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
             {/* Anúncios Online */}
-            <div className="bg-card border-2 border-destructive/30 rounded-2xl p-6">
-              <div className="w-12 h-12 bg-destructive/20 rounded-full flex items-center justify-center mb-4">
-                <MousePointer className="w-6 h-6 text-destructive" />
+            <div className="bg-card border border-border rounded-2xl p-6">
+              <div className="w-12 h-12 bg-muted rounded-full flex items-center justify-center mb-4">
+                <MousePointer className="w-6 h-6 text-muted-foreground" />
               </div>
-              <h3 className="text-xl font-bold mb-4 text-destructive">Plataformas de Anúncios</h3>
+              <h3 className="text-xl font-bold mb-4">Plataformas de Anúncios</h3>
               <ul className="space-y-3 text-sm">
                 <li className="flex items-start gap-2">
-                  <XCircle className="w-4 h-4 text-destructive mt-0.5 flex-shrink-0" />
+                  <XCircle className="w-4 h-4 text-muted-foreground mt-0.5 flex-shrink-0" />
                   <span>Paga R$ 2-5 por <strong>clique</strong> — não por interesse</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <XCircle className="w-4 h-4 text-destructive mt-0.5 flex-shrink-0" />
+                  <XCircle className="w-4 h-4 text-muted-foreground mt-0.5 flex-shrink-0" />
                   <span>Conversão média: <strong>2-5%</strong> dos cliques</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <XCircle className="w-4 h-4 text-destructive mt-0.5 flex-shrink-0" />
+                  <XCircle className="w-4 h-4 text-muted-foreground mt-0.5 flex-shrink-0" />
                   <span>Precisa de <strong>especialista</strong> pra gerenciar</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <XCircle className="w-4 h-4 text-destructive mt-0.5 flex-shrink-0" />
-                  <span>Queima dinheiro <strong>testando público</strong></span>
+                  <XCircle className="w-4 h-4 text-muted-foreground mt-0.5 flex-shrink-0" />
+                  <span>Investimento alto para <strong>testar público</strong></span>
                 </li>
               </ul>
-              <div className="mt-6 p-3 bg-destructive/10 rounded-lg text-center">
-                <span className="text-sm text-muted-foreground">Custo real por cliente:</span>
-                <div className="text-2xl font-black text-destructive">R$ 40 - R$ 100</div>
+              <div className="mt-6 p-3 bg-muted rounded-lg text-center">
+                <span className="text-sm text-muted-foreground">Custo médio por cliente:</span>
+                <div className="text-2xl font-black text-foreground">R$ 40 - R$ 100</div>
               </div>
             </div>
 
             {/* Apps de Delivery */}
-            <div className="bg-card border-2 border-orange-500/30 rounded-2xl p-6">
-              <div className="w-12 h-12 bg-orange-500/20 rounded-full flex items-center justify-center mb-4">
-                <Smartphone className="w-6 h-6 text-orange-500" />
+            <div className="bg-card border border-border rounded-2xl p-6">
+              <div className="w-12 h-12 bg-muted rounded-full flex items-center justify-center mb-4">
+                <Smartphone className="w-6 h-6 text-muted-foreground" />
               </div>
-              <h3 className="text-xl font-bold mb-4 text-orange-500">Apps de Delivery</h3>
+              <h3 className="text-xl font-bold mb-4">Apps de Delivery</h3>
               <ul className="space-y-3 text-sm">
                 <li className="flex items-start gap-2">
-                  <XCircle className="w-4 h-4 text-orange-500 mt-0.5 flex-shrink-0" />
+                  <XCircle className="w-4 h-4 text-muted-foreground mt-0.5 flex-shrink-0" />
                   <span>Taxa de <strong>27% por venda</strong></span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <XCircle className="w-4 h-4 text-orange-500 mt-0.5 flex-shrink-0" />
+                  <XCircle className="w-4 h-4 text-muted-foreground mt-0.5 flex-shrink-0" />
                   <span>Cliente é <strong>do marketplace</strong>, não seu</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <XCircle className="w-4 h-4 text-orange-500 mt-0.5 flex-shrink-0" />
-                  <span>Compete com <strong>500 concorrentes</strong></span>
+                  <XCircle className="w-4 h-4 text-muted-foreground mt-0.5 flex-shrink-0" />
+                  <span>Compete com <strong>muitos concorrentes</strong></span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <XCircle className="w-4 h-4 text-orange-500 mt-0.5 flex-shrink-0" />
+                  <XCircle className="w-4 h-4 text-muted-foreground mt-0.5 flex-shrink-0" />
                   <span>Depende do <strong>algoritmo</strong> do app</span>
                 </li>
               </ul>
-              <div className="mt-6 p-3 bg-orange-500/10 rounded-lg text-center">
-                <span className="text-sm text-muted-foreground">Pizza R$ 80 = você perde:</span>
-                <div className="text-2xl font-black text-orange-500">R$ 21,60</div>
+              <div className="mt-6 p-3 bg-muted rounded-lg text-center">
+                <span className="text-sm text-muted-foreground">Pizza R$ 80 = taxa de:</span>
+                <div className="text-2xl font-black text-foreground">R$ 21,60</div>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
 
-            {/* Clilin - Solução */}
-            <div className="bg-card border-2 border-primary rounded-2xl p-6 relative overflow-hidden">
-              <div className="absolute top-0 right-0 bg-primary text-primary-foreground text-xs font-bold px-3 py-1 rounded-bl-lg">
-                MELHOR OPÇÃO
+      {/* Seção: Existe um caminho melhor */}
+      <section className="py-20 bg-primary/5">
+        <div className="container mx-auto px-4">
+          <div className="max-w-5xl mx-auto text-center mb-12">
+            <h2 className="text-3xl md:text-5xl font-black mb-6">
+              Existe um <span className="text-primary">caminho melhor</span>
+            </h2>
+            <p className="text-xl text-muted-foreground">
+              E ele coloca você no controle do seu negócio.
+            </p>
+          </div>
+
+          <div className="max-w-lg mx-auto">
+            <div className="bg-card border-2 border-primary rounded-2xl p-8 relative overflow-hidden shadow-lg">
+              <div className="absolute top-0 right-0 bg-primary text-primary-foreground text-xs font-bold px-4 py-2 rounded-bl-xl">
+                RECOMENDADO
               </div>
-              <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center mb-4">
-                <CheckCircle2 className="w-6 h-6 text-primary" />
+              <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mb-6">
+                <CheckCircle2 className="w-8 h-8 text-primary" />
               </div>
-              <h3 className="text-xl font-bold mb-4 text-primary">Clilin</h3>
-              <ul className="space-y-3 text-sm">
-                <li className="flex items-start gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+              <h3 className="text-2xl font-bold mb-6 text-primary">Clilin</h3>
+              <ul className="space-y-4 text-base">
+                <li className="flex items-start gap-3">
+                  <CheckCircle2 className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
                   <span>Paga <strong>só por interesse real</strong></span>
                 </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                <li className="flex items-start gap-3">
+                  <CheckCircle2 className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
                   <span>Cliente vai <strong>pro SEU WhatsApp</strong></span>
                 </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                <li className="flex items-start gap-3">
+                  <CheckCircle2 className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
                   <span><strong>Zero taxa</strong> sobre a venda</span>
                 </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
-                  <span>IA + divulgadores <strong>trabalham 24h</strong></span>
+                <li className="flex items-start gap-3">
+                  <CheckCircle2 className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+                  <span>Comunidade de divulgadores <strong>trabalhando por você</strong></span>
                 </li>
               </ul>
-              <div className="mt-6 p-3 bg-primary/10 rounded-lg text-center">
-                <span className="text-sm text-muted-foreground">Custo por cliente:</span>
-                <div className="text-2xl font-black text-primary">R$ 1 - R$ 3</div>
+              <div className="mt-8 p-4 bg-primary/10 rounded-xl text-center">
+                <span className="text-sm text-muted-foreground">Custo por cliente interessado:</span>
+                <div className="text-3xl font-black text-primary">R$ 1 - R$ 3</div>
               </div>
             </div>
           </div>
