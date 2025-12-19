@@ -52,13 +52,13 @@ export function HeroSection() {
           {/* Headline */}
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-display font-bold tracking-tight mb-6 animate-fade-in-up" style={{ animationDelay: "0.1s" }}>
             <span className="bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
-              Apareça. Indique. Descubra.
+              Servir. Conectar. Crescer.
             </span>
           </h1>
 
           {/* Subtitle */}
           <p className="text-lg sm:text-xl text-muted-foreground mb-10 max-w-2xl mx-auto leading-relaxed animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
-            A única plataforma onde empresas, divulgadores e clientes se encontram — com IA e indicação real, direto na sua cidade.
+            Fortalecendo negócios locais e comunidades — juntos crescemos mais.
           </p>
 
           {/* CTAs */}
@@ -90,9 +90,9 @@ export function HeroSection() {
           {/* Trust Badges */}
           <div className="flex flex-wrap justify-center gap-4 sm:gap-6 lg:gap-10 text-sm animate-fade-in-up" style={{ animationDelay: "0.4s" }}>
             {[
-              { icon: CheckCircle2, text: "Visibilidade local garantida" },
-              { icon: CheckCircle2, text: "Branding na comunidade" },
-              { icon: CheckCircle2, text: "Cliente vai pro seu canal" },
+              { icon: CheckCircle2, text: "Comunidades fortalecidas" },
+              { icon: CheckCircle2, text: "Crescimento compartilhado" },
+              { icon: CheckCircle2, text: "Conexões com propósito" },
             ].map((item) => (
               <div key={item.text} className="flex items-center gap-2 text-muted-foreground">
                 <item.icon className="h-4 w-4 sm:h-5 sm:w-5 text-secondary shrink-0" />
@@ -111,24 +111,24 @@ export function HeroSection() {
           {[
             {
               icon: Building2,
-              title: "Apareça",
-              desc: "Seja encontrado por IA e indicação real",
+              title: "Servir",
+              desc: "Conecte-se com quem precisa de você",
               color: "company",
               gradient: "from-company to-company/70",
               delay: "0.5s",
             },
             {
               icon: TrendingUp,
-              title: "Indique",
-              desc: "Ganhe comissão por cada cliente",
+              title: "Conectar",
+              desc: "Una pessoas e negócios locais",
               color: "affiliate",
               gradient: "from-affiliate to-affiliate/70",
               delay: "0.65s",
             },
             {
               icon: Sparkles,
-              title: "Descubra",
-              desc: "As melhores ofertas da sua cidade",
+              title: "Crescer",
+              desc: "Prospere junto com sua comunidade",
               color: "client",
               gradient: "from-client to-client/70",
               delay: "0.8s",

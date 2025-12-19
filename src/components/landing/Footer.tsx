@@ -13,8 +13,8 @@ export function Footer() {
               <img src={logo} alt="clilin" className="h-10" />
             </Link>
             <p className="text-muted-foreground max-w-md leading-relaxed">
-              Plataforma de ofertas locais que conecta empresas, divulgadores e clientes 
-              de forma inteligente e eficiente.
+              Servindo comunidades locais — conectamos empresas, divulgadores e clientes 
+              para que todos cresçam juntos 💛
             </p>
             <div className="flex gap-3 mt-6">
               <a
@@ -90,6 +90,7 @@ export function Footer() {
         </div>
 
         <div className="border-t border-border mt-12 pt-8 text-center text-sm text-muted-foreground">
+          <p className="mb-2">Servindo comunidades com propósito 💛</p>
           <p>© {new Date().getFullYear()} clilin. Todos os direitos reservados.</p>
         </div>
       </div>
