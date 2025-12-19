@@ -20,7 +20,9 @@ import {
   Flame,
   MessageCircle,
   Sparkles,
-  Timer
+  Timer,
+  Globe,
+  FileText
 } from "lucide-react";
 import { SEOHead } from "@/components/seo/SEOHead";
 import { Footer } from "@/components/landing/Footer";
@@ -130,6 +132,10 @@ const ParaDivulgadoresPage = () => {
     {
       question: "Preciso ter muitos seguidores?",
       answer: "Não! Você pode divulgar no WhatsApp da família, grupos de amigos, vizinhos. Qualquer pessoa pode começar. Aliás, grupos de WhatsApp convertem melhor que redes sociais."
+    },
+    {
+      question: "Para onde o cliente vai quando clica?",
+      answer: "Depende da escolha da empresa! Pode ser direto pro WhatsApp, pro site, ou pro cardápio digital. Você não precisa se preocupar com isso - a empresa já configurou o destino ideal pra ela."
     },
     {
       question: "Como funciona a comissão?",
@@ -319,6 +325,38 @@ const ParaDivulgadoresPage = () => {
                   </p>
                 </div>
               </div>
+            </div>
+
+            {/* Destinos do Link */}
+            <div className="bg-card border border-border rounded-2xl p-6">
+              <div className="text-center mb-4">
+                <p className="text-lg font-bold">
+                  🎯 Para onde o cliente vai quando clica?
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  Depende da empresa! Cada uma escolhe o destino ideal:
+                </p>
+              </div>
+              <div className="grid grid-cols-3 gap-3">
+                <div className="flex flex-col items-center text-center p-3 bg-green-500/5 rounded-xl border border-green-500/20">
+                  <MessageCircle className="w-8 h-8 text-green-500 mb-2" />
+                  <span className="text-xs font-bold">WhatsApp</span>
+                  <span className="text-[10px] text-muted-foreground">Conversa direta</span>
+                </div>
+                <div className="flex flex-col items-center text-center p-3 bg-blue-500/5 rounded-xl border border-blue-500/20">
+                  <Globe className="w-8 h-8 text-blue-500 mb-2" />
+                  <span className="text-xs font-bold">Site</span>
+                  <span className="text-[10px] text-muted-foreground">Página da empresa</span>
+                </div>
+                <div className="flex flex-col items-center text-center p-3 bg-purple-500/5 rounded-xl border border-purple-500/20">
+                  <FileText className="w-8 h-8 text-purple-500 mb-2" />
+                  <span className="text-xs font-bold">Cardápio</span>
+                  <span className="text-[10px] text-muted-foreground">Menu digital</span>
+                </div>
+              </div>
+              <p className="text-center text-xs text-muted-foreground mt-3">
+                Você só compartilha o link. O resto é automático!
+              </p>
             </div>
 
             <div className="bg-gradient-to-r from-green-500/10 to-accent/10 border border-green-500/20 rounded-2xl p-6 text-center">
@@ -568,7 +606,7 @@ const ParaDivulgadoresPage = () => {
                 <Smartphone className="w-12 h-12 text-green-500 mx-auto mb-4 mt-4" />
                 <h3 className="text-xl font-bold mb-2">Compartilhe</h3>
                 <p className="text-muted-foreground text-sm">
-                  WhatsApp, Instagram, grupos... Só copiar e mandar.
+                  O link leva pro WhatsApp, site ou cardápio - a empresa escolhe.
                 </p>
               </div>
 
