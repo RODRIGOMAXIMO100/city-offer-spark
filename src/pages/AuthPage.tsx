@@ -23,21 +23,21 @@ const ROLES: { value: AppRole; label: string; icon: React.ReactNode; description
     value: 'COMPANY',
     label: 'Empresa',
     icon: <Building2 className="h-5 w-5" />,
-    description: 'Anuncie ofertas e pague por interesse real',
+    description: 'Sirva sua comunidade com ofertas incríveis',
     color: 'bg-company text-company-foreground',
   },
   {
     value: 'AFFILIATE',
     label: 'Divulgador',
     icon: <Users className="h-5 w-5" />,
-    description: 'Compartilhe ofertas e ganhe comissão',
+    description: 'Ajude negócios locais a crescer',
     color: 'bg-affiliate text-affiliate-foreground',
   },
   {
     value: 'CLIENT',
     label: 'Cliente',
     icon: <Sparkles className="h-5 w-5" />,
-    description: 'Encontre ofertas com IA inteligente',
+    description: 'Descubra o melhor da sua cidade',
     color: 'bg-client text-client-foreground',
   },
 ];
@@ -269,7 +269,7 @@ export default function AuthPage() {
         {/* Logo */}
         <div className="text-center mb-8">
           <img src={logoImg} alt="clilin" className="h-14 mx-auto" />
-          <p className="text-muted-foreground mt-2">Ofertas locais inteligentes</p>
+          <p className="text-muted-foreground mt-2">Conectando comunidades 💛</p>
         </div>
 
         <Card className="shadow-lg border-border/50">

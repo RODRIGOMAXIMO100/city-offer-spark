@@ -163,16 +163,16 @@ const ParaClientesPage = () => {
             </div>
             
             <h1 className="text-3xl md:text-5xl lg:text-6xl font-black mb-4 md:mb-6 leading-tight">
-              Ofertas{" "}
+              Descubra os{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-rose-500">
-                exclusivas
+                tesouros
               </span>{" "}
-              que você não encontra em nenhum app
+              da sua cidade
             </h1>
             
             <p className="text-base md:text-xl text-muted-foreground mb-6 md:mb-8 max-w-3xl mx-auto">
-              Descontos de <strong className="text-foreground">20% a 70%</strong> em negócios da sua cidade. 
-              Curados por IA. Indicados por vizinhos. <strong className="text-secondary">100% gratuito.</strong>
+              Ofertas de <strong className="text-foreground">20% a 70%</strong> em negócios locais. 
+              Indicados por vizinhos. Encontrados por IA. <strong className="text-secondary">100% gratuito.</strong>
             </p>
 
             <div className="flex flex-col sm:flex-row gap-3 justify-center mb-8 md:mb-12">
@@ -348,10 +348,10 @@ const ParaClientesPage = () => {
             <div className="grid md:grid-cols-2 gap-8 items-center">
               <div>
                 <h2 className="text-3xl md:text-4xl font-black mb-6">
-                  Pergunte como se fosse pra um amigo
+                  Pergunte como perguntaria a um vizinho 💛
                 </h2>
                 <p className="text-xl text-muted-foreground mb-6">
-                  A IA entende linguagem natural. Não precisa de busca exata.
+                  A IA te entende naturalmente. Sem busca exata, sem complicação.
                 </p>
                 <ul className="space-y-4">
                   <li className="flex items-center gap-3">
@@ -386,7 +386,7 @@ const ParaClientesPage = () => {
 
                 <div className="space-y-4">
                   <div className="bg-muted/50 rounded-xl p-4 max-w-[80%]">
-                    <p className="text-sm">Oi! O que você está procurando hoje?</p>
+                    <p className="text-sm">Que bom ter você aqui! 💛 O que você está procurando hoje?</p>
                   </div>
 
                   <div className="bg-secondary/10 rounded-xl p-4 max-w-[80%] ml-auto">
@@ -413,7 +413,7 @@ const ParaClientesPage = () => {
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-black mb-6">
-              Por que usar a Clilin
+              Por que você vai amar 💛
             </h2>
           </div>
 
@@ -439,7 +439,7 @@ const ParaClientesPage = () => {
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto">
             <h2 className="text-3xl md:text-4xl font-black mb-12 text-center">
-              Perguntas frequentes
+              Dúvidas? Estamos aqui 💛
             </h2>
 
             <div className="space-y-4">
