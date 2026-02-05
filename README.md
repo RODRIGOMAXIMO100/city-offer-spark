@@ -1,73 +1,185 @@
-# Welcome to your Lovable project
+# 🐝 Clilin - Plataforma de Ofertas Locais
 
-## Project info
+Plataforma que conecta empresas locais, divulgadores e clientes através de ofertas e um sistema de afiliados com comissões.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+## 🚀 Tecnologias
 
-## How can I edit this code?
+- **Frontend**: React 18 + TypeScript + Vite
+- **Estilização**: Tailwind CSS + shadcn/ui
+- **Backend**: Supabase (Lovable Cloud)
+- **Estado**: React Query (TanStack Query)
+- **Roteamento**: React Router v6
+- **IA**: Integração com modelos Gemini/GPT
 
-There are several ways of editing your application.
+---
 
-**Use Lovable**
+## 📋 Pré-requisitos
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+Antes de começar, certifique-se de ter instalado:
 
-Changes made via Lovable will be committed automatically to this repo.
+- [Node.js](https://nodejs.org/) v18 ou superior
+- npm (incluído no Node.js) ou [Bun](https://bun.sh/)
+- [Git](https://git-scm.com/)
 
-**Use your preferred IDE**
+---
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## 🛠️ Instalação e Execução
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+### 1. Clone o repositório
 
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+```bash
+git clone <URL_DO_REPOSITORIO>
+cd clilin
 ```
 
-**Edit a file directly in GitHub**
+### 2. Instale as dependências
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+```bash
+# Usando npm
+npm install
 
-**Use GitHub Codespaces**
+# Ou usando bun (mais rápido)
+bun install
+```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+### 3. Configure as variáveis de ambiente
 
-## What technologies are used for this project?
+O arquivo `.env` já está configurado com as credenciais do Lovable Cloud. Não é necessário criar manualmente.
 
-This project is built with:
+> ⚠️ **Nota**: Nunca commite credenciais sensíveis. O `.env` do projeto contém apenas chaves públicas.
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+### 4. Inicie o servidor de desenvolvimento
 
-## How can I deploy this project?
+```bash
+# Usando npm
+npm run dev
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+# Ou usando bun
+bun dev
+```
 
-## Can I connect a custom domain to my Lovable project?
+### 5. Acesse a aplicação
 
-Yes, you can!
+Abra [http://localhost:5173](http://localhost:5173) no seu navegador.
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+---
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+## 📜 Scripts Disponíveis
+
+| Comando | Descrição |
+|---------|-----------|
+| `npm run dev` | Inicia servidor de desenvolvimento com hot-reload |
+| `npm run build` | Gera build otimizado para produção |
+| `npm run build:dev` | Gera build de desenvolvimento |
+| `npm run preview` | Preview local do build de produção |
+| `npm run lint` | Executa o ESLint para verificar o código |
+
+---
+
+## 📁 Estrutura do Projeto
+
+```
+src/
+├── assets/         # Imagens e assets estáticos
+├── components/     # Componentes React
+│   ├── auth/       # Componentes de autenticação
+│   ├── dashboard/  # Dashboards (Admin, Empresa, Afiliado, Cliente)
+│   ├── landing/    # Componentes da landing page
+│   ├── ui/         # Componentes shadcn/ui
+│   └── onboarding/ # Tour e onboarding de usuários
+├── contexts/       # Contextos React (Auth, Onboarding)
+├── data/           # Dados estáticos (estados, cidades)
+├── hooks/          # Custom hooks (useAuth, useOffers, etc.)
+├── integrations/   # Integrações externas (Supabase)
+├── lib/            # Utilitários e funções auxiliares
+├── pages/          # Páginas da aplicação
+└── types/          # Tipos e interfaces TypeScript
+
+supabase/
+├── functions/      # Edge Functions (backend serverless)
+└── migrations/     # Migrações do banco de dados
+
+public/             # Assets públicos (favicon, manifest, etc.)
+```
+
+---
+
+## 🔧 Edge Functions (Backend)
+
+O projeto utiliza Edge Functions para lógica de backend:
+
+| Função | Descrição |
+|--------|-----------|
+| `ai-chat` | Chat com IA para clientes buscarem ofertas |
+| `process-lead` | Processa e valida leads capturados |
+| `request-withdrawal` | Solicitação de saque de afiliados |
+| `create-asaas-payment` | Integração com gateway de pagamentos Asaas |
+| `check-signup-eligibility` | Validação anti-fraude no cadastro |
+| `check-lead-fraud` | Detecção de leads fraudulentos |
+| `approve-withdrawal` | Aprovação administrativa de saques |
+
+---
+
+## 🌐 Ambientes
+
+| Ambiente | URL |
+|----------|-----|
+| **Desenvolvimento** | http://localhost:5173 |
+| **Preview** | https://id-preview--5095792b-7c1f-4c33-8222-92b1dca77719.lovable.app |
+| **Produção** | https://city-offer-spark.lovable.app |
+
+---
+
+## 👥 Tipos de Usuário
+
+A plataforma possui 4 tipos de usuários:
+
+1. **Cliente**: Busca ofertas via chat com IA
+2. **Empresa**: Cria ofertas e recebe leads
+3. **Divulgador (Afiliado)**: Compartilha ofertas e ganha comissões
+4. **Admin**: Gerencia toda a plataforma
+
+---
+
+## 🔐 Autenticação
+
+- Login via email/senha
+- Login via Google (OAuth)
+- Verificação de email obrigatória
+- Proteção contra spam com Cloudflare Turnstile
+
+---
+
+## 📊 Funcionalidades Principais
+
+- ✅ Dashboard personalizado por tipo de usuário
+- ✅ Sistema de comissões por níveis (Bronze, Prata, Ouro)
+- ✅ Chat com IA para busca de ofertas
+- ✅ Sistema de pagamentos integrado (Asaas)
+- ✅ Detecção de fraude em leads
+- ✅ Blog integrado com SEO
+- ✅ Sistema de notificações
+- ✅ Suporte a múltiplas cidades
+
+---
+
+## 🤝 Contribuindo
+
+1. Faça um fork do projeto
+2. Crie uma branch para sua feature (`git checkout -b feature/nova-feature`)
+3. Commit suas mudanças (`git commit -m 'Adiciona nova feature'`)
+4. Push para a branch (`git push origin feature/nova-feature`)
+5. Abra um Pull Request
+
+---
+
+## 📄 Licença
+
+Este projeto é proprietário. Todos os direitos reservados.
+
+---
+
+## 📞 Suporte
+
+- **Central de Ajuda**: https://city-offer-spark.lovable.app/ajuda
+- **WhatsApp**: Disponível na aplicação
