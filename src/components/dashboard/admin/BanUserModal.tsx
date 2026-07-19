@@ -61,7 +61,7 @@ export default function BanUserModal({ user, open, onOpenChange, onUserBanned }:
 
       const { error: updateError } = await supabase
         .from('profiles')
-        .update(updateData)
+        .update(updateData as any)
         .eq('id', user.id);
 
       if (updateError) throw updateError;
