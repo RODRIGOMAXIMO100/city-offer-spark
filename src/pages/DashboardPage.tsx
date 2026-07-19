@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
+import { useNoIndex } from '@/components/seo/NoIndex';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Loader2 } from 'lucide-react';
