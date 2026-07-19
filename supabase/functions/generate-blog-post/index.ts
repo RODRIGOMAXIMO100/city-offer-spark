@@ -76,7 +76,7 @@ Use a função create_themes para retornar os temas.`;
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
+        model: "openai/gpt-5-mini",
         messages: [{ role: "user", content: themePrompt }],
         tools,
         tool_choice: { type: "function", function: { name: "create_themes" } }
@@ -385,7 +385,7 @@ Abra com um lead PROVOCATIVO, siga a estrutura obrigatória (parágrafos → Pri
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-2.5-pro",
+        model: "openai/gpt-5",
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: userPrompt },
