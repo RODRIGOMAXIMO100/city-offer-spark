@@ -39,7 +39,7 @@ export function Navbar() {
         <div className="flex justify-between items-center h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center group">
-            <img src={logo} alt="clilin" className="h-10" />
+            <img src={logo} alt="Clilin — Plataforma de ofertas locais" className="h-10" />
           </Link>
 
           {/* Desktop Navigation */}
