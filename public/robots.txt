@@ -1,17 +1,14 @@
-User-agent: Googlebot
-Allow: /
-
-User-agent: Bingbot
-Allow: /
-
-User-agent: Twitterbot
-Allow: /
-
-User-agent: facebookexternalhit
-Allow: /
-
 User-agent: *
 Allow: /
 
-# Sitemap
+# Bloquear áreas privadas / autenticação
+Disallow: /auth
+Disallow: /auth/callback
+Disallow: /complete-signup
+Disallow: /dashboard
+Disallow: /chat
+Disallow: /admin
+Disallow: /admin/login
+
+# Sitemaps
 Sitemap: https://clilin.com/sitemap.xml
