@@ -81,6 +81,13 @@ export type Database = {
             foreignKeyName: "affiliate_monthly_history_affiliate_id_fkey"
             columns: ["affiliate_id"]
             isOneToOne: false
+            referencedRelation: "company_public_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "affiliate_monthly_history_affiliate_id_fkey"
+            columns: ["affiliate_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -129,6 +136,13 @@ export type Database = {
             columns: ["affiliate_id"]
             isOneToOne: true
             referencedRelation: "company_public_info"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "affiliate_stats_affiliate_id_fkey"
+            columns: ["affiliate_id"]
+            isOneToOne: true
+            referencedRelation: "company_public_profiles"
             referencedColumns: ["id"]
           },
           {
@@ -461,6 +475,13 @@ export type Database = {
             foreignKeyName: "fraud_alerts_resolved_by_fkey"
             columns: ["resolved_by"]
             isOneToOne: false
+            referencedRelation: "company_public_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fraud_alerts_resolved_by_fkey"
+            columns: ["resolved_by"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -469,6 +490,13 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "company_public_info"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fraud_alerts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "company_public_profiles"
             referencedColumns: ["id"]
           },
           {
@@ -511,6 +539,13 @@ export type Database = {
             columns: ["added_by"]
             isOneToOne: false
             referencedRelation: "company_public_info"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fraud_blacklist_added_by_fkey"
+            columns: ["added_by"]
+            isOneToOne: false
+            referencedRelation: "company_public_profiles"
             referencedColumns: ["id"]
           },
           {
@@ -606,6 +641,13 @@ export type Database = {
             foreignKeyName: "leads_affiliate_id_fkey"
             columns: ["affiliate_id"]
             isOneToOne: false
+            referencedRelation: "company_public_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "leads_affiliate_id_fkey"
+            columns: ["affiliate_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -688,6 +730,13 @@ export type Database = {
             foreignKeyName: "notifications_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
+            referencedRelation: "company_public_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notifications_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -751,6 +800,13 @@ export type Database = {
             columns: ["affiliate_id"]
             isOneToOne: false
             referencedRelation: "company_public_info"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "offer_clicks_affiliate_id_fkey"
+            columns: ["affiliate_id"]
+            isOneToOne: false
+            referencedRelation: "company_public_profiles"
             referencedColumns: ["id"]
           },
           {
@@ -921,6 +977,13 @@ export type Database = {
             foreignKeyName: "offers_company_id_fkey"
             columns: ["company_id"]
             isOneToOne: false
+            referencedRelation: "company_public_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "offers_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -1019,6 +1082,13 @@ export type Database = {
             columns: ["profile_id"]
             isOneToOne: false
             referencedRelation: "company_public_info"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payments_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "company_public_profiles"
             referencedColumns: ["id"]
           },
           {
@@ -1169,6 +1239,13 @@ export type Database = {
             foreignKeyName: "profiles_banned_by_fkey"
             columns: ["banned_by"]
             isOneToOne: false
+            referencedRelation: "company_public_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "profiles_banned_by_fkey"
+            columns: ["banned_by"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -1212,6 +1289,13 @@ export type Database = {
             columns: ["affiliate_id"]
             isOneToOne: false
             referencedRelation: "company_public_info"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "short_links_affiliate_id_fkey"
+            columns: ["affiliate_id"]
+            isOneToOne: false
+            referencedRelation: "company_public_profiles"
             referencedColumns: ["id"]
           },
           {
@@ -1334,6 +1418,13 @@ export type Database = {
             foreignKeyName: "transactions_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
+            referencedRelation: "company_public_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "transactions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -1382,6 +1473,13 @@ export type Database = {
             foreignKeyName: "user_bans_banned_by_fkey"
             columns: ["banned_by"]
             isOneToOne: false
+            referencedRelation: "company_public_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_bans_banned_by_fkey"
+            columns: ["banned_by"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -1390,6 +1488,13 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "company_public_info"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_bans_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "company_public_profiles"
             referencedColumns: ["id"]
           },
           {
@@ -1534,6 +1639,13 @@ export type Database = {
             foreignKeyName: "withdrawals_reviewed_by_fkey"
             columns: ["reviewed_by"]
             isOneToOne: false
+            referencedRelation: "company_public_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "withdrawals_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -1542,6 +1654,13 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "company_public_info"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "withdrawals_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "company_public_profiles"
             referencedColumns: ["id"]
           },
           {
@@ -1570,6 +1689,13 @@ export type Database = {
             columns: ["affiliate_id"]
             isOneToOne: true
             referencedRelation: "company_public_info"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "affiliate_stats_affiliate_id_fkey"
+            columns: ["affiliate_id"]
+            isOneToOne: true
+            referencedRelation: "company_public_profiles"
             referencedColumns: ["id"]
           },
           {
@@ -1608,6 +1734,25 @@ export type Database = {
           name?: string | null
         }
         Relationships: []
+      }
+      company_public_profiles: {
+        Row: {
+          avatar_url: string | null
+          city: string | null
+          id: string | null
+          instagram_url: string | null
+          name: string | null
+          niche_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profiles_niche_id_fkey"
+            columns: ["niche_id"]
+            isOneToOne: false
+            referencedRelation: "niches"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Functions: {
