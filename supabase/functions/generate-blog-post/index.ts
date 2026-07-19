@@ -503,8 +503,21 @@ Abra com um lead PROVOCATIVO, siga a estrutura obrigatória (parágrafos → Pri
 
     console.log("Post created:", newPost.id, newPost.title, "| Image:", featuredImageUrl ? "Yes" : "No");
 
-    // Sitemap is served dynamically via the `sitemap-blog` edge function
-    // (referenced by public/sitemap.xml as a sitemap index), so no manual
+    // Fire IndexNow + Google ping so Bing/Yandex/Google discover the URL immediately.
+    try {
+      const postUrl = `https://clilin.com/blog/${uniqueSlug}`;
+      await fetch(`${supabaseUrl}/functions/v1/indexnow-ping`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${supabaseServiceKey}`,
+        },
+        body: JSON.stringify({ urls: [postUrl, "https://clilin.com/blog"] }),
+      });
+      console.log("IndexNow pinged for:", postUrl);
+    } catch (pingErr) {
+      console.error("IndexNow ping failed (non-fatal):", pingErr);
+    }
     // regeneration step is needed here.
 
     return new Response(
