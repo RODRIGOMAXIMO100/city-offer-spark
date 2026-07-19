@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNoIndex } from '@/components/seo/NoIndex';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -66,6 +67,7 @@ const AdminLoginPage = () => {
     }
   };
 
+  useNoIndex();
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-4">
       <Card className="w-full max-w-md bg-slate-800/50 border-slate-700 backdrop-blur-sm">

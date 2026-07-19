@@ -1,4 +1,5 @@
 import { useLocation, Link } from "react-router-dom";
+import { useNoIndex } from "@/components/seo/NoIndex";
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Home, Heart } from "lucide-react";
@@ -10,6 +11,7 @@ const NotFound = () => {
     console.error("404 Error: User attempted to access non-existent route:", location.pathname);
   }, [location.pathname]);
 
+  useNoIndex();
   return (
     <div className="flex min-h-screen items-center justify-center bg-background">
       <div className="text-center px-4">

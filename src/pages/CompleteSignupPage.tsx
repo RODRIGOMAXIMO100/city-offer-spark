@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNoIndex } from '@/components/seo/NoIndex';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -280,6 +281,7 @@ export default function CompleteSignupPage() {
     );
   }
 
+  useNoIndex();
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <Card className="w-full max-w-lg">

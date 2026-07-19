@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
+import { useNoIndex } from '@/components/seo/NoIndex';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Loader2 } from 'lucide-react';
@@ -12,6 +13,8 @@ export default function DashboardPage() {
   const location = useLocation();
   const hasRefreshed = useRef(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  useNoIndex();
+
 
   useEffect(() => {
     if (!loading && !user) {

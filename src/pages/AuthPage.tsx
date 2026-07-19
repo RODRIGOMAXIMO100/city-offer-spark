@@ -1,4 +1,5 @@
 import { useState, useMemo, useCallback } from 'react';
+import { useNoIndex } from '@/components/seo/NoIndex';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { AppRole } from '@/types/database';
@@ -263,6 +264,7 @@ export default function AuthPage() {
     setIsLoading(false);
   };
 
+  useNoIndex();
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <div className="w-full max-w-md">
