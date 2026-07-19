@@ -421,6 +421,7 @@ export default function ChatPage() {
   // Main Chat Interface (always shown)
   return (
     <div className="h-[100dvh] bg-background flex flex-col overflow-hidden">
+      <h1 className="sr-only">Clilin AI — Chat de ofertas locais</h1>
       {/* Header */}
       <header className="flex items-center justify-between px-4 py-3 border-b border-border bg-card shrink-0">
         <Button variant="ghost" size="sm" onClick={() => navigate('/')}>
