@@ -1,4 +1,5 @@
 import { useState, useMemo, useCallback } from 'react';
+import { useNoIndex } from '@/components/seo/NoIndex';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { AppRole } from '@/types/database';
