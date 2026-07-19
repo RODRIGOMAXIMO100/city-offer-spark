@@ -428,12 +428,14 @@ export default function OfferPage() {
               <>
                 <button
                   onClick={prevImage}
+                  aria-label="Imagem anterior"
                   className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-2 transition-colors"
                 >
                   <ChevronLeft className="h-5 w-5" />
                 </button>
                 <button
                   onClick={nextImage}
+                  aria-label="Próxima imagem"
                   className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-2 transition-colors"
                 >
                   <ChevronRight className="h-5 w-5" />
@@ -443,6 +445,7 @@ export default function OfferPage() {
                     <button
                       key={index}
                       onClick={() => setCurrentImageIndex(index)}
+                      aria-label={`Ir para imagem ${index + 1}`}
                       className={`w-2 h-2 rounded-full transition-colors ${
                         index === currentImageIndex ? 'bg-white' : 'bg-white/50'
                       }`}
