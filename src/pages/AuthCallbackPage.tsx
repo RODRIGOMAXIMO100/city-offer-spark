@@ -73,7 +73,6 @@ export default function AuthCallbackPage() {
     handleCallback();
   }, [navigate]);
 
-  return (
   useNoIndex();
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">
