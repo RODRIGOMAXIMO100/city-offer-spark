@@ -10,7 +10,7 @@ export function Footer() {
           {/* Logo & Description */}
           <div className="col-span-2">
             <Link to="/" className="flex items-center mb-4">
-              <img src={logo} alt="clilin" className="h-10" />
+              <img src={logo} alt="Clilin — Ofertas locais com inteligência" className="h-10" />
             </Link>
             <p className="text-muted-foreground max-w-md leading-relaxed">
               Servindo comunidades locais — conectamos empresas, divulgadores e clientes 
