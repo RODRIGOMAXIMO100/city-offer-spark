@@ -48,8 +48,6 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-background">
       <SEOHead canonicalUrl="/" />
-      <StructuredData type="Organization" />
-      <StructuredData type="WebSite" />
       <StructuredData type="FAQPage" faqs={faqs} />
       
       <Navbar />

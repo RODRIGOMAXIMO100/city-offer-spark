@@ -1,0 +1,21 @@
+# Clilin
+
+> Plataforma brasileira de ofertas locais que conecta empresas, divulgadores e clientes de forma inteligente. Empresas publicam ofertas e pagam por resultado; divulgadores compartilham e ganham comissão; clientes descobrem promoções reais da própria cidade.
+
+Clilin serve comunidades locais — ajudamos negócios de bairro a crescer, divulgadores a monetizar sua rede e clientes a economizar em ofertas verificadas.
+
+## Páginas
+
+- [Home](/): Visão geral da plataforma e como funciona.
+- [Para Empresas](/empresas): Como empresas locais publicam ofertas, pagam por lead e escolhem o destino (WhatsApp, site ou cardápio digital). Depósito mínimo R$ 100.
+- [Para Divulgadores](/divulgadores): Como divulgadores ganham comissão compartilhando ofertas da sua cidade.
+- [Para Clientes](/clientes): Como clientes encontram ofertas reais do comércio local.
+- [Blog](/blog): Artigos sobre marketing local, vendas para pequenos negócios e economia comunitária.
+- [Sobre](/sobre): Missão, visão e história da Clilin.
+- [Ajuda](/ajuda): Perguntas frequentes e suporte.
+- [Transparência](/transparencia): Como os pagamentos, comissões e métricas funcionam.
+
+## Optional
+
+- [Termos de Uso](/termos)
+- [Política de Privacidade](/privacidade)

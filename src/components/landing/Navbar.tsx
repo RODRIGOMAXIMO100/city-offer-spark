@@ -39,7 +39,7 @@ export function Navbar() {
         <div className="flex justify-between items-center h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center group">
-            <img src={logo} alt="clilin" className="h-10" />
+            <img src={logo} alt="Clilin — Plataforma de ofertas locais" className="h-10" />
           </Link>
 
           {/* Desktop Navigation */}
@@ -96,6 +96,8 @@ export function Navbar() {
           <button
             className="md:hidden p-2 rounded-lg hover:bg-muted/50 transition-colors"
             onClick={() => setIsOpen(!isOpen)}
+            aria-label={isOpen ? "Fechar menu" : "Abrir menu"}
+            aria-expanded={isOpen}
           >
             {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>

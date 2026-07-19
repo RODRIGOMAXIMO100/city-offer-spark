@@ -14,7 +14,7 @@ const AboutPage = () => {
         keywords={["clilin", "ofertas locais", "divulgadores", "empresas locais", "sobre"]}
         canonicalUrl="https://clilin.com/sobre"
       />
-      <StructuredData type="Organization" />
+      
 
       {/* Header */}
       <header className="bg-background border-b border-border">
@@ -41,7 +41,10 @@ const AboutPage = () => {
       {/* Hero Section */}
       <section className="py-16 bg-gradient-to-b from-primary/5 to-background">
         <div className="container mx-auto px-4 text-center">
-          <img src={logo} alt="Clilin" className="h-20 w-auto mx-auto mb-6" />
+          <img src={logo} alt="Clilin — Plataforma de ofertas locais" className="h-20 w-auto mx-auto mb-6" />
+          <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+            Sobre a Clilin — Conectando Negócios Locais
+          </h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             Servindo comunidades locais — conectamos empresas, divulgadores e clientes para que todos cresçam juntos
           </p>

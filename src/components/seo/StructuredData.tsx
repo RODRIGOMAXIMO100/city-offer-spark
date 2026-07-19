@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-const BASE_URL = 'https://clilin.com.br';
+const BASE_URL = 'https://clilin.com';
 
 interface OrganizationSchemaProps {
   type: 'Organization';
@@ -64,7 +64,7 @@ function generateOrganizationSchema() {
     contactPoint: {
       '@type': 'ContactPoint',
       contactType: 'customer service',
-      email: 'contato@clilin.com.br',
+      email: 'contato@clilin.com',
       availableLanguage: ['Portuguese'],
     },
     address: {
