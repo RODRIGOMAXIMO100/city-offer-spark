@@ -120,14 +120,21 @@ export default function OfferPage() {
     const fetchOffer = async () => {
       if (!id) return;
 
-      const { data, error } = await supabase
+      const { data: offerData, error } = await supabase
         .from('offers')
-        .select(`
-          *,
-          profiles!offers_company_id_fkey(name, instagram_url, avatar_url)
-        `)
+        .select('*')
         .eq('id', id)
         .single();
+
+      let data: any = offerData;
+      if (offerData?.company_id) {
+        const { data: company } = await supabase
+          .from('company_public_profiles')
+          .select('name, instagram_url, avatar_url')
+          .eq('id', offerData.company_id)
+          .maybeSingle();
+        data = { ...offerData, profiles: company };
+      }
 
       if (error || !data) {
         toast({
