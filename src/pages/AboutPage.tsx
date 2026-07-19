@@ -14,7 +14,7 @@ const AboutPage = () => {
         keywords={["clilin", "ofertas locais", "divulgadores", "empresas locais", "sobre"]}
         canonicalUrl="https://clilin.com/sobre"
       />
-      <StructuredData type="Organization" />
+      
 
       {/* Header */}
       <header className="bg-background border-b border-border">
