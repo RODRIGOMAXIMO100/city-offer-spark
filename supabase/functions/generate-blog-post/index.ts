@@ -518,7 +518,7 @@ Abra com um lead PROVOCATIVO, siga a estrutura obrigatória (parágrafos → Pri
     } catch (pingErr) {
       console.error("IndexNow ping failed (non-fatal):", pingErr);
     }
-    // regeneration step is needed here.
+    
 
     return new Response(
       JSON.stringify({
