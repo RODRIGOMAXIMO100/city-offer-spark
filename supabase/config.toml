@@ -50,3 +50,6 @@ verify_jwt = true
 
 [functions.update-sitemap-file]
 verify_jwt = false
+
+[functions.sitemap-blog]
+verify_jwt = false
