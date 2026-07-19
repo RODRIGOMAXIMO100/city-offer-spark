@@ -13,6 +13,8 @@ export default function DashboardPage() {
   const location = useLocation();
   const hasRefreshed = useRef(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  useNoIndex();
+
 
   useEffect(() => {
     if (!loading && !user) {
