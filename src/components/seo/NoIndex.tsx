@@ -1,26 +1,26 @@
 import { useEffect } from 'react';
 
 /**
- * Renders a noindex,nofollow robots meta so private/auth/dashboard routes
- * don't get indexed by Google/Bing (fixes "crawled but not indexed" noise).
+ * Sets <meta name="robots" content="noindex, nofollow"> for the current route
+ * so private/auth/dashboard pages don't get indexed. Restores on unmount.
  */
 export function NoIndex() {
-  useEffect(() => {
-    const prev = document.querySelector('meta[name="robots"]') as HTMLMetaElement | null;
-    const prevContent = prev?.content;
+  useNoIndex();
+  return null;
+}
 
-    let meta = prev;
+export function useNoIndex() {
+  useEffect(() => {
+    let meta = document.querySelector('meta[name="robots"]') as HTMLMetaElement | null;
+    const prevContent = meta?.content;
     if (!meta) {
       meta = document.createElement('meta');
       meta.name = 'robots';
       document.head.appendChild(meta);
     }
     meta.content = 'noindex, nofollow';
-
     return () => {
       if (meta) meta.content = prevContent ?? 'index, follow';
     };
   }, []);
-
-  return null;
 }
