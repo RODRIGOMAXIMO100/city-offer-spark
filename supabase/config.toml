@@ -53,3 +53,9 @@ verify_jwt = false
 
 [functions.sitemap-blog]
 verify_jwt = false
+
+[functions.rss]
+verify_jwt = false
+
+[functions.indexnow-ping]
+verify_jwt = false
