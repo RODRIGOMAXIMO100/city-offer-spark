@@ -29,6 +29,7 @@ import AdminLeads from './admin/AdminLeads';
 import { AdminNiches } from './admin/AdminNiches';
 import AdminFinanceiro from './admin/AdminFinanceiro';
 import AdminCities from './admin/AdminCities';
+import AdminSEO from './admin/AdminSEO';
 
 interface Stats {
   receita: number;
@@ -625,6 +626,10 @@ export default function AdminDashboard() {
       
       case 'blog':
         return <AdminBlog />;
+
+      case 'seo':
+        return <AdminSEO />;
+      
       
       default:
         return null;
