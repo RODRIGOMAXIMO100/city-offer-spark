@@ -64,7 +64,7 @@ function generateOrganizationSchema() {
     contactPoint: {
       '@type': 'ContactPoint',
       contactType: 'customer service',
-      email: 'contato@clilin.com.br',
+      email: 'contato@clilin.com',
       availableLanguage: ['Portuguese'],
     },
     address: {
