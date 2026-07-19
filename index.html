@@ -36,6 +36,40 @@
     <link rel="manifest" href="/manifest.json" />
     <meta name="theme-color" content="#7c3aed" />
 
+    <!-- RSS Feed -->
+    <link rel="alternate" type="application/rss+xml" title="Clilin — Blog" href="https://sukvjgxxuzophzjcojvd.supabase.co/functions/v1/rss" />
+
+    <!-- Organization + WebSite JSON-LD (enables sitelinks + search box) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://clilin.com/#organization",
+          "name": "Clilin",
+          "url": "https://clilin.com",
+          "logo": "https://clilin.com/android-chrome-512x512.png",
+          "description": "Plataforma de ofertas locais que conecta empresas, divulgadores e clientes.",
+          "sameAs": []
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://clilin.com/#website",
+          "url": "https://clilin.com",
+          "name": "Clilin",
+          "publisher": { "@id": "https://clilin.com/#organization" },
+          "inLanguage": "pt-BR",
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://clilin.com/blog?q={search_term_string}",
+            "query-input": "required name=search_term_string"
+          }
+        }
+      ]
+    }
+    </script>
+
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
