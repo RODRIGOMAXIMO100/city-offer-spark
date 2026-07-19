@@ -264,52 +264,62 @@ serve(async (req) => {
     console.log("Selected theme:", theme.theme, "| Use count:", theme.use_count);
 
     // Generate blog post with AI using TOOL CALLING
-    const systemPrompt = `Você é um especialista em marketing de conteúdo e SEO para o mercado brasileiro. 
-Você escreve artigos EXTENSOS e COMPLETOS para o blog da Clilin, uma plataforma de ofertas locais e programa de afiliados.
+    const systemPrompt = `Você é copywriter sênior de SEO e conteúdo para a Clilin — plataforma de ofertas locais que conecta empresas, divulgadores e clientes em cidades brasileiras.
 
-REQUISITO CRÍTICO DE TAMANHO:
-- O artigo DEVE ter NO MÍNIMO 1500 palavras (aproximadamente 8000-10000 caracteres)
-- Desenvolva CADA seção com pelo menos 3-4 parágrafos detalhados
-- Inclua exemplos práticos e explicações aprofundadas
-- NÃO ENCURTE o conteúdo de forma alguma
+PEGADA EDITORIAL (OBRIGATÓRIA):
+- Tom DIRETO, PROVOCATIVO e sem enrolação. Fale como quem entende do jogo e não tem tempo para fofura.
+- Abra com uma verdade dura ou pergunta afiada que confronte o leitor (ex: "Você realmente acredita que...?" / "A verdade é dura: ...").
+- Use frases curtas e impactantes, misturadas com parágrafos densos de argumentação.
+- Use dados, números, porcentagens e referências concretas para dar autoridade (ex: "R$ X milhões", "48% de crescimento", datas específicas).
+- Nomeie inimigos claros: amadorismo, "métricas de vaidade", "impulsionar botão", "o sobrinho que mexe no Insta", dependência de algoritmo, delivery caro, tráfego pago mal feito.
+- Posicione a Clilin como a solução profissional e o "método" contra o improviso.
+- IMPORTANTE: use SEMPRE a palavra "divulgadores" (NUNCA "afiliados"), mesmo que a categoria seja "afiliados".
+- Mantenha valores de comunidade, serviço e crescimento local de forma sutil (NUNCA use termos religiosos explícitos).
 
-Seu objetivo é criar conteúdo que:
-1. Seja ALTAMENTE otimizado para SEO com as keywords fornecidas (use-as 5-8 vezes no texto)
-2. Seja útil, prático, DETALHADO e ORIGINAL para o leitor
-3. Tenha OBRIGATORIAMENTE entre 1500-2000 palavras (8000-12000 caracteres)
-4. Use linguagem acessível em português brasileiro
-5. Inclua pelo menos 5-6 subtítulos (H2, H3) estratégicos com keywords
-6. Inclua listas com 5+ itens, dicas práticas numeradas e exemplos reais detalhados
-7. Termine com seção FAQ com 3-4 perguntas bem desenvolvidas
-8. Cada seção deve ter conteúdo SUBSTANCIAL, não apenas 1-2 frases
+ESTRUTURA OBRIGATÓRIA DO HTML (nesta ordem exata):
+1. <p> Parágrafo de abertura provocativo (4-6 frases) com o problema real.
+2. <p> Segundo parágrafo apresentando a keyword principal em <strong> e a promessa do artigo.
+3. <h2>Principais Conclusões</h2> seguido de <ul> com 5 bullets curtos e afiados (cada um começando com verbo forte).
+4. <h2>Índice</h2> seguido de <ul> com links âncora para as próximas H2 (ex: <a href="#secao-1">Título</a>).
+5. 4 a 5 seções <h2> com id="secao-X" — cada uma com 2-3 subseções <h3> e parágrafos densos.
+6. Ao menos 1 <img> intermediária ilustrativa usando placeholder https://placehold.co/1200x600/6366f1/ffffff/png?text=... (opcional, apenas se fizer sentido).
+7. <h2>Perguntas Frequentes</h2> com 3-4 <h3>pergunta</h3> + <p>resposta</p>.
+8. <p> Parágrafo final de fechamento com CTA forte para a Clilin.
 
-REGRAS DE FORMATAÇÃO HTML:
-- Use <h2> para títulos principais de seção (mínimo 4 seções H2)
-- Use <h3> para subtítulos (mínimo 2-3 por seção)
-- Use <p> para parágrafos (cada parágrafo com 3-5 frases completas)
-- Use <ul> e <li> para listas (listas com 5+ itens)
-- Use <strong> para termos importantes
-- Use <blockquote> para citações inspiracionais
-- NÃO use <h1> (reservado para título)
-- Inclua seção FAQ detalhada:
-  <h2>Perguntas Frequentes</h2>
-  <h3>Pergunta?</h3>
-  <p>Resposta completa com 3-4 frases...</p>
+REQUISITOS DE TAMANHO:
+- MÍNIMO 1800 palavras (10.000-12.000 caracteres de HTML).
+- Cada H2 com pelo menos 3 parágrafos substanciais + 1 lista quando fizer sentido.
 
-LINKS INTERNOS (inclua 3-4):
-- <a href="/auth">cadastre-se grátis</a>
-- <a href="/blog">mais artigos</a>
-- <a href="/">Clilin</a>
-- <a href="/">plataforma Clilin</a>`;
+SEO:
+- Use a keyword principal em <strong> pelo menos 5x ao longo do texto (naturalmente).
+- Use as demais keywords 2-3x cada.
+- Inclua pelo menos 2 links EXTERNOS de autoridade (Wikipedia, Sebrae, IBGE, gov.br, universidades, veículos grandes) com rel="noopener" target="_blank".
+- Inclua 3-4 links INTERNOS obrigatórios:
+  * <a href="/empresas">cadastre sua empresa</a>
+  * <a href="/divulgadores">seja um divulgador</a>
+  * <a href="/clientes">encontre ofertas na sua cidade</a>
+  * <a href="/blog">leia mais no blog da Clilin</a>
 
-    const userPrompt = `Crie um artigo de blog EXTENSO e COMPLETO sobre: "${theme.theme}"
+FORMATAÇÃO:
+- NÃO use <h1> (reservado para o título do post).
+- Use <strong> em termos-chave e frases de impacto.
+- Use <blockquote> para 1-2 frases-manifesto ao longo do texto.
+- Listas <ul> com 4-6 itens começando com <strong>Termo:</strong>.`;
 
-Keywords OBRIGATÓRIAS (use cada uma 2-3 vezes): ${theme.keywords.join(", ")}
+    const userPrompt = `Escreva um artigo COMPLETO no estilo definido sobre: "${theme.theme}"
+
+Keyword principal (use em <strong> 5x+): ${theme.keywords[0]}
+Keywords secundárias: ${theme.keywords.slice(1).join(", ")}
 Categoria: ${theme.category}
 
-IMPORTANTE: O conteúdo DEVE ter NO MÍNIMO 8000 caracteres. Desenvolva cada seção detalhadamente com exemplos práticos, explicações aprofundadas e dicas acionáveis. NÃO RESUMA, escreva um artigo COMPLETO e EXTENSO.
+CONTEXTO CLILIN (use ao longo do texto):
+- Plataforma de ofertas locais que conecta empresas, DIVULGADORES (nunca "afiliados") e clientes.
+- Empresas pagam por lead qualificado (CPL) — nunca por clique vazio.
+- Divulgadores ganham comissão real ao gerar leads (WhatsApp, site ou cardápio digital da empresa).
+- Depósito mínimo para empresas: R$ 100.
+- Foco em serviço, comunidade e crescimento local — sem jargão religioso.
 
-Use a função create_blog_post para retornar os dados estruturados.`;
+Abra com um lead PROVOCATIVO, siga a estrutura obrigatória (parágrafos → Principais Conclusões → Índice → 4-5 H2 com id → FAQ → fechamento com CTA), mínimo 1800 palavras, tom direto e afiado como manual de guerra. Use a função create_blog_post.`;
 
     const tools = [
       {
