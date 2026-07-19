@@ -136,7 +136,7 @@ export default function AdminFraudManagement() {
         .single();
 
       // Update profile
-      const updateData: Record<string, unknown> = {
+      const updateData: Record<string, any> = {
         banned: true,
         banned_at: new Date().toISOString(),
         banned_reason: banReason,
