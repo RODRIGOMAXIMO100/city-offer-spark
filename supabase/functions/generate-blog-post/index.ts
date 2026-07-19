@@ -503,20 +503,9 @@ Abra com um lead PROVOCATIVO, siga a estrutura obrigatória (parágrafos → Pri
 
     console.log("Post created:", newPost.id, newPost.title, "| Image:", featuredImageUrl ? "Yes" : "No");
 
-    // Trigger sitemap update in background
-    try {
-      const sitemapUrl = `${supabaseUrl}/functions/v1/update-sitemap-file`;
-      fetch(sitemapUrl, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${Deno.env.get("SUPABASE_ANON_KEY")}`,
-        },
-      }).catch(err => console.error("Sitemap update trigger failed:", err));
-      console.log("Sitemap update triggered");
-    } catch (sitemapError) {
-      console.error("Failed to trigger sitemap update:", sitemapError);
-    }
+    // Sitemap is served dynamically via the `sitemap-blog` edge function
+    // (referenced by public/sitemap.xml as a sitemap index), so no manual
+    // regeneration step is needed here.
 
     return new Response(
       JSON.stringify({
