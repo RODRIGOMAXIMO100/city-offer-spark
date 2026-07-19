@@ -150,7 +150,7 @@ export default function AdminFraudManagement() {
 
       const { error: updateError } = await supabase
         .from('profiles')
-        .update(updateData)
+        .update(updateData as any)
         .eq('id', selectedUser.id);
 
       if (updateError) throw updateError;
