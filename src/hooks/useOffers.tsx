@@ -16,10 +16,7 @@ export function useOffers(city?: string) {
       setLoading(true);
       let query = supabase
         .from('offers')
-        .select(`
-          *,
-          profiles!offers_company_id_fkey(name, instagram_url)
-        `)
+        .select('*')
         .eq('active', true)
         .is('deleted_at', null)
         .gt('expires_at', new Date().toISOString())
@@ -32,8 +29,20 @@ export function useOffers(city?: string) {
       const { data, error: fetchError } = await query;
 
       if (fetchError) throw fetchError;
-      
-      setOffers(data as Offer[] || []);
+
+      // Fetch safe company info from the public view (no sensitive columns exposed)
+      const companyIds = Array.from(new Set((data || []).map((o: any) => o.company_id).filter(Boolean)));
+      let companiesById = new Map<string, any>();
+      if (companyIds.length > 0) {
+        const { data: companies } = await supabase
+          .from('company_public_profiles')
+          .select('id, name, instagram_url, avatar_url')
+          .in('id', companyIds);
+        companiesById = new Map((companies || []).map((c: any) => [c.id, c]));
+      }
+      const merged = (data || []).map((o: any) => ({ ...o, profiles: companiesById.get(o.company_id) || null }));
+
+      setOffers(merged as Offer[]);
     } catch (err) {
       setError(err as Error);
       console.error('Error fetching offers:', err);
