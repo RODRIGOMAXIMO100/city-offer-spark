@@ -13,7 +13,8 @@ import {
   FileText,
   ChevronDown,
   LayoutDashboard,
-  MapPin
+  MapPin,
+  Search
 } from 'lucide-react';
 import {
   Sidebar,
@@ -43,7 +44,8 @@ export type AdminSection =
   | 'security' 
   | 'niches' 
   | 'cities'
-  | 'blog';
+  | 'blog'
+  | 'seo';
 
 interface AdminSidebarProps {
   currentSection: AdminSection;
@@ -93,6 +95,7 @@ const menuGroups = [
       { id: 'cities' as AdminSection, label: 'Cidades', icon: MapPin },
       { id: 'niches' as AdminSection, label: 'Nichos', icon: Tags },
       { id: 'blog' as AdminSection, label: 'Blog', icon: FileText },
+      { id: 'seo' as AdminSection, label: 'SEO / Google', icon: Search },
     ]
   },
 ];
