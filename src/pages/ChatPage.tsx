@@ -38,6 +38,7 @@ interface Message {
 }
 
 export default function ChatPage() {
+  useNoIndex();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   
