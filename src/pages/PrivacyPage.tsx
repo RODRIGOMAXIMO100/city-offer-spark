@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Footer } from '@/components/landing/Footer';
@@ -7,6 +8,16 @@ import logo from '@/assets/logo.png';
 export default function PrivacyPage() {
   return (
     <div className="min-h-screen bg-background">
+      <Helmet>
+        <title>Política de Privacidade | Clilin</title>
+        <meta name="description" content="Como a Clilin coleta, usa e protege dados de empresas, divulgadores e clientes na plataforma de ofertas locais." />
+        <link rel="canonical" href="https://clilin.com/privacidade" />
+        <meta property="og:title" content="Política de Privacidade | Clilin" />
+        <meta property="og:description" content="Como a Clilin coleta, usa e protege dados de empresas, divulgadores e clientes na plataforma de ofertas locais." />
+        <meta property="og:url" content="https://clilin.com/privacidade" />
+        <meta property="og:type" content="article" />
+      </Helmet>
+
       {/* Header */}
       <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-50">
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center gap-4">

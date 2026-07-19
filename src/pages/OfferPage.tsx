@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
+
 import { supabase } from '@/integrations/supabase/client';
 import { Offer, CONFIG } from '@/types/database';
 import { Button } from '@/components/ui/button';
@@ -390,7 +392,31 @@ export default function OfferPage() {
 
   return (
     <div className="min-h-screen bg-muted/30 flex flex-col">
+      <Helmet>
+        <title>{`${offer.title} | Clilin`}</title>
+        <meta
+          name="description"
+          content={
+            (offer.description?.slice(0, 155) ||
+              `Oferta em ${offer.city} por R$ ${offer.price_new.toFixed(2)} (de R$ ${offer.price_old.toFixed(2)}). Aproveite no Clilin.`)
+          }
+        />
+        <link rel="canonical" href={`https://clilin.com/oferta/${offer.id}`} />
+        <meta property="og:type" content="product" />
+        <meta property="og:title" content={`${offer.title} | Clilin`} />
+        <meta
+          property="og:description"
+          content={
+            (offer.description?.slice(0, 200) ||
+              `Oferta em ${offer.city} por R$ ${offer.price_new.toFixed(2)} (de R$ ${offer.price_old.toFixed(2)}).`)
+          }
+        />
+        <meta property="og:url" content={`https://clilin.com/oferta/${offer.id}`} />
+        {hasImages && <meta property="og:image" content={offerImages[0]} />}
+        {hasImages && <meta name="twitter:image" content={offerImages[0]} />}
+      </Helmet>
       {/* Navigation Header */}
+
       <div className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b">
         <div className="max-w-md mx-auto px-4 py-3 flex items-center justify-between">
           <Button
