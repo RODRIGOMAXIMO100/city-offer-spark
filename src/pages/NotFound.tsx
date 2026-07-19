@@ -1,4 +1,5 @@
 import { useLocation, Link } from "react-router-dom";
+import { useNoIndex } from "@/components/seo/NoIndex";
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Home, Heart } from "lucide-react";
