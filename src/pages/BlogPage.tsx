@@ -167,8 +167,6 @@ export default function BlogPage() {
         keywords={['blog', 'marketing local', 'afiliados', 'dicas', 'ofertas', 'ganhar dinheiro']}
         canonicalUrl={currentPage > 1 ? `/blog?pagina=${currentPage}` : '/blog'}
       />
-      <StructuredData type="Organization" />
-      <StructuredData type="WebSite" />
       <StructuredData
         type="BreadcrumbList"
         items={[
