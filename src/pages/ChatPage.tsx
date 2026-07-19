@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { useNoIndex } from '@/components/seo/NoIndex';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
