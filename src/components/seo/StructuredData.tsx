@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-const BASE_URL = 'https://clilin.com.br';
+const BASE_URL = 'https://clilin.com';
 
 interface OrganizationSchemaProps {
   type: 'Organization';
