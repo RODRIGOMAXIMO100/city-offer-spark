@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Footer } from '@/components/landing/Footer';
@@ -7,6 +8,16 @@ import logo from '@/assets/logo.png';
 export default function TermsPage() {
   return (
     <div className="min-h-screen bg-background">
+      <Helmet>
+        <title>Termos de Uso | Clilin</title>
+        <meta name="description" content="Termos de uso da Clilin: regras da plataforma de ofertas locais para empresas, divulgadores e clientes." />
+        <link rel="canonical" href="https://clilin.com/termos" />
+        <meta property="og:title" content="Termos de Uso | Clilin" />
+        <meta property="og:description" content="Termos de uso da Clilin: regras da plataforma de ofertas locais para empresas, divulgadores e clientes." />
+        <meta property="og:url" content="https://clilin.com/termos" />
+        <meta property="og:type" content="article" />
+      </Helmet>
+
       {/* Header */}
       <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-50">
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center gap-4">
