@@ -95,7 +95,7 @@ export function OnboardingTour() {
 
     let retryCount = 0;
     const maxRetries = 8;
-    let retryTimer: NodeJS.Timeout;
+    let retryTimer: ReturnType<typeof setTimeout>;
     let cancelled = false;
 
     const findElement = () => {

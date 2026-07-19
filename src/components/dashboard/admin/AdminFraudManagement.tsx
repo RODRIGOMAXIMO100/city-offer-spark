@@ -136,7 +136,7 @@ export default function AdminFraudManagement() {
         .single();
 
       // Update profile
-      const updateData: Record<string, unknown> = {
+      const updateData: Record<string, any> = {
         banned: true,
         banned_at: new Date().toISOString(),
         banned_reason: banReason,
@@ -150,7 +150,7 @@ export default function AdminFraudManagement() {
 
       const { error: updateError } = await supabase
         .from('profiles')
-        .update(updateData)
+        .update(updateData as any)
         .eq('id', selectedUser.id);
 
       if (updateError) throw updateError;

@@ -364,7 +364,7 @@ export function OnboardingProvider({ children }: { children: React.ReactNode }) 
 
     await supabase
       .from('user_onboarding')
-      .update({ dismissed: true } as Record<string, unknown>)
+      .update({ dismissed: true } as any)
       .eq('user_id', user.id);
   }, [user]);
 

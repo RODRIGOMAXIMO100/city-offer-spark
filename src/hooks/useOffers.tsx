@@ -249,7 +249,7 @@ export function useOffers(city?: string) {
 
       const { data, error } = await supabase
         .from('offers')
-        .update(updateData)
+        .update(updateData as any)
         .eq('id', offerId)
         .select()
         .single();
