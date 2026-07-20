@@ -161,6 +161,24 @@ export type Database = {
           },
         ]
       }
+      ai_chat_rate_limits: {
+        Row: {
+          created_at: string
+          id: string
+          ip_address: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          ip_address: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          ip_address?: string
+        }
+        Relationships: []
+      }
       available_cities: {
         Row: {
           activated_at: string | null
@@ -1766,6 +1784,7 @@ export type Database = {
         Args: { p_city: string; p_offer_id: string }
         Returns: number
       }
+      cleanup_ai_chat_rate_limits: { Args: never; Returns: undefined }
       cleanup_old_rate_limits: { Args: never; Returns: undefined }
       cleanup_old_sessions: { Args: never; Returns: undefined }
       cleanup_old_signup_rate_limits: { Args: never; Returns: undefined }
