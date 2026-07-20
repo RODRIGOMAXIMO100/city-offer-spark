@@ -655,6 +655,17 @@ export default function OfferPage() {
             )}
           </Button>
 
+          {/* Coupon CTA */}
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => setShowCouponModal(true)}
+            className="w-full border-secondary/40 text-secondary hover:bg-secondary/10"
+          >
+            <Ticket className="mr-2 h-5 w-5" />
+            Pegar cupom para usar no local
+          </Button>
+
           {/* Nota de aceite */}
           <p className="text-xs text-center text-muted-foreground">
             Ao enviar, você concorda com nossos{' '}
