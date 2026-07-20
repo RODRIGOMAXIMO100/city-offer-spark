@@ -44,6 +44,7 @@ import {
 import { OnboardingProvider, useOnboarding } from '@/contexts/OnboardingContext';
 import { WelcomeModal, OnboardingTour, OnboardingChecklist } from '@/components/onboarding';
 import CompanyLeadsList from './CompanyLeadsList';
+import RedeemCouponPanel from './RedeemCouponPanel';
 
 const MAX_ACTIVE_OFFERS = 3;
 
