@@ -116,6 +116,7 @@ export default function OfferPage() {
   const [leadName, setLeadName] = useState('');
   const [leadPhone, setLeadPhone] = useState('');
   const [formError, setFormError] = useState<string | null>(null);
+  const [showCouponModal, setShowCouponModal] = useState(false);
 
   const sessionStarted = useRef(false);
 
