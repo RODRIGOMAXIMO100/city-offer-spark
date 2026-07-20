@@ -427,12 +427,12 @@ function CompanyDashboardContent() {
       <div className="max-w-2xl mx-auto px-3 sm:px-4 py-4 sm:py-6 space-y-4 sm:space-y-6">
         {/* Tab Navigation */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-2 mb-4">
-            <TabsTrigger value="panel" className="flex items-center gap-2">
+          <TabsList className="grid w-full grid-cols-3 mb-4">
+            <TabsTrigger value="panel" className="flex items-center gap-1.5 text-xs sm:text-sm">
               <LayoutDashboard className="h-4 w-4" />
               Painel
             </TabsTrigger>
-            <TabsTrigger value="leads" className="flex items-center gap-2">
+            <TabsTrigger value="leads" className="flex items-center gap-1.5 text-xs sm:text-sm">
               <Users className="h-4 w-4" />
               Leads
               {totalLeads > 0 && (
@@ -440,6 +440,10 @@ function CompanyDashboardContent() {
                   {totalLeads}
                 </Badge>
               )}
+            </TabsTrigger>
+            <TabsTrigger value="coupons" className="flex items-center gap-1.5 text-xs sm:text-sm">
+              <Ticket className="h-4 w-4" />
+              Cupons
             </TabsTrigger>
           </TabsList>
 
