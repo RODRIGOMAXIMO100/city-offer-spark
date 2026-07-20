@@ -318,13 +318,12 @@ export function OnboardingProvider({ children }: { children: React.ReactNode }) 
     const bonus = bonuses[bonusType as keyof typeof bonuses];
     if (!bonus || bonus.amount === 0) return false;
 
-    const { data } = await supabase.rpc('credit_onboarding_bonus', {
-      p_user_id: user.id,
-      p_bonus_type: bonusType,
-      p_amount: bonus.amount,
+    const { data } = await supabase.functions.invoke('credit-onboarding-bonus', {
+      body: { bonus_type: bonusType },
     });
 
-    if (data) {
+    if (data?.credited) {
+
       setState(prev => ({
         ...prev,
         checklistItems: [...prev.checklistItems, bonusType],
