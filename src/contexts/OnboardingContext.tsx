@@ -291,11 +291,11 @@ export function OnboardingProvider({ children }: { children: React.ReactNode }) 
     // Creditar bônus do tour
     const bonuses = getBonuses();
     if (bonuses.tour_completed?.amount > 0) {
-      const { data } = await supabase.rpc('credit_onboarding_bonus', {
-        p_user_id: user.id,
-        p_bonus_type: 'tour_completed',
-        p_amount: bonuses.tour_completed.amount,
+      const { data } = await supabase.functions.invoke('credit-onboarding-bonus', {
+        body: { bonus_type: 'tour_completed' },
       });
+
+
 
       if (data) {
         setState(prev => ({
