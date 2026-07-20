@@ -821,6 +821,10 @@ function CompanyDashboardContent() {
           <TabsContent value="leads" className="mt-0">
             <CompanyLeadsList />
           </TabsContent>
+
+          <TabsContent value="coupons" className="mt-0">
+            <RedeemCouponPanel />
+          </TabsContent>
         </Tabs>
       </div>
 
