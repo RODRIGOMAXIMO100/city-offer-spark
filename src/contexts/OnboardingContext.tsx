@@ -297,7 +297,8 @@ export function OnboardingProvider({ children }: { children: React.ReactNode }) 
 
 
 
-      if (data) {
+      if (data?.credited) {
+
         setState(prev => ({
           ...prev,
           checklistItems: [...prev.checklistItems, 'tour_completed'],
