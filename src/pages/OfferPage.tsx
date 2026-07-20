@@ -694,6 +694,15 @@ export default function OfferPage() {
           <img src={logo} alt="clilin" className="h-8 opacity-60" />
         </div>
       </div>
+
+      {offer && (
+        <CouponModal
+          open={showCouponModal}
+          onOpenChange={setShowCouponModal}
+          offerId={offer.id}
+          offerTitle={offer.title}
+        />
+      )}
     </div>
   );
 }
