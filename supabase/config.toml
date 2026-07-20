@@ -63,3 +63,9 @@ verify_jwt = false
 [functions.credit-onboarding-bonus]
 verify_jwt = true
 
+[functions.issue-coupon]
+verify_jwt = false
+
+[functions.redeem-coupon]
+verify_jwt = true
+

@@ -393,6 +393,86 @@ export type Database = {
           },
         ]
       }
+      coupons: {
+        Row: {
+          code: string
+          company_id: string
+          created_at: string
+          customer_ip: string | null
+          customer_name: string
+          customer_phone: string
+          expires_at: string
+          id: string
+          issued_at: string
+          offer_id: string
+          redeemed_at: string | null
+          redeemed_by_whatsapp: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          code: string
+          company_id: string
+          created_at?: string
+          customer_ip?: string | null
+          customer_name: string
+          customer_phone: string
+          expires_at: string
+          id?: string
+          issued_at?: string
+          offer_id: string
+          redeemed_at?: string | null
+          redeemed_by_whatsapp?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          code?: string
+          company_id?: string
+          created_at?: string
+          customer_ip?: string | null
+          customer_name?: string
+          customer_phone?: string
+          expires_at?: string
+          id?: string
+          issued_at?: string
+          offer_id?: string
+          redeemed_at?: string | null
+          redeemed_by_whatsapp?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "coupons_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "company_public_info"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "coupons_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "company_public_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "coupons_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "coupons_offer_id_fkey"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "offers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       device_fingerprints: {
         Row: {
           blocked: boolean | null

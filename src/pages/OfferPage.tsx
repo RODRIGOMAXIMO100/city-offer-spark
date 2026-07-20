@@ -7,10 +7,11 @@ import { Offer, CONFIG } from '@/types/database';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, Clock, MessageCircle, Globe, FileText, MapPin, Sparkles, Instagram, ChevronLeft, ChevronRight, ArrowLeft, User, Phone } from 'lucide-react';
+import { Loader2, Clock, MessageCircle, Globe, FileText, MapPin, Sparkles, Instagram, ChevronLeft, ChevronRight, ArrowLeft, User, Phone, Ticket } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import CouponModal from '@/components/offer/CouponModal';
 import logo from '@/assets/logo.png';
 
 // Generate persistent device ID
@@ -115,6 +116,7 @@ export default function OfferPage() {
   const [leadName, setLeadName] = useState('');
   const [leadPhone, setLeadPhone] = useState('');
   const [formError, setFormError] = useState<string | null>(null);
+  const [showCouponModal, setShowCouponModal] = useState(false);
 
   const sessionStarted = useRef(false);
 
@@ -653,6 +655,17 @@ export default function OfferPage() {
             )}
           </Button>
 
+          {/* Coupon CTA */}
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => setShowCouponModal(true)}
+            className="w-full border-secondary/40 text-secondary hover:bg-secondary/10"
+          >
+            <Ticket className="mr-2 h-5 w-5" />
+            Pegar cupom para usar no local
+          </Button>
+
           {/* Nota de aceite */}
           <p className="text-xs text-center text-muted-foreground">
             Ao enviar, você concorda com nossos{' '}
@@ -681,6 +694,15 @@ export default function OfferPage() {
           <img src={logo} alt="clilin" className="h-8 opacity-60" />
         </div>
       </div>
+
+      {offer && (
+        <CouponModal
+          open={showCouponModal}
+          onOpenChange={setShowCouponModal}
+          offerId={offer.id}
+          offerTitle={offer.title}
+        />
+      )}
     </div>
   );
 }
