@@ -392,7 +392,7 @@ Abra com um lead PROVOCATIVO, siga a estrutura obrigatória (parágrafos → Pri
         ],
         tools: tools,
         tool_choice: { type: "function", function: { name: "create_blog_post" } },
-        max_tokens: 8192
+        max_completion_tokens: 8192
       }),
     });
 
