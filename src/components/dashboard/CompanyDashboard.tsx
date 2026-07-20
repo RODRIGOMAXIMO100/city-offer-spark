@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Banknote, PlusCircle, LogOut, Eye, MousePointer, TrendingUp, Loader2, Instagram, Check, Clock, Trash2, Info, Star, ExternalLink, AlertTriangle, Pencil, Image, HelpCircle, BookOpen, Users, Settings, LayoutDashboard, MoreVertical } from 'lucide-react';
+import { Banknote, PlusCircle, LogOut, Eye, MousePointer, TrendingUp, Loader2, Instagram, Check, Clock, Trash2, Info, Star, ExternalLink, AlertTriangle, Pencil, Image, HelpCircle, BookOpen, Users, Settings, LayoutDashboard, MoreVertical, Ticket } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
