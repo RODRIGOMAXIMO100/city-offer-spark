@@ -18,6 +18,7 @@ export default defineTool({
     tags: z.array(z.string()).optional(),
     images: z.array(z.string().url()).optional(),
     company_id: z.string().uuid().optional().describe("Somente admin: cria para outra empresa."),
+    bounty: z.number().positive().optional().describe("Recompensa por resgate: quanto a empresa paga quando um cliente novo resgata o cupom na loja, em reais. Minimo R$5,00. Padrao R$8,00."),
   },
   annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: false },
   handler: async (input, ctx) => {
@@ -42,6 +43,7 @@ export default defineTool({
         link_type: input.link_type,
         tags: input.tags ?? [],
         images: input.images ?? [],
+        redemption_cost: Math.max(500, Math.round((input.bounty ?? 8) * 100)),
         active: true,
       })
       .select("id, title, price_new, active")

@@ -83,13 +83,17 @@ Deno.serve(async (req) => {
       return json({ error: "Não foi possível resgatar. Tente novamente." }, 409);
     }
 
-    // ---- NOVO: FINANCEIRO (identico ao wa-webhook / padrao process-click) ----
+    // ---- FINANCEIRO — PIVO PAY-PER-RESGATE ----
+    // custo = BOUNTY da oferta (cada empresa define quanto paga por cliente convertido);
+    // fallback = valor global do pricing_config.
     const { data: pricing } = await admin
       .from("pricing_config")
       .select("redemption_cost, redemption_affiliate_share")
       .limit(1).maybeSingle();
-    const cost = pricing?.redemption_cost ?? 300;
-    const share = Number(pricing?.redemption_affiliate_share ?? 0.6);
+    const { data: offerBounty } = await admin
+      .from("offers").select("redemption_cost").eq("id", updated.offer_id).maybeSingle();
+    const cost = Number(offerBounty?.redemption_cost ?? pricing?.redemption_cost ?? 800);
+    const share = Number(pricing?.redemption_affiliate_share ?? 0.7);
 
     // debita a empresa (saldo pode negativar — cliente esta no balcao)
     const { data: companyProfile } = await admin
@@ -118,6 +122,10 @@ Deno.serve(async (req) => {
         await admin.from("transactions").insert({
           user_id: aff.id, amount: payout, type: "REDEMPTION_EARNING",
           offer_id: updated.offer_id, description: `Comissão resgate ${updated.code}`,
+        });
+        // PIVO: progressao de nivel conta RESGATES (nao mais cliques)
+        await admin.rpc("update_affiliate_stats", {
+          affiliate_profile_id: aff.id, earnings: payout,
         });
       }
     }

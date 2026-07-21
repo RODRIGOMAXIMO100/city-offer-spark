@@ -19,7 +19,7 @@ export default defineTool({
     let q = sb
       .from("profiles")
       .select("id, name, city, cpf, email, balance, banned, balance_frozen, fraud_score, created_at")
-      .in("id", roleRows.map((r: any) => r.user_id))
+      .in("user_id", roleRows.map((r: any) => r.user_id))
       .limit(limit);
     if (city) q = q.eq("city", city);
     if (search) q = q.or(`name.ilike.%${search}%,cpf.ilike.%${search}%,email.ilike.%${search}%`);

@@ -18,7 +18,7 @@ export default defineTool({
     let q = sb
       .from("profiles")
       .select("id, name, city, cnpj, razao_social, email, balance, banned, balance_frozen, created_at")
-      .in("id", (
+      .in("user_id", (
         await sb.from("user_roles").select("user_id").eq("role", "COMPANY")
       ).data?.map((r: any) => r.user_id) ?? [])
       .limit(limit);

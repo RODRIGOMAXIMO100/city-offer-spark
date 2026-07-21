@@ -16,11 +16,14 @@ export default defineTool({
     link_destination: z.string().url().optional(),
     tags: z.array(z.string()).optional(),
     images: z.array(z.string().url()).optional(),
+    bounty: z.number().positive().optional().describe("Recompensa por resgate em reais (minimo R$5,00)."),
   },
   annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: false },
   handler: async ({ offer_id, ...patch }, ctx) => {
     if (!ctx.isAuthenticated()) return { content: [{ type: "text", text: "Não autenticado" }], isError: true };
-    const cleaned = Object.fromEntries(Object.entries(patch).filter(([, v]) => v !== undefined));
+    const { bounty, ...rest } = patch as Record<string, unknown>;
+    const cleaned: Record<string, unknown> = Object.fromEntries(Object.entries(rest).filter(([, v]) => v !== undefined));
+    if (bounty !== undefined) cleaned.redemption_cost = Math.max(500, Math.round(Number(bounty) * 100));
     if (Object.keys(cleaned).length === 0) return { content: [{ type: "text", text: "Nada para atualizar." }], isError: true };
     const sb = supabaseForUser(ctx);
     const { data, error } = await sb.from("offers").update(cleaned).eq("id", offer_id).select("id, title").maybeSingle();

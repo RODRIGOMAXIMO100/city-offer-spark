@@ -688,6 +688,13 @@ serve(async (req) => {
     
     const affiliateShare = pricingConfig?.affiliate_share || 0.60;
 
+    // ========== PIVO: MODO DE COBRANCA ==========
+    const billingMode = pricingConfig?.billing_mode ?? "LEGACY";
+    let actualAffiliatePayout = 0; // compartilhada com o log final (fora do guard)
+
+    // No modo REDEMPTION_ONLY o clique NAO cobra a empresa nem paga o divulgador:
+    // ele so e REGISTRADO (metrica + atribuicao). A cobranca acontece no RESGATE.
+    if (billingMode !== "REDEMPTION_ONLY") {
     // Check company balance
     if (companyProfile.balance < cpcCost) {
       await supabase
@@ -732,7 +739,6 @@ serve(async (req) => {
     });
 
     // 4. Credit affiliate if valid AND not banned
-    let actualAffiliatePayout = 0;
     if (validAffiliateId) {
       const { data: affiliateProfile } = await supabase
         .from("profiles")
@@ -805,6 +811,7 @@ serve(async (req) => {
       }
       }
     }
+    } // fim do guard billingMode !== REDEMPTION_ONLY (PIVO)
 
     // 5. Record click with all tracking data
     await supabase.from("offer_clicks").insert({

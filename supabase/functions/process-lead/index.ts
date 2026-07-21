@@ -362,13 +362,27 @@ serve(async (req) => {
       }
     }
 
+    // ========== PIVO: MODO DE COBRANCA ==========
+    const { data: pricingCfgLead } = await supabase
+      .from("pricing_config").select("billing_mode").limit(1).maybeSingle();
+    const billingMode = pricingCfgLead?.billing_mode ?? "LEGACY";
+
+    // vars compartilhadas (usadas no SAVE LEAD e na resposta, fora do bloco de cobranca)
+    let cplCents = 0;
+    let affiliateEarnings = 0;
+    let validAffiliateId = affiliateId;
+
+    // No modo REDEMPTION_ONLY o lead NAO cobra a empresa nem paga o divulgador aqui:
+    // ele so registra (metrica + atribuicao do divulgador). A cobranca acontece no
+    // RESGATE do cupom. Isso preserva todo o funil como METRICA.
+    if (billingMode !== "REDEMPTION_ONLY") {
     // ========== CALCULATE CPL ==========
     const { data: cplResult } = await supabase.rpc("calculate_real_cpl", {
       p_offer_id: offerId,
       p_city: offer.city,
     });
 
-    const cplCents = cplResult || 150; // Default R$ 1,50
+    cplCents = cplResult || 150; // Default R$ 1,50
     console.log(`CPL for offer ${offerId}: ${cplCents} centavos`);
 
     // ========== CHECK COMPANY BALANCE ==========
@@ -418,9 +432,6 @@ serve(async (req) => {
     });
 
     // ========== CREDIT AFFILIATE (if exists) ==========
-    let affiliateEarnings = 0;
-    let validAffiliateId = affiliateId;
-
     if (affiliateId) {
       // Check if affiliate is valid
       const { data: affiliateProfile } = await supabase
@@ -469,6 +480,7 @@ serve(async (req) => {
         validAffiliateId = null;
       }
     }
+    } // fim do guard billingMode !== REDEMPTION_ONLY (PIVO)
 
     // ========== SAVE LEAD ==========
     await supabase.from("leads").insert({
