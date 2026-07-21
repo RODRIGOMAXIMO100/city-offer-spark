@@ -10,11 +10,21 @@ import { defineTool } from "npm:@lovable.dev/mcp-js@0.24.0";
 
 // src/lib/mcp/_shared/supabase.ts
 import { createClient } from "npm:@supabase/supabase-js@^2.87.1";
+function readEnv(name) {
+  const value = Deno.env.get(name);
+  if (!value) throw new Error(`Env var ausente na edge function mcp: ${name}`);
+  return value;
+}
 function supabaseForUser(ctx) {
-  return createClient(process.env.SUPABASE_URL, process.env.SUPABASE_PUBLISHABLE_KEY, {
-    global: { headers: { Authorization: `Bearer ${ctx.getToken()}` } },
-    auth: { persistSession: false, autoRefreshToken: false }
-  });
+  return createClient(
+    readEnv("SUPABASE_URL"),
+    // fallback: alguns runtimes só têm ANON_KEY, outros só PUBLISHABLE_KEY
+    Deno.env.get("SUPABASE_PUBLISHABLE_KEY") ?? readEnv("SUPABASE_ANON_KEY"),
+    {
+      global: { headers: { Authorization: `Bearer ${ctx.getToken()}` } },
+      auth: { persistSession: false, autoRefreshToken: false }
+    }
+  );
 }
 
 // src/lib/mcp/tools/whoami.ts
