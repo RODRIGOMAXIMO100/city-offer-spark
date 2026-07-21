@@ -1,12 +1,5 @@
-import { createClient } from "@supabase/supabase-js";
-import { defineTool, type ToolContext } from "@lovable.dev/mcp-js";
-
-function supabaseForUser(ctx: ToolContext) {
-  return createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_PUBLISHABLE_KEY!, {
-    global: { headers: { Authorization: `Bearer ${ctx.getToken()}` } },
-    auth: { persistSession: false, autoRefreshToken: false },
-  });
-}
+import { defineTool } from "@lovable.dev/mcp-js";
+import { supabaseForUser } from "../_shared/supabase";
 
 export default defineTool({
   name: "admin_overview",
@@ -20,7 +13,6 @@ export default defineTool({
       return { content: [{ type: "text", text: "Não autenticado" }], isError: true };
     }
     const sb = supabaseForUser(ctx);
-    // Verifica papel ADMIN
     const { data: roles } = await sb
       .from("user_roles")
       .select("role")
