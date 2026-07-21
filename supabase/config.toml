@@ -69,3 +69,7 @@ verify_jwt = false
 [functions.redeem-coupon]
 verify_jwt = true
 
+[functions.create-wa-templates]
+verify_jwt = true
+
+

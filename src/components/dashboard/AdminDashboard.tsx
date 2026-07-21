@@ -30,6 +30,8 @@ import { AdminNiches } from './admin/AdminNiches';
 import AdminFinanceiro from './admin/AdminFinanceiro';
 import AdminCities from './admin/AdminCities';
 import AdminSEO from './admin/AdminSEO';
+import AdminWhatsAppTemplates from './admin/AdminWhatsAppTemplates';
+
 
 interface Stats {
   receita: number;
@@ -629,6 +631,10 @@ export default function AdminDashboard() {
 
       case 'seo':
         return <AdminSEO />;
+
+      case 'wa-templates':
+        return <AdminWhatsAppTemplates />;
+
       
       
       default:
