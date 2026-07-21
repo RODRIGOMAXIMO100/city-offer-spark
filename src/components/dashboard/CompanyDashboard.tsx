@@ -285,7 +285,7 @@ function CompanyDashboardContent() {
   };
 
   const getScoreTip = (score: number) => {
-    if (score >= 7) return 'Excelente! Você paga menos por clique.';
+    if (score >= 7) return 'Excelente! Sua oferta ganha mais destaque.';
     if (score >= 5) return 'Bom! Melhore descrição e desconto para pagar menos.';
     return 'Adicione descrição, Instagram e aumente o desconto!';
   };
@@ -584,12 +584,12 @@ function CompanyDashboardContent() {
                 <Info className="h-4 w-4 sm:h-5 sm:w-5 text-company" />
               </div>
               <div className="space-y-1.5 sm:space-y-2 min-w-0">
-                <p className="font-bold text-foreground text-sm sm:text-base">💰 Modelo CPL (Custo por Lead)</p>
+                <p className="font-bold text-foreground text-sm sm:text-base">💰 Você só paga por resultado</p>
                 <ul className="text-xs sm:text-sm text-muted-foreground space-y-0.5 sm:space-y-1">
-                  <li>• <strong className="text-foreground">Só paga por leads reais</strong><span className="hidden sm:inline"> — pessoas que preencheram nome e WhatsApp</span></li>
-                  <li>• <strong className="text-foreground">CPL:</strong> R$ 1,00 a R$ 3,00<span className="hidden sm:inline"> (baseado na nota)</span></li>
-                  <li>• <strong className="text-foreground">Nota alta = paga menos</strong><span className="hidden sm:inline">: nota 10 paga R$ 1,00</span></li>
-                  <li>• <strong className="text-foreground">Divisão 50/50</strong><span className="hidden sm:inline">: metade vai para o divulgador</span></li>
+                  <li>• <strong className="text-foreground">Só paga quando o cliente vai à loja</strong><span className="hidden sm:inline"> e usa o cupom — cliente novo de verdade</span></li>
+                  <li>• <strong className="text-foreground">Você define a recompensa</strong><span className="hidden sm:inline"> por cliente (mínimo R$ 5,00)</span></li>
+                  <li>• <strong className="text-foreground">Cliques e cadastros são grátis</strong><span className="hidden sm:inline">: servem só pra medir o alcance</span></li>
+                  <li>• <strong className="text-foreground">Divulgador ganha 70%</strong><span className="hidden sm:inline"> da recompensa por cada cliente que traz</span></li>
                 </ul>
                 <Button variant="link" asChild className="h-auto p-0 text-company text-xs sm:text-sm">
                   <Link to="/transparencia">
@@ -724,7 +724,7 @@ function CompanyDashboardContent() {
                                   <hr className="my-2 border-border/50" />
                                   <p className="text-xs text-muted-foreground">{getScoreTip(offerScore)}</p>
                                   <p className="text-xs font-medium mt-1">
-                                    Custo por lead: R$ {((14 - offerScore) * 0.3333).toFixed(2)}
+                                    Recompensa por cliente na loja: R$ {(((offer as any).redemption_cost ?? 800) / 100).toFixed(2)}
                                   </p>
                                 </TooltipContent>
                               </Tooltip>
@@ -733,7 +733,7 @@ function CompanyDashboardContent() {
                             {/* Cost per Lead & Expiration */}
                             <div className="flex items-center gap-2 mt-1 flex-wrap">
                               <span className="text-[10px] sm:text-xs text-muted-foreground">
-                                CPL: R$ {((14 - offerScore) * 0.3333).toFixed(2)}
+                                Recompensa: R$ {(((offer as any).redemption_cost ?? 800) / 100).toFixed(2)}
                               </span>
                               <span className="text-muted-foreground">•</span>
                               <div className={`flex items-center gap-1 text-[10px] sm:text-xs ${expInfo.color}`}>

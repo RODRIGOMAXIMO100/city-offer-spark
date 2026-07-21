@@ -11,27 +11,27 @@ import { PRICING_DISCLAIMER } from "@/types/database";
 export const faqs = [
   {
     question: "Quanto custa para empresas?",
-    answer: `Não há mensalidade ou taxa fixa. Você só paga quando recebe um lead qualificado (nome + WhatsApp). O custo por lead varia de R$ 1,00 a R$ 3,00, calculado automaticamente pela qualidade da sua oferta. Quanto melhor sua nota, menos você paga! ${PRICING_DISCLAIMER.short}`,
+    answer: `Não há mensalidade nem taxa fixa. Você só paga quando um cliente novo vai até a sua loja e usa o cupom — resultado real, não clique. Você define quanto vale cada cliente (a recompensa, mínimo R$ 5,00). Se ninguém aparecer, você não paga nada. ${PRICING_DISCLAIMER.short}`,
   },
   {
     question: "Como recebo minha comissão como divulgador?",
-    answer: `Cada lead qualificado gerado pelo seu link (quando alguém preenche nome e WhatsApp) gera saldo na sua conta. Você começa ganhando 30% e pode chegar até 50% conforme sobe de nível (Bronze 30%, Prata 40%, Ouro 50%). Por exemplo, em um lead de R$ 2,00, você ganha de R$ 0,60 a R$ 1,00! Saque mínimo: R$ 100,00 via PIX. ${PRICING_DISCLAIMER.short}`,
+    answer: `Você ganha quando alguém que você indicou vai até a loja e usa o cupom. A comissão é 70% da recompensa que a loja paga por cada cliente. Exemplo: a loja paga R$ 8,00, você leva R$ 5,60. Quanto mais clientes você traz, mais alto fica seu nível e maior sua comissão. Saque mínimo: R$ 100,00 via PIX. ${PRICING_DISCLAIMER.short}`,
   },
   {
     question: "Preciso ter CNPJ para cadastrar minha empresa?",
     answer: "Sim, o CNPJ é obrigatório para cadastrar ofertas. MEIs, microempresas e empresas de qualquer porte podem participar, desde que tenham CNPJ ativo.",
   },
   {
-    question: "Como funciona o custo por lead (CPL)?",
-    answer: `O CPL é automático! Ofertas novas começam com nota 7 e pagam R$ 2,00 por lead qualificado. Melhore a qualidade da oferta (bons descontos, descrição completa, Instagram vinculado) para aumentar sua nota e pagar menos. Nota 10 = R$ 1,00. Nota 4 = R$ 3,00. ${PRICING_DISCLAIMER.short}`,
+    question: "Como a empresa é cobrada?",
+    answer: `Só quando dá resultado. O cliente pega o cupom e, quando vai à loja e o lojista confirma o resgate, aí sim a recompensa é debitada. Cliques e cadastros no caminho são gratuitos — servem só pra você medir o alcance da campanha. ${PRICING_DISCLAIMER.short}`,
   },
   {
     question: "O que é a Nota da Oferta?",
-    answer: "É uma pontuação de 0 a 10 que avalia sua oferta. Considera: taxa de conversão (40%), qualidade da oferta (35%) e reputação da empresa (25%). Ofertas novas começam com nota 7. Quanto maior sua nota, menor o custo por lead!",
+    answer: "É uma pontuação de 0 a 10 que avalia sua oferta. Considera: taxa de conversão (40%), qualidade da oferta (35%) e reputação da empresa (25%). Ofertas novas começam com nota 7. Quanto maior sua nota, mais destaque sua oferta ganha para divulgadores e clientes!",
   },
   {
     question: "Como funciona a divisão de valores?",
-    answer: `Você começa ganhando 30% do valor pago pela empresa e pode chegar até 50% no nível Ouro! Por exemplo, se a empresa paga R$ 2,00 por lead e você está no Bronze, ganha R$ 0,60. No Ouro, ganha R$ 1,00. Quanto mais você divulga, mais você ganha! ${PRICING_DISCLAIMER.short}`,
+    answer: `Do valor que a empresa paga por cada cliente que aparece na loja, o divulgador leva 70% e a plataforma fica com 30%. Exemplo: recompensa de R$ 8,00 → divulgador ganha R$ 5,60. Suba de nível trazendo mais clientes e evolua sua comissão. ${PRICING_DISCLAIMER.short}`,
   },
 ];
 

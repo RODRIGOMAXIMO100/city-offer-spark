@@ -105,7 +105,7 @@ function AffiliateDashboardContent() {
         .from('transactions')
         .select('id, amount, created_at, offer_id, offers(title)')
         .eq('user_id', profile.id)
-        .in('type', ['CLICK_EARNING', 'LEAD_EARNING'])
+        .in('type', ['CLICK_EARNING', 'LEAD_EARNING', 'REDEMPTION_EARNING'])
         .order('created_at', { ascending: false })
         .limit(50);
 
@@ -383,12 +383,12 @@ function AffiliateDashboardContent() {
                     <Share2 className="h-5 w-5 sm:h-6 sm:w-6" />
                   </div>
                   <div className="space-y-1.5 sm:space-y-2 min-w-0">
-                    <p className="font-bold text-base sm:text-lg">💰 Ganhe por Lead!</p>
+                    <p className="font-bold text-base sm:text-lg">💰 Ganhe por cliente na loja!</p>
                     <ul className="text-xs sm:text-sm opacity-95 space-y-0.5 sm:space-y-1">
-                      <li>• <strong>R$ 0,30 a R$ 1,50/lead</strong><span className="hidden sm:inline"> (pessoa que preenche nome + WhatsApp)</span></li>
-                      <li>• <strong>Comissão 30%</strong><span className="hidden sm:inline"> - suba de nível e ganhe mais!</span></li>
-                      <li className="hidden sm:list-item">• <strong>Bronze:</strong> 30% | <strong>Prata:</strong> 40% | <strong>Ouro:</strong> 50%</li>
-                      <li>• <strong>Metas zeram dia 1</strong><span className="hidden sm:inline"> - evolua todo mês!</span></li>
+                      <li>• <strong>Você ganha quando o cliente vai à loja</strong><span className="hidden sm:inline"> e usa o cupom que você indicou</span></li>
+                      <li>• <strong>Comissão de 70%</strong><span className="hidden sm:inline"> da recompensa da loja - suba de nível e ganhe mais!</span></li>
+                      <li className="hidden sm:list-item">• <strong>Ex.:</strong> loja paga R$ 8 → você leva R$ 5,60 por cliente</li>
+                      <li>• <strong>Quanto mais resgates, maior seu nível</strong><span className="hidden sm:inline"> e sua comissão!</span></li>
                       <li>• <strong>Saque mín: R$ 100</strong> <span className="hidden sm:inline">via PIX</span></li>
                       <li>• <a href="/transparencia" className="underline font-medium">Ver detalhes →</a></li>
                     </ul>

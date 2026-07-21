@@ -124,6 +124,7 @@ export default function CreateOfferModal({
     link_destination: '',
     link_type: 'WHATSAPP' as LinkType,
     expires_at: addDays(new Date(), 7),
+    redemption_cost: '8',
   });
   const [newImages, setNewImages] = useState<File[]>([]);
   const [existingImages, setExistingImages] = useState<string[]>([]);
@@ -144,6 +145,7 @@ export default function CreateOfferModal({
         link_destination: linkType === 'WHATSAPP' ? '' : editOffer.link_destination,
         link_type: linkType,
         expires_at: new Date(editOffer.expires_at),
+        redemption_cost: ((editOffer as any).redemption_cost ? ((editOffer as any).redemption_cost / 100) : 8).toString(),
       });
       
       // Extract phone number from wa.me link if WhatsApp
@@ -166,6 +168,7 @@ export default function CreateOfferModal({
         link_destination: '',
         link_type: 'WHATSAPP',
         expires_at: addDays(new Date(), 7),
+        redemption_cost: '8',
       });
       setPhoneNumber('');
       setExistingImages([]);
@@ -241,6 +244,7 @@ export default function CreateOfferModal({
         link_destination: finalLinkDestination,
         link_type: formData.link_type,
         expires_at: formData.expires_at.toISOString(),
+        redemption_cost: Math.max(500, Math.round(parseFloat(String(formData.redemption_cost).replace(',', '.') || '8') * 100)),
         newImages: newImages,
         existingImages: existingImages,
       });
@@ -254,7 +258,7 @@ export default function CreateOfferModal({
         link_type: formData.link_type,
         city: profile.city,
         expires_at: formData.expires_at.toISOString(),
-        max_cpc_bid: 7,
+        redemption_cost: Math.max(500, Math.round(parseFloat(String(formData.redemption_cost).replace(',', '.') || '8') * 100)),
         images: newImages,
       });
     }
@@ -532,9 +536,34 @@ export default function CreateOfferModal({
         )}>
           {discount >= 30 ? '🔥 Desconto excelente! Sua oferta terá mais destaque.' :
            discount >= 20 ? '👍 Bom desconto! Continue assim.' :
-           '💡 Dica: Descontos de 30%+ melhoram sua nota e reduzem o CPC.'}
+           '💡 Dica: Descontos de 30%+ deixam sua oferta em destaque.'}
         </div>
       )}
+
+      {/* Recompensa por resgate — empresa so paga quando o cliente vai a loja */}
+      <div className="space-y-1.5">
+        <Label htmlFor="redemption_cost" className="text-sm flex items-center gap-1.5">
+          <Star className="h-4 w-4 text-secondary" />
+          Recompensa por cliente na loja *
+        </Label>
+        <div className="relative">
+          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">R$</span>
+          <Input
+            id="redemption_cost"
+            type="text"
+            inputMode="decimal"
+            pattern="[0-9]*[.,]?[0-9]*"
+            placeholder="8.00"
+            value={formData.redemption_cost}
+            onChange={(e) => setFormData({ ...formData, redemption_cost: formatPriceInput(e.target.value) })}
+            required
+            className="text-base pl-9"
+          />
+        </div>
+        <p className="text-[11px] text-muted-foreground">
+          É quanto você paga <strong>só quando</strong> um cliente novo aparece na loja e usa o cupom. Mínimo R$ 5,00. Ninguém apareceu, você não paga nada.
+        </p>
+      </div>
 
       {/* Link Type */}
       <div className="space-y-1.5">
@@ -648,14 +677,14 @@ export default function CreateOfferModal({
         </p>
       </div>
 
-      {/* CPL Info */}
+      {/* Modelo pay-per-resgate */}
       <div className="p-3 bg-company/5 border border-company/20 rounded-lg">
         <div className="flex items-center gap-2 mb-1">
           <Star className="h-4 w-4 text-company" />
-          <span className="font-medium text-xs">CPL Automático</span>
+          <span className="font-medium text-xs">Você só paga por resultado</span>
         </div>
         <p className="text-[10px] text-muted-foreground">
-          Seu custo por lead qualificado (R$ 1,00 - R$ 3,00) é calculado automaticamente com base na <strong>Nota da Oferta</strong>.
+          Divulgadores locais espalham sua oferta e você <strong>só paga quando um cliente novo vai até a loja e usa o cupom</strong>. Cliques e cadastros são de graça — servem só pra você medir o alcance.
         </p>
         <p className="text-[9px] text-amber-600 dark:text-amber-400 mt-1 italic">
           Valores atuais, sujeitos a alteração conforme política da plataforma.

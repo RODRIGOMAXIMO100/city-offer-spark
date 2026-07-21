@@ -124,6 +124,7 @@ export function useOffers(city?: string) {
     city: string;
     expires_at: string;
     max_cpc_bid?: number;
+    redemption_cost?: number;
     images?: File[];
   }) => {
     if (!profile) {
@@ -157,6 +158,7 @@ export function useOffers(city?: string) {
           expires_at: offerData.expires_at,
           tags: [...autoTags, 'oferta', 'promoção'],
           max_cpc_bid: offerData.max_cpc_bid || 5,
+          redemption_cost: offerData.redemption_cost ?? 800,
           images: [],
         })
         .select()
@@ -215,6 +217,7 @@ export function useOffers(city?: string) {
     link_destination?: string;
     link_type?: LinkType;
     expires_at?: string;
+    redemption_cost?: number;
     newImages?: File[];
     existingImages?: string[];
   }) => {
@@ -245,6 +248,7 @@ export function useOffers(city?: string) {
       if (offerData.link_destination) updateData.link_destination = offerData.link_destination;
       if (offerData.link_type) updateData.link_type = offerData.link_type;
       if (offerData.expires_at) updateData.expires_at = offerData.expires_at;
+      if (offerData.redemption_cost !== undefined) updateData.redemption_cost = offerData.redemption_cost;
       updateData.images = allImageUrls;
 
       // Regenerate tags if title changed
