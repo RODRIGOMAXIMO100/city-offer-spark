@@ -165,7 +165,7 @@ export default function AuthPage() {
         title: 'Bem-vindo de volta!',
         description: 'Login realizado com sucesso.',
       });
-      navigate('/dashboard');
+      navigate(postAuthTarget);
     }
 
     setIsLoading(false);
@@ -262,7 +262,7 @@ export default function AuthPage() {
         title: 'Conta criada!',
         description: 'Você já pode acessar a plataforma.',
       });
-      navigate('/dashboard');
+      navigate(postAuthTarget);
     }
 
     setIsLoading(false);
@@ -349,6 +349,7 @@ export default function AuthPage() {
                     disabled={isGoogleLoading}
                     onClick={async () => {
                       setIsGoogleLoading(true);
+                      if (safeNext) sessionStorage.setItem('clilin_post_auth_next', safeNext);
                       const { error } = await signInWithGoogle();
                       if (error) {
                         toast({
@@ -385,6 +386,7 @@ export default function AuthPage() {
                     disabled={isGoogleLoading}
                     onClick={async () => {
                       setIsGoogleLoading(true);
+                      if (safeNext) sessionStorage.setItem('clilin_post_auth_next', safeNext);
                       const { error } = await signInWithGoogle();
                       if (error) {
                         toast({
