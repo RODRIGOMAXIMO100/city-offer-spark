@@ -292,7 +292,8 @@ var create_offer_default = defineTool9({
     link_type: z6.enum(["WHATSAPP", "WEBSITE", "MENU"]).default("WHATSAPP"),
     tags: z6.array(z6.string()).optional(),
     images: z6.array(z6.string().url()).optional(),
-    company_id: z6.string().uuid().optional().describe("Somente admin: cria para outra empresa.")
+    company_id: z6.string().uuid().optional().describe("Somente admin: cria para outra empresa."),
+    bounty: z6.number().positive().optional().describe("Recompensa por resgate: quanto a empresa paga quando um cliente novo resgata o cupom na loja, em reais. Minimo R$5,00. Padrao R$8,00.")
   },
   annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: false },
   handler: async (input, ctx) => {
@@ -315,6 +316,7 @@ var create_offer_default = defineTool9({
       link_type: input.link_type,
       tags: input.tags ?? [],
       images: input.images ?? [],
+      redemption_cost: Math.max(500, Math.round((input.bounty ?? 8) * 100)),
       active: true
     }).select("id, title, price_new, active").maybeSingle();
     if (error) return { content: [{ type: "text", text: error.message }], isError: true };
@@ -338,12 +340,15 @@ var update_offer_default = defineTool10({
     city: z7.string().optional(),
     link_destination: z7.string().url().optional(),
     tags: z7.array(z7.string()).optional(),
-    images: z7.array(z7.string().url()).optional()
+    images: z7.array(z7.string().url()).optional(),
+    bounty: z7.number().positive().optional().describe("Recompensa por resgate em reais (minimo R$5,00).")
   },
   annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: false },
   handler: async ({ offer_id, ...patch }, ctx) => {
     if (!ctx.isAuthenticated()) return { content: [{ type: "text", text: "N\xE3o autenticado" }], isError: true };
-    const cleaned = Object.fromEntries(Object.entries(patch).filter(([, v]) => v !== void 0));
+    const { bounty, ...rest } = patch;
+    const cleaned = Object.fromEntries(Object.entries(rest).filter(([, v]) => v !== void 0));
+    if (bounty !== void 0) cleaned.redemption_cost = Math.max(500, Math.round(Number(bounty) * 100));
     if (Object.keys(cleaned).length === 0) return { content: [{ type: "text", text: "Nada para atualizar." }], isError: true };
     const sb = supabaseForUser(ctx);
     const { data, error } = await sb.from("offers").update(cleaned).eq("id", offer_id).select("id, title").maybeSingle();
@@ -388,7 +393,7 @@ var list_companies_default = defineTool12({
   handler: async ({ city, search, limit }, ctx) => {
     if (!ctx.isAuthenticated()) return { content: [{ type: "text", text: "N\xE3o autenticado" }], isError: true };
     const sb = supabaseForUser(ctx);
-    let q = sb.from("profiles").select("id, name, city, cnpj, razao_social, email, balance, banned, balance_frozen, created_at").in("id", (await sb.from("user_roles").select("user_id").eq("role", "COMPANY")).data?.map((r) => r.user_id) ?? []).limit(limit);
+    let q = sb.from("profiles").select("id, name, city, cnpj, razao_social, email, balance, banned, balance_frozen, created_at").in("user_id", (await sb.from("user_roles").select("user_id").eq("role", "COMPANY")).data?.map((r) => r.user_id) ?? []).limit(limit);
     if (city) q = q.eq("city", city);
     if (search) q = q.or(`name.ilike.%${search}%,razao_social.ilike.%${search}%`);
     const { data, error } = await q;
@@ -414,7 +419,7 @@ var list_affiliates_default = defineTool13({
     if (!ctx.isAuthenticated()) return { content: [{ type: "text", text: "N\xE3o autenticado" }], isError: true };
     const sb = supabaseForUser(ctx);
     const roleRows = (await sb.from("user_roles").select("user_id").eq("role", "AFFILIATE")).data ?? [];
-    let q = sb.from("profiles").select("id, name, city, cpf, email, balance, banned, balance_frozen, fraud_score, created_at").in("id", roleRows.map((r) => r.user_id)).limit(limit);
+    let q = sb.from("profiles").select("id, name, city, cpf, email, balance, banned, balance_frozen, fraud_score, created_at").in("user_id", roleRows.map((r) => r.user_id)).limit(limit);
     if (city) q = q.eq("city", city);
     if (search) q = q.or(`name.ilike.%${search}%,cpf.ilike.%${search}%,email.ilike.%${search}%`);
     const { data, error } = await q;
