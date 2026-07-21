@@ -395,6 +395,7 @@ export type Database = {
       }
       coupons: {
         Row: {
+          affiliate_id: string | null
           code: string
           company_id: string
           created_at: string
@@ -404,6 +405,7 @@ export type Database = {
           expires_at: string
           id: string
           issued_at: string
+          lead_id: string | null
           offer_id: string
           redeemed_at: string | null
           redeemed_by_whatsapp: string | null
@@ -411,6 +413,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          affiliate_id?: string | null
           code: string
           company_id: string
           created_at?: string
@@ -420,6 +423,7 @@ export type Database = {
           expires_at: string
           id?: string
           issued_at?: string
+          lead_id?: string | null
           offer_id: string
           redeemed_at?: string | null
           redeemed_by_whatsapp?: string | null
@@ -427,6 +431,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          affiliate_id?: string | null
           code?: string
           company_id?: string
           created_at?: string
@@ -436,6 +441,7 @@ export type Database = {
           expires_at?: string
           id?: string
           issued_at?: string
+          lead_id?: string | null
           offer_id?: string
           redeemed_at?: string | null
           redeemed_by_whatsapp?: string | null
@@ -443,6 +449,27 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "coupons_affiliate_id_fkey"
+            columns: ["affiliate_id"]
+            isOneToOne: false
+            referencedRelation: "company_public_info"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "coupons_affiliate_id_fkey"
+            columns: ["affiliate_id"]
+            isOneToOne: false
+            referencedRelation: "company_public_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "coupons_affiliate_id_fkey"
+            columns: ["affiliate_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "coupons_company_id_fkey"
             columns: ["company_id"]
@@ -462,6 +489,13 @@ export type Database = {
             columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "coupons_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
             referencedColumns: ["id"]
           },
           {
@@ -754,6 +788,55 @@ export type Database = {
             columns: ["offer_id"]
             isOneToOne: false
             referencedRelation: "offers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      merchant_whatsapp: {
+        Row: {
+          created_at: string
+          id: string
+          label: string | null
+          phone: string
+          profile_id: string
+          verified: boolean
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          label?: string | null
+          phone: string
+          profile_id: string
+          verified?: boolean
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          label?: string | null
+          phone?: string
+          profile_id?: string
+          verified?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "merchant_whatsapp_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "company_public_info"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "merchant_whatsapp_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "company_public_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "merchant_whatsapp_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -1206,6 +1289,8 @@ export type Database = {
           id: string
           max_cpc: number
           min_cpc: number
+          redemption_affiliate_share: number
+          redemption_cost: number
           updated_at: string
         }
         Insert: {
@@ -1215,6 +1300,8 @@ export type Database = {
           id?: string
           max_cpc?: number
           min_cpc?: number
+          redemption_affiliate_share?: number
+          redemption_cost?: number
           updated_at?: string
         }
         Update: {
@@ -1224,6 +1311,8 @@ export type Database = {
           id?: string
           max_cpc?: number
           min_cpc?: number
+          redemption_affiliate_share?: number
+          redemption_cost?: number
           updated_at?: string
         }
         Relationships: []
@@ -1667,6 +1756,33 @@ export type Database = {
         }
         Relationships: []
       }
+      wa_messages: {
+        Row: {
+          created_at: string
+          direction: string
+          id: string
+          kind: string | null
+          payload: Json | null
+          phone: string | null
+        }
+        Insert: {
+          created_at?: string
+          direction: string
+          id?: string
+          kind?: string | null
+          payload?: Json | null
+          phone?: string | null
+        }
+        Update: {
+          created_at?: string
+          direction?: string
+          id?: string
+          kind?: string | null
+          payload?: Json | null
+          phone?: string | null
+        }
+        Relationships: []
+      }
       withdrawals: {
         Row: {
           amount: number
@@ -1941,6 +2057,8 @@ export type Database = {
         | "LEAD_COST"
         | "LEAD_EARNING"
         | "ADMIN_ADJUSTMENT"
+        | "REDEMPTION_COST"
+        | "REDEMPTION_EARNING"
       withdrawal_status:
         | "PENDING"
         | "APPROVED"
@@ -2085,6 +2203,8 @@ export const Constants = {
         "LEAD_COST",
         "LEAD_EARNING",
         "ADMIN_ADJUSTMENT",
+        "REDEMPTION_COST",
+        "REDEMPTION_EARNING",
       ],
       withdrawal_status: [
         "PENDING",
