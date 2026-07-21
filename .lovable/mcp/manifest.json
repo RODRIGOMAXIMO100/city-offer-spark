@@ -406,6 +406,11 @@
               "type": "string",
               "format": "uuid",
               "description": "Somente admin: cria para outra empresa."
+            },
+            "bounty": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "description": "Recompensa por resgate: quanto a empresa paga quando um cliente novo resgata o cupom na loja, em reais. Minimo R$5,00. Padrao R$8,00."
             }
           },
           "required": [
@@ -472,6 +477,11 @@
                 "type": "string",
                 "format": "uri"
               }
+            },
+            "bounty": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "description": "Recompensa por resgate em reais (minimo R$5,00)."
             }
           },
           "required": [
