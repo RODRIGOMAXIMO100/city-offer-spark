@@ -14,7 +14,9 @@ import {
   ChevronDown,
   LayoutDashboard,
   MapPin,
-  Search
+  Search,
+  MessageCircle
+
 } from 'lucide-react';
 import {
   Sidebar,
@@ -45,7 +47,9 @@ export type AdminSection =
   | 'niches' 
   | 'cities'
   | 'blog'
-  | 'seo';
+  | 'seo'
+  | 'wa-templates';
+
 
 interface AdminSidebarProps {
   currentSection: AdminSection;
@@ -96,7 +100,9 @@ const menuGroups = [
       { id: 'niches' as AdminSection, label: 'Nichos', icon: Tags },
       { id: 'blog' as AdminSection, label: 'Blog', icon: FileText },
       { id: 'seo' as AdminSection, label: 'SEO / Google', icon: Search },
+      { id: 'wa-templates' as AdminSection, label: 'Templates WhatsApp', icon: MessageCircle },
     ]
+
   },
 ];
 
