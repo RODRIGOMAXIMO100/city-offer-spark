@@ -27,6 +27,7 @@ import CompleteSignupPage from "./pages/CompleteSignupPage";
 import ParaEmpresasPage from "./pages/ParaEmpresasPage";
 import ParaDivulgadoresPage from "./pages/ParaDivulgadoresPage";
 import ParaClientesPage from "./pages/ParaClientesPage";
+import OAuthConsentPage from "./pages/OAuthConsentPage";
 
 import WhatsAppButton from "./components/WhatsAppButton";
 
@@ -43,10 +44,18 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 
 function PublicRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
-  
+
   if (loading) return null;
-  if (user) return <Navigate to="/dashboard" replace />;
-  
+  if (user) {
+    // Preserva ?next= (usado no fluxo OAuth de MCP) para não perder o destino após login
+    const params = new URLSearchParams(window.location.search);
+    const next = params.get("next");
+    if (next && next.startsWith("/") && !next.startsWith("//")) {
+      return <Navigate to={next} replace />;
+    }
+    return <Navigate to="/dashboard" replace />;
+  }
+
   return <>{children}</>;
 }
 
@@ -89,6 +98,7 @@ const AppRoutes = () => (
         <Route path="/empresas" element={<ParaEmpresasPage />} />
         <Route path="/divulgadores" element={<ParaDivulgadoresPage />} />
         <Route path="/clientes" element={<ParaClientesPage />} />
+        <Route path="/.lovable/oauth/consent" element={<OAuthConsentPage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
 );
