@@ -265,26 +265,443 @@ var admin_overview_default = defineTool8({
   }
 });
 
+// src/lib/mcp/tools/create-offer.ts
+import { defineTool as defineTool9 } from "npm:@lovable.dev/mcp-js@0.24.0";
+import { z as z6 } from "npm:zod@^3.25.76";
+var create_offer_default = defineTool9({
+  name: "create_offer",
+  title: "Criar oferta",
+  description: "Cria uma nova oferta para a empresa logada (ou para uma empresa espec\xEDfica se admin). Pre\xE7os em reais (ex: 49.90).",
+  inputSchema: {
+    title: z6.string().min(3).max(120),
+    description: z6.string().optional(),
+    price_old: z6.number().positive(),
+    price_new: z6.number().positive(),
+    city: z6.string(),
+    link_destination: z6.string().url(),
+    link_type: z6.enum(["WHATSAPP", "WEBSITE", "MENU"]).default("WHATSAPP"),
+    tags: z6.array(z6.string()).optional(),
+    images: z6.array(z6.string().url()).optional(),
+    company_id: z6.string().uuid().optional().describe("Somente admin: cria para outra empresa.")
+  },
+  annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: false },
+  handler: async (input, ctx) => {
+    if (!ctx.isAuthenticated()) return { content: [{ type: "text", text: "N\xE3o autenticado" }], isError: true };
+    const sb = supabaseForUser(ctx);
+    let companyId = input.company_id;
+    if (!companyId) {
+      const { data: prof } = await sb.from("profiles").select("id").eq("user_id", ctx.getUserId()).maybeSingle();
+      if (!prof) return { content: [{ type: "text", text: "Profile n\xE3o encontrado." }], isError: true };
+      companyId = prof.id;
+    }
+    const { data, error } = await sb.from("offers").insert({
+      company_id: companyId,
+      title: input.title,
+      description: input.description ?? null,
+      price_old: input.price_old,
+      price_new: input.price_new,
+      city: input.city,
+      link_destination: input.link_destination,
+      link_type: input.link_type,
+      tags: input.tags ?? [],
+      images: input.images ?? [],
+      active: true
+    }).select("id, title, price_new, active").maybeSingle();
+    if (error) return { content: [{ type: "text", text: error.message }], isError: true };
+    return { content: [{ type: "text", text: `Oferta "${data?.title}" criada.` }], structuredContent: { offer: data } };
+  }
+});
+
+// src/lib/mcp/tools/update-offer.ts
+import { defineTool as defineTool10 } from "npm:@lovable.dev/mcp-js@0.24.0";
+import { z as z7 } from "npm:zod@^3.25.76";
+var update_offer_default = defineTool10({
+  name: "update_offer",
+  title: "Editar oferta",
+  description: "Atualiza campos de uma oferta existente. S\xF3 envie os campos que quer mudar.",
+  inputSchema: {
+    offer_id: z7.string().uuid(),
+    title: z7.string().min(3).max(120).optional(),
+    description: z7.string().optional(),
+    price_old: z7.number().positive().optional(),
+    price_new: z7.number().positive().optional(),
+    city: z7.string().optional(),
+    link_destination: z7.string().url().optional(),
+    tags: z7.array(z7.string()).optional(),
+    images: z7.array(z7.string().url()).optional()
+  },
+  annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: false },
+  handler: async ({ offer_id, ...patch }, ctx) => {
+    if (!ctx.isAuthenticated()) return { content: [{ type: "text", text: "N\xE3o autenticado" }], isError: true };
+    const cleaned = Object.fromEntries(Object.entries(patch).filter(([, v]) => v !== void 0));
+    if (Object.keys(cleaned).length === 0) return { content: [{ type: "text", text: "Nada para atualizar." }], isError: true };
+    const sb = supabaseForUser(ctx);
+    const { data, error } = await sb.from("offers").update(cleaned).eq("id", offer_id).select("id, title").maybeSingle();
+    if (error) return { content: [{ type: "text", text: error.message }], isError: true };
+    if (!data) return { content: [{ type: "text", text: "Oferta n\xE3o encontrada ou sem permiss\xE3o." }], isError: true };
+    return { content: [{ type: "text", text: `Oferta "${data.title}" atualizada.` }], structuredContent: { offer: data } };
+  }
+});
+
+// src/lib/mcp/tools/delete-offer.ts
+import { defineTool as defineTool11 } from "npm:@lovable.dev/mcp-js@0.24.0";
+import { z as z8 } from "npm:zod@^3.25.76";
+var delete_offer_default = defineTool11({
+  name: "delete_offer",
+  title: "Deletar oferta",
+  description: "Soft-delete de oferta (marca deleted_at). N\xE3o some do banco, s\xF3 some do site.",
+  inputSchema: { offer_id: z8.string().uuid() },
+  annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: true, openWorldHint: false },
+  handler: async ({ offer_id }, ctx) => {
+    if (!ctx.isAuthenticated()) return { content: [{ type: "text", text: "N\xE3o autenticado" }], isError: true };
+    const sb = supabaseForUser(ctx);
+    const { data, error } = await sb.from("offers").update({ deleted_at: (/* @__PURE__ */ new Date()).toISOString(), active: false }).eq("id", offer_id).select("id, title").maybeSingle();
+    if (error) return { content: [{ type: "text", text: error.message }], isError: true };
+    if (!data) return { content: [{ type: "text", text: "Oferta n\xE3o encontrada ou sem permiss\xE3o." }], isError: true };
+    return { content: [{ type: "text", text: `Oferta "${data.title}" deletada.` }] };
+  }
+});
+
+// src/lib/mcp/tools/list-companies.ts
+import { defineTool as defineTool12 } from "npm:@lovable.dev/mcp-js@0.24.0";
+import { z as z9 } from "npm:zod@^3.25.76";
+var list_companies_default = defineTool12({
+  name: "list_companies",
+  title: "Listar empresas",
+  description: "Lista empresas (admin v\xEA todas; empresa v\xEA a pr\xF3pria). Filtro opcional por cidade ou nome.",
+  inputSchema: {
+    city: z9.string().optional(),
+    search: z9.string().optional().describe("Busca parcial por nome ou raz\xE3o social."),
+    limit: z9.number().int().min(1).max(200).default(50)
+  },
+  annotations: { readOnlyHint: true, openWorldHint: false },
+  handler: async ({ city, search, limit }, ctx) => {
+    if (!ctx.isAuthenticated()) return { content: [{ type: "text", text: "N\xE3o autenticado" }], isError: true };
+    const sb = supabaseForUser(ctx);
+    let q = sb.from("profiles").select("id, name, city, cnpj, razao_social, email, balance, banned, balance_frozen, created_at").in("id", (await sb.from("user_roles").select("user_id").eq("role", "COMPANY")).data?.map((r) => r.user_id) ?? []).limit(limit);
+    if (city) q = q.eq("city", city);
+    if (search) q = q.or(`name.ilike.%${search}%,razao_social.ilike.%${search}%`);
+    const { data, error } = await q;
+    if (error) return { content: [{ type: "text", text: error.message }], isError: true };
+    return { content: [{ type: "text", text: `${data?.length ?? 0} empresas.` }], structuredContent: { companies: data } };
+  }
+});
+
+// src/lib/mcp/tools/list-affiliates.ts
+import { defineTool as defineTool13 } from "npm:@lovable.dev/mcp-js@0.24.0";
+import { z as z10 } from "npm:zod@^3.25.76";
+var list_affiliates_default = defineTool13({
+  name: "list_affiliates",
+  title: "Listar divulgadores",
+  description: "Lista divulgadores. S\xF3 admin consegue ver todos.",
+  inputSchema: {
+    city: z10.string().optional(),
+    search: z10.string().optional(),
+    limit: z10.number().int().min(1).max(200).default(50)
+  },
+  annotations: { readOnlyHint: true, openWorldHint: false },
+  handler: async ({ city, search, limit }, ctx) => {
+    if (!ctx.isAuthenticated()) return { content: [{ type: "text", text: "N\xE3o autenticado" }], isError: true };
+    const sb = supabaseForUser(ctx);
+    const roleRows = (await sb.from("user_roles").select("user_id").eq("role", "AFFILIATE")).data ?? [];
+    let q = sb.from("profiles").select("id, name, city, cpf, email, balance, banned, balance_frozen, fraud_score, created_at").in("id", roleRows.map((r) => r.user_id)).limit(limit);
+    if (city) q = q.eq("city", city);
+    if (search) q = q.or(`name.ilike.%${search}%,cpf.ilike.%${search}%,email.ilike.%${search}%`);
+    const { data, error } = await q;
+    if (error) return { content: [{ type: "text", text: error.message }], isError: true };
+    return { content: [{ type: "text", text: `${data?.length ?? 0} divulgadores.` }], structuredContent: { affiliates: data } };
+  }
+});
+
+// src/lib/mcp/tools/adjust-user-balance.ts
+import { defineTool as defineTool14 } from "npm:@lovable.dev/mcp-js@0.24.0";
+import { z as z11 } from "npm:zod@^3.25.76";
+var adjust_user_balance_default = defineTool14({
+  name: "adjust_user_balance",
+  title: "Ajustar saldo de usu\xE1rio",
+  description: "Admin: adiciona (positivo) ou remove (negativo) cr\xE9ditos do saldo em CENTAVOS e registra transa\xE7\xE3o. Ex: 10000 = R$ 100,00.",
+  inputSchema: {
+    profile_id: z11.string().uuid(),
+    amount_cents: z11.number().int().describe("Valor em centavos. Positivo credita, negativo debita."),
+    reason: z11.string().min(3)
+  },
+  annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: false },
+  handler: async ({ profile_id, amount_cents, reason }, ctx) => {
+    if (!ctx.isAuthenticated()) return { content: [{ type: "text", text: "N\xE3o autenticado" }], isError: true };
+    const sb = supabaseForUser(ctx);
+    const { data: prof, error: pErr } = await sb.from("profiles").select("balance").eq("id", profile_id).maybeSingle();
+    if (pErr || !prof) return { content: [{ type: "text", text: pErr?.message ?? "Usu\xE1rio n\xE3o encontrado / sem permiss\xE3o." }], isError: true };
+    const newBalance = (prof.balance ?? 0) + amount_cents;
+    const { error: uErr } = await sb.from("profiles").update({ balance: newBalance }).eq("id", profile_id);
+    if (uErr) return { content: [{ type: "text", text: uErr.message }], isError: true };
+    const { error: tErr } = await sb.from("transactions").insert({
+      user_id: profile_id,
+      amount: amount_cents,
+      type: amount_cents >= 0 ? "DEPOSIT" : "WITHDRAWAL",
+      description: `Ajuste manual via MCP: ${reason}`
+    });
+    if (tErr) return { content: [{ type: "text", text: `Saldo atualizado mas transa\xE7\xE3o falhou: ${tErr.message}` }] };
+    return { content: [{ type: "text", text: `Saldo ajustado. Novo saldo: R$ ${(newBalance / 100).toFixed(2)}` }], structuredContent: { balance_cents: newBalance } };
+  }
+});
+
+// src/lib/mcp/tools/set-user-banned.ts
+import { defineTool as defineTool15 } from "npm:@lovable.dev/mcp-js@0.24.0";
+import { z as z12 } from "npm:zod@^3.25.76";
+var set_user_banned_default = defineTool15({
+  name: "set_user_banned",
+  title: "Banir ou desbanir usu\xE1rio",
+  description: "Admin: bane (banned=true) ou desbane (banned=false) um usu\xE1rio.",
+  inputSchema: {
+    profile_id: z12.string().uuid(),
+    banned: z12.boolean(),
+    reason: z12.string().optional()
+  },
+  annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: true, openWorldHint: false },
+  handler: async ({ profile_id, banned, reason }, ctx) => {
+    if (!ctx.isAuthenticated()) return { content: [{ type: "text", text: "N\xE3o autenticado" }], isError: true };
+    const sb = supabaseForUser(ctx);
+    const patch = { banned };
+    if (banned) {
+      patch.banned_at = (/* @__PURE__ */ new Date()).toISOString();
+      patch.banned_reason = reason ?? "Banido via MCP";
+    } else {
+      patch.banned_at = null;
+      patch.banned_reason = null;
+    }
+    const { data, error } = await sb.from("profiles").update(patch).eq("id", profile_id).select("id, name, banned").maybeSingle();
+    if (error) return { content: [{ type: "text", text: error.message }], isError: true };
+    if (!data) return { content: [{ type: "text", text: "Usu\xE1rio n\xE3o encontrado / sem permiss\xE3o." }], isError: true };
+    return { content: [{ type: "text", text: `Usu\xE1rio ${data.name} ${data.banned ? "banido" : "desbanido"}.` }] };
+  }
+});
+
+// src/lib/mcp/tools/set-balance-frozen.ts
+import { defineTool as defineTool16 } from "npm:@lovable.dev/mcp-js@0.24.0";
+import { z as z13 } from "npm:zod@^3.25.76";
+var set_balance_frozen_default = defineTool16({
+  name: "set_balance_frozen",
+  title: "Congelar/descongelar saldo",
+  description: "Admin: congela ou descongela o saldo de um usu\xE1rio (bloqueia saques).",
+  inputSchema: { profile_id: z13.string().uuid(), frozen: z13.boolean() },
+  annotations: { readOnlyHint: false, idempotentHint: true, openWorldHint: false },
+  handler: async ({ profile_id, frozen }, ctx) => {
+    if (!ctx.isAuthenticated()) return { content: [{ type: "text", text: "N\xE3o autenticado" }], isError: true };
+    const sb = supabaseForUser(ctx);
+    const { data, error } = await sb.from("profiles").update({ balance_frozen: frozen }).eq("id", profile_id).select("id, name, balance_frozen").maybeSingle();
+    if (error) return { content: [{ type: "text", text: error.message }], isError: true };
+    if (!data) return { content: [{ type: "text", text: "Usu\xE1rio n\xE3o encontrado / sem permiss\xE3o." }], isError: true };
+    return { content: [{ type: "text", text: `Saldo de ${data.name} ${data.balance_frozen ? "congelado" : "descongelado"}.` }] };
+  }
+});
+
+// src/lib/mcp/tools/list-withdrawals.ts
+import { defineTool as defineTool17 } from "npm:@lovable.dev/mcp-js@0.24.0";
+import { z as z14 } from "npm:zod@^3.25.76";
+var list_withdrawals_default = defineTool17({
+  name: "list_withdrawals",
+  title: "Listar solicita\xE7\xF5es de saque",
+  description: "Lista saques. Filtre por status (PENDING, APPROVED, REJECTED, PAID).",
+  inputSchema: {
+    status: z14.string().optional(),
+    limit: z14.number().int().min(1).max(200).default(50)
+  },
+  annotations: { readOnlyHint: true, openWorldHint: false },
+  handler: async ({ status, limit }, ctx) => {
+    if (!ctx.isAuthenticated()) return { content: [{ type: "text", text: "N\xE3o autenticado" }], isError: true };
+    const sb = supabaseForUser(ctx);
+    let q = sb.from("withdrawals").select("*").order("created_at", { ascending: false }).limit(limit);
+    if (status) q = q.eq("status", status);
+    const { data, error } = await q;
+    if (error) return { content: [{ type: "text", text: error.message }], isError: true };
+    return { content: [{ type: "text", text: `${data?.length ?? 0} saques.` }], structuredContent: { withdrawals: data } };
+  }
+});
+
+// src/lib/mcp/tools/set-withdrawal-status.ts
+import { defineTool as defineTool18 } from "npm:@lovable.dev/mcp-js@0.24.0";
+import { z as z15 } from "npm:zod@^3.25.76";
+var set_withdrawal_status_default = defineTool18({
+  name: "set_withdrawal_status",
+  title: "Aprovar/rejeitar saque",
+  description: "Admin: muda status de uma solicita\xE7\xE3o de saque (APPROVED, REJECTED, PAID).",
+  inputSchema: {
+    withdrawal_id: z15.string().uuid(),
+    status: z15.enum(["APPROVED", "REJECTED", "PAID"]),
+    note: z15.string().optional()
+  },
+  annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: false },
+  handler: async ({ withdrawal_id, status, note }, ctx) => {
+    if (!ctx.isAuthenticated()) return { content: [{ type: "text", text: "N\xE3o autenticado" }], isError: true };
+    const sb = supabaseForUser(ctx);
+    const patch = { status };
+    if (note) patch.admin_note = note;
+    if (status === "PAID") patch.paid_at = (/* @__PURE__ */ new Date()).toISOString();
+    const { data, error } = await sb.from("withdrawals").update(patch).eq("id", withdrawal_id).select("id, status, amount").maybeSingle();
+    if (error) return { content: [{ type: "text", text: error.message }], isError: true };
+    if (!data) return { content: [{ type: "text", text: "Saque n\xE3o encontrado / sem permiss\xE3o." }], isError: true };
+    return { content: [{ type: "text", text: `Saque marcado como ${data.status}.` }], structuredContent: { withdrawal: data } };
+  }
+});
+
+// src/lib/mcp/tools/list-cities.ts
+import { defineTool as defineTool19 } from "npm:@lovable.dev/mcp-js@0.24.0";
+import { z as z16 } from "npm:zod@^3.25.76";
+var list_cities_default = defineTool19({
+  name: "list_cities",
+  title: "Listar cidades dispon\xEDveis",
+  description: "Lista cidades cadastradas (ativas e inativas). Filtro opcional por estado.",
+  inputSchema: {
+    state_code: z16.string().length(2).optional(),
+    active_only: z16.boolean().default(false)
+  },
+  annotations: { readOnlyHint: true, openWorldHint: false },
+  handler: async ({ state_code, active_only }, ctx) => {
+    if (!ctx.isAuthenticated()) return { content: [{ type: "text", text: "N\xE3o autenticado" }], isError: true };
+    const sb = supabaseForUser(ctx);
+    let q = sb.from("available_cities").select("*").order("state_code").order("city_name");
+    if (state_code) q = q.eq("state_code", state_code.toUpperCase());
+    if (active_only) q = q.eq("active", true);
+    const { data, error } = await q;
+    if (error) return { content: [{ type: "text", text: error.message }], isError: true };
+    return { content: [{ type: "text", text: `${data?.length ?? 0} cidades.` }], structuredContent: { cities: data } };
+  }
+});
+
+// src/lib/mcp/tools/set-city-active.ts
+import { defineTool as defineTool20 } from "npm:@lovable.dev/mcp-js@0.24.0";
+import { z as z17 } from "npm:zod@^3.25.76";
+var set_city_active_default = defineTool20({
+  name: "set_city_active",
+  title: "Ativar/desativar cidade",
+  description: "Admin: ativa ou desativa uma cidade para cadastros.",
+  inputSchema: { city_id: z17.string().uuid(), active: z17.boolean() },
+  annotations: { readOnlyHint: false, idempotentHint: true, openWorldHint: false },
+  handler: async ({ city_id, active }, ctx) => {
+    if (!ctx.isAuthenticated()) return { content: [{ type: "text", text: "N\xE3o autenticado" }], isError: true };
+    const sb = supabaseForUser(ctx);
+    const patch = { active };
+    if (active) patch.activated_at = (/* @__PURE__ */ new Date()).toISOString();
+    const { data, error } = await sb.from("available_cities").update(patch).eq("id", city_id).select("id, city_name, state_code, active").maybeSingle();
+    if (error) return { content: [{ type: "text", text: error.message }], isError: true };
+    if (!data) return { content: [{ type: "text", text: "Cidade n\xE3o encontrada / sem permiss\xE3o." }], isError: true };
+    return { content: [{ type: "text", text: `${data.city_name}/${data.state_code} ${data.active ? "ativada" : "desativada"}.` }] };
+  }
+});
+
+// src/lib/mcp/tools/list-blog-posts.ts
+import { defineTool as defineTool21 } from "npm:@lovable.dev/mcp-js@0.24.0";
+import { z as z18 } from "npm:zod@^3.25.76";
+var list_blog_posts_default = defineTool21({
+  name: "list_blog_posts",
+  title: "Listar posts do blog",
+  description: "Lista posts do blog. Filtre por status (draft, published, scheduled).",
+  inputSchema: {
+    status: z18.string().optional(),
+    limit: z18.number().int().min(1).max(200).default(50)
+  },
+  annotations: { readOnlyHint: true, openWorldHint: false },
+  handler: async ({ status, limit }, ctx) => {
+    if (!ctx.isAuthenticated()) return { content: [{ type: "text", text: "N\xE3o autenticado" }], isError: true };
+    const sb = supabaseForUser(ctx);
+    let q = sb.from("blog_posts").select("id, title, slug, status, category, published_at, views, created_at").order("created_at", { ascending: false }).limit(limit);
+    if (status) q = q.eq("status", status);
+    const { data, error } = await q;
+    if (error) return { content: [{ type: "text", text: error.message }], isError: true };
+    return { content: [{ type: "text", text: `${data?.length ?? 0} posts.` }], structuredContent: { posts: data } };
+  }
+});
+
+// src/lib/mcp/tools/publish-blog-post.ts
+import { defineTool as defineTool22 } from "npm:@lovable.dev/mcp-js@0.24.0";
+import { z as z19 } from "npm:zod@^3.25.76";
+var publish_blog_post_default = defineTool22({
+  name: "publish_blog_post",
+  title: "Publicar ou despublicar post",
+  description: "Muda status de um post do blog para published/draft.",
+  inputSchema: {
+    post_id: z19.string().uuid(),
+    status: z19.enum(["published", "draft"])
+  },
+  annotations: { readOnlyHint: false, idempotentHint: true, openWorldHint: false },
+  handler: async ({ post_id, status }, ctx) => {
+    if (!ctx.isAuthenticated()) return { content: [{ type: "text", text: "N\xE3o autenticado" }], isError: true };
+    const sb = supabaseForUser(ctx);
+    const patch = { status };
+    if (status === "published") patch.published_at = (/* @__PURE__ */ new Date()).toISOString();
+    const { data, error } = await sb.from("blog_posts").update(patch).eq("id", post_id).select("id, title, status").maybeSingle();
+    if (error) return { content: [{ type: "text", text: error.message }], isError: true };
+    if (!data) return { content: [{ type: "text", text: "Post n\xE3o encontrado / sem permiss\xE3o." }], isError: true };
+    return { content: [{ type: "text", text: `Post "${data.title}" -> ${data.status}.` }] };
+  }
+});
+
+// src/lib/mcp/tools/add-merchant-whatsapp.ts
+import { defineTool as defineTool23 } from "npm:@lovable.dev/mcp-js@0.24.0";
+import { z as z20 } from "npm:zod@^3.25.76";
+var add_merchant_whatsapp_default = defineTool23({
+  name: "add_merchant_whatsapp",
+  title: "Adicionar WhatsApp de resgate",
+  description: "Adiciona um n\xFAmero de WhatsApp autorizado a resgatar cupons para a empresa logada.",
+  inputSchema: {
+    phone: z20.string().regex(/^\+?\d{10,15}$/, "Telefone em formato internacional, s\xF3 d\xEDgitos (ex: 5511999998888)."),
+    label: z20.string().optional().describe("Ex: Caixa 1, Balc\xE3o")
+  },
+  annotations: { readOnlyHint: false, idempotentHint: false, openWorldHint: false },
+  handler: async ({ phone, label }, ctx) => {
+    if (!ctx.isAuthenticated()) return { content: [{ type: "text", text: "N\xE3o autenticado" }], isError: true };
+    const sb = supabaseForUser(ctx);
+    const { data: prof } = await sb.from("profiles").select("id").eq("user_id", ctx.getUserId()).maybeSingle();
+    if (!prof) return { content: [{ type: "text", text: "Profile n\xE3o encontrado." }], isError: true };
+    const normalized = phone.replace(/\D/g, "");
+    const { data, error } = await sb.from("merchant_whatsapp").insert({
+      profile_id: prof.id,
+      phone: normalized,
+      label: label ?? null,
+      verified: false
+    }).select("id, phone, label").maybeSingle();
+    if (error) return { content: [{ type: "text", text: error.message }], isError: true };
+    return { content: [{ type: "text", text: `WhatsApp ${data?.phone} adicionado${data?.label ? ` (${data.label})` : ""}.` }] };
+  }
+});
+
 // src/lib/mcp/index.ts
 var projectRef = "sukvjgxxuzophzjcojvd";
 var mcp_default = defineMcp({
   name: "clilin-mcp",
   title: "Clilin",
-  version: "0.1.0",
-  instructions: "Ferramentas do Clilin (plataforma de ofertas locais). Use `whoami` primeiro para descobrir o papel do usu\xE1rio. Empresas podem ver/pausar ofertas, ler leads e cupons. Divulgadores veem saldo e transa\xE7\xF5es. Admins t\xEAm um overview geral. Todas as a\xE7\xF5es respeitam as permiss\xF5es do usu\xE1rio logado (RLS).",
+  version: "0.2.0",
+  instructions: "Ferramentas do Clilin (plataforma de ofertas locais). Use `whoami` primeiro para descobrir o papel do usu\xE1rio. Todas as a\xE7\xF5es respeitam RLS: admins t\xEAm alcance total, empresas mexem s\xF3 nas pr\xF3prias ofertas/leads/cupons, divulgadores veem seu saldo. Opera\xE7\xF5es destrutivas (ban, delete, ajuste de saldo, aprovar saque) devem ser confirmadas com o usu\xE1rio antes de executar.",
   auth: auth.oauth.issuer({
     issuer: `https://${projectRef}.supabase.co/auth/v1`,
     acceptedAudiences: "authenticated"
   }),
   tools: [
+    // Leitura
     whoami_default,
     list_offers_default,
     list_my_offers_default,
-    set_offer_active_default,
     list_my_leads_default,
     list_my_coupons_default,
     get_my_earnings_default,
-    admin_overview_default
+    admin_overview_default,
+    list_companies_default,
+    list_affiliates_default,
+    list_withdrawals_default,
+    list_cities_default,
+    list_blog_posts_default,
+    // Escrita
+    set_offer_active_default,
+    create_offer_default,
+    update_offer_default,
+    delete_offer_default,
+    adjust_user_balance_default,
+    set_user_banned_default,
+    set_balance_frozen_default,
+    set_withdrawal_status_default,
+    set_city_active_default,
+    publish_blog_post_default,
+    add_merchant_whatsapp_default
   ]
 });
 

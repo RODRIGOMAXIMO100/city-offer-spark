@@ -12,7 +12,7 @@
   "mcp": {
     "server": {
       "name": "clilin-mcp",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "title": "Clilin"
     },
     "tools": [
@@ -77,38 +77,6 @@
           "$schema": "http://json-schema.org/draft-07/schema#",
           "type": "object",
           "properties": {}
-        },
-        "outputSchema": null
-      },
-      {
-        "name": "set_offer_active",
-        "title": "Pausar ou reativar oferta",
-        "description": "Ativa ou pausa uma oferta da empresa logada. Passe active=true para reativar, active=false para pausar.",
-        "annotations": {
-          "readOnlyHint": false,
-          "destructiveHint": false,
-          "idempotentHint": true,
-          "openWorldHint": false
-        },
-        "inputSchema": {
-          "type": "object",
-          "properties": {
-            "offer_id": {
-              "type": "string",
-              "format": "uuid",
-              "description": "ID da oferta."
-            },
-            "active": {
-              "type": "boolean",
-              "description": "true para reativar, false para pausar."
-            }
-          },
-          "required": [
-            "offer_id",
-            "active"
-          ],
-          "additionalProperties": false,
-          "$schema": "http://json-schema.org/draft-07/schema#"
         },
         "outputSchema": null
       },
@@ -204,6 +172,566 @@
           "$schema": "http://json-schema.org/draft-07/schema#",
           "type": "object",
           "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_companies",
+        "title": "Listar empresas",
+        "description": "Lista empresas (admin vê todas; empresa vê a própria). Filtro opcional por cidade ou nome.",
+        "annotations": {
+          "readOnlyHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "city": {
+              "type": "string"
+            },
+            "search": {
+              "type": "string",
+              "description": "Busca parcial por nome ou razão social."
+            },
+            "limit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200,
+              "default": 50
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_affiliates",
+        "title": "Listar divulgadores",
+        "description": "Lista divulgadores. Só admin consegue ver todos.",
+        "annotations": {
+          "readOnlyHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "city": {
+              "type": "string"
+            },
+            "search": {
+              "type": "string"
+            },
+            "limit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200,
+              "default": 50
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_withdrawals",
+        "title": "Listar solicitações de saque",
+        "description": "Lista saques. Filtre por status (PENDING, APPROVED, REJECTED, PAID).",
+        "annotations": {
+          "readOnlyHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "limit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200,
+              "default": 50
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_cities",
+        "title": "Listar cidades disponíveis",
+        "description": "Lista cidades cadastradas (ativas e inativas). Filtro opcional por estado.",
+        "annotations": {
+          "readOnlyHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "state_code": {
+              "type": "string",
+              "minLength": 2,
+              "maxLength": 2
+            },
+            "active_only": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_blog_posts",
+        "title": "Listar posts do blog",
+        "description": "Lista posts do blog. Filtre por status (draft, published, scheduled).",
+        "annotations": {
+          "readOnlyHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "limit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200,
+              "default": 50
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "set_offer_active",
+        "title": "Pausar ou reativar oferta",
+        "description": "Ativa ou pausa uma oferta da empresa logada. Passe active=true para reativar, active=false para pausar.",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "offer_id": {
+              "type": "string",
+              "format": "uuid",
+              "description": "ID da oferta."
+            },
+            "active": {
+              "type": "boolean",
+              "description": "true para reativar, false para pausar."
+            }
+          },
+          "required": [
+            "offer_id",
+            "active"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "create_offer",
+        "title": "Criar oferta",
+        "description": "Cria uma nova oferta para a empresa logada (ou para uma empresa específica se admin). Preços em reais (ex: 49.90).",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "idempotentHint": false,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string",
+              "minLength": 3,
+              "maxLength": 120
+            },
+            "description": {
+              "type": "string"
+            },
+            "price_old": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "price_new": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "city": {
+              "type": "string"
+            },
+            "link_destination": {
+              "type": "string",
+              "format": "uri"
+            },
+            "link_type": {
+              "type": "string",
+              "enum": [
+                "WHATSAPP",
+                "WEBSITE",
+                "MENU"
+              ],
+              "default": "WHATSAPP"
+            },
+            "tags": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "images": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "uri"
+              }
+            },
+            "company_id": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Somente admin: cria para outra empresa."
+            }
+          },
+          "required": [
+            "title",
+            "price_old",
+            "price_new",
+            "city",
+            "link_destination"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "update_offer",
+        "title": "Editar oferta",
+        "description": "Atualiza campos de uma oferta existente. Só envie os campos que quer mudar.",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "offer_id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "title": {
+              "type": "string",
+              "minLength": 3,
+              "maxLength": 120
+            },
+            "description": {
+              "type": "string"
+            },
+            "price_old": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "price_new": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "city": {
+              "type": "string"
+            },
+            "link_destination": {
+              "type": "string",
+              "format": "uri"
+            },
+            "tags": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "images": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "uri"
+              }
+            }
+          },
+          "required": [
+            "offer_id"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "delete_offer",
+        "title": "Deletar oferta",
+        "description": "Soft-delete de oferta (marca deleted_at). Não some do banco, só some do site.",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "offer_id": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "required": [
+            "offer_id"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "adjust_user_balance",
+        "title": "Ajustar saldo de usuário",
+        "description": "Admin: adiciona (positivo) ou remove (negativo) créditos do saldo em CENTAVOS e registra transação. Ex: 10000 = R$ 100,00.",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "idempotentHint": false,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "profile_id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "amount_cents": {
+              "type": "integer",
+              "description": "Valor em centavos. Positivo credita, negativo debita."
+            },
+            "reason": {
+              "type": "string",
+              "minLength": 3
+            }
+          },
+          "required": [
+            "profile_id",
+            "amount_cents",
+            "reason"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "set_user_banned",
+        "title": "Banir ou desbanir usuário",
+        "description": "Admin: bane (banned=true) ou desbane (banned=false) um usuário.",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "profile_id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "banned": {
+              "type": "boolean"
+            },
+            "reason": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "profile_id",
+            "banned"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "set_balance_frozen",
+        "title": "Congelar/descongelar saldo",
+        "description": "Admin: congela ou descongela o saldo de um usuário (bloqueia saques).",
+        "annotations": {
+          "readOnlyHint": false,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "profile_id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "frozen": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "profile_id",
+            "frozen"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "set_withdrawal_status",
+        "title": "Aprovar/rejeitar saque",
+        "description": "Admin: muda status de uma solicitação de saque (APPROVED, REJECTED, PAID).",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "withdrawal_id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "status": {
+              "type": "string",
+              "enum": [
+                "APPROVED",
+                "REJECTED",
+                "PAID"
+              ]
+            },
+            "note": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "withdrawal_id",
+            "status"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "set_city_active",
+        "title": "Ativar/desativar cidade",
+        "description": "Admin: ativa ou desativa uma cidade para cadastros.",
+        "annotations": {
+          "readOnlyHint": false,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "city_id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "active": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "city_id",
+            "active"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "publish_blog_post",
+        "title": "Publicar ou despublicar post",
+        "description": "Muda status de um post do blog para published/draft.",
+        "annotations": {
+          "readOnlyHint": false,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "post_id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "status": {
+              "type": "string",
+              "enum": [
+                "published",
+                "draft"
+              ]
+            }
+          },
+          "required": [
+            "post_id",
+            "status"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "add_merchant_whatsapp",
+        "title": "Adicionar WhatsApp de resgate",
+        "description": "Adiciona um número de WhatsApp autorizado a resgatar cupons para a empresa logada.",
+        "annotations": {
+          "readOnlyHint": false,
+          "idempotentHint": false,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "phone": {
+              "type": "string",
+              "pattern": "^\\+?\\d{10,15}$"
+            },
+            "label": {
+              "type": "string",
+              "description": "Ex: Caixa 1, Balcão"
+            }
+          },
+          "required": [
+            "phone"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
         },
         "outputSchema": null
       }
