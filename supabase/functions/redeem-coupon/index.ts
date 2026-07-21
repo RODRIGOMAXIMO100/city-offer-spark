@@ -116,6 +116,44 @@ Deno.serve(async (req) => {
       .eq("id", updated.offer_id)
       .maybeSingle();
 
+    // Send confirmation template (best-effort)
+    const waToken = Deno.env.get("WA_TOKEN");
+    const waPhoneId = Deno.env.get("WA_PHONE_NUMBER_ID");
+    if (waToken && waPhoneId && updated.customer_phone && offer?.title) {
+      try {
+        const to = updated.customer_phone.startsWith("55")
+          ? updated.customer_phone
+          : `55${updated.customer_phone}`;
+        const metaRes = await fetch(`https://graph.facebook.com/v19.0/${waPhoneId}/messages`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${waToken}`,
+          },
+          body: JSON.stringify({
+            messaging_product: "whatsapp",
+            recipient_type: "individual",
+            to,
+            type: "template",
+            template: {
+              name: "clilin_resgate_confirmado",
+              language: { code: "pt_BR" },
+              components: [{
+                type: "body",
+                parameters: [{ type: "text", text: offer.title }],
+              }],
+            },
+          }),
+        });
+        if (!metaRes.ok) {
+          const metaJson = await metaRes.json().catch(() => ({}));
+          console.error("[redeem-coupon] Meta error:", metaJson);
+        }
+      } catch (err) {
+        console.error("[redeem-coupon] Meta fetch error:", err);
+      }
+    }
+
     return new Response(JSON.stringify({
       success: true,
       coupon: {

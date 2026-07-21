@@ -161,10 +161,71 @@ Deno.serve(async (req) => {
       });
     }
 
+    // Fetch company name for template
+    const { data: company } = await admin
+      .from("profiles")
+      .select("company_name, name")
+      .eq("id", offer.company_id)
+      .maybeSingle();
+    const companyName = company?.company_name || company?.name || "Empresa parceira";
+
+    // Send WhatsApp template (best-effort — never blocks the response)
+    const waToken = Deno.env.get("WA_TOKEN");
+    const waPhoneId = Deno.env.get("WA_PHONE_NUMBER_ID");
+    let waSent = false;
+    let waError: string | null = null;
+    if (waToken && waPhoneId) {
+      try {
+        const to = customerPhone.startsWith("55") ? customerPhone : `55${customerPhone}`;
+        const validade = new Date(inserted.expires_at).toLocaleDateString("pt-BR", {
+          day: "2-digit", month: "2-digit", year: "numeric",
+        });
+        const metaRes = await fetch(`https://graph.facebook.com/v19.0/${waPhoneId}/messages`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${waToken}`,
+          },
+          body: JSON.stringify({
+            messaging_product: "whatsapp",
+            recipient_type: "individual",
+            to,
+            type: "template",
+            template: {
+              name: "clilin_cupom",
+              language: { code: "pt_BR" },
+              components: [{
+                type: "body",
+                parameters: [
+                  { type: "text", text: offer.title },
+                  { type: "text", text: companyName },
+                  { type: "text", text: inserted.code },
+                  { type: "text", text: validade },
+                ],
+              }],
+            },
+          }),
+        });
+        const metaJson = await metaRes.json();
+        if (!metaRes.ok) {
+          waError = metaJson?.error?.message || "meta_send_failed";
+          console.error("[issue-coupon] Meta error:", metaJson);
+        } else {
+          waSent = true;
+          console.log("[issue-coupon] Template sent to", to, "wamid:", metaJson.messages?.[0]?.id);
+        }
+      } catch (err) {
+        waError = err instanceof Error ? err.message : "unknown";
+        console.error("[issue-coupon] Meta fetch error:", err);
+      }
+    }
+
     return new Response(JSON.stringify({
       code: inserted.code,
       expires_at: inserted.expires_at,
       offer_title: offer.title,
+      wa_sent: waSent,
+      wa_error: waError,
     }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
   } catch (e) {
     console.error(e);
