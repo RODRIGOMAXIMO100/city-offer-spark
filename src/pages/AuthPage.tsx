@@ -1,6 +1,6 @@
 import { useState, useMemo, useCallback } from 'react';
 import { useNoIndex } from '@/components/seo/NoIndex';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { AppRole } from '@/types/database';
 import { Button } from '@/components/ui/button';
@@ -45,6 +45,10 @@ const ROLES: { value: AppRole; label: string; icon: React.ReactNode; description
 
 export default function AuthPage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const nextParam = searchParams.get('next');
+  const safeNext = nextParam && nextParam.startsWith('/') && !nextParam.startsWith('//') ? nextParam : null;
+  const postAuthTarget = safeNext ?? '/dashboard';
   const { signIn, signUp, signInWithGoogle } = useAuth();
   const { toast } = useToast();
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
