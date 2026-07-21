@@ -76,3 +76,6 @@ verify_jwt = true
 verify_jwt = true
 
 
+
+[functions.wa-webhook]
+verify_jwt = false

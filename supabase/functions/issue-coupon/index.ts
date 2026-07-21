@@ -1,3 +1,7 @@
+// issue-coupon v2 — mesmo comportamento do deployado + 2 adicoes:
+//   (1) atribuicao do divulgador (via lead_id opcional ou lookup por telefone)
+//   (2) envio do cupom pelo WhatsApp Cloud API (template clilin_cupom)
+// Secrets novos: WA_TOKEN, WA_PHONE_NUMBER_ID (sem eles, funciona como hoje: so tela)
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
@@ -11,7 +15,6 @@ const MAX_PER_PHONE_24H = 3;
 const MAX_PER_IP_24H = 10;
 
 function generateCode(): string {
-  // 8 chars, no ambiguous (0/O, 1/I)
   const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
   const bytes = new Uint8Array(8);
   crypto.getRandomValues(bytes);
@@ -19,7 +22,6 @@ function generateCode(): string {
   for (let i = 0; i < 8; i++) out += alphabet[bytes[i] % alphabet.length];
   return out;
 }
-
 function normalizePhone(raw: string): string {
   return String(raw || "").replace(/\D/g, "");
 }
@@ -38,22 +40,16 @@ Deno.serve(async (req) => {
     const offerId = String(body?.offer_id ?? "").trim();
     const customerName = String(body?.customer_name ?? "").trim();
     const customerPhone = normalizePhone(body?.customer_phone ?? "");
+    const leadId = String(body?.lead_id ?? "").trim() || null;
 
-    // Basic validation
     if (!offerId || !/^[0-9a-f-]{36}$/i.test(offerId)) {
-      return new Response(JSON.stringify({ error: "offer_id inválido" }), {
-        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      return json({ error: "offer_id inválido" }, 400);
     }
     if (customerName.length < 3 || customerName.length > 100) {
-      return new Response(JSON.stringify({ error: "Nome inválido" }), {
-        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      return json({ error: "Nome inválido" }, 400);
     }
     if (customerPhone.length < 10 || customerPhone.length > 11) {
-      return new Response(JSON.stringify({ error: "WhatsApp inválido" }), {
-        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      return json({ error: "WhatsApp inválido" }, 400);
     }
 
     const clientIp =
@@ -61,176 +57,172 @@ Deno.serve(async (req) => {
       req.headers.get("cf-connecting-ip") ||
       "unknown";
 
-    // Fetch offer + company
     const { data: offer, error: offerErr } = await admin
       .from("offers")
-      .select("id, company_id, active, deleted_at, expires_at, title")
+      .select("id, company_id, active, deleted_at, expires_at, title, profiles!offers_company_id_fkey(name)")
       .eq("id", offerId)
       .maybeSingle();
 
-    if (offerErr || !offer) {
-      return new Response(JSON.stringify({ error: "Oferta não encontrada" }), {
-        status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
+    if (offerErr || !offer) return json({ error: "Oferta não encontrada" }, 404);
     if (!offer.active || offer.deleted_at || new Date(offer.expires_at) < new Date()) {
-      return new Response(JSON.stringify({ error: "Oferta indisponível" }), {
-        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      return json({ error: "Oferta indisponível" }, 400);
     }
 
-    // Rate limit: phone (per 24h)
+    // Rate limit: phone (24h)
     const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
     const { count: phoneCount } = await admin
-      .from("coupons")
-      .select("id", { count: "exact", head: true })
-      .eq("customer_phone", customerPhone)
-      .gte("created_at", since);
+      .from("coupons").select("id", { count: "exact", head: true })
+      .eq("customer_phone", customerPhone).gte("created_at", since);
     if ((phoneCount ?? 0) >= MAX_PER_PHONE_24H) {
-      return new Response(JSON.stringify({ error: "Limite diário atingido para este WhatsApp" }), {
-        status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      return json({ error: "Limite diário atingido para este WhatsApp" }, 429);
     }
-
-    // Rate limit: IP (per 24h)
+    // Rate limit: IP (24h)
     if (clientIp !== "unknown") {
       const { count: ipCount } = await admin
-        .from("coupons")
-        .select("id", { count: "exact", head: true })
-        .eq("customer_ip", clientIp)
-        .gte("created_at", since);
+        .from("coupons").select("id", { count: "exact", head: true })
+        .eq("customer_ip", clientIp).gte("created_at", since);
       if ((ipCount ?? 0) >= MAX_PER_IP_24H) {
-        return new Response(JSON.stringify({ error: "Muitos cupons deste dispositivo. Tente mais tarde." }), {
-          status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
+        return json({ error: "Muitos cupons deste dispositivo. Tente mais tarde." }, 429);
       }
     }
 
-    // Prevent duplicate active coupon for same phone + offer
+    // ---- NOVO: atribuicao do divulgador ----
+    // 1) lead_id explicito; 2) lookup do lead mais recente dessa oferta com esse telefone
+    let affiliateId: string | null = null;
+    let resolvedLeadId: string | null = null;
+    if (leadId && /^[0-9a-f-]{36}$/i.test(leadId)) {
+      const { data: lead } = await admin
+        .from("leads").select("id, offer_id, affiliate_id")
+        .eq("id", leadId).maybeSingle();
+      if (lead && lead.offer_id === offerId) {
+        affiliateId = lead.affiliate_id ?? null;
+        resolvedLeadId = lead.id;
+      }
+    }
+    if (!resolvedLeadId) {
+      const { data: lead } = await admin
+        .from("leads").select("id, affiliate_id")
+        .eq("offer_id", offerId)
+        .in("phone_whatsapp", [customerPhone, "55" + customerPhone])
+        .order("created_at", { ascending: false })
+        .limit(1).maybeSingle();
+      if (lead) { affiliateId = lead.affiliate_id ?? null; resolvedLeadId = lead.id; }
+    }
+
+    // Reuso de cupom ISSUED vigente (comportamento atual mantido)
     const { data: existing } = await admin
       .from("coupons")
-      .select("id, code, expires_at, status")
-      .eq("customer_phone", customerPhone)
-      .eq("offer_id", offerId)
-      .eq("status", "ISSUED")
-      .gt("expires_at", new Date().toISOString())
+      .select("id, code, expires_at, status, affiliate_id")
+      .eq("customer_phone", customerPhone).eq("offer_id", offerId)
+      .eq("status", "ISSUED").gt("expires_at", new Date().toISOString())
       .maybeSingle();
 
-    if (existing) {
-      return new Response(JSON.stringify({
-        code: existing.code,
-        expires_at: existing.expires_at,
-        reused: true,
-      }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    let coupon: { id: string; code: string; expires_at: string } | null = existing as any;
+
+    if (coupon && !((existing as any).affiliate_id) && affiliateId) {
+      // completa atribuicao de cupom antigo sem afiliado
+      await admin.from("coupons")
+        .update({ affiliate_id: affiliateId, lead_id: resolvedLeadId })
+        .eq("id", coupon.id);
     }
 
-    // Generate unique code (retry up to 5 times)
-    let code = "";
-    for (let i = 0; i < 5; i++) {
-      const candidate = generateCode();
-      const { data: dup } = await admin.from("coupons").select("id").eq("code", candidate).maybeSingle();
-      if (!dup) { code = candidate; break; }
+    if (!coupon) {
+      let code = "";
+      for (let i = 0; i < 5; i++) {
+        const candidate = generateCode();
+        const { data: dup } = await admin.from("coupons").select("id").eq("code", candidate).maybeSingle();
+        if (!dup) { code = candidate; break; }
+      }
+      if (!code) return json({ error: "Não foi possível gerar código" }, 500);
+
+      const expiresAt = new Date(
+        Math.min(Date.now() + COUPON_TTL_DAYS * 864e5, new Date(offer.expires_at).getTime())
+      ).toISOString();
+
+      const { data: inserted, error: insErr } = await admin
+        .from("coupons")
+        .insert({
+          code,
+          offer_id: offerId,
+          company_id: offer.company_id,
+          customer_name: customerName,
+          customer_phone: customerPhone,
+          customer_ip: clientIp === "unknown" ? null : clientIp,
+          expires_at: expiresAt,
+          status: "ISSUED",
+          affiliate_id: affiliateId,
+          lead_id: resolvedLeadId,
+        })
+        .select("id, code, expires_at")
+        .single();
+
+      if (insErr || !inserted) {
+        console.error("insert coupon error:", insErr);
+        return json({ error: "Erro ao emitir cupom" }, 500);
+      }
+      coupon = inserted;
     }
-    if (!code) {
-      return new Response(JSON.stringify({ error: "Não foi possível gerar código" }), {
-        status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
 
-    const expiresAt = new Date(Date.now() + COUPON_TTL_DAYS * 24 * 60 * 60 * 1000).toISOString();
-
-    const { data: inserted, error: insErr } = await admin
-      .from("coupons")
-      .insert({
-        code,
-        offer_id: offerId,
-        company_id: offer.company_id,
-        customer_name: customerName,
-        customer_phone: customerPhone,
-        customer_ip: clientIp === "unknown" ? null : clientIp,
-        expires_at: expiresAt,
-        status: "ISSUED",
-      })
-      .select("code, expires_at")
-      .single();
-
-    if (insErr || !inserted) {
-      console.error("insert coupon error:", insErr);
-      return new Response(JSON.stringify({ error: "Erro ao emitir cupom" }), {
-        status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
-    // Fetch company name for template
-    const { data: company } = await admin
-      .from("profiles")
-      .select("company_name, name")
-      .eq("id", offer.company_id)
-      .maybeSingle();
-    const companyName = company?.company_name || company?.name || "Empresa parceira";
-
-    // Send WhatsApp template (best-effort — never blocks the response)
-    const waToken = Deno.env.get("WA_TOKEN");
-    const waPhoneId = Deno.env.get("WA_PHONE_NUMBER_ID");
-    let waSent = false;
-    let waError: string | null = null;
-    if (waToken && waPhoneId) {
+    // ---- NOVO: envio do cupom pelo WhatsApp (best-effort, nao bloqueia) ----
+    let whatsappSent = false;
+    const WA_TOKEN = Deno.env.get("WA_TOKEN");
+    const WA_PHONE_NUMBER_ID = Deno.env.get("WA_PHONE_NUMBER_ID");
+    if (WA_TOKEN && WA_PHONE_NUMBER_ID) {
       try {
-        const to = customerPhone.startsWith("55") ? customerPhone : `55${customerPhone}`;
-        const validade = new Date(inserted.expires_at).toLocaleDateString("pt-BR", {
-          day: "2-digit", month: "2-digit", year: "numeric",
+        const to = "55" + customerPhone;
+        const validade = new Date(coupon.expires_at).toLocaleString("pt-BR", {
+          timeZone: "America/Sao_Paulo", day: "2-digit", month: "2-digit",
+          hour: "2-digit", minute: "2-digit",
         });
-        const metaRes = await fetch(`https://graph.facebook.com/v19.0/${waPhoneId}/messages`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${waToken}`,
-          },
-          body: JSON.stringify({
-            messaging_product: "whatsapp",
-            recipient_type: "individual",
-            to,
-            type: "template",
-            template: {
-              name: "clilin_cupom",
-              language: { code: "pt_BR" },
-              components: [{
-                type: "body",
-                parameters: [
-                  { type: "text", text: offer.title },
-                  { type: "text", text: companyName },
-                  { type: "text", text: inserted.code },
-                  { type: "text", text: validade },
-                ],
-              }],
-            },
-          }),
+        const resp = await fetch(
+          `https://graph.facebook.com/v21.0/${WA_PHONE_NUMBER_ID}/messages`,
+          {
+            method: "POST",
+            headers: { Authorization: `Bearer ${WA_TOKEN}`, "Content-Type": "application/json" },
+            body: JSON.stringify({
+              messaging_product: "whatsapp",
+              to,
+              type: "template",
+              template: {
+                name: "clilin_cupom",
+                language: { code: "pt_BR" },
+                components: [{
+                  type: "body",
+                  parameters: [
+                    { type: "text", text: offer.title },
+                    { type: "text", text: (offer as any).profiles?.name || "Parceiro Clilin" },
+                    { type: "text", text: coupon.code },
+                    { type: "text", text: validade },
+                  ],
+                }],
+              },
+            }),
+          }
+        );
+        const respJson = await resp.json().catch(() => ({}));
+        whatsappSent = resp.ok;
+        await admin.from("wa_messages").insert({
+          direction: "OUT", phone: to, kind: "template:clilin_cupom",
+          payload: { ok: resp.ok, resp: respJson },
         });
-        const metaJson = await metaRes.json();
-        if (!metaRes.ok) {
-          waError = metaJson?.error?.message || "meta_send_failed";
-          console.error("[issue-coupon] Meta error:", metaJson);
-        } else {
-          waSent = true;
-          console.log("[issue-coupon] Template sent to", to, "wamid:", metaJson.messages?.[0]?.id);
-        }
-      } catch (err) {
-        waError = err instanceof Error ? err.message : "unknown";
-        console.error("[issue-coupon] Meta fetch error:", err);
+      } catch (waErr) {
+        console.error("wa send error:", waErr);
       }
     }
 
-    return new Response(JSON.stringify({
-      code: inserted.code,
-      expires_at: inserted.expires_at,
+    return json({
+      code: coupon.code,
+      expires_at: coupon.expires_at,
       offer_title: offer.title,
-      wa_sent: waSent,
-      wa_error: waError,
-    }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      whatsapp_sent: whatsappSent,
+    });
   } catch (e) {
     console.error(e);
-    return new Response(JSON.stringify({ error: e instanceof Error ? e.message : "Unknown" }), {
-      status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    return json({ error: e instanceof Error ? e.message : "Unknown" }, 500);
   }
 });
+
+function json(obj: unknown, status = 200) {
+  return new Response(JSON.stringify(obj),
+    { status, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+}
