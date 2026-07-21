@@ -1095,6 +1095,7 @@ export type Database = {
           max_cpc_bid: number
           price_new: number
           price_old: number
+          redemption_cost: number
           tags: string[] | null
           title: string
           updated_at: string
@@ -1118,6 +1119,7 @@ export type Database = {
           max_cpc_bid?: number
           price_new: number
           price_old: number
+          redemption_cost?: number
           tags?: string[] | null
           title: string
           updated_at?: string
@@ -1141,6 +1143,7 @@ export type Database = {
           max_cpc_bid?: number
           price_new?: number
           price_old?: number
+          redemption_cost?: number
           tags?: string[] | null
           title?: string
           updated_at?: string
@@ -1284,6 +1287,7 @@ export type Database = {
       pricing_config: {
         Row: {
           affiliate_share: number
+          billing_mode: string
           created_at: string
           default_cpc: number
           id: string
@@ -1295,6 +1299,7 @@ export type Database = {
         }
         Insert: {
           affiliate_share?: number
+          billing_mode?: string
           created_at?: string
           default_cpc?: number
           id?: string
@@ -1306,6 +1311,7 @@ export type Database = {
         }
         Update: {
           affiliate_share?: number
+          billing_mode?: string
           created_at?: string
           default_cpc?: number
           id?: string
