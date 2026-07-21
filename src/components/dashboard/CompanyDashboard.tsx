@@ -45,6 +45,7 @@ import { OnboardingProvider, useOnboarding } from '@/contexts/OnboardingContext'
 import { WelcomeModal, OnboardingTour, OnboardingChecklist } from '@/components/onboarding';
 import CompanyLeadsList from './CompanyLeadsList';
 import RedeemCouponPanel from './RedeemCouponPanel';
+import MerchantWhatsAppPanel from './MerchantWhatsAppPanel';
 
 const MAX_ACTIVE_OFFERS = 3;
 
@@ -822,8 +823,9 @@ function CompanyDashboardContent() {
             <CompanyLeadsList />
           </TabsContent>
 
-          <TabsContent value="coupons" className="mt-0">
+          <TabsContent value="coupons" className="mt-0 space-y-4 sm:space-y-6">
             <RedeemCouponPanel />
+            <MerchantWhatsAppPanel />
           </TabsContent>
         </Tabs>
       </div>
