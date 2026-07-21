@@ -1,0 +1,212 @@
+{
+  "version": 1,
+  "sdk_version": "0.24.0",
+  "path": "/functions/v1/mcp",
+  "auth": {
+    "type": "oauth",
+    "issuer": "https://sukvjgxxuzophzjcojvd.supabase.co/auth/v1",
+    "accepted_audiences": [
+      "authenticated"
+    ]
+  },
+  "mcp": {
+    "server": {
+      "name": "clilin-mcp",
+      "version": "0.1.0",
+      "title": "Clilin"
+    },
+    "tools": [
+      {
+        "name": "whoami",
+        "title": "Quem sou eu",
+        "description": "Retorna o perfil do usuário logado no Clilin: id, nome, papel (CLIENT/COMPANY/AFFILIATE/ADMIN), cidade e saldo em centavos.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_offers",
+        "title": "Listar ofertas ativas",
+        "description": "Lista ofertas ativas no Clilin, com filtros opcionais por cidade e busca no título. Retorna id, título, preços, cidade, empresa e cliques.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "city": {
+              "type": "string",
+              "description": "Cidade no formato 'Cidade - UF' (ex: 'Belo Horizonte - MG')."
+            },
+            "search": {
+              "type": "string",
+              "description": "Texto para buscar no título da oferta."
+            },
+            "limit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50,
+              "description": "Máximo de ofertas a retornar (padrão 20)."
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_my_offers",
+        "title": "Listar minhas ofertas (empresa)",
+        "description": "Lista as ofertas da empresa logada, incluindo pausadas e expiradas. Só funciona se o usuário for COMPANY.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "set_offer_active",
+        "title": "Pausar ou reativar oferta",
+        "description": "Ativa ou pausa uma oferta da empresa logada. Passe active=true para reativar, active=false para pausar.",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "offer_id": {
+              "type": "string",
+              "format": "uuid",
+              "description": "ID da oferta."
+            },
+            "active": {
+              "type": "boolean",
+              "description": "true para reativar, false para pausar."
+            }
+          },
+          "required": [
+            "offer_id",
+            "active"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_my_leads",
+        "title": "Listar meus leads (empresa)",
+        "description": "Lista os leads recebidos pela empresa logada, mais recentes primeiro.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "limit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200,
+              "description": "Máximo de leads (padrão 50)."
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_my_coupons",
+        "title": "Listar cupons da empresa",
+        "description": "Lista cupons emitidos para a empresa logada, com filtro opcional por status (ISSUED, REDEEMED, EXPIRED).",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "ISSUED",
+                "REDEEMED",
+                "EXPIRED"
+              ]
+            },
+            "limit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_my_earnings",
+        "title": "Meu saldo e transações",
+        "description": "Retorna o saldo atual (em centavos) e as últimas transações do usuário logado. Útil para divulgadores e empresas verem movimentações.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "limit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "description": "Nº de transações (padrão 20)."
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "admin_overview",
+        "title": "Overview admin",
+        "description": "Retorna totais gerais da plataforma: nº de empresas, divulgadores, clientes, ofertas ativas, leads, cupons e saques pendentes. Apenas para usuários com papel ADMIN.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}

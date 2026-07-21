@@ -48,6 +48,13 @@ export default function AuthCallbackPage() {
       }
     };
 
+    const consumePendingNext = (): string | null => {
+      const raw = sessionStorage.getItem('clilin_post_auth_next');
+      sessionStorage.removeItem('clilin_post_auth_next');
+      if (raw && raw.startsWith('/') && !raw.startsWith('//')) return raw;
+      return null;
+    };
+
     const checkProfileAndRedirect = async (userId: string) => {
       setStatus('Verificando perfil...');
 
@@ -58,15 +65,18 @@ export default function AuthCallbackPage() {
         .eq('user_id', userId)
         .maybeSingle();
 
+      const pendingNext = consumePendingNext();
+
       if (existingProfile) {
-        // User already has profile, go to dashboard
         toast.success('Login realizado com sucesso!');
-        navigate('/dashboard');
+        navigate(pendingNext ?? '/dashboard');
         return;
       }
 
       // New user - redirect to complete signup page to choose role
       setStatus('Redirecionando para completar cadastro...');
+      // Se veio de fluxo OAuth (MCP), preserva o next para depois do complete-signup
+      if (pendingNext) sessionStorage.setItem('clilin_post_auth_next', pendingNext);
       navigate('/complete-signup');
     };
 
