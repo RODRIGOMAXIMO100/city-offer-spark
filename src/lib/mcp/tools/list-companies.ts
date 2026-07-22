@@ -26,6 +26,9 @@ export default defineTool({
     if (search) q = q.or(`name.ilike.%${search}%,razao_social.ilike.%${search}%`);
     const { data, error } = await q;
     if (error) return { content: [{ type: "text", text: error.message }], isError: true };
-    return { content: [{ type: "text", text: `${data?.length ?? 0} empresas.` }], structuredContent: { companies: data } };
+    const rows = data ?? [];
+    const lines = rows.map((c: any) => `- ${c.name} | id=${c.id} | ${c.city ?? "-"} | CNPJ=${c.cnpj ?? "-"} | saldo=${c.balance ?? 0} | ${c.banned ? "BANIDA" : c.balance_frozen ? "SALDO CONGELADO" : "ok"}`);
+    const text = `${rows.length} empresas. Use o campo 'id' como company_id em create_offer/update_offer.\n${lines.join("\n")}`;
+    return { content: [{ type: "text", text }], structuredContent: { companies: rows } };
   },
 });
