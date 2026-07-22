@@ -74,7 +74,8 @@ export default function AdminAnalytics() {
     clicks: { current: 0, previous: 0 },
     users: { current: 0, previous: 0 },
     earnings: { current: 0, previous: 0 },
-    offers: { current: 0, previous: 0 }
+    offers: { current: 0, previous: 0 },
+    redemptions: { current: 0, previous: 0 }
   });
 
   useEffect(() => {
@@ -203,18 +204,50 @@ export default function AdminAnalytics() {
 
       const offersByDay = groupByDay(offers || [], 'created_at', days);
 
-      // Calculate earnings based on leads (PPL model)
-      const CPL_AVERAGE = 200; // R$ 2.00 average CPL in cents
-      const PLATFORM_FEE = 0.40; // 40% platform fee
       const currentLeadsCount = allLeads.length;
       const previousLeadsCount = prevLeads?.length || 0;
-      const currentEarnings = Math.round(currentLeadsCount * CPL_AVERAGE * PLATFORM_FEE);
-      const previousEarnings = Math.round(previousLeadsCount * CPL_AVERAGE * PLATFORM_FEE);
 
-      const earningsByDay = leadsByDay.map(d => ({
-        date: d.date,
-        earnings: Math.round(d.leads * CPL_AVERAGE * PLATFORM_FEE)
-      }));
+      // Faturamento REAL: vem dos resgates (transactions REDEMPTION), nao de leads.
+      // Receita liquida da plataforma = |REDEMPTION_COST| (empresa pagou) - REDEMPTION_EARNING (divulgador recebeu).
+      const { data: txCurrent } = await supabase
+        .from('transactions')
+        .select('created_at, amount, type, user_id')
+        .in('type', ['REDEMPTION_COST', 'REDEMPTION_EARNING'])
+        .gte('created_at', startDate.toISOString());
+
+      const { data: txPrevious } = await supabase
+        .from('transactions')
+        .select('amount, type')
+        .in('type', ['REDEMPTION_COST', 'REDEMPTION_EARNING'])
+        .gte('created_at', previousStartDate.toISOString())
+        .lt('created_at', startDate.toISOString());
+
+      const curTx = txCurrent || [];
+      const platformRevenue = (rows: { amount: number; type: string }[]) =>
+        rows.reduce((sum, t) => sum + (t.type === 'REDEMPTION_COST' ? Math.abs(Number(t.amount)) : -Number(t.amount)), 0);
+      const currentEarnings = platformRevenue(curTx);
+      const previousEarnings = platformRevenue(txPrevious || []);
+      const currentRedemptions = curTx.filter(t => t.type === 'REDEMPTION_COST').length;
+      const previousRedemptions = (txPrevious || []).filter(t => t.type === 'REDEMPTION_COST').length;
+
+      // faturamento liquido por dia (mesma base de dias dos outros graficos)
+      const revByIso: Record<string, number> = {};
+      curTx.forEach(t => {
+        const iso = new Date(t.created_at).toISOString().split('T')[0];
+        revByIso[iso] = (revByIso[iso] || 0) + (t.type === 'REDEMPTION_COST' ? Math.abs(Number(t.amount)) : -Number(t.amount));
+      });
+      const earningsByDay: { date: string; earnings: number }[] = [];
+      {
+        const base = new Date();
+        for (let i = days - 1; i >= 0; i--) {
+          const dt = new Date(base.getTime() - i * 24 * 60 * 60 * 1000);
+          const iso = dt.toISOString().split('T')[0];
+          earningsByDay.push({
+            date: dt.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }),
+            earnings: revByIso[iso] || 0
+          });
+        }
+      }
 
       // Fetch total views and leads for conversion rate
       const { data: allOffers } = await supabase
@@ -231,11 +264,11 @@ export default function AdminAnalytics() {
         .slice(0, 5)
         .map(o => ({ name: o.title.substring(0, 25) + (o.title.length > 25 ? '...' : ''), leads: o.leads_count || 0 }));
 
-      // Top 5 affiliates by earnings from leads
+      // Top 5 divulgadores por ganho REAL de resgate (REDEMPTION_EARNING)
       const affiliateEarnings: Record<string, number> = {};
-      allLeads.forEach(lead => {
-        if (lead.affiliate_id) {
-          affiliateEarnings[lead.affiliate_id] = (affiliateEarnings[lead.affiliate_id] || 0) + Math.round(CPL_AVERAGE * 0.30);
+      curTx.forEach(t => {
+        if (t.type === 'REDEMPTION_EARNING' && t.user_id) {
+          affiliateEarnings[t.user_id] = (affiliateEarnings[t.user_id] || 0) + Number(t.amount);
         }
       });
 
@@ -278,7 +311,8 @@ export default function AdminAnalytics() {
         clicks: { current: mainClicks.length, previous: prevPaidClicks.length },
         users: { current: newUsers?.length || 0, previous: prevUsers?.length || 0 },
         earnings: { current: currentEarnings, previous: previousEarnings },
-        offers: { current: offers?.length || 0, previous: prevOffers?.length || 0 }
+        offers: { current: offers?.length || 0, previous: prevOffers?.length || 0 },
+        redemptions: { current: currentRedemptions, previous: previousRedemptions }
       });
 
     } catch (error) {
@@ -449,7 +483,13 @@ export default function AdminAnalytics() {
           icon={Users}
         />
         <ComparisonCard 
-          title="Ganhos (PPL)" 
+          title="Resgates" 
+          current={comparison.redemptions.current} 
+          previous={comparison.redemptions.previous}
+          icon={Target}
+        />
+        <ComparisonCard 
+          title="Faturamento (resgates)" 
           current={comparison.earnings.current} 
           previous={comparison.earnings.previous}
           icon={DollarSign}
@@ -653,7 +693,7 @@ export default function AdminAnalytics() {
         {/* Earnings Over Time */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Ganhos por Dia</CardTitle>
+            <CardTitle className="text-base">Faturamento por Dia</CardTitle>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={250}>
