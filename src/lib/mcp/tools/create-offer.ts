@@ -6,7 +6,7 @@ export default defineTool({
   name: "create_offer",
   title: "Criar oferta",
   description:
-    "Cria uma nova oferta para a empresa logada (ou para uma empresa específica se admin). Preços em reais (ex: 49.90).",
+    "Cria uma nova oferta. Empresa (COMPANY) cria para si própria — não passe company_id. ADMIN pode criar em nome de QUALQUER empresa passando company_id (use `list_companies` ou `find_company` para descobrir o id da empresa desejada). Preços em reais (ex: 49.90).",
   inputSchema: {
     title: z.string().min(3).max(120),
     description: z.string().optional(),

@@ -281,7 +281,7 @@ import { z as z6 } from "npm:zod@^3.25.76";
 var create_offer_default = defineTool9({
   name: "create_offer",
   title: "Criar oferta",
-  description: "Cria uma nova oferta para a empresa logada (ou para uma empresa espec\xEDfica se admin). Pre\xE7os em reais (ex: 49.90).",
+  description: "Cria uma nova oferta. Empresa (COMPANY) cria para si pr\xF3pria \u2014 n\xE3o passe company_id. ADMIN pode criar em nome de QUALQUER empresa passando company_id (use `list_companies` ou `find_company` para descobrir o id da empresa desejada). Pre\xE7os em reais (ex: 49.90).",
   inputSchema: {
     title: z6.string().min(3).max(120),
     description: z6.string().optional(),
