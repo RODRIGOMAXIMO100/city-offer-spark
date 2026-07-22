@@ -30,14 +30,14 @@ const ParaEmpresasPage = () => {
       metric: "Custo por cliente",
       anuncios: "R$ 40 - R$ 100",
       delivery: "R$ 21,60 (27%)",
-      clilin: "R$ 1 - R$ 3",
+      clilin: "R$ 5 - R$ 8",
       icon: DollarSign
     },
     { 
       metric: "O que você paga",
       anuncios: "Por clique (pode nem converter)",
       delivery: "Porcentagem de cada venda",
-      clilin: "Por interesse real",
+      clilin: "Só quando o cliente vai à loja",
       icon: MousePointer
     },
     { 
@@ -106,11 +106,11 @@ const ParaEmpresasPage = () => {
   const faqs = [
     {
       question: "Quanto custa para começar?",
-      answer: "Você deposita quanto quiser. Mínimo de R$ 100. Cada lead custa entre R$ 1 e R$ 3 dependendo da sua cidade e categoria."
+      answer: "Você deposita quanto quiser. Mínimo de R$ 100. Você só paga quando um cliente novo vai à sua loja e usa o cupom — a recompensa que você definir (mínimo R$ 5 por cliente)."
     },
     {
-      question: "Como funciona o lance?",
-      answer: "Você define quanto quer pagar por lead. Quanto maior seu lance, mais destaque sua oferta ganha. Simples assim."
+      question: "Como funciona a recompensa?",
+      answer: "Você define quanto quer pagar por cliente que aparece na loja (mínimo R$ 5). Quanto maior a recompensa, mais divulgadores levam clientes até você. Simples assim."
     },
     {
       question: "Posso cancelar a qualquer momento?",
@@ -118,7 +118,7 @@ const ParaEmpresasPage = () => {
     },
     {
       question: "Como recebo os clientes?",
-      answer: "Direto no seu WhatsApp. O cliente clica na oferta, abre conversa com você. Pronto."
+      answer: "O cliente pega o cupom e vai até a sua loja. Você confirma o resgate — pelo painel ou pelo WhatsApp — e pronto: cliente novo no balcão."
     },
     {
       question: "Funciona pra qualquer negócio?",
@@ -130,8 +130,8 @@ const ParaEmpresasPage = () => {
     <div className="min-h-screen bg-background">
       <SEOHead
         title="Para Empresas | Clilin - Pare de queimar dinheiro com anúncios"
-        description="Enquanto você paga R$ 5 por clique que talvez vire cliente, empresas espertas pagam R$ 2 por cliente que JÁ QUER comprar. Sem taxa por venda."
-        keywords={["marketing local", "clientes whatsapp", "sem taxa delivery", "alternativa google ads", "leads qualificados", "custo por lead"]}
+        description="Enquanto você paga por clique que talvez vire cliente, empresas espertas só pagam quando o cliente novo aparece na loja e compra. Sem mensalidade, sem taxa por venda."
+        keywords={["marketing local", "clientes whatsapp", "sem taxa delivery", "alternativa google ads", "indicação local", "pagamento por resultado"]}
       />
 
       {/* Hero Section - Agressivo */}
@@ -314,8 +314,8 @@ const ParaEmpresasPage = () => {
                 </li>
               </ul>
               <div className="mt-8 p-4 bg-primary/10 rounded-xl text-center">
-                <span className="text-sm text-muted-foreground">Custo por cliente interessado:</span>
-                <div className="text-3xl font-black text-primary">R$ 1 - R$ 3</div>
+                <span className="text-sm text-muted-foreground">Recompensa por cliente na loja:</span>
+                <div className="text-3xl font-black text-primary">R$ 5 - R$ 8</div>
               </div>
             </div>
           </div>
@@ -523,7 +523,7 @@ const ParaEmpresasPage = () => {
                   "Pagar por clique é <span className="text-destructive">apostar</span>."
                 </blockquote>
                 <p className="text-lg opacity-80">
-                  Pagar por lead é <span className="text-primary font-bold">investir</span>.
+                  Pagar por cliente na loja é <span className="text-primary font-bold">investir</span>.
                 </p>
               </div>
               <div className="text-center md:text-left">

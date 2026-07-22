@@ -124,7 +124,7 @@ export default function PrivacyPage() {
                 <h4 className="font-semibold">Execução de Contrato (Art. 7º, V)</h4>
                 <p className="text-sm text-muted-foreground">
                   Para prestação dos serviços da plataforma: cadastro, exibição de ofertas, 
-                  processamento de leads qualificados, cálculo e pagamento de comissões.
+                  processamento de resgates de cupom, cálculo e pagamento de comissões.
                 </p>
               </div>
               <div className="border-l-4 border-primary pl-4">

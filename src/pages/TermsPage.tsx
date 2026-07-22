@@ -54,7 +54,7 @@ export default function TermsPage() {
             </p>
             <ul className="list-disc pl-6 mt-4 space-y-2 text-muted-foreground">
               <li><strong>Empresas:</strong> Criam e publicam ofertas de seus produtos e serviços.</li>
-              <li><strong>Divulgadores (Afiliados):</strong> Compartilham ofertas e recebem comissões por leads qualificados.</li>
+              <li><strong>Divulgadores (Afiliados):</strong> Compartilham ofertas e recebem comissões quando o cliente indicado vai à loja e usa o cupom.</li>
               <li><strong>Clientes:</strong> Encontram e aproveitam ofertas locais.</li>
             </ul>
           </section>
@@ -71,13 +71,13 @@ export default function TermsPage() {
           <section>
             <h2 className="text-2xl font-display font-semibold mb-4">4. Sistema de Créditos</h2>
             <p className="text-muted-foreground leading-relaxed">
-              O clilin opera com um sistema de créditos baseado em leads qualificados:
+              O clilin opera com um sistema de créditos baseado em resgates de cupom (clientes que vão à loja):
             </p>
             <ul className="list-disc pl-6 mt-4 space-y-2 text-muted-foreground">
-              <li>Empresas adquirem créditos para publicar ofertas e pagar por leads qualificados.</li>
-              <li>Divulgadores ganham créditos por leads válidos gerados através de suas divulgações.</li>
+              <li>Empresas adquirem créditos para publicar ofertas e pagar por cada cliente que resgata o cupom na loja.</li>
+              <li>Divulgadores ganham créditos quando os clientes que indicaram resgatam o cupom na loja.</li>
               <li>Créditos podem ser convertidos em valores monetários conforme as regras da plataforma.</li>
-              <li>A plataforma implementa sistemas anti-fraude para garantir a integridade dos leads.</li>
+              <li>A plataforma implementa sistemas anti-fraude para garantir a integridade dos resgates.</li>
             </ul>
           </section>
 

@@ -80,58 +80,58 @@ const HelpPage = () => {
                 <AccordionTrigger className="hover:no-underline">
                   <div className="flex items-center gap-3">
                     <Calculator className="h-5 w-5 text-primary" />
-                    <span className="font-bold">⭐ Como funciona o Pay-Per-Lead (PPL)</span>
+                    <span className="font-bold">⭐ Como funciona o pagamento por resgate</span>
                   </div>
                 </AccordionTrigger>
                 <AccordionContent className="space-y-4 pt-2">
                   <div className="p-3 rounded-lg bg-primary/10 border border-primary/20 mb-4">
                     <p className="text-sm font-medium text-primary mb-2">
-                      💡 O que é um Lead Qualificado?
+                      💡 Você só paga por cliente que aparece na loja
                     </p>
                     <p className="text-sm text-muted-foreground">
-                      Na Clilin, você paga apenas quando um cliente <strong>deixa seus dados de contato</strong> (nome + WhatsApp) demonstrando interesse real na sua oferta.
+                      Na Clilin você paga apenas quando um cliente novo <strong>vai até a sua loja e usa o cupom</strong>. Resultado de verdade — não clique, não cadastro.
                     </p>
                     <ul className="mt-2 space-y-1 text-sm text-muted-foreground">
                       <li className="flex items-start gap-2">
                         <span>📝</span>
-                        <span><strong>Captação de Lead:</strong> O cliente preenche um formulário com nome e WhatsApp</span>
+                        <span><strong>Divulgadores locais</strong> espalham a sua oferta pela cidade</span>
                       </li>
                       <li className="flex items-start gap-2">
                         <span>✅</span>
-                        <span><strong>Validação:</strong> Sistema anti-fraude verifica se é um contato real</span>
+                        <span><strong>O cliente pega o cupom</strong> e leva até a sua loja</span>
                       </li>
                       <li className="flex items-start gap-2">
                         <span>📱</span>
-                        <span><strong>Você recebe:</strong> Lista de leads no seu dashboard para contato via WhatsApp</span>
+                        <span><strong>Você confirma o resgate</strong> no balcão — e só aí a recompensa é cobrada</span>
                       </li>
                     </ul>
                     <p className="text-xs text-muted-foreground mt-2 italic">
-                      Diferente de cliques simples, você recebe contatos reais de pessoas interessadas!
+                      Cliques e cadastros no caminho são de graça: servem só pra você medir o alcance.
                     </p>
                   </div>
                   <p className="text-muted-foreground">
-                    O custo por lead (CPL) é calculado com base na nota da sua oferta. Quanto melhor a nota, menor o custo:
+                    Você define a recompensa por cada cliente que aparece na loja (mínimo R$ 5,00). Exemplos:
                   </p>
                   <div className="grid gap-3">
                     <div className="flex items-center justify-between p-3 rounded-lg bg-green-500/10 border border-green-500/20">
-                      <span className="font-medium text-green-600">Nota 10 (Excelente)</span>
-                      <span className="font-bold text-green-600">R$ 1,00 por lead</span>
+                      <span className="font-medium text-green-600">Recompensa mínima</span>
+                      <span className="font-bold text-green-600">R$ 5,00 por cliente</span>
                     </div>
                     <div className="flex items-center justify-between p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
-                      <span className="font-medium text-yellow-600">Nota 7 (Inicial)</span>
-                      <span className="font-bold text-yellow-600">R$ 2,00 por lead</span>
+                      <span className="font-medium text-yellow-600">Recompensa padrão</span>
+                      <span className="font-bold text-yellow-600">R$ 8,00 por cliente</span>
                     </div>
-                    <div className="flex items-center justify-between p-3 rounded-lg bg-red-500/10 border border-red-500/20">
-                      <span className="font-medium text-red-600">Nota 4 (Mínima)</span>
-                      <span className="font-bold text-red-600">R$ 3,00 por lead</span>
+                    <div className="flex items-center justify-between p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                      <span className="font-medium text-blue-600">Recompensa alta</span>
+                      <span className="font-bold text-blue-600">R$ 12,00+ por cliente</span>
                     </div>
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    <strong>Fórmula:</strong> CPL = (14 - Nota) × R$ 0,33
+                    Quanto maior a recompensa, mais divulgadores se interessam em levar cliente até você.
                   </p>
                   <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20 mt-4">
                     <p className="text-sm text-blue-600">
-                      📊 <strong>Vantagem PPL:</strong> Você recebe dados de contato reais para fazer follow-up, diferente de sistemas que apenas redirecionam o cliente.
+                      📊 <strong>Sem risco:</strong> se ninguém aparecer na loja, você não paga nada. Você investe só quando o cliente já está na sua frente.
                     </p>
                   </div>
                 </AccordionContent>
@@ -146,7 +146,7 @@ const HelpPage = () => {
                 </AccordionTrigger>
                 <AccordionContent className="space-y-4 pt-2">
                   <p className="text-muted-foreground">
-                    Sua nota é calculada com base em 3 fatores e influencia diretamente o custo por lead:
+                    Sua nota é calculada com base em 3 fatores e influencia o destaque da sua oferta:
                   </p>
                   <div className="space-y-3">
                     <div className="p-3 rounded-lg bg-muted/50">
@@ -231,7 +231,7 @@ const HelpPage = () => {
                     </li>
                     <li className="flex items-start gap-3">
                       <AlertCircle className="h-5 w-5 text-yellow-500 mt-0.5 flex-shrink-0" />
-                      <span>Créditos são descontados apenas em <strong>leads válidos</strong> (nome + WhatsApp verificado)</span>
+                      <span>Créditos são descontados apenas quando um cliente <strong>usa o cupom na sua loja</strong></span>
                     </li>
                   </ul>
                 </AccordionContent>
@@ -342,33 +342,33 @@ const HelpPage = () => {
                 <AccordionContent className="space-y-4 pt-2">
                   <div className="p-4 rounded-lg bg-green-500/10 border border-green-500/20">
                     <p className="text-center text-lg font-bold text-green-600 mb-2">
-                      Ganhe até 50% por Lead Captado! 🚀
+                      Ganhe 70% por cliente que você leva à loja! 🚀
                     </p>
                     <p className="text-center text-sm text-muted-foreground">
-                      Comece com 30% e evolua para 50% conforme sobe de nível
+                      Comece com 70% da recompensa e aumente a cada nível
                     </p>
                   </div>
                   <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20 mb-4">
                     <p className="text-sm text-blue-600">
-                      📝 <strong>Modelo Pay-Per-Lead:</strong> Você ganha comissão quando o cliente preenche o formulário com nome e WhatsApp, não apenas por cliques!
+                      📝 <strong>Você ganha por resultado:</strong> a comissão cai na sua conta quando o cliente que você indicou vai até a loja e usa o cupom — não por clique.
                     </p>
                   </div>
                   <div className="grid gap-3 mt-4">
                     <div className="flex items-center justify-between p-3 rounded-lg bg-orange-500/10 border border-orange-500/20">
-                      <span>Bronze (Base)</span>
-                      <span className="font-bold text-orange-600">30% → R$ 0,30 a R$ 0,90 por lead</span>
+                      <span>Bronze (base)</span>
+                      <span className="font-bold text-orange-600">70% da recompensa</span>
                     </div>
                     <div className="flex items-center justify-between p-3 rounded-lg bg-slate-400/10 border border-slate-400/20">
-                      <span>Prata (100+ leads)</span>
-                      <span className="font-bold text-slate-600">40% → R$ 0,40 a R$ 1,20 por lead</span>
+                      <span>Prata (10 resgates)</span>
+                      <span className="font-bold text-slate-600">75% da recompensa</span>
                     </div>
                     <div className="flex items-center justify-between p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
-                      <span>Ouro (500+ leads)</span>
-                      <span className="font-bold text-yellow-600">50% → R$ 0,50 a R$ 1,50 por lead</span>
+                      <span>Ouro (30 resgates)</span>
+                      <span className="font-bold text-yellow-600">80% da recompensa</span>
                     </div>
                   </div>
                   <p className="text-sm text-muted-foreground mt-2">
-                    <strong>Dica:</strong> Quanto mais leads válidos você gerar, mais rápido sobe de nível e maior é sua comissão!
+                    <strong>Dica:</strong> Quanto mais clientes você leva até a loja, mais rápido sobe de nível e maior sua comissão!
                   </p>
                 </AccordionContent>
               </AccordionItem>
@@ -382,7 +382,7 @@ const HelpPage = () => {
                 </AccordionTrigger>
                 <AccordionContent className="space-y-4 pt-2">
                   <p className="text-muted-foreground">
-                    Quanto mais leads válidos você gerar, maior sua comissão por lead:
+                    Quanto mais clientes você leva até a loja, maior sua comissão:
                   </p>
                   <div className="space-y-3">
                     <div className="flex items-center justify-between p-3 rounded-lg bg-orange-500/10 border border-orange-500/20">
@@ -390,30 +390,30 @@ const HelpPage = () => {
                         <span className="text-xl">🥉</span>
                         <div>
                           <span className="font-medium">Bronze</span>
-                          <p className="text-xs text-muted-foreground">0+ leads</p>
+                          <p className="text-xs text-muted-foreground">0 resgates</p>
                         </div>
                       </div>
-                      <span className="font-bold text-orange-600">30%</span>
+                      <span className="font-bold text-orange-600">70%</span>
                     </div>
                     <div className="flex items-center justify-between p-3 rounded-lg bg-slate-400/10 border border-slate-400/20">
                       <div className="flex items-center gap-2">
                         <span className="text-xl">🥈</span>
                         <div>
                           <span className="font-medium">Prata</span>
-                          <p className="text-xs text-muted-foreground">100+ leads</p>
+                          <p className="text-xs text-muted-foreground">10 resgates</p>
                         </div>
                       </div>
-                      <span className="font-bold text-slate-600">40%</span>
+                      <span className="font-bold text-slate-600">75%</span>
                     </div>
                     <div className="flex items-center justify-between p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
                       <div className="flex items-center gap-2">
                         <span className="text-xl">🥇</span>
                         <div>
                           <span className="font-medium">Ouro</span>
-                          <p className="text-xs text-muted-foreground">500+ leads</p>
+                          <p className="text-xs text-muted-foreground">30 resgates</p>
                         </div>
                       </div>
-                      <span className="font-bold text-yellow-600">50%</span>
+                      <span className="font-bold text-yellow-600">80%</span>
                     </div>
                   </div>
                 </AccordionContent>
@@ -423,21 +423,21 @@ const HelpPage = () => {
                 <AccordionTrigger className="hover:no-underline">
                   <div className="flex items-center gap-3">
                     <Shield className="h-5 w-5 text-blue-500" />
-                    <span>O que são Leads Válidos</span>
+                    <span>O que conta como cliente</span>
                   </div>
                 </AccordionTrigger>
                 <AccordionContent className="space-y-4 pt-2">
                   <p className="text-muted-foreground">
-                    Para ser contabilizado e gerar comissão, um lead precisa:
+                    Para gerar comissão, o cliente precisa:
                   </p>
                   <ul className="space-y-3">
                     <li className="flex items-start gap-3">
                       <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-                      <span>Preencher <strong>nome e WhatsApp</strong> no formulário da oferta</span>
+                      <span>Pegar o cupom e <strong>usar na loja</strong> (resgate confirmado pelo lojista)</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-                      <span>Ser de um <strong>usuário único</strong> (1 lead por telefone/oferta)</span>
+                      <span>Ser um <strong>cliente novo</strong> (1 resgate por telefone/oferta)</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
@@ -480,7 +480,7 @@ const HelpPage = () => {
                     <div>
                       <p className="font-medium">Como aumento meu nível?</p>
                       <p className="text-sm text-muted-foreground mt-1">
-                        Gerando leads válidos! Quanto mais pessoas preencherem o formulário pelos seus links, mais rápido você sobe de nível.
+                        Levando clientes até a loja! Quanto mais pessoas usam o cupom que você indicou, mais rápido você sobe de nível.
                       </p>
                     </div>
                     <div>

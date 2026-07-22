@@ -29,8 +29,8 @@ UPDATE public.pricing_config
 -- 3) CURVA DE NIVEIS: monotonica, regua local, contada por RESGATES.
 --    min_clicks passa a significar "resgates acumulados" (update_affiliate_stats
 --    e chamado no resgate, nao mais no clique). Textos batem com os multiplicadores.
-UPDATE public.affiliate_levels SET name='Bronze',   min_clicks=0,   commission_multiplier=1.00, badge_color='#CD7F32', benefits=ARRAY['Comissao padrao','Comece a indicar'] WHERE id=1;
-UPDATE public.affiliate_levels SET name='Prata',     min_clicks=10,  commission_multiplier=1.10, badge_color='#C0C0C0', benefits=ARRAY['Comissao +10%','Destaque no ranking'] WHERE id=2;
-UPDATE public.affiliate_levels SET name='Ouro',      min_clicks=30,  commission_multiplier=1.25, badge_color='#FFD700', benefits=ARRAY['Comissao +25%','Suporte prioritario'] WHERE id=3;
-UPDATE public.affiliate_levels SET name='Platina',   min_clicks=75,  commission_multiplier=1.40, badge_color='#E5E4E2', benefits=ARRAY['Comissao +40%','Ofertas exclusivas'] WHERE id=4;
-UPDATE public.affiliate_levels SET name='Diamante',  min_clicks=150, commission_multiplier=1.60, badge_color='#B9F2FF', benefits=ARRAY['Comissao +60%','Bonus mensais'] WHERE id=5;
+UPDATE public.affiliate_levels SET name='Bronze',   min_clicks=0,   commission_multiplier=1.00, badge_color='#CD7F32', benefits=ARRAY['Comissao de 70%','Comece a indicar'] WHERE id=1;
+UPDATE public.affiliate_levels SET name='Prata',     min_clicks=10,  commission_multiplier=1.07, badge_color='#C0C0C0', benefits=ARRAY['Comissao de 75%','Destaque no ranking'] WHERE id=2;
+UPDATE public.affiliate_levels SET name='Ouro',      min_clicks=30,  commission_multiplier=1.14, badge_color='#FFD700', benefits=ARRAY['Comissao de 80%','Suporte prioritario'] WHERE id=3;
+UPDATE public.affiliate_levels SET name='Platina',   min_clicks=75,  commission_multiplier=1.21, badge_color='#E5E4E2', benefits=ARRAY['Comissao de 85%','Ofertas exclusivas'] WHERE id=4;
+UPDATE public.affiliate_levels SET name='Diamante',  min_clicks=150, commission_multiplier=1.28, badge_color='#B9F2FF', benefits=ARRAY['Comissao de 90%','Bonus mensais'] WHERE id=5;

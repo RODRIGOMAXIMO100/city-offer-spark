@@ -114,7 +114,7 @@ const ParaDivulgadoresPage = () => {
     {
       icon: Award,
       title: "Cresça junto",
-      description: "Bronze 30%, Prata 40%, Ouro 50%. Quanto mais ajuda, mais cresce."
+      description: "Comece com 70% e suba a cada cliente que traz. Quanto mais ajuda, mais cresce."
     },
     {
       icon: Smartphone,
@@ -139,7 +139,7 @@ const ParaDivulgadoresPage = () => {
     },
     {
       question: "Como funciona a comissão?",
-      answer: "Você ganha de 30% a 50% do valor que a empresa paga por cada lead. Começa com 30% e vai subindo conforme seu nível. 10 leads = Bronze, 50 = Prata, 100+ = Ouro."
+      answer: "Você ganha 70% da recompensa que a empresa paga por cada cliente que aparece na loja. Ex.: recompensa de R$ 8, você leva R$ 5,60. Sua comissão sobe a cada nível: 10 resgates = Prata, 30 = Ouro, 75 = Platina, 150 = Diamante."
     },
     {
       question: "Quando recebo o dinheiro?",
@@ -159,8 +159,8 @@ const ParaDivulgadoresPage = () => {
     <div className="min-h-screen bg-background">
       <SEOHead
         title="Para Divulgadores | Clilin - Ganhe R$ 22.500/mês só indicando"
-        description="Não precisa aparecer. Não precisa criar conteúdo. Não precisa vender NADA. Só mandar um link. Cada clique = até R$ 1,50 na sua conta. PIX em 24h."
-        keywords={["ganhar dinheiro online", "divulgador", "renda extra", "indicar negócios", "comissão por lead", "trabalho de casa"]}
+        description="Não precisa aparecer. Não precisa criar conteúdo. Não precisa vender NADA. Só indicar. Cada cliente que você leva à loja vira comissão na sua conta. PIX em 24h."
+        keywords={["ganhar dinheiro online", "divulgador", "renda extra", "indicar negócios", "comissão por indicação", "trabalho de casa"]}
       />
 
       {/* Hero Section - AGRESSIVO */}
@@ -216,8 +216,8 @@ const ParaDivulgadoresPage = () => {
             {/* Quick Stats */}
             <div className="grid grid-cols-3 gap-2 md:gap-4 max-w-2xl mx-auto">
               <div className="bg-card/50 backdrop-blur border border-green-500/30 rounded-xl p-3 md:p-4">
-                <div className="text-lg md:text-3xl font-black text-green-500">R$ 1,50</div>
-                <div className="text-[10px] md:text-sm text-muted-foreground">por clique</div>
+                <div className="text-lg md:text-3xl font-black text-green-500">R$ 5,60</div>
+                <div className="text-[10px] md:text-sm text-muted-foreground">por cliente</div>
               </div>
               <div className="bg-card/50 backdrop-blur border border-green-500/30 rounded-xl p-3 md:p-4">
                 <div className="text-lg md:text-3xl font-black text-green-500">24h</div>
@@ -321,7 +321,7 @@ const ParaDivulgadoresPage = () => {
                     Grupo da família reclamando que tá caro comer fora?
                   </p>
                   <p className="text-muted-foreground">
-                    Manda oferta de 30% off. 15 pessoas clicam. <strong className="text-green-500">R$ 22,50 em 5 minutos.</strong>
+                    Manda a oferta no grupo. 3 pessoas vão até a loja e usam o cupom. <strong className="text-green-500">R$ 16,80 na sua conta.</strong>
                   </p>
                 </div>
               </div>
@@ -490,7 +490,7 @@ const ParaDivulgadoresPage = () => {
             </div>
 
             <p className="text-center text-muted-foreground mt-4 text-sm">
-              *CPL R$ 3,00 × Comissão Ouro (50%) = R$ 1,50/lead
+              *Recompensa R$ 8,00 × sua comissão 70% = R$ 5,60 por cliente na loja
             </p>
           </div>
         </div>
@@ -691,7 +691,7 @@ const ParaDivulgadoresPage = () => {
                 <ul className="space-y-4 mb-8">
                   <li className="flex items-center gap-3">
                     <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0" />
-                    <span>Até R$ 1,50 por conexão genuína</span>
+                    <span>70% da recompensa por cada cliente na loja</span>
                   </li>
                   <li className="flex items-center gap-3">
                     <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0" />

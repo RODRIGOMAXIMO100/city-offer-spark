@@ -471,7 +471,7 @@ export default function AdminAnalytics() {
               <div>
                 <p className="text-sm text-muted-foreground">Total de Leads</p>
                 <p className="text-3xl font-bold text-secondary">{data.totalLeads.toLocaleString('pt-BR')}</p>
-                <p className="text-xs text-muted-foreground mt-1">Leads válidos gerados</p>
+                <p className="text-xs text-muted-foreground mt-1">Leads registrados (métrica de alcance)</p>
               </div>
               <Users className="h-10 w-10 text-secondary/50" />
             </div>

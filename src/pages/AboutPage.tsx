@@ -86,7 +86,7 @@ const AboutPage = () => {
               <h3 className="text-xl font-semibold text-foreground mb-3">Para Empresas</h3>
               <p className="text-muted-foreground">
                 Crie ofertas atrativas e alcance clientes locais através de uma rede de divulgadores. 
-                Pague apenas por resultados reais com nosso modelo de Custo Por Lead (CPL).
+                Pague apenas por resultado real: só quando um cliente novo vai até a sua loja e usa o cupom.
               </p>
             </div>
             
