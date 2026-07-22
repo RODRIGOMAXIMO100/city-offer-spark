@@ -47,8 +47,11 @@ var whoami_default = defineTool({
     const payload = {
       user_id: ctx.getUserId(),
       email: ctx.getUserEmail?.() ?? null,
+      profile_id: profile?.id ?? null,
+      company_id: profile?.id ?? null,
       profile,
-      roles: (roles ?? []).map((r) => r.role)
+      roles: (roles ?? []).map((r) => r.role),
+      hint: "profile_id / company_id \xE9 o UUID usado em create_offer, adjust_user_balance, etc. Admins podem operar em qualquer company_id (descubra com find_company/list_companies)."
     };
     return {
       content: [{ type: "text", text: JSON.stringify(payload, null, 2) }],
