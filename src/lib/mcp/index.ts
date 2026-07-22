@@ -14,6 +14,7 @@ import createOffer from "./tools/create-offer";
 import updateOffer from "./tools/update-offer";
 import deleteOffer from "./tools/delete-offer";
 import listCompanies from "./tools/list-companies";
+import findCompany from "./tools/find-company";
 import listAffiliates from "./tools/list-affiliates";
 import adjustUserBalance from "./tools/adjust-user-balance";
 import setUserBanned from "./tools/set-user-banned";
@@ -33,7 +34,7 @@ export default defineMcp({
   title: "Clilin",
   version: "0.2.0",
   instructions:
-    "Ferramentas do Clilin (plataforma de ofertas locais). Use `whoami` primeiro para descobrir o papel do usuário. Todas as ações respeitam RLS: admins têm alcance total, empresas mexem só nas próprias ofertas/leads/cupons, divulgadores veem seu saldo. Operações destrutivas (ban, delete, ajuste de saldo, aprovar saque) devem ser confirmadas com o usuário antes de executar.",
+    "Ferramentas do Clilin (plataforma de ofertas locais). Comece SEMPRE com `whoami` para descobrir o papel do usuário logado (ADMIN/COMPANY/AFFILIATE/CLIENT). IDs importantes: `profiles.id` é o `company_id`/`affiliate_id` usado em quase tudo — use `find_company` (busca por nome/CNPJ) ou `list_companies` para descobrir o UUID de uma empresa. ADMIN tem acesso irrestrito: pode criar/editar/deletar ofertas de QUALQUER empresa passando `company_id` em create_offer, ajustar saldos, banir usuários, aprovar saques, ativar cidades etc. Empresas (COMPANY) só mexem nas próprias ofertas (omitem company_id). Divulgadores (AFFILIATE) veem seu saldo. Todas as ações respeitam RLS. Operações destrutivas (ban, delete, ajuste de saldo, aprovar saque, publicar post) devem ser confirmadas antes de executar.",
   auth: auth.oauth.issuer({
     issuer: `https://${projectRef}.supabase.co/auth/v1`,
     acceptedAudiences: "authenticated",
@@ -48,6 +49,7 @@ export default defineMcp({
     getMyEarnings,
     adminOverview,
     listCompanies,
+    findCompany,
     listAffiliates,
     listWithdrawals,
     listCities,

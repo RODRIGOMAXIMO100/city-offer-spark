@@ -82,9 +82,13 @@ var list_offers_default = defineTool2({
     if (error) {
       return { content: [{ type: "text", text: error.message }], isError: true };
     }
+    const rows = data ?? [];
+    const lines = rows.map((o) => `- offer_id=${o.id} | company_id=${o.company_id} | ${o.title} | ${o.city} | R$${o.price_new} (era R$${o.price_old}) | cliques=${o.clicks_count}`);
+    const text = `${rows.length} ofertas ativas.
+${lines.join("\n")}`;
     return {
-      content: [{ type: "text", text: JSON.stringify(data, null, 2) }],
-      structuredContent: { offers: data ?? [] }
+      content: [{ type: "text", text }],
+      structuredContent: { offers: rows }
     };
   }
 });
@@ -406,17 +410,44 @@ ${lines.join("\n")}`;
   }
 });
 
-// src/lib/mcp/tools/list-affiliates.ts
+// src/lib/mcp/tools/find-company.ts
 import { defineTool as defineTool13 } from "npm:@lovable.dev/mcp-js@0.24.0";
 import { z as z10 } from "npm:zod@^3.25.76";
-var list_affiliates_default = defineTool13({
+var find_company_default = defineTool13({
+  name: "find_company",
+  title: "Encontrar empresa (id)",
+  description: "Busca uma empresa por nome, raz\xE3o social, CNPJ ou email e retorna o UUID (company_id) para usar em create_offer/update_offer/adjust_user_balance. Admin v\xEA todas.",
+  inputSchema: {
+    query: z10.string().min(2).describe("Nome, raz\xE3o social, CNPJ ou email (parcial)."),
+    limit: z10.number().int().min(1).max(50).default(10)
+  },
+  annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
+  handler: async ({ query, limit }, ctx) => {
+    if (!ctx.isAuthenticated()) return { content: [{ type: "text", text: "N\xE3o autenticado" }], isError: true };
+    const sb = supabaseForUser(ctx);
+    const companyUserIds = (await sb.from("user_roles").select("user_id").eq("role", "COMPANY")).data?.map((r) => r.user_id) ?? [];
+    const q = query.replace(/[%,]/g, "");
+    const { data, error } = await sb.from("profiles").select("id, user_id, name, razao_social, cnpj, email, city, balance, banned, balance_frozen").in("user_id", companyUserIds).or(`name.ilike.%${q}%,razao_social.ilike.%${q}%,cnpj.ilike.%${q}%,email.ilike.%${q}%`).limit(limit);
+    if (error) return { content: [{ type: "text", text: error.message }], isError: true };
+    const rows = data ?? [];
+    const lines = rows.map((c) => `- company_id=${c.id} | user_id=${c.user_id} | ${c.name} | ${c.city ?? "-"} | CNPJ=${c.cnpj ?? "-"}`);
+    const text = rows.length === 0 ? `Nenhuma empresa encontrada para "${query}".` : `${rows.length} empresa(s) para "${query}":
+${lines.join("\n")}`;
+    return { content: [{ type: "text", text }], structuredContent: { matches: rows } };
+  }
+});
+
+// src/lib/mcp/tools/list-affiliates.ts
+import { defineTool as defineTool14 } from "npm:@lovable.dev/mcp-js@0.24.0";
+import { z as z11 } from "npm:zod@^3.25.76";
+var list_affiliates_default = defineTool14({
   name: "list_affiliates",
   title: "Listar divulgadores",
   description: "Lista divulgadores. S\xF3 admin consegue ver todos.",
   inputSchema: {
-    city: z10.string().optional(),
-    search: z10.string().optional(),
-    limit: z10.number().int().min(1).max(200).default(50)
+    city: z11.string().optional(),
+    search: z11.string().optional(),
+    limit: z11.number().int().min(1).max(200).default(50)
   },
   annotations: { readOnlyHint: true, openWorldHint: false },
   handler: async ({ city, search, limit }, ctx) => {
@@ -433,16 +464,16 @@ var list_affiliates_default = defineTool13({
 });
 
 // src/lib/mcp/tools/adjust-user-balance.ts
-import { defineTool as defineTool14 } from "npm:@lovable.dev/mcp-js@0.24.0";
-import { z as z11 } from "npm:zod@^3.25.76";
-var adjust_user_balance_default = defineTool14({
+import { defineTool as defineTool15 } from "npm:@lovable.dev/mcp-js@0.24.0";
+import { z as z12 } from "npm:zod@^3.25.76";
+var adjust_user_balance_default = defineTool15({
   name: "adjust_user_balance",
   title: "Ajustar saldo de usu\xE1rio",
   description: "Admin: adiciona (positivo) ou remove (negativo) cr\xE9ditos do saldo em CENTAVOS e registra transa\xE7\xE3o. Ex: 10000 = R$ 100,00.",
   inputSchema: {
-    profile_id: z11.string().uuid(),
-    amount_cents: z11.number().int().describe("Valor em centavos. Positivo credita, negativo debita."),
-    reason: z11.string().min(3)
+    profile_id: z12.string().uuid(),
+    amount_cents: z12.number().int().describe("Valor em centavos. Positivo credita, negativo debita."),
+    reason: z12.string().min(3)
   },
   annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: false },
   handler: async ({ profile_id, amount_cents, reason }, ctx) => {
@@ -465,16 +496,16 @@ var adjust_user_balance_default = defineTool14({
 });
 
 // src/lib/mcp/tools/set-user-banned.ts
-import { defineTool as defineTool15 } from "npm:@lovable.dev/mcp-js@0.24.0";
-import { z as z12 } from "npm:zod@^3.25.76";
-var set_user_banned_default = defineTool15({
+import { defineTool as defineTool16 } from "npm:@lovable.dev/mcp-js@0.24.0";
+import { z as z13 } from "npm:zod@^3.25.76";
+var set_user_banned_default = defineTool16({
   name: "set_user_banned",
   title: "Banir ou desbanir usu\xE1rio",
   description: "Admin: bane (banned=true) ou desbane (banned=false) um usu\xE1rio.",
   inputSchema: {
-    profile_id: z12.string().uuid(),
-    banned: z12.boolean(),
-    reason: z12.string().optional()
+    profile_id: z13.string().uuid(),
+    banned: z13.boolean(),
+    reason: z13.string().optional()
   },
   annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: true, openWorldHint: false },
   handler: async ({ profile_id, banned, reason }, ctx) => {
@@ -496,13 +527,13 @@ var set_user_banned_default = defineTool15({
 });
 
 // src/lib/mcp/tools/set-balance-frozen.ts
-import { defineTool as defineTool16 } from "npm:@lovable.dev/mcp-js@0.24.0";
-import { z as z13 } from "npm:zod@^3.25.76";
-var set_balance_frozen_default = defineTool16({
+import { defineTool as defineTool17 } from "npm:@lovable.dev/mcp-js@0.24.0";
+import { z as z14 } from "npm:zod@^3.25.76";
+var set_balance_frozen_default = defineTool17({
   name: "set_balance_frozen",
   title: "Congelar/descongelar saldo",
   description: "Admin: congela ou descongela o saldo de um usu\xE1rio (bloqueia saques).",
-  inputSchema: { profile_id: z13.string().uuid(), frozen: z13.boolean() },
+  inputSchema: { profile_id: z14.string().uuid(), frozen: z14.boolean() },
   annotations: { readOnlyHint: false, idempotentHint: true, openWorldHint: false },
   handler: async ({ profile_id, frozen }, ctx) => {
     if (!ctx.isAuthenticated()) return { content: [{ type: "text", text: "N\xE3o autenticado" }], isError: true };
@@ -515,15 +546,15 @@ var set_balance_frozen_default = defineTool16({
 });
 
 // src/lib/mcp/tools/list-withdrawals.ts
-import { defineTool as defineTool17 } from "npm:@lovable.dev/mcp-js@0.24.0";
-import { z as z14 } from "npm:zod@^3.25.76";
-var list_withdrawals_default = defineTool17({
+import { defineTool as defineTool18 } from "npm:@lovable.dev/mcp-js@0.24.0";
+import { z as z15 } from "npm:zod@^3.25.76";
+var list_withdrawals_default = defineTool18({
   name: "list_withdrawals",
   title: "Listar solicita\xE7\xF5es de saque",
   description: "Lista saques. Filtre por status (PENDING, APPROVED, REJECTED, PAID).",
   inputSchema: {
-    status: z14.string().optional(),
-    limit: z14.number().int().min(1).max(200).default(50)
+    status: z15.string().optional(),
+    limit: z15.number().int().min(1).max(200).default(50)
   },
   annotations: { readOnlyHint: true, openWorldHint: false },
   handler: async ({ status, limit }, ctx) => {
@@ -538,16 +569,16 @@ var list_withdrawals_default = defineTool17({
 });
 
 // src/lib/mcp/tools/set-withdrawal-status.ts
-import { defineTool as defineTool18 } from "npm:@lovable.dev/mcp-js@0.24.0";
-import { z as z15 } from "npm:zod@^3.25.76";
-var set_withdrawal_status_default = defineTool18({
+import { defineTool as defineTool19 } from "npm:@lovable.dev/mcp-js@0.24.0";
+import { z as z16 } from "npm:zod@^3.25.76";
+var set_withdrawal_status_default = defineTool19({
   name: "set_withdrawal_status",
   title: "Aprovar/rejeitar saque",
   description: "Admin: muda status de uma solicita\xE7\xE3o de saque (APPROVED, REJECTED, PAID).",
   inputSchema: {
-    withdrawal_id: z15.string().uuid(),
-    status: z15.enum(["APPROVED", "REJECTED", "PAID"]),
-    note: z15.string().optional()
+    withdrawal_id: z16.string().uuid(),
+    status: z16.enum(["APPROVED", "REJECTED", "PAID"]),
+    note: z16.string().optional()
   },
   annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: false },
   handler: async ({ withdrawal_id, status, note }, ctx) => {
@@ -564,15 +595,15 @@ var set_withdrawal_status_default = defineTool18({
 });
 
 // src/lib/mcp/tools/list-cities.ts
-import { defineTool as defineTool19 } from "npm:@lovable.dev/mcp-js@0.24.0";
-import { z as z16 } from "npm:zod@^3.25.76";
-var list_cities_default = defineTool19({
+import { defineTool as defineTool20 } from "npm:@lovable.dev/mcp-js@0.24.0";
+import { z as z17 } from "npm:zod@^3.25.76";
+var list_cities_default = defineTool20({
   name: "list_cities",
   title: "Listar cidades dispon\xEDveis",
   description: "Lista cidades cadastradas (ativas e inativas). Filtro opcional por estado.",
   inputSchema: {
-    state_code: z16.string().length(2).optional(),
-    active_only: z16.boolean().default(false)
+    state_code: z17.string().length(2).optional(),
+    active_only: z17.boolean().default(false)
   },
   annotations: { readOnlyHint: true, openWorldHint: false },
   handler: async ({ state_code, active_only }, ctx) => {
@@ -588,13 +619,13 @@ var list_cities_default = defineTool19({
 });
 
 // src/lib/mcp/tools/set-city-active.ts
-import { defineTool as defineTool20 } from "npm:@lovable.dev/mcp-js@0.24.0";
-import { z as z17 } from "npm:zod@^3.25.76";
-var set_city_active_default = defineTool20({
+import { defineTool as defineTool21 } from "npm:@lovable.dev/mcp-js@0.24.0";
+import { z as z18 } from "npm:zod@^3.25.76";
+var set_city_active_default = defineTool21({
   name: "set_city_active",
   title: "Ativar/desativar cidade",
   description: "Admin: ativa ou desativa uma cidade para cadastros.",
-  inputSchema: { city_id: z17.string().uuid(), active: z17.boolean() },
+  inputSchema: { city_id: z18.string().uuid(), active: z18.boolean() },
   annotations: { readOnlyHint: false, idempotentHint: true, openWorldHint: false },
   handler: async ({ city_id, active }, ctx) => {
     if (!ctx.isAuthenticated()) return { content: [{ type: "text", text: "N\xE3o autenticado" }], isError: true };
@@ -609,15 +640,15 @@ var set_city_active_default = defineTool20({
 });
 
 // src/lib/mcp/tools/list-blog-posts.ts
-import { defineTool as defineTool21 } from "npm:@lovable.dev/mcp-js@0.24.0";
-import { z as z18 } from "npm:zod@^3.25.76";
-var list_blog_posts_default = defineTool21({
+import { defineTool as defineTool22 } from "npm:@lovable.dev/mcp-js@0.24.0";
+import { z as z19 } from "npm:zod@^3.25.76";
+var list_blog_posts_default = defineTool22({
   name: "list_blog_posts",
   title: "Listar posts do blog",
   description: "Lista posts do blog. Filtre por status (draft, published, scheduled).",
   inputSchema: {
-    status: z18.string().optional(),
-    limit: z18.number().int().min(1).max(200).default(50)
+    status: z19.string().optional(),
+    limit: z19.number().int().min(1).max(200).default(50)
   },
   annotations: { readOnlyHint: true, openWorldHint: false },
   handler: async ({ status, limit }, ctx) => {
@@ -632,15 +663,15 @@ var list_blog_posts_default = defineTool21({
 });
 
 // src/lib/mcp/tools/publish-blog-post.ts
-import { defineTool as defineTool22 } from "npm:@lovable.dev/mcp-js@0.24.0";
-import { z as z19 } from "npm:zod@^3.25.76";
-var publish_blog_post_default = defineTool22({
+import { defineTool as defineTool23 } from "npm:@lovable.dev/mcp-js@0.24.0";
+import { z as z20 } from "npm:zod@^3.25.76";
+var publish_blog_post_default = defineTool23({
   name: "publish_blog_post",
   title: "Publicar ou despublicar post",
   description: "Muda status de um post do blog para published/draft.",
   inputSchema: {
-    post_id: z19.string().uuid(),
-    status: z19.enum(["published", "draft"])
+    post_id: z20.string().uuid(),
+    status: z20.enum(["published", "draft"])
   },
   annotations: { readOnlyHint: false, idempotentHint: true, openWorldHint: false },
   handler: async ({ post_id, status }, ctx) => {
@@ -656,15 +687,15 @@ var publish_blog_post_default = defineTool22({
 });
 
 // src/lib/mcp/tools/add-merchant-whatsapp.ts
-import { defineTool as defineTool23 } from "npm:@lovable.dev/mcp-js@0.24.0";
-import { z as z20 } from "npm:zod@^3.25.76";
-var add_merchant_whatsapp_default = defineTool23({
+import { defineTool as defineTool24 } from "npm:@lovable.dev/mcp-js@0.24.0";
+import { z as z21 } from "npm:zod@^3.25.76";
+var add_merchant_whatsapp_default = defineTool24({
   name: "add_merchant_whatsapp",
   title: "Adicionar WhatsApp de resgate",
   description: "Adiciona um n\xFAmero de WhatsApp autorizado a resgatar cupons para a empresa logada.",
   inputSchema: {
-    phone: z20.string().regex(/^\+?\d{10,15}$/, "Telefone em formato internacional, s\xF3 d\xEDgitos (ex: 5511999998888)."),
-    label: z20.string().optional().describe("Ex: Caixa 1, Balc\xE3o")
+    phone: z21.string().regex(/^\+?\d{10,15}$/, "Telefone em formato internacional, s\xF3 d\xEDgitos (ex: 5511999998888)."),
+    label: z21.string().optional().describe("Ex: Caixa 1, Balc\xE3o")
   },
   annotations: { readOnlyHint: false, idempotentHint: false, openWorldHint: false },
   handler: async ({ phone, label }, ctx) => {
@@ -690,7 +721,7 @@ var mcp_default = defineMcp({
   name: "clilin-mcp",
   title: "Clilin",
   version: "0.2.0",
-  instructions: "Ferramentas do Clilin (plataforma de ofertas locais). Use `whoami` primeiro para descobrir o papel do usu\xE1rio. Todas as a\xE7\xF5es respeitam RLS: admins t\xEAm alcance total, empresas mexem s\xF3 nas pr\xF3prias ofertas/leads/cupons, divulgadores veem seu saldo. Opera\xE7\xF5es destrutivas (ban, delete, ajuste de saldo, aprovar saque) devem ser confirmadas com o usu\xE1rio antes de executar.",
+  instructions: "Ferramentas do Clilin (plataforma de ofertas locais). Comece SEMPRE com `whoami` para descobrir o papel do usu\xE1rio logado (ADMIN/COMPANY/AFFILIATE/CLIENT). IDs importantes: `profiles.id` \xE9 o `company_id`/`affiliate_id` usado em quase tudo \u2014 use `find_company` (busca por nome/CNPJ) ou `list_companies` para descobrir o UUID de uma empresa. ADMIN tem acesso irrestrito: pode criar/editar/deletar ofertas de QUALQUER empresa passando `company_id` em create_offer, ajustar saldos, banir usu\xE1rios, aprovar saques, ativar cidades etc. Empresas (COMPANY) s\xF3 mexem nas pr\xF3prias ofertas (omitem company_id). Divulgadores (AFFILIATE) veem seu saldo. Todas as a\xE7\xF5es respeitam RLS. Opera\xE7\xF5es destrutivas (ban, delete, ajuste de saldo, aprovar saque, publicar post) devem ser confirmadas antes de executar.",
   auth: auth.oauth.issuer({
     issuer: `https://${projectRef}.supabase.co/auth/v1`,
     acceptedAudiences: "authenticated"
@@ -705,6 +736,7 @@ var mcp_default = defineMcp({
     get_my_earnings_default,
     admin_overview_default,
     list_companies_default,
+    find_company_default,
     list_affiliates_default,
     list_withdrawals_default,
     list_cities_default,

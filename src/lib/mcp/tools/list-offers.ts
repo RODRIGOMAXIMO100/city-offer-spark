@@ -31,9 +31,12 @@ export default defineTool({
     if (error) {
       return { content: [{ type: "text", text: error.message }], isError: true };
     }
+    const rows = data ?? [];
+    const lines = rows.map((o: any) => `- offer_id=${o.id} | company_id=${o.company_id} | ${o.title} | ${o.city} | R$${o.price_new} (era R$${o.price_old}) | cliques=${o.clicks_count}`);
+    const text = `${rows.length} ofertas ativas.\n${lines.join("\n")}`;
     return {
-      content: [{ type: "text", text: JSON.stringify(data, null, 2) }],
-      structuredContent: { offers: data ?? [] },
+      content: [{ type: "text", text }],
+      structuredContent: { offers: rows },
     };
   },
 });

@@ -206,6 +206,38 @@
         "outputSchema": null
       },
       {
+        "name": "find_company",
+        "title": "Encontrar empresa (id)",
+        "description": "Busca uma empresa por nome, razão social, CNPJ ou email e retorna o UUID (company_id) para usar em create_offer/update_offer/adjust_user_balance. Admin vê todas.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "minLength": 2,
+              "description": "Nome, razão social, CNPJ ou email (parcial)."
+            },
+            "limit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50,
+              "default": 10
+            }
+          },
+          "required": [
+            "query"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
         "name": "list_affiliates",
         "title": "Listar divulgadores",
         "description": "Lista divulgadores. Só admin consegue ver todos.",
