@@ -292,7 +292,7 @@ var create_offer_default = defineTool9({
     link_type: z6.enum(["WHATSAPP", "WEBSITE", "MENU"]).default("WHATSAPP"),
     tags: z6.array(z6.string()).optional(),
     images: z6.array(z6.string().url()).optional(),
-    company_id: z6.string().uuid().optional().describe("Somente admin: cria para outra empresa."),
+    company_id: z6.string().uuid().optional().describe("UUID da empresa dona da oferta (tabela profiles.id). Obrigat\xF3rio apenas para admins criando em nome de terceiros; empresas comuns devem omitir."),
     bounty: z6.number().positive().optional().describe("Recompensa por resgate: quanto a empresa paga quando um cliente novo resgata o cupom na loja, em reais. Minimo R$5,00. Padrao R$8,00.")
   },
   annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: false },

@@ -405,7 +405,7 @@
             "company_id": {
               "type": "string",
               "format": "uuid",
-              "description": "Somente admin: cria para outra empresa."
+              "description": "UUID da empresa dona da oferta (tabela profiles.id). Obrigatório apenas para admins criando em nome de terceiros; empresas comuns devem omitir."
             },
             "bounty": {
               "type": "number",
