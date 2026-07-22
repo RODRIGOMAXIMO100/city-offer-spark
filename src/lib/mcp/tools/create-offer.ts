@@ -6,7 +6,7 @@ export default defineTool({
   name: "create_offer",
   title: "Criar oferta",
   description:
-    "Cria uma nova oferta para a empresa logada (ou para uma empresa específica se admin). Preços em reais (ex: 49.90).",
+    "Cria uma nova oferta. Empresa (COMPANY) cria para si própria — não passe company_id. ADMIN pode criar em nome de QUALQUER empresa passando company_id (use `list_companies` ou `find_company` para descobrir o id da empresa desejada). Preços em reais (ex: 49.90).",
   inputSchema: {
     title: z.string().min(3).max(120),
     description: z.string().optional(),
@@ -17,7 +17,7 @@ export default defineTool({
     link_type: z.enum(["WHATSAPP", "WEBSITE", "MENU"]).default("WHATSAPP"),
     tags: z.array(z.string()).optional(),
     images: z.array(z.string().url()).optional(),
-    company_id: z.string().uuid().optional().describe("Somente admin: cria para outra empresa."),
+    company_id: z.string().uuid().optional().describe("UUID da empresa dona da oferta (tabela profiles.id). Obrigatório apenas para admins criando em nome de terceiros; empresas comuns devem omitir."),
     bounty: z.number().positive().optional().describe("Recompensa por resgate: quanto a empresa paga quando um cliente novo resgata o cupom na loja, em reais. Minimo R$5,00. Padrao R$8,00."),
   },
   annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: false },
