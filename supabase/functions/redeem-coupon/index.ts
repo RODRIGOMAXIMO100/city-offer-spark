@@ -1,6 +1,7 @@
-// redeem-coupon v2 — mesma funcao do painel (deployada) + FINANCEIRO:
-// agora o resgate pelo painel tambem debita a empresa (REDEMPTION_COST)
-// e comissiona o divulgador (REDEMPTION_EARNING), igual ao wa-webhook.
+// redeem-coupon v3 — resgate pelo painel.
+// FASE 2: o financeiro saiu daqui e virou o RPC settle_redemption (atomico +
+// idempotente), compartilhado com o wa-webhook. Ele respeita o billing_mode
+// da empresa: PRE debita na hora com desconto pre-pago; POS acumula em fatura.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
@@ -83,55 +84,19 @@ Deno.serve(async (req) => {
       return json({ error: "Não foi possível resgatar. Tente novamente." }, 409);
     }
 
-    // ---- FINANCEIRO — TAXA PERCENTUAL (FASE 1) ----
-    // custo = taxa CONGELADA no cupom quando o cliente pegou: max(piso, % do preco).
-    // Fallback (cupons antigos, sem fee_cents): recalcula pelo preco atual da oferta.
-    const { data: pricing } = await admin
-      .from("pricing_config")
-      .select("redemption_affiliate_share")
-      .limit(1).maybeSingle();
-    let cost = Number((updated as any).fee_cents ?? 0);
-    if (!Number.isFinite(cost) || cost <= 0) {
-      const { data: feeRpc } = await admin
-        .rpc("calc_redemption_fee", { p_offer_id: updated.offer_id });
-      cost = Number(feeRpc ?? 300);
+    // ---- FINANCEIRO — FASE 2: liquidacao centralizada no banco ----
+    // settle_redemption e atomico e idempotente. Ele decide pelo billing_mode
+    // da empresa: PRE debita com desconto pre-pago e libera a comissao na hora;
+    // POS nao debita e deixa custo + comissao PENDING, presos ao coupon_id,
+    // ate um ADMIN dar baixa na fatura (mark_invoice_paid).
+    const { data: settle, error: sErr } = await admin
+      .rpc("settle_redemption", { p_coupon_id: updated.id });
+    if (sErr) {
+      // o cupom JA foi resgatado (cliente atendido). Nao derruba a resposta:
+      // loga alto pro financeiro reconciliar depois.
+      console.error("settle_redemption FALHOU", { code: updated.code, coupon_id: updated.id, err: sErr });
     }
-    const share = Number(pricing?.redemption_affiliate_share ?? 0.5);
-
-    // debita a empresa (saldo pode negativar — cliente esta no balcao)
-    const { data: companyProfile } = await admin
-      .from("profiles").select("id, balance").eq("id", coupon.company_id).maybeSingle();
-    if (companyProfile) {
-      await admin.from("profiles")
-        .update({ balance: (companyProfile.balance ?? 0) - cost }).eq("id", companyProfile.id);
-      await admin.from("transactions").insert({
-        user_id: companyProfile.id, amount: -cost, type: "REDEMPTION_COST",
-        offer_id: updated.offer_id, description: `Resgate cupom ${updated.code}`,
-      });
-    }
-
-    // comissiona o divulgador (se atribuido; respeita banned/balance_frozen e nivel)
-    if (updated.affiliate_id) {
-      const { data: aff } = await admin
-        .from("profiles").select("id, balance, banned, balance_frozen")
-        .eq("id", updated.affiliate_id).maybeSingle();
-      if (aff && !aff.banned && !aff.balance_frozen) {
-        let payout = Math.round(cost * share);
-        const { data: mult } = await admin
-          .rpc("get_commission_multiplier", { affiliate_profile_id: aff.id });
-        if (typeof mult === "number" && mult > 0) payout = Math.round(payout * mult);
-        await admin.from("profiles")
-          .update({ balance: (aff.balance ?? 0) + payout }).eq("id", aff.id);
-        await admin.from("transactions").insert({
-          user_id: aff.id, amount: payout, type: "REDEMPTION_EARNING",
-          offer_id: updated.offer_id, description: `Comissão resgate ${updated.code}`,
-        });
-        // PIVO: progressao de nivel conta RESGATES (nao mais cliques)
-        await admin.rpc("update_affiliate_stats", {
-          affiliate_profile_id: aff.id, earnings: payout,
-        });
-      }
-    }
+    const billing = (settle && typeof settle === "object") ? settle as Record<string, unknown> : null;
 
     const { data: offer } = await admin
       .from("offers").select("title").eq("id", updated.offer_id).maybeSingle();
@@ -145,6 +110,13 @@ Deno.serve(async (req) => {
         redeemed_at: updated.redeemed_at,
         offer_title: offer?.title ?? null,
       },
+      // como esse resgate foi cobrado (o painel usa pra dizer
+      // "debitado do saldo" x "vai na sua proxima fatura")
+      billing: billing ? {
+        mode: billing.billing_mode ?? null,
+        charged_cents: billing.charged_cents ?? null,
+        gross_cents: billing.gross_cents ?? null,
+      } : null,
     });
   } catch (e) {
     console.error(e);
