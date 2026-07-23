@@ -41,6 +41,13 @@ interface CreateOfferModalProps {
   editOffer?: Offer | null;
 }
 
+const COUPON_VALIDITIES = [
+  { hours: 24, label: '24 horas' },
+  { hours: 72, label: '3 dias' },
+  { hours: 168, label: '7 dias' },
+  { hours: 720, label: '30 dias' },
+];
+
 const LINK_TYPES: { value: LinkType; label: string; icon: React.ReactNode; color: string }[] = [
   { value: 'WHATSAPP', label: 'WhatsApp', icon: <MessageCircle className="h-4 w-4" />, color: 'bg-green-500' },
   { value: 'SITE', label: 'Site/Cardápio', icon: <Globe className="h-4 w-4" />, color: 'bg-blue-500' },
@@ -124,7 +131,7 @@ export default function CreateOfferModal({
     link_destination: '',
     link_type: 'WHATSAPP' as LinkType,
     expires_at: addDays(new Date(), 7),
-    redemption_cost: '8',
+    coupon_valid_hours: '168',
   });
   const [newImages, setNewImages] = useState<File[]>([]);
   const [existingImages, setExistingImages] = useState<string[]>([]);
@@ -145,7 +152,7 @@ export default function CreateOfferModal({
         link_destination: linkType === 'WHATSAPP' ? '' : editOffer.link_destination,
         link_type: linkType,
         expires_at: new Date(editOffer.expires_at),
-        redemption_cost: ((editOffer as any).redemption_cost ? ((editOffer as any).redemption_cost / 100) : 8).toString(),
+        coupon_valid_hours: ((editOffer as any).coupon_valid_hours ?? 168).toString(),
       });
       
       // Extract phone number from wa.me link if WhatsApp
@@ -168,7 +175,7 @@ export default function CreateOfferModal({
         link_destination: '',
         link_type: 'WHATSAPP',
         expires_at: addDays(new Date(), 7),
-        redemption_cost: '8',
+        coupon_valid_hours: '168',
       });
       setPhoneNumber('');
       setExistingImages([]);
@@ -244,7 +251,7 @@ export default function CreateOfferModal({
         link_destination: finalLinkDestination,
         link_type: formData.link_type,
         expires_at: formData.expires_at.toISOString(),
-        redemption_cost: Math.max(500, Math.round(parseFloat(String(formData.redemption_cost).replace(',', '.') || '8') * 100)),
+        coupon_valid_hours: parseInt(formData.coupon_valid_hours, 10) || 168,
         newImages: newImages,
         existingImages: existingImages,
       });
@@ -258,7 +265,7 @@ export default function CreateOfferModal({
         link_type: formData.link_type,
         city: profile.city,
         expires_at: formData.expires_at.toISOString(),
-        redemption_cost: Math.max(500, Math.round(parseFloat(String(formData.redemption_cost).replace(',', '.') || '8') * 100)),
+        coupon_valid_hours: parseInt(formData.coupon_valid_hours, 10) || 168,
         images: newImages,
       });
     }
@@ -276,6 +283,9 @@ export default function CreateOfferModal({
   const maxDate = addDays(new Date(), 30);
 
   // Calculate discount percentage
+  // FASE 1: taxa = max(R$3 ; 15% do preco promocional)
+  const estimatedFeeCents = Math.max(300, Math.round(parsePrice(formData.price_new) * 100 * 0.15));
+
   const discount = formData.price_old && formData.price_new
     ? Math.round((1 - parsePrice(formData.price_new) / parsePrice(formData.price_old)) * 100)
     : 0;
@@ -540,28 +550,47 @@ export default function CreateOfferModal({
         </div>
       )}
 
-      {/* Recompensa por resgate — empresa so paga quando o cliente vai a loja */}
+      {/* FASE 1: taxa calculada automaticamente (15% do preco, minimo R$3) */}
       <div className="space-y-1.5">
-        <Label htmlFor="redemption_cost" className="text-sm flex items-center gap-1.5">
+        <Label className="text-sm flex items-center gap-1.5">
           <Star className="h-4 w-4 text-secondary" />
-          Recompensa por cliente na loja *
+          Quanto você paga por cliente na loja
         </Label>
-        <div className="relative">
-          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">R$</span>
-          <Input
-            id="redemption_cost"
-            type="text"
-            inputMode="decimal"
-            pattern="[0-9]*[.,]?[0-9]*"
-            placeholder="8.00"
-            value={formData.redemption_cost}
-            onChange={(e) => setFormData({ ...formData, redemption_cost: formatPriceInput(e.target.value) })}
-            required
-            className="text-base pl-9"
-          />
+        <div className="p-3 rounded-lg bg-secondary/5 border border-secondary/20">
+          <div className="flex items-baseline justify-between">
+            <span className="text-sm text-muted-foreground">Taxa por resgate</span>
+            <span className="text-2xl font-bold text-secondary">
+              R$ {(estimatedFeeCents / 100).toFixed(2).replace('.', ',')}
+            </span>
+          </div>
+          <p className="text-[11px] text-muted-foreground mt-1.5">
+            15% do preço promocional (mínimo R$ 3,00). Você paga <strong>só quando</strong> o cliente vai à loja e usa o cupom — ninguém apareceu, você não paga nada.
+          </p>
+        </div>
+      </div>
+
+      {/* FASE 1: validade do cupom definida pela empresa */}
+      <div className="space-y-1.5">
+        <Label className="text-sm">Cupom válido por *</Label>
+        <div className="grid grid-cols-4 gap-2">
+          {COUPON_VALIDITIES.map((v) => (
+            <button
+              key={v.hours}
+              type="button"
+              onClick={() => setFormData({ ...formData, coupon_valid_hours: String(v.hours) })}
+              className={cn(
+                "p-2 rounded-lg border-2 transition-all text-xs font-medium",
+                formData.coupon_valid_hours === String(v.hours)
+                  ? 'border-primary bg-primary text-white'
+                  : 'border-border hover:border-primary/50'
+              )}
+            >
+              {v.label}
+            </button>
+          ))}
         </div>
         <p className="text-[11px] text-muted-foreground">
-          É quanto você paga <strong>só quando</strong> um cliente novo aparece na loja e usa o cupom. Mínimo R$ 5,00. Ninguém apareceu, você não paga nada.
+          Prazo que o cliente tem pra usar o cupom na loja depois de pegar. Prazo curto cria urgência.
         </p>
       </div>
 

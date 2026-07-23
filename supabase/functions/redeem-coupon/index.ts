@@ -76,24 +76,27 @@ Deno.serve(async (req) => {
       })
       .eq("id", coupon.id)
       .eq("status", "ISSUED")
-      .select("id, code, customer_name, customer_phone, redeemed_at, offer_id, affiliate_id")
+      .select("id, code, customer_name, customer_phone, redeemed_at, offer_id, affiliate_id, fee_cents")
       .maybeSingle();
 
     if (uErr || !updated) {
       return json({ error: "Não foi possível resgatar. Tente novamente." }, 409);
     }
 
-    // ---- FINANCEIRO — PIVO PAY-PER-RESGATE ----
-    // custo = BOUNTY da oferta (cada empresa define quanto paga por cliente convertido);
-    // fallback = valor global do pricing_config.
+    // ---- FINANCEIRO — TAXA PERCENTUAL (FASE 1) ----
+    // custo = taxa CONGELADA no cupom quando o cliente pegou: max(piso, % do preco).
+    // Fallback (cupons antigos, sem fee_cents): recalcula pelo preco atual da oferta.
     const { data: pricing } = await admin
       .from("pricing_config")
-      .select("redemption_cost, redemption_affiliate_share")
+      .select("redemption_affiliate_share")
       .limit(1).maybeSingle();
-    const { data: offerBounty } = await admin
-      .from("offers").select("redemption_cost").eq("id", updated.offer_id).maybeSingle();
-    const cost = Number(offerBounty?.redemption_cost ?? pricing?.redemption_cost ?? 800);
-    const share = Number(pricing?.redemption_affiliate_share ?? 0.7);
+    let cost = Number((updated as any).fee_cents ?? 0);
+    if (!Number.isFinite(cost) || cost <= 0) {
+      const { data: feeRpc } = await admin
+        .rpc("calc_redemption_fee", { p_offer_id: updated.offer_id });
+      cost = Number(feeRpc ?? 300);
+    }
+    const share = Number(pricing?.redemption_affiliate_share ?? 0.5);
 
     // debita a empresa (saldo pode negativar — cliente esta no balcao)
     const { data: companyProfile } = await admin

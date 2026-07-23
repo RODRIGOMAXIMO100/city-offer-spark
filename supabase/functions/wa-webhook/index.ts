@@ -141,7 +141,7 @@ Deno.serve(async (req) => {
         })
         .eq("id", couponId).eq("company_id", merchant.profile_id).eq("status", "ISSUED")
         .gt("expires_at", new Date().toISOString())
-        .select("id, code, offer_id, affiliate_id, customer_phone, offers(title)")
+        .select("id, code, offer_id, affiliate_id, customer_phone, fee_cents, offers(title)")
         .maybeSingle();
 
       if (!redeemed) {
@@ -153,12 +153,16 @@ Deno.serve(async (req) => {
       // custo = BOUNTY da oferta; fallback = global do pricing_config.
       const { data: pricing } = await admin
         .from("pricing_config")
-        .select("redemption_cost, redemption_affiliate_share")
+        .select("redemption_affiliate_share")
         .limit(1).maybeSingle();
-      const { data: offerBounty } = await admin
-        .from("offers").select("redemption_cost").eq("id", redeemed.offer_id).maybeSingle();
-      const cost = Number(offerBounty?.redemption_cost ?? pricing?.redemption_cost ?? 800);
-      const share = Number(pricing?.redemption_affiliate_share ?? 0.7);
+      // FASE 1: taxa congelada no cupom; fallback recalcula pela oferta.
+      let cost = Number((redeemed as any).fee_cents ?? 0);
+      if (!Number.isFinite(cost) || cost <= 0) {
+        const { data: feeRpc } = await admin
+          .rpc("calc_redemption_fee", { p_offer_id: redeemed.offer_id });
+        cost = Number(feeRpc ?? 300);
+      }
+      const share = Number(pricing?.redemption_affiliate_share ?? 0.5);
 
       const { data: companyProfile } = await admin
         .from("profiles").select("id, balance").eq("id", merchant.profile_id).maybeSingle();

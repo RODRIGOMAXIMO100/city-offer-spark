@@ -59,7 +59,7 @@ Deno.serve(async (req) => {
 
     const { data: offer, error: offerErr } = await admin
       .from("offers")
-      .select("id, company_id, active, deleted_at, expires_at, title, profiles!offers_company_id_fkey(name)")
+      .select("id, company_id, active, deleted_at, expires_at, title, price_new, coupon_valid_hours, profiles!offers_company_id_fkey(name)")
       .eq("id", offerId)
       .maybeSingle();
 
@@ -135,9 +135,18 @@ Deno.serve(async (req) => {
       }
       if (!code) return json({ error: "Não foi possível gerar código" }, 500);
 
+      // FASE 1: validade definida pela empresa na oferta (fallback 7 dias),
+      // sempre limitada pela data em que a propria oferta expira.
+      const validHours = Number((offer as any).coupon_valid_hours) || COUPON_TTL_DAYS * 24;
       const expiresAt = new Date(
-        Math.min(Date.now() + COUPON_TTL_DAYS * 864e5, new Date(offer.expires_at).getTime())
+        Math.min(Date.now() + validHours * 36e5, new Date(offer.expires_at).getTime())
       ).toISOString();
+
+      // FASE 1: taxa CONGELADA na emissao — max(piso, % do preco).
+      // Se a empresa mudar o preco depois, este cupom mantem o valor combinado.
+      let feeCents: number | null = null;
+      const { data: feeRpc } = await admin.rpc("calc_redemption_fee", { p_offer_id: offerId });
+      if (typeof feeRpc === "number" && feeRpc > 0) feeCents = feeRpc;
 
       const { data: inserted, error: insErr } = await admin
         .from("coupons")
@@ -152,6 +161,7 @@ Deno.serve(async (req) => {
           status: "ISSUED",
           affiliate_id: affiliateId,
           lead_id: resolvedLeadId,
+          fee_cents: feeCents,
         })
         .select("id, code, expires_at")
         .single();
