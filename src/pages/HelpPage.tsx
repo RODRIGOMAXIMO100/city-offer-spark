@@ -102,7 +102,7 @@ const HelpPage = () => {
                       </li>
                       <li className="flex items-start gap-2">
                         <span>📱</span>
-                        <span><strong>Você confirma o resgate</strong> no balcão — e só aí a recompensa é cobrada</span>
+                        <span><strong>Você confirma o resgate</strong> no balcão — e só aí a taxa é cobrada</span>
                       </li>
                     </ul>
                     <p className="text-xs text-muted-foreground mt-2 italic">
@@ -110,24 +110,24 @@ const HelpPage = () => {
                     </p>
                   </div>
                   <p className="text-muted-foreground">
-                    Você define a recompensa por cada cliente que aparece na loja (mínimo R$ 5,00). Exemplos:
+                    A taxa é 15% do preço da oferta (mínimo R$ 3,00), cobrada só quando o cliente aparece na loja. Exemplos:
                   </p>
                   <div className="grid gap-3">
                     <div className="flex items-center justify-between p-3 rounded-lg bg-green-500/10 border border-green-500/20">
-                      <span className="font-medium text-green-600">Recompensa mínima</span>
-                      <span className="font-bold text-green-600">R$ 5,00 por cliente</span>
+                      <span className="font-medium text-green-600">Oferta de R$ 20</span>
+                      <span className="font-bold text-green-600">R$ 3,00 por cliente</span>
                     </div>
                     <div className="flex items-center justify-between p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
-                      <span className="font-medium text-yellow-600">Recompensa padrão</span>
-                      <span className="font-bold text-yellow-600">R$ 8,00 por cliente</span>
+                      <span className="font-medium text-yellow-600">Oferta de R$ 50</span>
+                      <span className="font-bold text-yellow-600">R$ 7,50 por cliente</span>
                     </div>
                     <div className="flex items-center justify-between p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
-                      <span className="font-medium text-blue-600">Recompensa alta</span>
-                      <span className="font-bold text-blue-600">R$ 12,00+ por cliente</span>
+                      <span className="font-medium text-blue-600">Oferta de R$ 100</span>
+                      <span className="font-bold text-blue-600">R$ 15,00 por cliente</span>
                     </div>
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    Quanto maior a recompensa, mais divulgadores se interessam em levar cliente até você.
+                    Quanto maior o valor da oferta, maior a taxa — e mais atrativo fica para os divulgadores levarem clientes até você.
                   </p>
                   <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20 mt-4">
                     <p className="text-sm text-blue-600">
@@ -342,10 +342,10 @@ const HelpPage = () => {
                 <AccordionContent className="space-y-4 pt-2">
                   <div className="p-4 rounded-lg bg-green-500/10 border border-green-500/20">
                     <p className="text-center text-lg font-bold text-green-600 mb-2">
-                      Ganhe 70% por cliente que você leva à loja! 🚀
+                      Ganhe 50% da taxa por cliente que você leva à loja! 🚀
                     </p>
                     <p className="text-center text-sm text-muted-foreground">
-                      Comece com 70% da recompensa e aumente a cada nível
+                      Comece com 50% da taxa e chegue a 70% subindo de nível
                     </p>
                   </div>
                   <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20 mb-4">
@@ -356,15 +356,15 @@ const HelpPage = () => {
                   <div className="grid gap-3 mt-4">
                     <div className="flex items-center justify-between p-3 rounded-lg bg-orange-500/10 border border-orange-500/20">
                       <span>Bronze (base)</span>
-                      <span className="font-bold text-orange-600">70% da recompensa</span>
+                      <span className="font-bold text-orange-600">50% da taxa</span>
                     </div>
                     <div className="flex items-center justify-between p-3 rounded-lg bg-slate-400/10 border border-slate-400/20">
                       <span>Prata (10 resgates)</span>
-                      <span className="font-bold text-slate-600">75% da recompensa</span>
+                      <span className="font-bold text-slate-600">55% da taxa</span>
                     </div>
                     <div className="flex items-center justify-between p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
                       <span>Ouro (30 resgates)</span>
-                      <span className="font-bold text-yellow-600">80% da recompensa</span>
+                      <span className="font-bold text-yellow-600">60% da taxa</span>
                     </div>
                   </div>
                   <p className="text-sm text-muted-foreground mt-2">
@@ -393,7 +393,7 @@ const HelpPage = () => {
                           <p className="text-xs text-muted-foreground">0 resgates</p>
                         </div>
                       </div>
-                      <span className="font-bold text-orange-600">70%</span>
+                      <span className="font-bold text-orange-600">50%</span>
                     </div>
                     <div className="flex items-center justify-between p-3 rounded-lg bg-slate-400/10 border border-slate-400/20">
                       <div className="flex items-center gap-2">
@@ -403,7 +403,7 @@ const HelpPage = () => {
                           <p className="text-xs text-muted-foreground">10 resgates</p>
                         </div>
                       </div>
-                      <span className="font-bold text-slate-600">75%</span>
+                      <span className="font-bold text-slate-600">55%</span>
                     </div>
                     <div className="flex items-center justify-between p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
                       <div className="flex items-center gap-2">
@@ -413,7 +413,7 @@ const HelpPage = () => {
                           <p className="text-xs text-muted-foreground">30 resgates</p>
                         </div>
                       </div>
-                      <span className="font-bold text-yellow-600">80%</span>
+                      <span className="font-bold text-yellow-600">60%</span>
                     </div>
                   </div>
                 </AccordionContent>

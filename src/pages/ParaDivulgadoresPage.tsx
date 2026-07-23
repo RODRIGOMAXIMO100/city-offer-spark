@@ -114,7 +114,7 @@ const ParaDivulgadoresPage = () => {
     {
       icon: Award,
       title: "Cresça junto",
-      description: "Comece com 70% e suba a cada cliente que traz. Quanto mais ajuda, mais cresce."
+      description: "Comece com 50% da taxa e suba até 70% a cada cliente que traz. Quanto mais ajuda, mais cresce."
     },
     {
       icon: Smartphone,
@@ -139,7 +139,7 @@ const ParaDivulgadoresPage = () => {
     },
     {
       question: "Como funciona a comissão?",
-      answer: "Você ganha 70% da recompensa que a empresa paga por cada cliente que aparece na loja. Ex.: recompensa de R$ 8, você leva R$ 5,60. Sua comissão sobe a cada nível: 10 resgates = Prata, 30 = Ouro, 75 = Platina, 150 = Diamante."
+      answer: "A empresa paga 15% do preço da oferta (mín. R$ 3) por cada cliente que aparece na loja, e você leva 50% disso. Ex.: oferta de R$ 50 → taxa de R$ 7,50 → você ganha R$ 3,75. Sua comissão sobe a cada nível até 70%: 10 resgates = Prata, 30 = Ouro, 75 = Platina, 150 = Diamante."
     },
     {
       question: "Quando recebo o dinheiro?",
@@ -216,7 +216,7 @@ const ParaDivulgadoresPage = () => {
             {/* Quick Stats */}
             <div className="grid grid-cols-3 gap-2 md:gap-4 max-w-2xl mx-auto">
               <div className="bg-card/50 backdrop-blur border border-green-500/30 rounded-xl p-3 md:p-4">
-                <div className="text-lg md:text-3xl font-black text-green-500">R$ 5,60</div>
+                <div className="text-lg md:text-3xl font-black text-green-500">R$ 3,75</div>
                 <div className="text-[10px] md:text-sm text-muted-foreground">por cliente</div>
               </div>
               <div className="bg-card/50 backdrop-blur border border-green-500/30 rounded-xl p-3 md:p-4">
@@ -490,7 +490,7 @@ const ParaDivulgadoresPage = () => {
             </div>
 
             <p className="text-center text-muted-foreground mt-4 text-sm">
-              *Recompensa R$ 8,00 × sua comissão 70% = R$ 5,60 por cliente na loja
+              *Oferta de R$ 50 → taxa de R$ 7,50 × sua comissão 50% = R$ 3,75 por cliente na loja
             </p>
           </div>
         </div>
@@ -691,7 +691,7 @@ const ParaDivulgadoresPage = () => {
                 <ul className="space-y-4 mb-8">
                   <li className="flex items-center gap-3">
                     <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0" />
-                    <span>70% da recompensa por cada cliente na loja</span>
+                    <span>50% da taxa por cada cliente na loja (até 70%)</span>
                   </li>
                   <li className="flex items-center gap-3">
                     <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0" />

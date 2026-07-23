@@ -11,11 +11,11 @@ import { PRICING_DISCLAIMER } from "@/types/database";
 export const faqs = [
   {
     question: "Quanto custa para empresas?",
-    answer: `Não há mensalidade nem taxa fixa. Você só paga quando um cliente novo vai até a sua loja e usa o cupom — resultado real, não clique. Você define quanto vale cada cliente (a recompensa, mínimo R$ 5,00). Se ninguém aparecer, você não paga nada. ${PRICING_DISCLAIMER.short}`,
+    answer: `Não há mensalidade nem taxa fixa. Você só paga quando um cliente novo vai até a sua loja e usa o cupom — resultado real, não clique. A taxa é 15% do preço da oferta (mínimo R$ 3,00), cobrada só nesse momento. Se ninguém aparecer, você não paga nada. ${PRICING_DISCLAIMER.short}`,
   },
   {
     question: "Como recebo minha comissão como divulgador?",
-    answer: `Você ganha quando alguém que você indicou vai até a loja e usa o cupom. A comissão é 70% da recompensa que a loja paga por cada cliente. Exemplo: a loja paga R$ 8,00, você leva R$ 5,60. Quanto mais clientes você traz, mais alto fica seu nível e maior sua comissão. Saque mínimo: R$ 100,00 via PIX. ${PRICING_DISCLAIMER.short}`,
+    answer: `Você ganha quando alguém que você indicou vai até a loja e usa o cupom. A comissão começa em 50% da taxa que a loja paga por cada cliente. Exemplo: oferta de R$ 50 → taxa de R$ 7,50 → você leva R$ 3,75. Quanto mais clientes você traz, mais alto fica seu nível e maior sua comissão. Saque mínimo: R$ 100,00 via PIX. ${PRICING_DISCLAIMER.short}`,
   },
   {
     question: "Preciso ter CNPJ para cadastrar minha empresa?",
@@ -31,7 +31,7 @@ export const faqs = [
   },
   {
     question: "Como funciona a divisão de valores?",
-    answer: `Do valor que a empresa paga por cada cliente que aparece na loja, o divulgador leva 70% e a plataforma fica com 30%. Exemplo: recompensa de R$ 8,00 → divulgador ganha R$ 5,60. Suba de nível trazendo mais clientes e evolua sua comissão. ${PRICING_DISCLAIMER.short}`,
+    answer: `A empresa paga 15% do preço da oferta (mínimo R$ 3,00) por cada cliente que aparece na loja. Desse valor, o divulgador leva 50% e a plataforma fica com 50%. Subindo de nível o divulgador chega a 70%. ${PRICING_DISCLAIMER.short}`,
   },
 ];
 

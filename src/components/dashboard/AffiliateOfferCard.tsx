@@ -100,10 +100,10 @@ export function AffiliateOfferCard({ offer, profileId, index, commissionMultipli
 
   const discount = Math.round((1 - offer.price_new / offer.price_old) * 100);
   const offerScore = offer.current_offer_score || 5;
-  // Modelo pay-per-resgate: recompensa da loja (bounty) em centavos, default R$8.
-  const bountyCents = (offer as any).redemption_cost ?? 800;
-  const REDEMPTION_SHARE = 0.70; // comissao do divulgador no lancamento
-  const affiliateEarning = (bountyCents * REDEMPTION_SHARE * commissionMultiplier) / 100;
+  // FASE 1: taxa = max(R$3 ; 15% do preco promocional). Divulgador leva 50% (Bronze) ate 70% (Diamante).
+  const feeCents = Math.max(300, Math.round(offer.price_new * 100 * 0.15));
+  const REDEMPTION_SHARE = 0.50; // fatia base do divulgador (Bronze)
+  const affiliateEarning = (feeCents * REDEMPTION_SHARE * commissionMultiplier) / 100;
   const leadRate = offer.views_count > 0 ? (((offer as any).leads_count || 0) / offer.views_count * 100).toFixed(1) : "0";
   const isHot = parseFloat(leadRate) > 2;
 
@@ -294,8 +294,8 @@ export function AffiliateOfferCard({ offer, profileId, index, commissionMultipli
               <p className="font-bold mb-2">Como seu ganho é calculado</p>
               <div className="space-y-1 text-xs">
                 <p>📊 Nota da oferta: <strong>{offerScore.toFixed(1)}</strong></p>
-                <p>🏪 Recompensa da loja: R$ {(bountyCents / 100).toFixed(2)}</p>
-                <p>🎯 Sua comissão: 70%</p>
+                <p>🏪 Taxa do resgate: R$ {(feeCents / 100).toFixed(2)}</p>
+                <p>🎯 Sua comissão: {Math.round(REDEMPTION_SHARE * commissionMultiplier * 100)}%</p>
                 <p>⭐ Seu bônus de nível: <strong>×{commissionMultiplier.toFixed(2)}</strong></p>
                 <p>✨ Seu ganho: <strong className="text-affiliate">R$ {affiliateEarning.toFixed(2)}</strong></p>
               </div>

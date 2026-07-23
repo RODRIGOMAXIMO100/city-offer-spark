@@ -386,8 +386,8 @@ function AffiliateDashboardContent() {
                     <p className="font-bold text-base sm:text-lg">💰 Ganhe por cliente na loja!</p>
                     <ul className="text-xs sm:text-sm opacity-95 space-y-0.5 sm:space-y-1">
                       <li>• <strong>Você ganha quando o cliente vai à loja</strong><span className="hidden sm:inline"> e usa o cupom que você indicou</span></li>
-                      <li>• <strong>Comissão de 70%</strong><span className="hidden sm:inline"> da recompensa da loja - suba de nível e ganhe mais!</span></li>
-                      <li className="hidden sm:list-item">• <strong>Ex.:</strong> loja paga R$ 8 → você leva R$ 5,60 por cliente</li>
+                      <li>• <strong>Comissão de 50%</strong><span className="hidden sm:inline"> da taxa do resgate — suba de nível e chegue a 70%!</span></li>
+                      <li className="hidden sm:list-item">• <strong>Ex.:</strong> oferta de R$ 50 → taxa R$ 7,50 → você leva R$ 3,75</li>
                       <li>• <strong>Quanto mais resgates, maior seu nível</strong><span className="hidden sm:inline"> e sua comissão!</span></li>
                       <li>• <strong>Saque mín: R$ 100</strong> <span className="hidden sm:inline">via PIX</span></li>
                       <li>• <a href="/transparencia" className="underline font-medium">Ver detalhes →</a></li>

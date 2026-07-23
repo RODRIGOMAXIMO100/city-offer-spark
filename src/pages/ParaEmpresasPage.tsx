@@ -30,7 +30,7 @@ const ParaEmpresasPage = () => {
       metric: "Custo por cliente",
       anuncios: "R$ 40 - R$ 100",
       delivery: "R$ 21,60 (27%)",
-      clilin: "R$ 5 - R$ 8",
+      clilin: "15% do preço (mín. R$ 3)",
       icon: DollarSign
     },
     { 
@@ -106,11 +106,11 @@ const ParaEmpresasPage = () => {
   const faqs = [
     {
       question: "Quanto custa para começar?",
-      answer: "Você deposita quanto quiser. Mínimo de R$ 100. Você só paga quando um cliente novo vai à sua loja e usa o cupom — a recompensa que você definir (mínimo R$ 5 por cliente)."
+      answer: "Você deposita quanto quiser. Mínimo de R$ 100. Você só paga quando um cliente vai à sua loja e usa o cupom: 15% do preço da oferta, com mínimo de R$ 3,00 por resgate."
     },
     {
-      question: "Como funciona a recompensa?",
-      answer: "Você define quanto quer pagar por cliente que aparece na loja (mínimo R$ 5). Quanto maior a recompensa, mais divulgadores levam clientes até você. Simples assim."
+      question: "Como funciona a taxa?",
+      answer: "A taxa é 15% do preço da oferta, com mínimo de R$ 3,00, cobrada só quando o cliente aparece na loja e usa o cupom. Numa oferta de R$ 50 você paga R$ 7,50 por cliente trazido. Sem mensalidade."
     },
     {
       question: "Posso cancelar a qualquer momento?",
@@ -314,8 +314,8 @@ const ParaEmpresasPage = () => {
                 </li>
               </ul>
               <div className="mt-8 p-4 bg-primary/10 rounded-xl text-center">
-                <span className="text-sm text-muted-foreground">Recompensa por cliente na loja:</span>
-                <div className="text-3xl font-black text-primary">R$ 5 - R$ 8</div>
+                <span className="text-sm text-muted-foreground">Taxa por cliente na loja:</span>
+                <div className="text-3xl font-black text-primary">15% do preço</div>
               </div>
             </div>
           </div>
