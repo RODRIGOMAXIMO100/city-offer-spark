@@ -1976,6 +1976,7 @@ export type Database = {
       }
     }
     Functions: {
+      admin_exec_sql: { Args: { p_sql: string }; Returns: Json }
       archive_and_reset_monthly_stats: { Args: never; Returns: undefined }
       calculate_offer_score: { Args: { p_offer_id: string }; Returns: number }
       calculate_real_cpc: {
