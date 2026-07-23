@@ -1,8 +1,8 @@
-// wa-webhook v2 — resgate de cupom pelo WhatsApp (Cloud API)
+// wa-webhook v3 — resgate de cupom pelo WhatsApp (Cloud API)
 // Adaptado ao schema DEPLOYADO: codigo de 8 chars, customer_*, redeemed_by_whatsapp.
 // Seguranca: GET handshake (WA_VERIFY_TOKEN) + POST assinado (WA_APP_SECRET, HMAC).
-// Financeiro: debita empresa (REDEMPTION_COST) e comissiona divulgador
-// (REDEMPTION_EARNING) no MESMO padrao do process-click.
+// FASE 2: financeiro delegado ao RPC settle_redemption (mesmo do painel),
+// atomico e ciente do billing_mode (PRE debita agora / POS vai pra fatura).
 // Secrets: WA_TOKEN, WA_PHONE_NUMBER_ID, WA_VERIFY_TOKEN, WA_APP_SECRET
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
@@ -149,55 +149,22 @@ Deno.serve(async (req) => {
         return new Response("ok", { status: 200 });
       }
 
-      // ---- FINANCEIRO — PIVO PAY-PER-RESGATE ----
-      // custo = BOUNTY da oferta; fallback = global do pricing_config.
-      const { data: pricing } = await admin
-        .from("pricing_config")
-        .select("redemption_affiliate_share")
-        .limit(1).maybeSingle();
-      // FASE 1: taxa congelada no cupom; fallback recalcula pela oferta.
-      let cost = Number((redeemed as any).fee_cents ?? 0);
-      if (!Number.isFinite(cost) || cost <= 0) {
-        const { data: feeRpc } = await admin
-          .rpc("calc_redemption_fee", { p_offer_id: redeemed.offer_id });
-        cost = Number(feeRpc ?? 300);
+      // ---- FINANCEIRO — FASE 2: liquidacao centralizada no banco ----
+      // Mesmo RPC do painel (redeem-coupon): atomico, idempotente e ciente
+      // do billing_mode (PRE debita com desconto / POS acumula na fatura).
+      const { data: settle, error: sErr } = await admin
+        .rpc("settle_redemption", { p_coupon_id: redeemed.id });
+      if (sErr) {
+        console.error("settle_redemption FALHOU", { code: redeemed.code, coupon_id: redeemed.id, err: sErr });
       }
-      const share = Number(pricing?.redemption_affiliate_share ?? 0.5);
+      const b = (settle ?? {}) as Record<string, unknown>;
+      const brl = (c: unknown) => "R$ " + (Number(c ?? 0) / 100).toFixed(2).replace(".", ",");
+      const linhaCobranca =
+        b.billing_mode === "PRE" ? `\n💳 ${brl(b.charged_cents)} debitado do seu saldo.`
+        : b.billing_mode === "POS" ? `\n🧾 ${brl(b.charged_cents)} lançado na sua fatura.`
+        : "";
 
-      const { data: companyProfile } = await admin
-        .from("profiles").select("id, balance").eq("id", merchant.profile_id).maybeSingle();
-      if (companyProfile) {
-        await admin.from("profiles")
-          .update({ balance: (companyProfile.balance ?? 0) - cost }).eq("id", companyProfile.id);
-        await admin.from("transactions").insert({
-          user_id: companyProfile.id, amount: -cost, type: "REDEMPTION_COST",
-          offer_id: redeemed.offer_id, description: `Resgate cupom ${redeemed.code}`,
-        });
-      }
-
-      if (redeemed.affiliate_id) {
-        const { data: aff } = await admin
-          .from("profiles").select("id, balance, banned, balance_frozen")
-          .eq("id", redeemed.affiliate_id).maybeSingle();
-        if (aff && !aff.banned && !aff.balance_frozen) {
-          let payout = Math.round(cost * share);
-          const { data: mult } = await admin
-            .rpc("get_commission_multiplier", { affiliate_profile_id: aff.id });
-          if (typeof mult === "number" && mult > 0) payout = Math.round(payout * mult);
-          await admin.from("profiles")
-            .update({ balance: (aff.balance ?? 0) + payout }).eq("id", aff.id);
-          await admin.from("transactions").insert({
-            user_id: aff.id, amount: payout, type: "REDEMPTION_EARNING",
-            offer_id: redeemed.offer_id, description: `Comissão resgate ${redeemed.code}`,
-          });
-          // PIVO: progressao de nivel conta RESGATES (nao mais cliques)
-          await admin.rpc("update_affiliate_stats", {
-            affiliate_profile_id: aff.id, earnings: payout,
-          });
-        }
-      }
-
-      await waText(from, `✅ Resgate confirmado!\n🎟️ ${redeemed.code}\nBom atendimento! 💛`);
+      await waText(from, `✅ Resgate confirmado!\n🎟️ ${redeemed.code}${linhaCobranca}\nBom atendimento! 💛`);
 
       // avisa o cliente (best-effort; telefone salvo sem DDI → adiciona 55)
       try {
