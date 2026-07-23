@@ -26,6 +26,7 @@ import setCityActive from "./tools/set-city-active";
 import listBlogPosts from "./tools/list-blog-posts";
 import publishBlogPost from "./tools/publish-blog-post";
 import addMerchantWhatsapp from "./tools/add-merchant-whatsapp";
+import executeSql from "./tools/execute-sql";
 
 const projectRef = import.meta.env.VITE_SUPABASE_PROJECT_ID ?? "project-ref-unset";
 
@@ -66,5 +67,6 @@ export default defineMcp({
     setCityActive,
     publishBlogPost,
     addMerchantWhatsapp,
+    executeSql,
   ],
 });
