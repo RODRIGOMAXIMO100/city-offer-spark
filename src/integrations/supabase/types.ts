@@ -403,6 +403,7 @@ export type Database = {
           customer_name: string
           customer_phone: string
           expires_at: string
+          fee_cents: number | null
           id: string
           issued_at: string
           lead_id: string | null
@@ -421,6 +422,7 @@ export type Database = {
           customer_name: string
           customer_phone: string
           expires_at: string
+          fee_cents?: number | null
           id?: string
           issued_at?: string
           lead_id?: string | null
@@ -439,6 +441,7 @@ export type Database = {
           customer_name?: string
           customer_phone?: string
           expires_at?: string
+          fee_cents?: number | null
           id?: string
           issued_at?: string
           lead_id?: string | null
@@ -683,6 +686,67 @@ export type Database = {
           {
             foreignKeyName: "fraud_blacklist_added_by_fkey"
             columns: ["added_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      invoices: {
+        Row: {
+          company_id: string
+          created_at: string
+          id: string
+          note: string | null
+          paid_at: string | null
+          period_end: string | null
+          period_start: string | null
+          redemptions: number
+          status: string
+          total_cents: number
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          id?: string
+          note?: string | null
+          paid_at?: string | null
+          period_end?: string | null
+          period_start?: string | null
+          redemptions?: number
+          status?: string
+          total_cents?: number
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          id?: string
+          note?: string | null
+          paid_at?: string | null
+          period_end?: string | null
+          period_start?: string | null
+          redemptions?: number
+          status?: string
+          total_cents?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoices_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "company_public_info"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoices_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "company_public_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoices_company_id_fkey"
+            columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
@@ -1082,6 +1146,7 @@ export type Database = {
           city: string
           clicks_count: number
           company_id: string
+          coupon_valid_hours: number
           created_at: string
           current_offer_score: number
           deleted_at: string | null
@@ -1106,6 +1171,7 @@ export type Database = {
           city: string
           clicks_count?: number
           company_id: string
+          coupon_valid_hours?: number
           created_at?: string
           current_offer_score?: number
           deleted_at?: string | null
@@ -1130,6 +1196,7 @@ export type Database = {
           city?: string
           clicks_count?: number
           company_id?: string
+          coupon_valid_hours?: number
           created_at?: string
           current_offer_score?: number
           deleted_at?: string | null
@@ -1290,9 +1357,12 @@ export type Database = {
           billing_mode: string
           created_at: string
           default_cpc: number
+          fee_min_cents: number
+          fee_percent: number
           id: string
           max_cpc: number
           min_cpc: number
+          prepaid_discount: number
           redemption_affiliate_share: number
           redemption_cost: number
           updated_at: string
@@ -1302,9 +1372,12 @@ export type Database = {
           billing_mode?: string
           created_at?: string
           default_cpc?: number
+          fee_min_cents?: number
+          fee_percent?: number
           id?: string
           max_cpc?: number
           min_cpc?: number
+          prepaid_discount?: number
           redemption_affiliate_share?: number
           redemption_cost?: number
           updated_at?: string
@@ -1314,9 +1387,12 @@ export type Database = {
           billing_mode?: string
           created_at?: string
           default_cpc?: number
+          fee_min_cents?: number
+          fee_percent?: number
           id?: string
           max_cpc?: number
           min_cpc?: number
+          prepaid_discount?: number
           redemption_affiliate_share?: number
           redemption_cost?: number
           updated_at?: string
@@ -1333,6 +1409,7 @@ export type Database = {
           banned_at: string | null
           banned_by: string | null
           banned_reason: string | null
+          billing_mode: string
           cep: string | null
           city: string
           cnpj: string | null
@@ -1365,6 +1442,7 @@ export type Database = {
           banned_at?: string | null
           banned_by?: string | null
           banned_reason?: string | null
+          billing_mode?: string
           cep?: string | null
           city?: string
           cnpj?: string | null
@@ -1397,6 +1475,7 @@ export type Database = {
           banned_at?: string | null
           banned_by?: string | null
           banned_reason?: string | null
+          billing_mode?: string
           cep?: string | null
           city?: string
           cnpj?: string | null
@@ -1567,28 +1646,37 @@ export type Database = {
       transactions: {
         Row: {
           amount: number
+          coupon_id: string | null
           created_at: string
           description: string | null
           id: string
+          invoice_id: string | null
           offer_id: string | null
+          status: string
           type: Database["public"]["Enums"]["transaction_type"]
           user_id: string
         }
         Insert: {
           amount: number
+          coupon_id?: string | null
           created_at?: string
           description?: string | null
           id?: string
+          invoice_id?: string | null
           offer_id?: string | null
+          status?: string
           type: Database["public"]["Enums"]["transaction_type"]
           user_id: string
         }
         Update: {
           amount?: number
+          coupon_id?: string | null
           created_at?: string
           description?: string | null
           id?: string
+          invoice_id?: string | null
           offer_id?: string | null
+          status?: string
           type?: Database["public"]["Enums"]["transaction_type"]
           user_id?: string
         }
@@ -1978,6 +2066,7 @@ export type Database = {
     Functions: {
       admin_exec_sql: { Args: { p_sql: string }; Returns: Json }
       archive_and_reset_monthly_stats: { Args: never; Returns: undefined }
+      calc_redemption_fee: { Args: { p_offer_id: string }; Returns: number }
       calculate_offer_score: { Args: { p_offer_id: string }; Returns: number }
       calculate_real_cpc: {
         Args: { p_city: string; p_offer_id: string }
@@ -1991,6 +2080,7 @@ export type Database = {
       cleanup_old_rate_limits: { Args: never; Returns: undefined }
       cleanup_old_sessions: { Args: never; Returns: undefined }
       cleanup_old_signup_rate_limits: { Args: never; Returns: undefined }
+      close_invoice: { Args: { p_company_id: string }; Returns: string }
       create_fraud_alert: {
         Args: {
           p_alert_type: string
@@ -2005,6 +2095,10 @@ export type Database = {
       credit_onboarding_bonus: {
         Args: { p_amount: number; p_bonus_type: string; p_user_id: string }
         Returns: boolean
+      }
+      effective_fee_for_company: {
+        Args: { p_company_id: string; p_fee_cents: number }
+        Returns: number
       }
       get_affiliate_level: { Args: { total_clicks: number }; Returns: number }
       get_affiliate_level_monthly: {
@@ -2030,6 +2124,7 @@ export type Database = {
       increment_offer_clicks: { Args: { offer_id: string }; Returns: undefined }
       increment_offer_leads: { Args: { offer_id: string }; Returns: undefined }
       increment_offer_views: { Args: { offer_id: string }; Returns: undefined }
+      mark_invoice_paid: { Args: { p_invoice_id: string }; Returns: Json }
       recalculate_affiliate_stats: {
         Args: { affiliate_profile_id: string }
         Returns: undefined
@@ -2038,6 +2133,7 @@ export type Database = {
       recalculate_all_monthly_levels: { Args: never; Returns: undefined }
       recalculate_all_offer_scores: { Args: never; Returns: undefined }
       reset_weekly_clicks: { Args: never; Returns: undefined }
+      settle_redemption: { Args: { p_coupon_id: string }; Returns: Json }
       update_affiliate_fraud_score: {
         Args: { p_affiliate_id: string; p_score_delta: number }
         Returns: number
