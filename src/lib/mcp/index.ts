@@ -67,5 +67,6 @@ export default defineMcp({
     setCityActive,
     publishBlogPost,
     addMerchantWhatsapp,
+    executeSql,
   ],
 });

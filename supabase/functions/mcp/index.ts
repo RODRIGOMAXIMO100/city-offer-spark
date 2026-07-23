@@ -718,6 +718,46 @@ var add_merchant_whatsapp_default = defineTool24({
   }
 });
 
+// src/lib/mcp/tools/execute-sql.ts
+import { defineTool as defineTool25 } from "npm:@lovable.dev/mcp-js@0.24.0";
+import { z as z22 } from "npm:zod@^3.25.76";
+var execute_sql_default = defineTool25({
+  name: "execute_sql",
+  title: "Executar SQL (admin)",
+  description: "ADMIN-ONLY. Executa SQL arbitr\xE1rio no banco Postgres do Clilin via fun\xE7\xE3o SECURITY DEFINER public.admin_exec_sql. Use para migrations (ALTER, CREATE, DROP), DML (INSERT/UPDATE/DELETE) e consultas (SELECT). SELECTs retornam as linhas como JSON; DDL/DML retornam rows_affected. Erros s\xE3o capturados e retornados em jsonb. A checagem de admin \xE9 feita dentro da fun\xE7\xE3o \u2014 usu\xE1rios n\xE3o-admin recebem exception. USE COM EXTREMO CUIDADO: mudan\xE7as de schema afetam produ\xE7\xE3o imediatamente.",
+  inputSchema: {
+    query: z22.string().min(1).describe("SQL a ser executado. Pode ser SELECT, INSERT, UPDATE, DELETE, ALTER, CREATE, DROP, etc. Termine sem ';' opcional.")
+  },
+  annotations: {
+    readOnlyHint: false,
+    destructiveHint: true,
+    idempotentHint: false,
+    openWorldHint: false
+  },
+  handler: async ({ query }, ctx) => {
+    if (!ctx.isAuthenticated()) {
+      return { content: [{ type: "text", text: "N\xE3o autenticado" }], isError: true };
+    }
+    const sb = supabaseForUser(ctx);
+    const { data, error } = await sb.rpc("admin_exec_sql", { p_sql: query });
+    if (error) {
+      return { content: [{ type: "text", text: `Erro ao executar SQL: ${error.message}` }], isError: true };
+    }
+    const result = data;
+    if (result && result.status === "error") {
+      return {
+        content: [{ type: "text", text: `SQL error [${result.sqlstate}]: ${result.error}` }],
+        structuredContent: { result },
+        isError: true
+      };
+    }
+    return {
+      content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
+      structuredContent: { result }
+    };
+  }
+});
+
 // src/lib/mcp/index.ts
 var projectRef = "sukvjgxxuzophzjcojvd";
 var mcp_default = defineMcp({
@@ -755,7 +795,8 @@ var mcp_default = defineMcp({
     set_withdrawal_status_default,
     set_city_active_default,
     publish_blog_post_default,
-    add_merchant_whatsapp_default
+    add_merchant_whatsapp_default,
+    execute_sql_default
   ]
 });
 

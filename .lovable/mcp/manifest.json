@@ -776,6 +776,33 @@
           "$schema": "http://json-schema.org/draft-07/schema#"
         },
         "outputSchema": null
+      },
+      {
+        "name": "execute_sql",
+        "title": "Executar SQL (admin)",
+        "description": "ADMIN-ONLY. Executa SQL arbitrário no banco Postgres do Clilin via função SECURITY DEFINER public.admin_exec_sql. Use para migrations (ALTER, CREATE, DROP), DML (INSERT/UPDATE/DELETE) e consultas (SELECT). SELECTs retornam as linhas como JSON; DDL/DML retornam rows_affected. Erros são capturados e retornados em jsonb. A checagem de admin é feita dentro da função — usuários não-admin recebem exception. USE COM EXTREMO CUIDADO: mudanças de schema afetam produção imediatamente.",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": true,
+          "idempotentHint": false,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "minLength": 1,
+              "description": "SQL a ser executado. Pode ser SELECT, INSERT, UPDATE, DELETE, ALTER, CREATE, DROP, etc. Termine sem ';' opcional."
+            }
+          },
+          "required": [
+            "query"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
       }
     ]
   }
