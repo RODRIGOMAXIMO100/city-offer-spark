@@ -27,15 +27,19 @@ import listBlogPosts from "./tools/list-blog-posts";
 import publishBlogPost from "./tools/publish-blog-post";
 import addMerchantWhatsapp from "./tools/add-merchant-whatsapp";
 import executeSql from "./tools/execute-sql";
+import describeSchema from "./tools/describe-schema";
+import listAuthUsers from "./tools/list-auth-users";
+import manageStorage from "./tools/manage-storage";
+import callFunction from "./tools/call-function";
 
 const projectRef = import.meta.env.VITE_SUPABASE_PROJECT_ID ?? "project-ref-unset";
 
 export default defineMcp({
   name: "clilin-mcp",
   title: "Clilin",
-  version: "0.2.0",
+  version: "0.3.0",
   instructions:
-    "Ferramentas do Clilin (plataforma de ofertas locais). Comece SEMPRE com `whoami` para descobrir o papel do usuário logado (ADMIN/COMPANY/AFFILIATE/CLIENT). IDs importantes: `profiles.id` é o `company_id`/`affiliate_id` usado em quase tudo — use `find_company` (busca por nome/CNPJ) ou `list_companies` para descobrir o UUID de uma empresa. ADMIN tem acesso irrestrito: pode criar/editar/deletar ofertas de QUALQUER empresa passando `company_id` em create_offer, ajustar saldos, banir usuários, aprovar saques, ativar cidades etc. Empresas (COMPANY) só mexem nas próprias ofertas (omitem company_id). Divulgadores (AFFILIATE) veem seu saldo. Todas as ações respeitam RLS. Operações destrutivas (ban, delete, ajuste de saldo, aprovar saque, publicar post) devem ser confirmadas antes de executar.",
+    "Ferramentas do Clilin (plataforma de ofertas locais). Comece SEMPRE com `whoami` para descobrir o papel do usuário logado (ADMIN/COMPANY/AFFILIATE/CLIENT). IDs importantes: `profiles.id` é o `company_id`/`affiliate_id` usado em quase tudo — use `find_company` (busca por nome/CNPJ) ou `list_companies` para descobrir o UUID de uma empresa. ADMIN tem acesso irrestrito: pode criar/editar/deletar ofertas de QUALQUER empresa passando `company_id` em create_offer, ajustar saldos, banir usuários, aprovar saques, ativar cidades etc. Empresas (COMPANY) só mexem nas próprias ofertas (omitem company_id). Divulgadores (AFFILIATE) veem seu saldo. Todas as ações respeitam RLS. ADMIN tem acesso TOTAL: `execute_sql` roda qualquer SQL (DDL/DML), `describe_schema` mostra a estrutura, `list_auth_users` lista contas de login, `manage_storage` gerencia arquivos dos buckets e `call_function` invoca qualquer edge function. Operações destrutivas (ban, delete, ajuste de saldo, aprovar saque, publicar post) devem ser confirmadas antes de executar.",
   auth: auth.oauth.issuer({
     issuer: `https://${projectRef}.supabase.co/auth/v1`,
     acceptedAudiences: "authenticated",
@@ -68,5 +72,9 @@ export default defineMcp({
     publishBlogPost,
     addMerchantWhatsapp,
     executeSql,
+    describeSchema,
+    listAuthUsers,
+    manageStorage,
+    callFunction,
   ],
 });

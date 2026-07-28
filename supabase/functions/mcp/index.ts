@@ -758,13 +758,206 @@ var execute_sql_default = defineTool25({
   }
 });
 
+// src/lib/mcp/tools/describe-schema.ts
+import { defineTool as defineTool26 } from "npm:@lovable.dev/mcp-js@0.24.0";
+import { z as z23 } from "npm:zod@^3.25.76";
+
+// src/lib/mcp/_shared/admin.ts
+import { createClient as createClient2 } from "npm:@supabase/supabase-js@^2.87.1";
+async function supabaseAsAdmin(ctx) {
+  if (!ctx.isAuthenticated()) throw new Error("N\xE3o autenticado");
+  const asUser = supabaseForUser(ctx);
+  const { data, error } = await asUser.rpc("has_role", {
+    _user_id: ctx.getUserId(),
+    _role: "ADMIN"
+  });
+  if (error) throw new Error(`Falha ao verificar papel: ${error.message}`);
+  if (data !== true) throw new Error("Acesso negado: apenas ADMIN pode usar esta ferramenta.");
+  const url = Deno.env.get("SUPABASE_URL");
+  const key = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+  if (!url || !key) throw new Error("Service role indispon\xEDvel na edge function mcp.");
+  return createClient2(url, key, {
+    auth: { persistSession: false, autoRefreshToken: false }
+  });
+}
+function errorResult(e) {
+  return {
+    content: [{ type: "text", text: e instanceof Error ? e.message : String(e) }],
+    isError: true
+  };
+}
+function jsonResult(value) {
+  return {
+    content: [{ type: "text", text: JSON.stringify(value, null, 2) }],
+    structuredContent: { result: value }
+  };
+}
+
+// src/lib/mcp/tools/describe-schema.ts
+var describe_schema_default = defineTool26({
+  name: "describe_schema",
+  title: "Descrever schema do banco (admin)",
+  description: "ADMIN-ONLY. Lista tabelas, colunas, tipos, pol\xEDticas RLS e fun\xE7\xF5es do schema public. Use antes de escrever SQL para saber a estrutura real do banco. Passe `table` para detalhar apenas uma tabela.",
+  inputSchema: {
+    table: z23.string().optional().describe("Nome da tabela (opcional). Sem isso, retorna todas.")
+  },
+  annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
+  handler: async ({ table }, ctx) => {
+    if (!ctx.isAuthenticated()) return errorResult(new Error("N\xE3o autenticado"));
+    const filter = table ? `AND c.table_name = ${JSON.stringify(table).replace(/"/g, "'")}` : "";
+    const sql = `
+      select
+        c.table_name,
+        jsonb_agg(jsonb_build_object(
+          'column', c.column_name,
+          'type', c.data_type,
+          'nullable', c.is_nullable,
+          'default', c.column_default
+        ) order by c.ordinal_position) as columns,
+        (select coalesce(jsonb_agg(jsonb_build_object(
+            'policy', p.policyname, 'cmd', p.cmd, 'roles', p.roles,
+            'using', p.qual, 'with_check', p.with_check)), '[]'::jsonb)
+         from pg_policies p where p.schemaname = 'public' and p.tablename = c.table_name) as policies
+      from information_schema.columns c
+      join information_schema.tables t
+        on t.table_schema = c.table_schema and t.table_name = c.table_name and t.table_type = 'BASE TABLE'
+      where c.table_schema = 'public' ${filter}
+      group by c.table_name
+      order by c.table_name
+    `;
+    const sb = supabaseForUser(ctx);
+    const { data, error } = await sb.rpc("admin_exec_sql", { p_sql: sql });
+    if (error) return errorResult(error);
+    return jsonResult(data);
+  }
+});
+
+// src/lib/mcp/tools/list-auth-users.ts
+import { defineTool as defineTool27 } from "npm:@lovable.dev/mcp-js@0.24.0";
+import { z as z24 } from "npm:zod@^3.25.76";
+var list_auth_users_default = defineTool27({
+  name: "list_auth_users",
+  title: "Listar usu\xE1rios de autentica\xE7\xE3o (admin)",
+  description: "ADMIN-ONLY. Lista os usu\xE1rios cadastrados no sistema de autentica\xE7\xE3o (id, email, telefone, criado em, \xFAltimo login, confirma\xE7\xE3o). Use para achar o user_id real de algu\xE9m antes de mexer em profiles/roles.",
+  inputSchema: {
+    page: z24.number().int().min(1).default(1).describe("P\xE1gina (100 por p\xE1gina)."),
+    search: z24.string().optional().describe("Filtra por e-mail contendo este texto.")
+  },
+  annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
+  handler: async ({ page, search }, ctx) => {
+    try {
+      const sb = await supabaseAsAdmin(ctx);
+      const { data, error } = await sb.auth.admin.listUsers({ page: page ?? 1, perPage: 100 });
+      if (error) throw error;
+      let users = data.users.map((u) => ({
+        id: u.id,
+        email: u.email,
+        phone: u.phone,
+        created_at: u.created_at,
+        last_sign_in_at: u.last_sign_in_at,
+        email_confirmed_at: u.email_confirmed_at,
+        providers: u.app_metadata?.providers
+      }));
+      if (search) {
+        const s = search.toLowerCase();
+        users = users.filter((u) => (u.email ?? "").toLowerCase().includes(s));
+      }
+      return jsonResult({ count: users.length, users });
+    } catch (e) {
+      return errorResult(e);
+    }
+  }
+});
+
+// src/lib/mcp/tools/manage-storage.ts
+import { defineTool as defineTool28 } from "npm:@lovable.dev/mcp-js@0.24.0";
+import { z as z25 } from "npm:zod@^3.25.76";
+var manage_storage_default = defineTool28({
+  name: "manage_storage",
+  title: "Gerenciar arquivos de storage (admin)",
+  description: "ADMIN-ONLY. Opera nos buckets de arquivos (offer-images, company-avatars, static-files): `list_buckets`, `list` (arquivos de um bucket/pasta), `upload` (conte\xFAdo texto/base64), `delete` e `signed_url`.",
+  inputSchema: {
+    action: z25.enum(["list_buckets", "list", "upload", "delete", "signed_url"]),
+    bucket: z25.string().optional().describe("Nome do bucket (obrigat\xF3rio exceto em list_buckets)."),
+    path: z25.string().optional().describe("Caminho do arquivo ou pasta dentro do bucket."),
+    content: z25.string().optional().describe("Conte\xFAdo para upload."),
+    content_base64: z25.boolean().optional().describe("true se `content` estiver em base64."),
+    content_type: z25.string().optional().describe("MIME type do upload. Padr\xE3o: text/plain."),
+    expires_in: z25.number().int().min(30).max(604800).optional().describe("Segundos de validade da signed_url.")
+  },
+  annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: false, openWorldHint: false },
+  handler: async (input, ctx) => {
+    try {
+      const sb = await supabaseAsAdmin(ctx);
+      const { action, bucket, path } = input;
+      if (action === "list_buckets") {
+        const { data: data2, error: error2 } = await sb.storage.listBuckets();
+        if (error2) throw error2;
+        return jsonResult(data2);
+      }
+      if (!bucket) throw new Error("bucket \xE9 obrigat\xF3rio para esta a\xE7\xE3o.");
+      if (action === "list") {
+        const { data: data2, error: error2 } = await sb.storage.from(bucket).list(path ?? "", { limit: 200 });
+        if (error2) throw error2;
+        return jsonResult(data2);
+      }
+      if (!path) throw new Error("path \xE9 obrigat\xF3rio para esta a\xE7\xE3o.");
+      if (action === "upload") {
+        if (input.content === void 0) throw new Error("content \xE9 obrigat\xF3rio para upload.");
+        const body = input.content_base64 ? Uint8Array.from(atob(input.content), (c) => c.charCodeAt(0)) : new TextEncoder().encode(input.content);
+        const { data: data2, error: error2 } = await sb.storage.from(bucket).upload(path, body, {
+          contentType: input.content_type ?? "text/plain",
+          upsert: true
+        });
+        if (error2) throw error2;
+        return jsonResult(data2);
+      }
+      if (action === "delete") {
+        const { data: data2, error: error2 } = await sb.storage.from(bucket).remove([path]);
+        if (error2) throw error2;
+        return jsonResult(data2);
+      }
+      const { data, error } = await sb.storage.from(bucket).createSignedUrl(path, input.expires_in ?? 3600);
+      if (error) throw error;
+      return jsonResult(data);
+    } catch (e) {
+      return errorResult(e);
+    }
+  }
+});
+
+// src/lib/mcp/tools/call-function.ts
+import { defineTool as defineTool29 } from "npm:@lovable.dev/mcp-js@0.24.0";
+import { z as z26 } from "npm:zod@^3.25.76";
+var call_function_default = defineTool29({
+  name: "call_function",
+  title: "Chamar edge function (admin)",
+  description: "ADMIN-ONLY. Invoca qualquer edge function do Clilin (ex.: issue-coupon, redeem-coupon, process-lead, generate-blog-post, gsc-sitemap, create-wa-templates) com um corpo JSON. Retorna a resposta da fun\xE7\xE3o. N\xE3o chame `mcp` (recursivo).",
+  inputSchema: {
+    name: z26.string().min(1).describe("Nome da edge function."),
+    body: z26.record(z26.any()).optional().describe("Corpo JSON enviado para a fun\xE7\xE3o.")
+  },
+  annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: false, openWorldHint: true },
+  handler: async ({ name, body }, ctx) => {
+    try {
+      if (name === "mcp") throw new Error("Chamada recursiva \xE0 fun\xE7\xE3o mcp n\xE3o \xE9 permitida.");
+      const sb = await supabaseAsAdmin(ctx);
+      const { data, error } = await sb.functions.invoke(name, { body: body ?? {} });
+      if (error) throw error;
+      return jsonResult(data);
+    } catch (e) {
+      return errorResult(e);
+    }
+  }
+});
+
 // src/lib/mcp/index.ts
 var projectRef = "sukvjgxxuzophzjcojvd";
 var mcp_default = defineMcp({
   name: "clilin-mcp",
   title: "Clilin",
-  version: "0.2.0",
-  instructions: "Ferramentas do Clilin (plataforma de ofertas locais). Comece SEMPRE com `whoami` para descobrir o papel do usu\xE1rio logado (ADMIN/COMPANY/AFFILIATE/CLIENT). IDs importantes: `profiles.id` \xE9 o `company_id`/`affiliate_id` usado em quase tudo \u2014 use `find_company` (busca por nome/CNPJ) ou `list_companies` para descobrir o UUID de uma empresa. ADMIN tem acesso irrestrito: pode criar/editar/deletar ofertas de QUALQUER empresa passando `company_id` em create_offer, ajustar saldos, banir usu\xE1rios, aprovar saques, ativar cidades etc. Empresas (COMPANY) s\xF3 mexem nas pr\xF3prias ofertas (omitem company_id). Divulgadores (AFFILIATE) veem seu saldo. Todas as a\xE7\xF5es respeitam RLS. Opera\xE7\xF5es destrutivas (ban, delete, ajuste de saldo, aprovar saque, publicar post) devem ser confirmadas antes de executar.",
+  version: "0.3.0",
+  instructions: "Ferramentas do Clilin (plataforma de ofertas locais). Comece SEMPRE com `whoami` para descobrir o papel do usu\xE1rio logado (ADMIN/COMPANY/AFFILIATE/CLIENT). IDs importantes: `profiles.id` \xE9 o `company_id`/`affiliate_id` usado em quase tudo \u2014 use `find_company` (busca por nome/CNPJ) ou `list_companies` para descobrir o UUID de uma empresa. ADMIN tem acesso irrestrito: pode criar/editar/deletar ofertas de QUALQUER empresa passando `company_id` em create_offer, ajustar saldos, banir usu\xE1rios, aprovar saques, ativar cidades etc. Empresas (COMPANY) s\xF3 mexem nas pr\xF3prias ofertas (omitem company_id). Divulgadores (AFFILIATE) veem seu saldo. Todas as a\xE7\xF5es respeitam RLS. ADMIN tem acesso TOTAL: `execute_sql` roda qualquer SQL (DDL/DML), `describe_schema` mostra a estrutura, `list_auth_users` lista contas de login, `manage_storage` gerencia arquivos dos buckets e `call_function` invoca qualquer edge function. Opera\xE7\xF5es destrutivas (ban, delete, ajuste de saldo, aprovar saque, publicar post) devem ser confirmadas antes de executar.",
   auth: auth.oauth.issuer({
     issuer: `https://${projectRef}.supabase.co/auth/v1`,
     acceptedAudiences: "authenticated"
@@ -796,7 +989,11 @@ var mcp_default = defineMcp({
     set_city_active_default,
     publish_blog_post_default,
     add_merchant_whatsapp_default,
-    execute_sql_default
+    execute_sql_default,
+    describe_schema_default,
+    list_auth_users_default,
+    manage_storage_default,
+    call_function_default
   ]
 });
 

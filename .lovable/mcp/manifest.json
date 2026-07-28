@@ -12,7 +12,7 @@
   "mcp": {
     "server": {
       "name": "clilin-mcp",
-      "version": "0.2.0",
+      "version": "0.3.0",
       "title": "Clilin"
     },
     "tools": [
@@ -798,6 +798,146 @@
           },
           "required": [
             "query"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "describe_schema",
+        "title": "Descrever schema do banco (admin)",
+        "description": "ADMIN-ONLY. Lista tabelas, colunas, tipos, políticas RLS e funções do schema public. Use antes de escrever SQL para saber a estrutura real do banco. Passe `table` para detalhar apenas uma tabela.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "table": {
+              "type": "string",
+              "description": "Nome da tabela (opcional). Sem isso, retorna todas."
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_auth_users",
+        "title": "Listar usuários de autenticação (admin)",
+        "description": "ADMIN-ONLY. Lista os usuários cadastrados no sistema de autenticação (id, email, telefone, criado em, último login, confirmação). Use para achar o user_id real de alguém antes de mexer em profiles/roles.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "page": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1,
+              "description": "Página (100 por página)."
+            },
+            "search": {
+              "type": "string",
+              "description": "Filtra por e-mail contendo este texto."
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "manage_storage",
+        "title": "Gerenciar arquivos de storage (admin)",
+        "description": "ADMIN-ONLY. Opera nos buckets de arquivos (offer-images, company-avatars, static-files): `list_buckets`, `list` (arquivos de um bucket/pasta), `upload` (conteúdo texto/base64), `delete` e `signed_url`.",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": true,
+          "idempotentHint": false,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "action": {
+              "type": "string",
+              "enum": [
+                "list_buckets",
+                "list",
+                "upload",
+                "delete",
+                "signed_url"
+              ]
+            },
+            "bucket": {
+              "type": "string",
+              "description": "Nome do bucket (obrigatório exceto em list_buckets)."
+            },
+            "path": {
+              "type": "string",
+              "description": "Caminho do arquivo ou pasta dentro do bucket."
+            },
+            "content": {
+              "type": "string",
+              "description": "Conteúdo para upload."
+            },
+            "content_base64": {
+              "type": "boolean",
+              "description": "true se `content` estiver em base64."
+            },
+            "content_type": {
+              "type": "string",
+              "description": "MIME type do upload. Padrão: text/plain."
+            },
+            "expires_in": {
+              "type": "integer",
+              "minimum": 30,
+              "maximum": 604800,
+              "description": "Segundos de validade da signed_url."
+            }
+          },
+          "required": [
+            "action"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "call_function",
+        "title": "Chamar edge function (admin)",
+        "description": "ADMIN-ONLY. Invoca qualquer edge function do Clilin (ex.: issue-coupon, redeem-coupon, process-lead, generate-blog-post, gsc-sitemap, create-wa-templates) com um corpo JSON. Retorna a resposta da função. Não chame `mcp` (recursivo).",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": true,
+          "idempotentHint": false,
+          "openWorldHint": true
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Nome da edge function."
+            },
+            "body": {
+              "type": "object",
+              "additionalProperties": {},
+              "description": "Corpo JSON enviado para a função."
+            }
+          },
+          "required": [
+            "name"
           ],
           "additionalProperties": false,
           "$schema": "http://json-schema.org/draft-07/schema#"
