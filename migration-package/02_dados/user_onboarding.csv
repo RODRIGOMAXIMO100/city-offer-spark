@@ -1,0 +1,9 @@
+id,user_id,role,tour_completed,tour_current_step,checklist_items,welcome_bonus_claimed,bonus_earned,completed_at,created_at,updated_at,dismissed
+c63c5411-edbc-4fa4-a178-6967822575dc,2e7684c3-9a97-4c95-b691-ba6c0987cc13,AFFILIATE,f,0,[],f,0,,2025-12-14 15:05:41.896389+00,2025-12-14 15:05:41.896389+00,f
+29c73607-e012-4441-a2e7-d9cd3ef1a535,776d7680-500f-4783-90e4-77ad902d8e37,COMPANY,t,0,"[""tour_completed"", ""first_offer"", ""instagram_connected"", ""logo_added"", ""first_lead""]",f,500,,2025-12-13 19:19:58.905973+00,2025-12-14 18:32:45.479276+00,f
+803ad02b-6d28-49a2-ae81-9c13d5aac2f8,03100273-5502-42c0-8274-45db27ef0d7d,COMPANY,f,0,[],f,0,,2025-12-19 22:02:42.065949+00,2025-12-19 22:02:42.065949+00,f
+49fb34b5-3b49-4622-86ee-fa0070a0e4d8,503a40f8-69c4-44fe-8eea-fdb25ff640cb,AFFILIATE,f,0,[],f,0,,2026-03-04 20:35:14.751714+00,2026-03-04 20:35:14.751714+00,f
+b7967a67-f26d-4305-87f6-599357ef3d6e,c675cba4-3bc2-446f-9453-00c21549e67e,COMPANY,f,0,"[""first_offer"", ""logo_added"", ""first_lead""]",f,300,,2026-03-04 20:27:26.933856+00,2026-03-04 20:36:22.830632+00,f
+9a5a96a3-1cdc-4ecb-ae6d-2eab52c2983e,fd05ef3c-5802-4c03-aa8f-a66e7bb5f50a,CLIENT,f,0,[],f,0,,2026-06-27 02:54:18.391841+00,2026-06-27 02:54:18.391841+00,f
+d124a181-27dd-4f25-a0ec-f17e544b062b,e71d63a8-2f39-4f8d-8db5-c539d99921f7,AFFILIATE,f,0,"[""first_lead""]",f,100,,2025-12-14 15:49:32.084092+00,2026-07-22 18:59:39.875145+00,f
+cb60eb2c-92c9-448b-b100-2264c8b42602,e0aadbfc-2a6f-4753-9c96-072b36547f41,AFFILIATE,t,0,"[""tour_completed""]",f,100,,2025-12-13 19:28:19.413601+00,2025-12-13 19:36:47.058054+00,f

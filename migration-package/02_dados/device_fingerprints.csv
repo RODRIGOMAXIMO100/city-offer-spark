@@ -1,0 +1,1 @@
+id,device_id,ip_address,fingerprint_data,first_seen_at,last_seen_at,is_suspicious,blocked,expected_country,browser_timezone,geo_mismatch_count,vpn_detected_count,last_vpn_check_at
