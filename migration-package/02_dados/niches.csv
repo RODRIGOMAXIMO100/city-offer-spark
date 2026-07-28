@@ -1,0 +1,35 @@
+id,name,category,icon,active,created_at
+00db5c43-0f17-4fc7-b39c-c391aab194ce,Restaurante,Alimentação,🍽️,t,2025-12-13 18:33:52.423948+00
+d2be3007-80c5-4771-abce-c3e25483f4bb,Pizzaria,Alimentação,🍕,t,2025-12-13 18:33:52.423948+00
+93b8e532-fff7-4a63-a99a-9e172ec8d3f9,Hamburgueria,Alimentação,🍔,t,2025-12-13 18:33:52.423948+00
+da0897d9-04b0-47f5-8fd0-746b429315b2,Lanchonete,Alimentação,🥪,t,2025-12-13 18:33:52.423948+00
+d7ad5fcf-0b4d-44f9-b30f-78eee388354d,Açaí,Alimentação,🍇,t,2025-12-13 18:33:52.423948+00
+c93a1fce-834b-42a4-ab08-b982cc73bafb,Sorveteria,Alimentação,🍦,t,2025-12-13 18:33:52.423948+00
+b95dfaef-48e1-44d9-99c6-f4aad69e333a,Padaria,Alimentação,🥖,t,2025-12-13 18:33:52.423948+00
+ee2f0c45-eb6b-49df-81d4-21e891a86d62,Cafeteria,Alimentação,☕,t,2025-12-13 18:33:52.423948+00
+482dd726-f7e8-421f-9bd4-b2593f7d0822,Bar,Alimentação,🍻,t,2025-12-13 18:33:52.423948+00
+eb4ca5e6-7b6c-477f-ad2a-ff8b3d1440b3,Doceria,Alimentação,🍰,t,2025-12-13 18:33:52.423948+00
+e68264c0-e466-4207-83a2-1b01a2e66433,Marmitaria,Alimentação,🍱,t,2025-12-13 18:33:52.423948+00
+dbc35338-c17e-460a-937f-e4050047849b,Sushi,Alimentação,🍣,t,2025-12-13 18:33:52.423948+00
+fd8698d3-e706-4a01-937d-2395acc7323c,Salão de Beleza,Beleza,💇,t,2025-12-13 18:33:52.423948+00
+65262937-c354-49ae-958f-dca0fd623ec3,Barbearia,Beleza,💈,t,2025-12-13 18:33:52.423948+00
+7af9afcb-6e7f-4a25-be68-c6ddb43fac3a,Estética,Beleza,✨,t,2025-12-13 18:33:52.423948+00
+5e36295a-1e36-42df-aac6-21aa0c66190e,Manicure/Pedicure,Beleza,💅,t,2025-12-13 18:33:52.423948+00
+1f00172d-3ddb-4409-926c-9de607efbb2a,Spa,Beleza,🧖,t,2025-12-13 18:33:52.423948+00
+f983dd15-38a5-4ab5-bb3f-1916afafc7a9,Clínica Médica,Saúde,🏥,t,2025-12-13 18:33:52.423948+00
+8aaf3413-6571-4cba-8563-1fd02b63ab4e,Clínica Odontológica,Saúde,🦷,t,2025-12-13 18:33:52.423948+00
+567a6e97-7f68-4f60-af20-152e6a33a86a,Farmácia,Saúde,💊,t,2025-12-13 18:33:52.423948+00
+fbfa25ec-500e-414f-8fda-0e6568084349,Academia,Saúde,🏋️,t,2025-12-13 18:33:52.423948+00
+ff24e84b-13a2-4fc7-ab10-ddd3b40ec728,Fisioterapia,Saúde,🦴,t,2025-12-13 18:33:52.423948+00
+c9d55c4a-c225-4773-a56f-f929037d387e,Nutricionista,Saúde,🥗,t,2025-12-13 18:33:52.423948+00
+71d2972a-c87e-49e1-92f4-903c4c8f9d42,Oficina Mecânica,Serviços,🔧,t,2025-12-13 18:33:52.423948+00
+6c782bc6-59c9-44b7-87db-c1b0987d167a,Pet Shop,Serviços,🐕,t,2025-12-13 18:33:52.423948+00
+e04280f7-ff9a-47c6-913d-40a96a75962a,Lavanderia,Serviços,👔,t,2025-12-13 18:33:52.423948+00
+4ef6c692-5521-4208-b768-8bea8da67f37,Escola/Curso,Serviços,📚,t,2025-12-13 18:33:52.423948+00
+a5636ae4-495f-476e-926a-f014dbf93f45,Gráfica,Serviços,🖨️,t,2025-12-13 18:33:52.423948+00
+ecd5f8ad-7b80-41b6-bf6d-29f877afd8a6,Loja de Roupas,Varejo,👕,t,2025-12-13 18:33:52.423948+00
+54e1d822-99e9-4627-a7ef-c8db4fba8d96,Loja de Calçados,Varejo,👟,t,2025-12-13 18:33:52.423948+00
+82e0d3ab-118d-4527-ae1f-e917d8ca99e3,Ótica,Varejo,👓,t,2025-12-13 18:33:52.423948+00
+bf6edfc2-8ae1-4c0a-b759-b7e1d6e609f7,Joalheria,Varejo,💎,t,2025-12-13 18:33:52.423948+00
+acfcce83-0cba-44c5-a9bc-5222f190efa7,Floricultura,Varejo,🌸,t,2025-12-13 18:33:52.423948+00
+3784fcea-0d7c-445f-9f5b-edce48caf476,Outros,Outros,📦,t,2025-12-13 18:33:52.423948+00

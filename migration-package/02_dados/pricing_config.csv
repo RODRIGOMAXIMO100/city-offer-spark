@@ -1,0 +1,2 @@
+id,min_cpc,max_cpc,default_cpc,affiliate_share,created_at,updated_at,redemption_cost,redemption_affiliate_share,billing_mode,fee_percent,fee_min_cents,prepaid_discount
+1cdcfbfa-85ba-49c7-bfef-54890a4cd291,4,15,5,0.30,2025-12-11 03:15:52.186057+00,2025-12-12 16:11:06.226923+00,500,0.50,REDEMPTION_ONLY,0.15,300,0.10

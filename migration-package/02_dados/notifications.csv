@@ -1,0 +1,4 @@
+id,user_id,type,title,message,data,read,created_at
+beea1fe2-e84d-4fd4-b522-d7f68ada1f41,813349ad-c7b9-4798-a38d-0749feddb9b2,BONUS,🎉 Bônus creditado!,"Você recebeu R$ 1,00 de bônus pelo seu primeiro lead!","{""amount"": 100, ""bonus_type"": ""first_lead""}",f,2025-12-14 18:21:06.235275+00
+ea405eb6-78d4-4440-8a49-9180241c64cf,cab0aba3-ff69-4d75-af28-ee4805607637,BONUS,🎉 Parabéns! Primeiro lead recebido!,"Você recebeu seu primeiro lead e ganhou R$ 1,00 de bônus! Continue divulgando suas ofertas.","{""amount"": 100, ""bonus_type"": ""first_lead""}",f,2026-03-04 20:36:23.04233+00
+eddc57dc-cbbf-4afc-914f-aea6c1b38eaa,c5b70e56-0957-4692-9222-847d1d109820,BONUS,🎉 Parabéns! Primeiro lead recebido!,"Você recebeu seu primeiro lead e ganhou R$ 1,00 de bônus! Continue divulgando suas ofertas.","{""amount"": 100, ""bonus_type"": ""first_lead""}",f,2026-07-22 18:59:40.074729+00

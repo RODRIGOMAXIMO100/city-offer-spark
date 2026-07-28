@@ -1,0 +1,6 @@
+id,name,min_clicks,commission_multiplier,badge_color,benefits
+1,Bronze,0,1.00,#CD7F32,"{""Comissao de 50%"",""Comece a indicar""}"
+2,Prata,10,1.10,#C0C0C0,"{""Comissao de 55%"",""Destaque no ranking""}"
+3,Ouro,30,1.20,#FFD700,"{""Comissao de 60%"",""Suporte prioritario""}"
+4,Platina,75,1.30,#E5E4E2,"{""Comissao de 65%"",""Ofertas exclusivas""}"
+5,Diamante,150,1.40,#B9F2FF,"{""Comissao de 70%"",""Bonus mensais""}"
