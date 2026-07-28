@@ -943,6 +943,85 @@
           "$schema": "http://json-schema.org/draft-07/schema#"
         },
         "outputSchema": null
+      },
+      {
+        "name": "deploy_edge_function",
+        "title": "Deploy de edge function (admin)",
+        "description": "ADMIN-ONLY. Faz deploy de uma edge function no projeto Supabase via Management API. Cria a função se o slug não existir, ou atualiza (PATCH) se já existir. Requer os secrets SUPABASE_ACCESS_TOKEN e SUPABASE_PROJECT_REF. USE COM CUIDADO: o deploy afeta produção imediatamente.",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": true,
+          "idempotentHint": false,
+          "openWorldHint": true
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "slug": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Slug da edge function, ex.: 'wa-webhook'."
+            },
+            "code": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Conteúdo completo do index.ts da função."
+            },
+            "verify_jwt": {
+              "type": "boolean",
+              "description": "Se a plataforma deve validar o JWT antes de invocar. Padrão: true."
+            }
+          },
+          "required": [
+            "slug",
+            "code"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "write_repo_file",
+        "title": "Escrever arquivo no repositório (admin)",
+        "description": "ADMIN-ONLY. Cria ou atualiza um arquivo no repositório GitHub do projeto via GitHub Contents API. Requer os secrets GITHUB_TOKEN e GITHUB_REPO ('owner/repo'). Retorna o sha do commit e a URL do arquivo.",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": true,
+          "idempotentHint": false,
+          "openWorldHint": true
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Caminho do arquivo no repo, ex.: 'src/hooks/usePricingConfig.tsx'."
+            },
+            "content": {
+              "type": "string",
+              "description": "Conteúdo completo do arquivo (texto puro, será convertido para base64)."
+            },
+            "message": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Mensagem de commit."
+            },
+            "branch": {
+              "type": "string",
+              "description": "Branch de destino. Padrão: 'main'."
+            }
+          },
+          "required": [
+            "path",
+            "content",
+            "message"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
       }
     ]
   }

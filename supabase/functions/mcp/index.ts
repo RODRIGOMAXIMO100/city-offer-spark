@@ -951,6 +951,165 @@ var call_function_default = defineTool29({
   }
 });
 
+// src/lib/mcp/tools/deploy-edge-function.ts
+import { defineTool as defineTool30 } from "npm:@lovable.dev/mcp-js@0.24.0";
+import { z as z27 } from "npm:zod@^3.25.76";
+var MGMT_API = "https://api.supabase.com";
+function readSecret(...names) {
+  for (const n of names) {
+    const v = Deno.env.get(n);
+    if (v) return v;
+  }
+  throw new Error(`Secret ausente na edge function mcp: ${names.join(" ou ")}`);
+}
+var deploy_edge_function_default = defineTool30({
+  name: "deploy_edge_function",
+  title: "Deploy de edge function (admin)",
+  description: "ADMIN-ONLY. Faz deploy de uma edge function no projeto Supabase via Management API. Cria a fun\xE7\xE3o se o slug n\xE3o existir, ou atualiza (PATCH) se j\xE1 existir. Requer os secrets SUPABASE_ACCESS_TOKEN e SUPABASE_PROJECT_REF. USE COM CUIDADO: o deploy afeta produ\xE7\xE3o imediatamente.",
+  inputSchema: {
+    slug: z27.string().min(1).describe("Slug da edge function, ex.: 'wa-webhook'."),
+    code: z27.string().min(1).describe("Conte\xFAdo completo do index.ts da fun\xE7\xE3o."),
+    verify_jwt: z27.boolean().optional().describe("Se a plataforma deve validar o JWT antes de invocar. Padr\xE3o: true.")
+  },
+  annotations: {
+    readOnlyHint: false,
+    destructiveHint: true,
+    idempotentHint: false,
+    openWorldHint: true
+  },
+  handler: async ({ slug, code, verify_jwt }, ctx) => {
+    try {
+      await supabaseAsAdmin(ctx);
+      const token = readSecret("SUPABASE_ACCESS_TOKEN", "SB_MGMT_ACCESS_TOKEN");
+      const ref = readSecret("SUPABASE_PROJECT_REF", "SB_PROJECT_REF");
+      const jwt = verify_jwt ?? true;
+      const authHeaders = {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json"
+      };
+      const existsRes = await fetch(
+        `${MGMT_API}/v1/projects/${ref}/functions/${encodeURIComponent(slug)}`,
+        { headers: authHeaders }
+      );
+      const exists = existsRes.status === 200;
+      const payload = {
+        slug,
+        name: slug,
+        verify_jwt: jwt,
+        entrypoint_path: "index.ts",
+        body: code
+      };
+      const url = exists ? `${MGMT_API}/v1/projects/${ref}/functions/${encodeURIComponent(slug)}` : `${MGMT_API}/v1/projects/${ref}/functions`;
+      const res = await fetch(url, {
+        method: exists ? "PATCH" : "POST",
+        headers: authHeaders,
+        body: JSON.stringify(payload)
+      });
+      const text = await res.text();
+      if (!res.ok) {
+        throw new Error(`Management API falhou [${res.status}]: ${text}`);
+      }
+      let parsed = text;
+      try {
+        parsed = JSON.parse(text);
+      } catch {
+      }
+      return jsonResult({
+        action: exists ? "updated" : "created",
+        slug,
+        verify_jwt: jwt,
+        status: res.status,
+        response: parsed
+      });
+    } catch (e) {
+      return errorResult(e);
+    }
+  }
+});
+
+// src/lib/mcp/tools/write-repo-file.ts
+import { defineTool as defineTool31 } from "npm:@lovable.dev/mcp-js@0.24.0";
+import { z as z28 } from "npm:zod@^3.25.76";
+var GH_API = "https://api.github.com";
+function readSecret2(name) {
+  const v = Deno.env.get(name);
+  if (!v) throw new Error(`Secret ausente na edge function mcp: ${name}`);
+  return v;
+}
+function toBase64(input) {
+  const bytes = new TextEncoder().encode(input);
+  let binary = "";
+  for (const b of bytes) binary += String.fromCharCode(b);
+  return btoa(binary);
+}
+var write_repo_file_default = defineTool31({
+  name: "write_repo_file",
+  title: "Escrever arquivo no reposit\xF3rio (admin)",
+  description: "ADMIN-ONLY. Cria ou atualiza um arquivo no reposit\xF3rio GitHub do projeto via GitHub Contents API. Requer os secrets GITHUB_TOKEN e GITHUB_REPO ('owner/repo'). Retorna o sha do commit e a URL do arquivo.",
+  inputSchema: {
+    path: z28.string().min(1).describe("Caminho do arquivo no repo, ex.: 'src/hooks/usePricingConfig.tsx'."),
+    content: z28.string().describe("Conte\xFAdo completo do arquivo (texto puro, ser\xE1 convertido para base64)."),
+    message: z28.string().min(1).describe("Mensagem de commit."),
+    branch: z28.string().optional().describe("Branch de destino. Padr\xE3o: 'main'.")
+  },
+  annotations: {
+    readOnlyHint: false,
+    destructiveHint: true,
+    idempotentHint: false,
+    openWorldHint: true
+  },
+  handler: async ({ path, content, message, branch }, ctx) => {
+    try {
+      await supabaseAsAdmin(ctx);
+      const token = readSecret2("GITHUB_TOKEN");
+      const repo = readSecret2("GITHUB_REPO");
+      const ref = branch ?? "main";
+      const headers = {
+        Authorization: `Bearer ${token}`,
+        Accept: "application/vnd.github+json",
+        "Content-Type": "application/json",
+        "User-Agent": "clilin-mcp"
+      };
+      const cleanPath = path.replace(/^\/+/, "");
+      const contentsUrl = `${GH_API}/repos/${repo}/contents/${cleanPath.split("/").map(encodeURIComponent).join("/")}`;
+      let sha;
+      const getRes = await fetch(`${contentsUrl}?ref=${encodeURIComponent(ref)}`, { headers });
+      if (getRes.status === 200) {
+        const existing = await getRes.json();
+        sha = existing?.sha;
+      } else if (getRes.status !== 404) {
+        const body = await getRes.text();
+        throw new Error(`GitHub GET falhou [${getRes.status}]: ${body}`);
+      }
+      const putRes = await fetch(contentsUrl, {
+        method: "PUT",
+        headers,
+        body: JSON.stringify({
+          message,
+          content: toBase64(content),
+          branch: ref,
+          ...sha ? { sha } : {}
+        })
+      });
+      const putText = await putRes.text();
+      if (!putRes.ok) {
+        throw new Error(`GitHub PUT falhou [${putRes.status}]: ${putText}`);
+      }
+      const data = JSON.parse(putText);
+      return jsonResult({
+        action: sha ? "updated" : "created",
+        path: cleanPath,
+        branch: ref,
+        commit_sha: data?.commit?.sha,
+        content_sha: data?.content?.sha,
+        html_url: data?.content?.html_url
+      });
+    } catch (e) {
+      return errorResult(e);
+    }
+  }
+});
+
 // src/lib/mcp/index.ts
 var projectRef = "sukvjgxxuzophzjcojvd";
 var mcp_default = defineMcp({
@@ -993,7 +1152,9 @@ var mcp_default = defineMcp({
     describe_schema_default,
     list_auth_users_default,
     manage_storage_default,
-    call_function_default
+    call_function_default,
+    deploy_edge_function_default,
+    write_repo_file_default
   ]
 });
 

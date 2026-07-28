@@ -31,6 +31,8 @@ import describeSchema from "./tools/describe-schema";
 import listAuthUsers from "./tools/list-auth-users";
 import manageStorage from "./tools/manage-storage";
 import callFunction from "./tools/call-function";
+import deployEdgeFunction from "./tools/deploy-edge-function";
+import writeRepoFile from "./tools/write-repo-file";
 
 const projectRef = import.meta.env.VITE_SUPABASE_PROJECT_ID ?? "project-ref-unset";
 
@@ -76,5 +78,7 @@ export default defineMcp({
     listAuthUsers,
     manageStorage,
     callFunction,
+    deployEdgeFunction,
+    writeRepoFile,
   ],
 });
