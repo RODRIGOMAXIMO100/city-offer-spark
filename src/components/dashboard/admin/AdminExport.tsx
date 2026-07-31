@@ -18,6 +18,12 @@ interface ExportableOffer {
   leads_count: number;
   active: boolean;
   expires_at: string;
+  /** price_new e numeric em REAIS (50.00 = R$50), nao centavos */
+  price_new?: number;
+  cupons_emitidos?: number;
+  cupons_resgatados?: number;
+  /** receita ja realizada, em CENTAVOS */
+  receita_cents?: number;
 }
 
 interface ExportableTransaction {
@@ -100,11 +106,19 @@ export const exportUsers = (users: ExportableUser[]) => {
 };
 
 export const exportOffers = (offers: ExportableOffer[]) => {
-  const headers = ['Título', 'Empresa', 'Cidade', 'Leads', 'Views', 'Cliques', 'Status', 'Expira em'];
+  const headers = [
+    'Título', 'Empresa', 'Cidade', 'Preço (R$)', 'Cupons resgatados',
+    'Cupons em aberto', 'Receita (R$)', 'Leads', 'Views', 'Cliques',
+    'Status', 'Expira em'
+  ];
   const rows = offers.map(offer => [
     offer.title,
     offer.company_name || '',
     offer.city,
+    (Number(offer.price_new) || 0).toFixed(2), // price_new ja esta em reais
+    String(offer.cupons_resgatados ?? 0),
+    String(offer.cupons_emitidos ?? 0),
+    ((offer.receita_cents ?? 0) / 100).toFixed(2), // receita esta em centavos
     String(offer.leads_count || 0),
     String(offer.views_count),
     String(offer.clicks_count),
