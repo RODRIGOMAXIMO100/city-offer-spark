@@ -6,6 +6,11 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { Copy, Check, Clock, Instagram, TrendingUp, DollarSign, Flame, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import {
+  usePricingConfig,
+  calcRedemptionFeeCents,
+  calcAffiliateEarningCents,
+} from "@/hooks/usePricingConfig";
 
 // Generate a random 6-character code
 const generateShortCode = (): string => {
@@ -100,10 +105,11 @@ export function AffiliateOfferCard({ offer, profileId, index, commissionMultipli
 
   const discount = Math.round((1 - offer.price_new / offer.price_old) * 100);
   const offerScore = offer.current_offer_score || 5;
-  // FASE 1: taxa = max(R$3 ; 15% do preco promocional). Divulgador leva 50% (Bronze) ate 70% (Diamante).
-  const feeCents = Math.max(300, Math.round(offer.price_new * 100 * 0.15));
-  const REDEMPTION_SHARE = 0.50; // fatia base do divulgador (Bronze)
-  const affiliateEarning = (feeCents * REDEMPTION_SHARE * commissionMultiplier) / 100;
+  // Taxa e fatia do divulgador vem de pricing_config (usePricingConfig),
+  // nao mais chumbadas aqui: se a regra mudar no banco, a tela acompanha.
+  const { config: pricing } = usePricingConfig();
+  const feeCents = calcRedemptionFeeCents(offer.price_new, pricing);
+  const affiliateEarning = calcAffiliateEarningCents(feeCents, commissionMultiplier, pricing) / 100;
   const leadRate = offer.views_count > 0 ? (((offer as any).leads_count || 0) / offer.views_count * 100).toFixed(1) : "0";
   const isHot = parseFloat(leadRate) > 2;
 
@@ -295,7 +301,7 @@ export function AffiliateOfferCard({ offer, profileId, index, commissionMultipli
               <div className="space-y-1 text-xs">
                 <p>📊 Nota da oferta: <strong>{offerScore.toFixed(1)}</strong></p>
                 <p>🏪 Taxa do resgate: R$ {(feeCents / 100).toFixed(2)}</p>
-                <p>🎯 Sua comissão: {Math.round(REDEMPTION_SHARE * commissionMultiplier * 100)}%</p>
+                <p>🎯 Sua comissão: {Math.round(pricing.redemption_affiliate_share * commissionMultiplier * 100)}%</p>
                 <p>⭐ Seu bônus de nível: <strong>×{commissionMultiplier.toFixed(2)}</strong></p>
                 <p>✨ Seu ganho: <strong className="text-affiliate">R$ {affiliateEarning.toFixed(2)}</strong></p>
               </div>
