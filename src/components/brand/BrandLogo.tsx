@@ -1,73 +1,137 @@
 import { useEffect, useState } from "react";
 import logoPng from "@/assets/logo.png";
-import { currentTheme, type ThemeId } from "@/lib/theme";
+import { currentLogo, currentTheme, type LogoId, type ThemeId } from "@/lib/theme";
 
 interface Props {
   className?: string;
-  /** "full" = símbolo + nome; "mark" = só o símbolo */
+  /** "full" = símbolo + nome; "mark" = só o símbolo (ícone) */
   variant?: "full" | "mark";
-  /** usa o nome em branco, para fundo escuro ou colorido */
+  /** cores para fundo escuro ou colorido */
   inverse?: boolean;
+  /** força uma opção (usado na página /marca para comparar) */
+  logo?: LogoId;
 }
 
-// Raio do balão por direção: Feira (letreiro), Boca a boca (bolha), Pódio (placa)
-const BUBBLE_RADIUS: Record<ThemeId, number> = { "0": 8, "1": 6, "2": 14, "3": 3 };
-
-function useTheme() {
-  const [tema, setTema] = useState<ThemeId>(currentTheme());
+function useBrandState() {
+  const [state, setState] = useState(() => ({ tema: currentTheme(), logo: currentLogo() }));
   useEffect(() => {
-    const on = () => setTema(currentTheme());
+    const on = () => setState({ tema: currentTheme(), logo: currentLogo() });
     window.addEventListener("clilin-tema", on);
     return () => window.removeEventListener("clilin-tema", on);
   }, []);
-  return tema;
+  return state;
 }
 
-/**
- * Símbolo: um balão de fala (boca a boca) com três barras subindo (alcance e ranking).
- * As cores vêm dos tokens do tema ativo.
- */
-export function BrandMark({ className = "h-9 w-9", tema }: { className?: string; tema: ThemeId }) {
-  const r = BUBBLE_RADIUS[tema];
+const STROKE = 5.5;
+
+/** Nome "clilin" desenhado em traço único, igual em todas as direções de cor. */
+function Wordmark({ x = 0, ink, inverse }: { x?: number; ink: string; inverse: boolean }) {
+  const dot1 = inverse ? "hsl(var(--highlight))" : "hsl(var(--company))";
+  const dot2 = inverse ? "hsl(var(--primary-foreground))" : "hsl(var(--affiliate))";
   return (
-    <svg viewBox="0 0 40 40" className={className} aria-hidden>
-      <path d="M9 29 L7 38 L18 29 Z" fill="hsl(var(--primary))" />
-      <rect x="2" y="2" width="36" height="28" rx={r} fill="hsl(var(--primary))" />
-      <rect x="10" y="17" width="5" height="8" rx="1" fill="hsl(var(--highlight))" />
-      <rect x="17.5" y="13" width="5" height="12" rx="1" fill="hsl(var(--highlight))" />
-      <rect x="25" y="8" width="5" height="17" rx="1" fill="hsl(var(--primary-foreground))" />
-    </svg>
+    <g transform={`translate(${x} 0)`}>
+      <g fill="none" stroke={ink} strokeWidth={STROKE} strokeLinecap="round" strokeLinejoin="round">
+        <path d="M17.5 19.5 A8.5 8.5 0 1 0 17.5 30.5" />
+        <path d="M27 5.5 V33.5" />
+        <path d="M36 17 V33.5" />
+        <path d="M45 5.5 V33.5" />
+        <path d="M54 17 V33.5" />
+        <path d="M63 17 V33.5 M63 24.5 A7.5 7.5 0 0 1 78 24.5 V33.5" />
+      </g>
+      <circle cx="36" cy="8" r="3.8" fill={dot1} />
+      <circle cx="54" cy="8" r="3.8" fill={dot2} />
+    </g>
   );
 }
 
-export function BrandLogo({ className = "h-10", variant = "full", inverse = false }: Props) {
-  const tema = useTheme();
-
-  if (tema === "0") {
-    return <img src={logoPng} alt="Clilin" className={className} />;
+/** Símbolos 40x40 de cada opção */
+function Mark({ logo, inverse }: { logo: LogoId; inverse: boolean }) {
+  const main = inverse ? "hsl(var(--primary-foreground))" : "hsl(var(--primary))";
+  switch (logo) {
+    case "b":
+      return (
+        <g fill="none" strokeLinecap="round">
+          <circle cx="9" cy="20" r="5.5" fill={main} />
+          <path d="M18.2 10.8 A13 13 0 0 1 18.2 29.2" stroke="hsl(var(--affiliate))" strokeWidth="4.5" />
+          <path d="M23.8 5.2 A21 21 0 0 1 23.8 34.8" stroke="hsl(var(--highlight))" strokeWidth="4.5" />
+        </g>
+      );
+    case "c":
+      return (
+        <g fill="none" strokeWidth="4.5">
+          <circle cx="10" cy="20" r="7.5" stroke={main} />
+          <circle cx="20" cy="20" r="7.5" stroke="hsl(var(--affiliate))" />
+          <circle cx="30" cy="20" r="7.5" stroke="hsl(var(--highlight))" />
+        </g>
+      );
+    case "d":
+      return (
+        <g>
+          <rect x="1" y="3" width="36" height="36" rx="10" fill={inverse ? "hsl(var(--primary-foreground))" : "hsl(var(--primary))"} />
+          <path
+            d="M25 16 A8.5 8.5 0 1 0 25 28"
+            fill="none"
+            stroke={inverse ? "hsl(var(--primary))" : "hsl(var(--primary-foreground))"}
+            strokeWidth="5"
+            strokeLinecap="round"
+          />
+          <circle cx="33" cy="7" r="6" fill="hsl(var(--highlight))" stroke={inverse ? "hsl(var(--primary))" : "hsl(var(--background))"} strokeWidth="2.5" />
+        </g>
+      );
+    default:
+      // "a" não tem símbolo separado: o ícone é o "c" com os dois pingos
+      return (
+        <g>
+          <path d="M26 14 A10 10 0 1 0 26 28" fill="none" stroke={main} strokeWidth="5.5" strokeLinecap="round" />
+          <circle cx="31" cy="9" r="4" fill="hsl(var(--company))" />
+          <circle cx="31" cy="21" r="4" fill="hsl(var(--affiliate))" />
+        </g>
+      );
   }
+}
 
-  if (variant === "mark") return <BrandMark tema={tema} className={`${className} w-auto aspect-square`} />;
-
-  // Nome desenhado no mesmo SVG para acompanhar a altura do símbolo
+export function LogoGraphic({
+  logo,
+  variant = "full",
+  inverse = false,
+  className = "h-10",
+}: {
+  logo: LogoId;
+  variant?: "full" | "mark";
+  inverse?: boolean;
+  className?: string;
+}) {
+  const ink = inverse ? "hsl(var(--primary-foreground))" : "hsl(var(--foreground))";
+  if (variant === "mark") {
+    return (
+      <svg viewBox="0 0 40 40" className={`${className} w-auto`} role="img" aria-label="Clilin">
+        <Mark logo={logo} inverse={inverse} />
+      </svg>
+    );
+  }
+  if (logo === "a") {
+    return (
+      <svg viewBox="0 0 84 40" className={`${className} w-auto`} role="img" aria-label="Clilin">
+        <Wordmark ink={ink} inverse={inverse} />
+      </svg>
+    );
+  }
   return (
     <svg viewBox="0 0 132 40" className={`${className} w-auto`} role="img" aria-label="Clilin">
-      <g>
-        <path d="M9 29 L7 38 L18 29 Z" fill="hsl(var(--primary))" />
-        <rect x="2" y="2" width="36" height="28" rx={BUBBLE_RADIUS[tema]} fill="hsl(var(--primary))" />
-        <rect x="10" y="17" width="5" height="8" rx="1" fill="hsl(var(--highlight))" />
-        <rect x="17.5" y="13" width="5" height="12" rx="1" fill="hsl(var(--highlight))" />
-        <rect x="25" y="8" width="5" height="17" rx="1" fill="hsl(var(--primary-foreground))" />
-      </g>
-      <text
-        x="46"
-        y="28"
-        className="font-display"
-        fill={inverse ? "hsl(var(--primary-foreground))" : "hsl(var(--foreground))"}
-        style={{ fontSize: tema === "2" ? 22 : 27, fontWeight: 800, letterSpacing: tema === "2" ? "-0.04em" : "-0.02em" }}
-      >
-        clilin
-      </text>
+      <Mark logo={logo} inverse={inverse} />
+      <Wordmark x={48} ink={ink} inverse={inverse} />
     </svg>
   );
 }
+
+export function BrandLogo({ className = "h-10", variant = "full", inverse = false, logo }: Props) {
+  const { tema, logo: chosen } = useBrandState();
+  const active = logo ?? chosen ?? (tema === "0" ? null : "a");
+
+  if (!active) {
+    return <img src={logoPng} alt="Clilin" className={className} />;
+  }
+  return <LogoGraphic logo={active} variant={variant} inverse={inverse} className={className} />;
+}
+
+export type { ThemeId };

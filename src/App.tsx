@@ -27,6 +27,7 @@ import ParaEmpresasPage from "./pages/ParaEmpresasPage";
 import ParaDivulgadoresPage from "./pages/ParaDivulgadoresPage";
 import ParaClientesPage from "./pages/ParaClientesPage";
 import OAuthConsentPage from "./pages/OAuthConsentPage";
+import MarcaPage from "./pages/MarcaPage";
 
 import WhatsAppButton from "./components/WhatsAppButton";
 import { ThemePreviewSwitcher } from "./components/brand/ThemePreviewSwitcher";
@@ -99,6 +100,7 @@ const AppRoutes = () => (
         <Route path="/empresas" element={<ParaEmpresasPage />} />
         <Route path="/divulgadores" element={<ParaDivulgadoresPage />} />
         <Route path="/clientes" element={<ParaClientesPage />} />
+        <Route path="/marca" element={<MarcaPage />} />
         <Route path="/.lovable/oauth/consent" element={<OAuthConsentPage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>

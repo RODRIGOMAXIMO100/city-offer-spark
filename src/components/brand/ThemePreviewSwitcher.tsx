@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Palette, ChevronDown } from "lucide-react";
-import { THEMES, applyTheme, currentTheme, isThemePreview, type ThemeId } from "@/lib/theme";
+import { Link } from "react-router-dom";
+import { LOGOS, THEMES, applyLogo, applyTheme, currentLogo, currentTheme, isThemePreview, type LogoId, type ThemeId } from "@/lib/theme";
 
 // Seletor flutuante para comparar as direções de identidade no site de verdade.
 // Só aparece para quem abriu o site com ?tema=.
@@ -8,9 +9,13 @@ export function ThemePreviewSwitcher() {
   const [visible] = useState(isThemePreview);
   const [tema, setTema] = useState<ThemeId>(currentTheme());
   const [open, setOpen] = useState(false);
+  const [logo, setLogo] = useState<LogoId | null>(currentLogo());
 
   useEffect(() => {
-    const on = () => setTema(currentTheme());
+    const on = () => {
+      setTema(currentTheme());
+      setLogo(currentLogo());
+    };
     window.addEventListener("clilin-tema", on);
     return () => window.removeEventListener("clilin-tema", on);
   }, []);
@@ -47,6 +52,25 @@ export function ThemePreviewSwitcher() {
                 <span className="block text-xs text-muted-foreground">{t.idea}</span>
               </button>
             ))}
+            <div className="pt-2 mt-1 border-t border-border">
+              <p className="text-xs font-semibold mb-1.5">Logo</p>
+              <div className="grid grid-cols-4 gap-1.5">
+                {LOGOS.map((l) => (
+                  <button
+                    key={l.id}
+                    type="button"
+                    title={l.name}
+                    onClick={() => applyLogo(l.id)}
+                    className={`rounded-lg py-1.5 text-sm font-semibold border ${logo === l.id ? "border-primary bg-primary/10" : "border-border hover:bg-muted"}`}
+                  >
+                    {l.id.toUpperCase()}
+                  </button>
+                ))}
+              </div>
+              <Link to="/marca" className="block text-xs text-primary font-semibold mt-2 hover:underline">
+                Ver todas as opções de logo
+              </Link>
+            </div>
           </div>
         )}
       </div>

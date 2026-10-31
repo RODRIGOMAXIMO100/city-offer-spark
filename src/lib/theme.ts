@@ -75,7 +75,14 @@ export function currentTheme(): ThemeId {
 
 /** true quando a pessoa está avaliando as direções (mostra o seletor) */
 export function isThemePreview(): boolean {
-  return readStored() !== null || new URLSearchParams(window.location.search).has("tema");
+  const q = new URLSearchParams(window.location.search);
+  let logo = false;
+  try {
+    logo = localStorage.getItem("clilin_logo_preview") !== null;
+  } catch {
+    /* ignora */
+  }
+  return readStored() !== null || logo || q.has("tema") || q.has("logo") || window.location.pathname === "/marca";
 }
 
 export function initTheme() {
@@ -83,4 +90,41 @@ export function initTheme() {
   const fromUrl = param && THEMES.some((t) => t.id === param) ? (param as ThemeId) : null;
   const id = fromUrl ?? readStored();
   if (id) applyTheme(id);
+}
+
+// ------------------------------------------------------------------
+// Opções de logo em avaliação (?logo=a|b|c|d). Valem junto com o tema.
+// ------------------------------------------------------------------
+export type LogoId = "a" | "b" | "c" | "d";
+
+export const LOGOS: { id: LogoId; name: string; idea: string }[] = [
+  { id: "a", name: "Pingos", idea: "Só o nome. Os pingos dos dois i são duas pessoas: a empresa e quem divulga." },
+  { id: "b", name: "Alcance", idea: "Um ponto que se espalha em ondas: o assunto ganhando a rede." },
+  { id: "c", name: "Corrente", idea: "Três círculos de mãos dadas: gente junta falando a mesma coisa." },
+  { id: "d", name: "Tlin!", idea: "Ícone de app com o c e o aviso de notificação: o som do nome." },
+];
+
+const LOGO_KEY = "clilin_logo_preview";
+
+export function currentLogo(): LogoId | null {
+  try {
+    const v = localStorage.getItem(LOGO_KEY);
+    return v && LOGOS.some((l) => l.id === v) ? (v as LogoId) : null;
+  } catch {
+    return null;
+  }
+}
+
+export function applyLogo(id: LogoId) {
+  try {
+    localStorage.setItem(LOGO_KEY, id);
+  } catch {
+    /* sem armazenamento: vale só nesta página */
+  }
+  window.dispatchEvent(new CustomEvent("clilin-tema", { detail: id }));
+}
+
+export function initLogo() {
+  const param = new URLSearchParams(window.location.search).get("logo");
+  if (param && LOGOS.some((l) => l.id === param)) applyLogo(param as LogoId);
 }
