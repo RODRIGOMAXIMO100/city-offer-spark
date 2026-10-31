@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import logoPng from "@/assets/logo.png";
 import { currentLogo, currentTheme, type LogoId, type ThemeId } from "@/lib/theme";
+import { CorrenteRings, CorrenteDots, CORRENTE_VIEWBOX } from "./CorrenteMark";
 
 interface Props {
   className?: string;
@@ -25,9 +26,9 @@ function useBrandState() {
 const STROKE = 5.5;
 
 /** Nome "clilin" desenhado em traço único, igual em todas as direções de cor. */
-function Wordmark({ x = 0, ink, inverse }: { x?: number; ink: string; inverse: boolean }) {
-  const dot1 = inverse ? "hsl(var(--highlight))" : "hsl(var(--company))";
-  const dot2 = inverse ? "hsl(var(--primary-foreground))" : "hsl(var(--affiliate))";
+function Wordmark({ x = 0, ink, inverse, mono = false }: { x?: number; ink: string; inverse: boolean; mono?: boolean }) {
+  const dot1 = mono ? ink : inverse ? "hsl(var(--highlight))" : "hsl(var(--company))";
+  const dot2 = mono ? ink : inverse ? "hsl(var(--primary-foreground))" : "hsl(var(--affiliate))";
   return (
     <g transform={`translate(${x} 0)`}>
       <g fill="none" stroke={ink} strokeWidth={STROKE} strokeLinecap="round" strokeLinejoin="round">
@@ -95,13 +96,43 @@ export function LogoGraphic({
   variant = "full",
   inverse = false,
   className = "h-10",
+  bg,
+  mono,
+  small,
 }: {
   logo: LogoId;
   variant?: "full" | "mark";
   inverse?: boolean;
   className?: string;
+  /** cor do fundo onde o logo está (usada no respiro do entrelaçado) */
+  bg?: string;
+  /** uma cor só: "dark" (preto) ou "light" (branco) */
+  mono?: "dark" | "light";
+  /** versão simplificada para tamanhos pequenos */
+  small?: boolean;
 }) {
-  const ink = inverse ? "hsl(var(--primary-foreground))" : "hsl(var(--foreground))";
+  const ink = mono === "dark" ? "#111827" : mono === "light" ? "#ffffff" : inverse ? "hsl(var(--primary-foreground))" : "hsl(var(--foreground))";
+
+  if (logo === "c") {
+    const gap = bg ?? (mono === "light" || inverse ? "hsl(var(--primary))" : "hsl(var(--background))");
+    const colors: [string, string, string] = mono
+      ? [ink, ink, ink]
+      : [inverse ? "hsl(var(--primary-foreground))" : "hsl(var(--primary))", "hsl(var(--affiliate))", "hsl(var(--highlight))"];
+    const mark = small ? <CorrenteDots colors={colors} gap={gap} /> : <CorrenteRings colors={colors} gap={gap} />;
+    if (variant === "mark") {
+      return (
+        <svg viewBox={CORRENTE_VIEWBOX} className={`${className} w-auto`} role="img" aria-label="Clilin">
+          {mark}
+        </svg>
+      );
+    }
+    return (
+      <svg viewBox="0 0 150 40" className={`${className} w-auto`} role="img" aria-label="Clilin">
+        {mark}
+        <Wordmark x={67} ink={ink} inverse={inverse || mono === "light"} mono={!!mono} />
+      </svg>
+    );
+  }
   if (variant === "mark") {
     return (
       <svg viewBox="0 0 40 40" className={`${className} w-auto`} role="img" aria-label="Clilin">

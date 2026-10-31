@@ -46,7 +46,7 @@ function store(id: ThemeId) {
   }
 }
 
-function loadFonts(id: ThemeId) {
+export function loadFonts(id: ThemeId) {
   const theme = THEMES.find((t) => t.id === id);
   if (!theme?.fonts) return;
   const elId = `tema-fonts-${id}`;
@@ -82,7 +82,7 @@ export function isThemePreview(): boolean {
   } catch {
     /* ignora */
   }
-  return readStored() !== null || logo || q.has("tema") || q.has("logo") || window.location.pathname === "/marca";
+  return readStored() !== null || logo || q.has("tema") || q.has("logo") || window.location.pathname.startsWith("/marca");
 }
 
 export function initTheme() {
