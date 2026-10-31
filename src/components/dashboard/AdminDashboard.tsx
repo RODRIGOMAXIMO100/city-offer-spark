@@ -31,6 +31,7 @@ import AdminFinanceiro from './admin/AdminFinanceiro';
 import AdminCities from './admin/AdminCities';
 import AdminSEO from './admin/AdminSEO';
 import AdminWhatsAppTemplates from './admin/AdminWhatsAppTemplates';
+import AdminCampaigns from './admin/AdminCampaigns';
 
 
 interface Stats {
@@ -634,6 +635,9 @@ export default function AdminDashboard() {
 
       case 'wa-templates':
         return <AdminWhatsAppTemplates />;
+
+      case 'campaigns':
+        return <AdminCampaigns />;
 
       
       

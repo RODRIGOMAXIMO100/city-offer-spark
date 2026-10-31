@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Banknote, PlusCircle, LogOut, Eye, MousePointer, TrendingUp, Loader2, Instagram, Check, Clock, Trash2, Info, Star, ExternalLink, AlertTriangle, Pencil, Image, HelpCircle, BookOpen, Users, Settings, LayoutDashboard, MoreVertical, Ticket } from 'lucide-react';
+import { Banknote, PlusCircle, LogOut, Eye, MousePointer, TrendingUp, Loader2, Instagram, Check, Clock, Trash2, Info, Star, ExternalLink, AlertTriangle, Pencil, Image, HelpCircle, BookOpen, Users, Settings, LayoutDashboard, MoreVertical, Ticket, Megaphone } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -46,6 +46,8 @@ import { WelcomeModal, OnboardingTour, OnboardingChecklist } from '@/components/
 import CompanyLeadsList from './CompanyLeadsList';
 import RedeemCouponPanel from './RedeemCouponPanel';
 import MerchantWhatsAppPanel from './MerchantWhatsAppPanel';
+import CompanyCampaigns from './reach/CompanyCampaigns';
+import { SHOW_COUPON_OFFERS } from '@/lib/reach';
 
 const MAX_ACTIVE_OFFERS = 3;
 
@@ -56,7 +58,7 @@ function CompanyDashboardContent() {
   const navigate = useNavigate();
   const { claimBonus, hasClaimedBonus, startTour, showTour } = useOnboarding();
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [activeTab, setActiveTab] = useState('panel');
+  const [activeTab, setActiveTab] = useState(SHOW_COUPON_OFFERS ? 'panel' : 'campaigns');
   const [showFiscalModal, setShowFiscalModal] = useState(false);
   const [instagramUrl, setInstagramUrl] = useState(profile?.instagram_url || '');
   const [savingInstagram, setSavingInstagram] = useState(false);
@@ -428,11 +430,17 @@ function CompanyDashboardContent() {
       <div className="max-w-2xl mx-auto px-3 sm:px-4 py-4 sm:py-6 space-y-4 sm:space-y-6">
         {/* Tab Navigation */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-3 mb-4">
+          <TabsList className={`grid w-full mb-4 ${SHOW_COUPON_OFFERS ? 'grid-cols-4' : 'grid-cols-2'}`}>
+            <TabsTrigger value="campaigns" className="flex items-center gap-1.5 text-xs sm:text-sm">
+              <Megaphone className="h-4 w-4" />
+              Campanhas
+            </TabsTrigger>
             <TabsTrigger value="panel" className="flex items-center gap-1.5 text-xs sm:text-sm">
               <LayoutDashboard className="h-4 w-4" />
-              Painel
+              {SHOW_COUPON_OFFERS ? 'Painel' : 'Perfil'}
             </TabsTrigger>
+            {SHOW_COUPON_OFFERS && (
+            <>
             <TabsTrigger value="leads" className="flex items-center gap-1.5 text-xs sm:text-sm">
               <Users className="h-4 w-4" />
               Leads
@@ -446,7 +454,13 @@ function CompanyDashboardContent() {
               <Ticket className="h-4 w-4" />
               Cupons
             </TabsTrigger>
+            </>
+            )}
           </TabsList>
+
+          <TabsContent value="campaigns" className="mt-0">
+            <CompanyCampaigns onNeedCredits={handleBuyCredits} />
+          </TabsContent>
 
           <TabsContent value="panel" className="space-y-4 sm:space-y-6 mt-0">
         {/* Company Logo Section */}
@@ -541,6 +555,8 @@ function CompanyDashboardContent() {
           </CardContent>
         </Card>
 
+        {SHOW_COUPON_OFFERS && (
+        <>
         {/* Stats */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3" data-tour="performance">
           <Card>
@@ -817,6 +833,8 @@ function CompanyDashboardContent() {
             </div>
           )}
         </div>
+        </>
+        )}
           </TabsContent>
 
           <TabsContent value="leads" className="mt-0">

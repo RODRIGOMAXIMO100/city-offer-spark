@@ -14,7 +14,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Banknote, LogOut, Share2, Copy, Check, TrendingUp, Loader2, MapPin, Instagram, Clock, History, Coins, HelpCircle, BookOpen, Settings, LayoutDashboard, BarChart3, ShoppingBag, Search, MoreVertical } from 'lucide-react';
+import { Banknote, LogOut, Share2, Copy, Check, TrendingUp, Loader2, MapPin, Instagram, Clock, History, Coins, HelpCircle, BookOpen, Settings, LayoutDashboard, BarChart3, ShoppingBag, Search, MoreVertical, Target, Trophy } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import PaymentDataModal from './PaymentDataModal';
@@ -28,6 +28,9 @@ import { Footer } from '@/components/landing/Footer';
 import { OnboardingProvider, useOnboarding } from '@/contexts/OnboardingContext';
 import { WelcomeModal, OnboardingTour, OnboardingChecklist } from '@/components/onboarding';
 import { AffiliateOfferCard } from './AffiliateOfferCard';
+import AffiliateMissions from './reach/AffiliateMissions';
+import AffiliateReachRanking from './reach/AffiliateReachRanking';
+import { SHOW_COUPON_OFFERS } from '@/lib/reach';
 import logo from '@/assets/logo.png';
 
 interface Withdrawal {
@@ -103,9 +106,10 @@ function AffiliateDashboardContent() {
       
       const { data } = await supabase
         .from('transactions')
-        .select('id, amount, created_at, offer_id, offers(title)')
+        .select('id, amount, created_at, offer_id, description, offers(title)')
         .eq('user_id', profile.id)
-        .in('type', ['CLICK_EARNING', 'LEAD_EARNING', 'REDEMPTION_EARNING'])
+        // PRIZE: premios do ranking das campanhas (tipo novo, fora do types.ts gerado)
+        .in('type', ['CLICK_EARNING', 'LEAD_EARNING', 'REDEMPTION_EARNING', 'PRIZE'] as never[])
         .order('created_at', { ascending: false })
         .limit(50);
 
@@ -114,7 +118,7 @@ function AffiliateDashboardContent() {
           id: t.id,
           amount: t.amount,
           created_at: t.created_at,
-          offer_title: t.offers?.title || null,
+          offer_title: t.offers?.title || t.description || null,
         })));
       }
     };
@@ -350,8 +354,18 @@ function AffiliateDashboardContent() {
       </header>
 
       <div className="max-w-4xl mx-auto px-4 py-6">
-        <Tabs defaultValue="inicio" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 mb-6">
+        <Tabs defaultValue={SHOW_COUPON_OFFERS ? 'inicio' : 'missoes'} className="w-full">
+          <TabsList className={`grid w-full mb-6 ${SHOW_COUPON_OFFERS ? 'grid-cols-5' : 'grid-cols-3'}`}>
+            <TabsTrigger value="missoes" className="flex items-center gap-2">
+              <Target className="h-4 w-4" />
+              <span className="text-xs sm:text-sm">Missões</span>
+            </TabsTrigger>
+            <TabsTrigger value="ranking" className="flex items-center gap-2">
+              <Trophy className="h-4 w-4" />
+              <span className="text-xs sm:text-sm">Ranking</span>
+            </TabsTrigger>
+            {SHOW_COUPON_OFFERS && (
+            <>
             <TabsTrigger value="inicio" className="flex items-center gap-2">
               <LayoutDashboard className="h-4 w-4" />
               <span className="hidden sm:inline">Início</span>
@@ -360,11 +374,21 @@ function AffiliateDashboardContent() {
               <ShoppingBag className="h-4 w-4" />
               <span className="hidden sm:inline">Ofertas</span>
             </TabsTrigger>
+            </>
+            )}
             <TabsTrigger value="historico" className="flex items-center gap-2">
               <BarChart3 className="h-4 w-4" />
-              <span className="hidden sm:inline">Histórico</span>
+              <span className="text-xs sm:text-sm">Saldo</span>
             </TabsTrigger>
           </TabsList>
+
+          <TabsContent value="missoes" className="space-y-6">
+            <AffiliateMissions />
+          </TabsContent>
+
+          <TabsContent value="ranking" className="space-y-6">
+            <AffiliateReachRanking />
+          </TabsContent>
 
           {/* Tab Início - Stats, Nível e Ranking */}
           <TabsContent value="inicio" className="space-y-6">

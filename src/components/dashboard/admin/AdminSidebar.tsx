@@ -15,7 +15,8 @@ import {
   LayoutDashboard,
   MapPin,
   Search,
-  MessageCircle
+  MessageCircle,
+  Target
 
 } from 'lucide-react';
 import {
@@ -48,7 +49,8 @@ export type AdminSection =
   | 'cities'
   | 'blog'
   | 'seo'
-  | 'wa-templates';
+  | 'wa-templates'
+  | 'campaigns';
 
 
 interface AdminSidebarProps {
@@ -69,6 +71,7 @@ const menuGroups = [
     label: 'Gestão',
     icon: Users,
     items: [
+      { id: 'campaigns' as AdminSection, label: 'Campanhas', icon: Target },
       { id: 'users' as AdminSection, label: 'Usuários', icon: Users },
       { id: 'offers' as AdminSection, label: 'Ofertas', icon: Megaphone },
       { id: 'leads' as AdminSection, label: 'Leads', icon: Phone },

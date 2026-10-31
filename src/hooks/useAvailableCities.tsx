@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { fetchAllCities } from '@/lib/cities';
 import { BRAZIL_STATES, BRAZIL_CITIES } from '@/data/brazilLocations';
 
 interface AvailableCity {
@@ -24,14 +25,8 @@ export function useAvailableCities(selectedState?: string) {
   const fetchCities = async () => {
     try {
       setLoading(true);
-      const { data, error } = await supabase
-        .from('available_cities')
-        .select('*')
-        .eq('active', true)
-        .order('city_name');
-
-      if (error) throw error;
-      setCities(data || []);
+      const data = await fetchAllCities(true);
+      setCities(data as AvailableCity[]);
     } catch (err) {
       console.error('Error fetching cities:', err);
       setError('Erro ao carregar cidades');

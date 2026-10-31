@@ -13,6 +13,7 @@ import { useToast } from '@/hooks/use-toast';
 import { BRAZIL_STATES, getCitiesByState } from '@/data/brazilLocations';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
+import { fetchAllCities } from '@/lib/cities';
 import Turnstile from '@/components/Turnstile';
 import CityWaitlistModal from './CityWaitlistModal';
 
@@ -64,22 +65,11 @@ export default function SignupForm({
   useEffect(() => {
     const fetchCities = async () => {
       try {
-        // Fetch active cities for signup validation
-        const { data: activeData, error: activeError } = await supabase
-          .from('available_cities')
-          .select('id, state_code, city_name, active')
-          .eq('active', true);
-        
-        if (activeError) throw activeError;
-        setActiveCitiesFromDb(activeData || []);
-        
-        // Fetch ALL cities for waitlist lookup (when selecting unavailable city)
-        const { data: allData, error: allError } = await supabase
-          .from('available_cities')
-          .select('id, state_code, city_name, active');
-        
-        if (allError) throw allError;
-        setAllCitiesFromDb(allData || []);
+        // Todas as cidades (paginado: sao 5.571); as ativas validam o cadastro
+        // e as demais servem para a lista de espera
+        const allData = await fetchAllCities();
+        setActiveCitiesFromDb(allData.filter((c) => c.active));
+        setAllCitiesFromDb(allData);
       } catch (err) {
         console.error('Error fetching cities:', err);
         setActiveCitiesFromDb([]);

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNoIndex } from '@/components/seo/NoIndex';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
+import { fetchAllCities } from '@/lib/cities';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -74,16 +75,13 @@ export default function CompleteSignupPage() {
   // Fetch cities from database
   useEffect(() => {
     const fetchCities = async () => {
-      const { data: activeData } = await supabase
-        .from('available_cities')
-        .select('id, state_code, city_name, active')
-        .eq('active', true);
-      setActiveCities(activeData || []);
-      
-      const { data: allData } = await supabase
-        .from('available_cities')
-        .select('id, state_code, city_name, active');
-      setAllCitiesFromDb(allData || []);
+      try {
+        const allData = await fetchAllCities();
+        setActiveCities(allData.filter((c) => c.active));
+        setAllCitiesFromDb(allData);
+      } catch (err) {
+        console.error('Error fetching cities:', err);
+      }
     };
     fetchCities();
   }, []);
