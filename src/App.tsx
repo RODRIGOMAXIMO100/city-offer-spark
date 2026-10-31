@@ -6,7 +6,6 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/hooks/useAuth";
 import { OnboardingProvider } from "@/contexts/OnboardingContext";
 import LandingPage from "./pages/LandingPage";
-import ChatPage from "./pages/ChatPage";
 import AuthPage from "./pages/AuthPage";
 import AdminLoginPage from "./pages/AdminLoginPage";
 import DashboardPage from "./pages/DashboardPage";
@@ -30,6 +29,7 @@ import ParaClientesPage from "./pages/ParaClientesPage";
 import OAuthConsentPage from "./pages/OAuthConsentPage";
 
 import WhatsAppButton from "./components/WhatsAppButton";
+import { ThemePreviewSwitcher } from "./components/brand/ThemePreviewSwitcher";
 
 const queryClient = new QueryClient();
 
@@ -76,7 +76,8 @@ function AdminRoute({ children }: { children: React.ReactNode }) {
 const AppRoutes = () => (
   <Routes>
     <Route path="/" element={<LandingPage />} />
-    <Route path="/chat" element={<ChatPage />} />
+    {/* Chat IA fora do ar até ter conteúdo do modelo de campanhas */}
+    <Route path="/chat" element={<Navigate to="/" replace />} />
     <Route path="/auth" element={<PublicRoute><AuthPage /></PublicRoute>} />
     <Route path="/auth/callback" element={<AuthCallbackPage />} />
     <Route path="/complete-signup" element={<CompleteSignupPage />} />
@@ -113,6 +114,7 @@ const App = () => (
           <OnboardingProvider>
             <AppRoutes />
             <WhatsAppButton />
+            <ThemePreviewSwitcher />
           </OnboardingProvider>
         </AuthProvider>
       </BrowserRouter>

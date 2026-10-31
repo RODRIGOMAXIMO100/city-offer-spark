@@ -31,7 +31,7 @@ import { AffiliateOfferCard } from './AffiliateOfferCard';
 import AffiliateMissions from './reach/AffiliateMissions';
 import AffiliateReachRanking from './reach/AffiliateReachRanking';
 import { SHOW_COUPON_OFFERS } from '@/lib/reach';
-import logo from '@/assets/logo.png';
+import { BrandLogo } from '@/components/brand/BrandLogo';
 
 interface Withdrawal {
   id: string;
@@ -294,7 +294,7 @@ function AffiliateDashboardContent() {
         <div className="max-w-4xl mx-auto px-4 py-2 flex items-center justify-between gap-2">
           {/* Logo + Nome */}
           <div className="flex items-center gap-2 min-w-0">
-            <img src={logo} alt="clilin" className="h-7 shrink-0" />
+            <BrandLogo className="h-7 shrink-0" />
             <span className="text-sm font-medium truncate max-w-[100px] sm:max-w-none">{profile?.name}</span>
           </div>
           

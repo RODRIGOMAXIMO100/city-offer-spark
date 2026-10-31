@@ -2,16 +2,15 @@ import { useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { Navbar } from "@/components/landing/Navbar";
-import { HeroSection } from "@/components/landing/HeroSection";
-import { WhyDifferent } from "@/components/landing/WhyDifferent";
-import { PublicAIChat } from "@/components/landing/PublicAIChat";
-import { HowItWorks } from "@/components/landing/HowItWorks";
-import { ForCompanies } from "@/components/landing/ForCompanies";
-import { ForAffiliates } from "@/components/landing/ForAffiliates";
-import { ForClients } from "@/components/landing/ForClients";
-import { FAQ, faqs } from "@/components/landing/FAQ";
-import { FinalCTA } from "@/components/landing/FinalCTA";
 import { Footer } from "@/components/landing/Footer";
+import { HomeHero } from "@/components/home/HomeHero";
+import { HomeHowItWorks } from "@/components/home/HomeHowItWorks";
+import { HomeWhyItWorks } from "@/components/home/HomeWhyItWorks";
+import { HomeForCompanies } from "@/components/home/HomeForCompanies";
+import { HomeForAffiliates } from "@/components/home/HomeForAffiliates";
+import { HomeComingSoon } from "@/components/home/HomeComingSoon";
+import { HomeFAQ, homeFaqs } from "@/components/home/HomeFAQ";
+import { HomeFinalCTA } from "@/components/home/HomeFinalCTA";
 import { SEOHead } from "@/components/seo/SEOHead";
 import { StructuredData } from "@/components/seo/StructuredData";
 
@@ -26,13 +25,12 @@ export default function LandingPage() {
     }
   }, [user, loading, navigate]);
 
-  // Handle hash scroll when coming from another page
+  // Rola até a seção quando chega de outra página com #ancora
   useEffect(() => {
     if (location.hash) {
       const id = location.hash.replace("#", "");
       setTimeout(() => {
-        const element = document.getElementById(id);
-        element?.scrollIntoView({ behavior: "smooth" });
+        document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
       }, 100);
     }
   }, [location.hash]);
@@ -48,19 +46,18 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-background">
       <SEOHead canonicalUrl="/" />
-      <StructuredData type="FAQPage" faqs={faqs} />
-      
+      <StructuredData type="FAQPage" faqs={homeFaqs} />
+
       <Navbar />
       <main>
-        <HeroSection />
-        <WhyDifferent />
-        <PublicAIChat />
-        <HowItWorks />
-        <ForCompanies />
-        <ForAffiliates />
-        <ForClients />
-        <FAQ />
-        <FinalCTA />
+        <HomeHero />
+        <HomeHowItWorks />
+        <HomeWhyItWorks />
+        <HomeForCompanies />
+        <HomeForAffiliates />
+        <HomeComingSoon />
+        <HomeFAQ />
+        <HomeFinalCTA />
       </main>
       <Footer />
     </div>

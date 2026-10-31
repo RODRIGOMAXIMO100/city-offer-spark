@@ -23,7 +23,7 @@ import FiscalDataModal from './FiscalDataModal';
 import ProfileSettingsModal from './ProfileSettingsModal';
 import { AddCreditsModal } from './AddCreditsModal';
 import { Footer } from '@/components/landing/Footer';
-import logo from '@/assets/logo.png';
+import { BrandLogo } from '@/components/brand/BrandLogo';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -312,7 +312,7 @@ function CompanyDashboardContent() {
       <header className="bg-card border-b border-border sticky top-0 z-10">
         <div className="max-w-2xl mx-auto px-3 sm:px-4 py-3 sm:py-4 flex justify-between items-center gap-2">
           <div className="flex items-center gap-2 min-w-0">
-            <img src={logo} alt="clilin" className="h-6 sm:h-8 shrink-0" />
+            <BrandLogo className="h-6 sm:h-8 shrink-0" />
             <div className="flex flex-col min-w-0">
               <span className="text-xs sm:text-sm font-medium text-foreground truncate max-w-[120px] sm:max-w-[200px]">
                 {profile?.name || 'Empresa'}

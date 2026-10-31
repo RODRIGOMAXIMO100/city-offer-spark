@@ -57,7 +57,7 @@ export default function AffiliateSocialAccounts({ accounts, onChange }: Props) {
   };
 
   return (
-    <Card>
+    <Card data-tour="social-accounts">
       <CardHeader className="pb-3">
         <CardTitle className="text-sm flex items-center justify-between gap-2">
           <span className="flex items-center gap-2"><Users className="h-4 w-4 text-affiliate" /> Minhas redes</span>

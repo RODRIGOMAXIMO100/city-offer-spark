@@ -19,20 +19,16 @@ export type BonusItem = {
 export type BonusMap = Record<string, BonusItem>;
 
 export const ONBOARDING_BONUSES: Record<string, BonusMap> = {
+  // Só tarefas que existem no modelo de campanhas. Bônus de oferta, link e lead
+  // voltam quando os cupons voltarem (SHOW_COUPON_OFFERS).
   AFFILIATE: {
     tour_completed: { amount: 100, label: 'Completar o tour' }, // R$1,00
-    first_link_copied: { amount: 100, label: 'Copiar primeiro link' }, // R$1,00
-    first_lead: { amount: 100, label: 'Primeiro lead válido' }, // R$1,00
-    payment_data_filled: { amount: 100, label: 'Preencher dados PIX' }, // R$1,00
-    ten_leads: { amount: 100, label: 'Atingir 10 leads' }, // R$1,00
-  }, // Total: R$5,00
+  },
   COMPANY: {
     tour_completed: { amount: 100, label: 'Completar o tour' }, // R$1,00
     logo_added: { amount: 100, label: 'Adicionar logo' }, // R$1,00
     instagram_connected: { amount: 100, label: 'Conectar Instagram' }, // R$1,00
-    first_offer: { amount: 100, label: 'Criar primeira oferta' }, // R$1,00
-    first_lead: { amount: 100, label: 'Receber primeiro lead' }, // R$1,00
-  }, // Total: R$5,00
+  },
   CLIENT: {}, // Cliente não tem bônus
 };
 
@@ -41,47 +37,35 @@ export const TOUR_STEPS: Record<string, TourStep[]> = {
   AFFILIATE: [
     {
       target: '[data-tour="balance"]',
-      title: 'Seu Saldo e Saque',
-      content: 'Aqui você vê quanto ganhou. Clique para sacar via PIX quando tiver R$100 ou mais!',
+      title: 'Seu saldo e saque',
+      content: 'Aqui aparecem os prêmios que você ganhar no ranking. O saque é via Pix a partir de R$ 100.',
       position: 'bottom',
     },
     {
-      target: '[data-tour="level"]',
-      title: 'Seu Nível',
-      content: 'Quanto mais leads você gera, maior seu nível e maior sua comissão! Suba de nível para ganhar mais.',
+      target: '[data-tour="social-accounts"]',
+      title: 'Seus perfis',
+      content: 'Cadastre seus perfis abertos nas redes. É por eles que você participa das missões e entra na liga certa.',
       position: 'bottom',
     },
     {
-      target: '[data-tour="offers"]',
-      title: 'Ofertas Disponíveis',
-      content: 'Copie o link das ofertas e compartilhe nas redes sociais para ganhar comissão por cada lead.',
+      target: '[data-tour="missions"]',
+      title: 'Missões',
+      content: 'As campanhas da sua cidade e do Brasil aparecem aqui. Poste com a palavra-chave e o #publi e envie o link.',
       position: 'top',
     },
   ],
   COMPANY: [
     {
       target: '[data-tour="balance"]',
-      title: 'Seus Créditos',
-      content: 'Veja seus créditos e adicione mais clicando no "+". Você só paga por leads reais!',
+      title: 'Seus créditos',
+      content: 'Veja seu saldo e adicione crédito no "+". Cada R$ 1 vale 200 visualizações verificadas.',
       position: 'bottom',
     },
     {
-      target: '[data-tour="company-logo"]',
-      title: 'Logo da Empresa',
-      content: 'Adicione a logo da sua empresa para aparecer nas ofertas e ganhar credibilidade.',
+      target: '[data-tour="campaigns"]',
+      title: 'Suas campanhas',
+      content: 'Clique em "Nova campanha", escolha a palavra-chave, as redes e a meta. Você paga só o que for visto e o resto volta para o saldo.',
       position: 'bottom',
-    },
-    {
-      target: '[data-tour="performance"]',
-      title: 'Desempenho',
-      content: 'Acompanhe views, leads e taxa de conversão das suas ofertas em tempo real.',
-      position: 'bottom',
-    },
-    {
-      target: '[data-tour="create-offer"]',
-      title: 'Criar Oferta',
-      content: 'Crie ofertas com descontos atrativos. Quanto melhor a oferta, mais leads você recebe!',
-      position: 'top',
     },
   ],
   CLIENT: [

@@ -284,9 +284,9 @@ export default function CompleteSignupPage() {
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <Card className="w-full max-w-lg">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl">Bem-vindo à Comunidade Clilin! 💛</CardTitle>
+          <CardTitle className="text-2xl">Bem-vindo ao Clilin</CardTitle>
           <CardDescription>
-            Vamos construir algo incrível juntos — preencha seus dados para começar
+            Complete seus dados para começar
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -300,7 +300,7 @@ export default function CompleteSignupPage() {
             {/* Role Selection */}
             <div className="space-y-3">
               <Label>Eu sou...</Label>
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-2 gap-3">
                 <button
                   type="button"
                   onClick={() => setSelectedRole('COMPANY')}
@@ -341,25 +341,6 @@ export default function CompleteSignupPage() {
                   )}>Divulgador</span>
                 </button>
                 
-                <button
-                  type="button"
-                  onClick={() => setSelectedRole('CLIENT')}
-                  className={cn(
-                    "flex flex-col items-center justify-center p-4 rounded-lg border-2 transition-all",
-                    selectedRole === 'CLIENT'
-                      ? "border-primary bg-primary/10"
-                      : "border-border hover:border-primary/50"
-                  )}
-                >
-                  <Star className={cn(
-                    "h-8 w-8 mb-2",
-                    selectedRole === 'CLIENT' ? "text-primary" : "text-muted-foreground"
-                  )} />
-                  <span className={cn(
-                    "text-sm font-medium",
-                    selectedRole === 'CLIENT' ? "text-primary" : "text-foreground"
-                  )}>Cliente</span>
-                </button>
               </div>
             </div>
 

@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Instagram, Mail } from "lucide-react";
-import logo from "@/assets/logo.png";
+import { BrandLogo } from "@/components/brand/BrandLogo";
 
 export function Footer() {
   return (
@@ -10,11 +10,11 @@ export function Footer() {
           {/* Logo & Description */}
           <div className="col-span-2">
             <Link to="/" className="flex items-center mb-4">
-              <img src={logo} alt="Clilin — Ofertas locais com inteligência" className="h-10" />
+              <BrandLogo className="h-10" />
             </Link>
             <p className="text-muted-foreground max-w-md leading-relaxed">
-              Servindo comunidades locais — conectamos empresas, divulgadores e clientes 
-              para que todos cresçam juntos 💛
+              Campanhas de alcance com gente de verdade. Empresas colocam o nome na boca do povo
+              e divulgadores são premiados todo mês.
             </p>
             <div className="flex gap-3 mt-6">
               <a
@@ -39,9 +39,9 @@ export function Footer() {
             <h4 className="font-display font-semibold mb-4">Plataforma</h4>
             <ul className="space-y-3">
               {[
-                { label: "Para Empresas", to: "/auth?role=COMPANY" },
-                { label: "Para Divulgadores", to: "/auth?role=AFFILIATE" },
-                { label: "Para Clientes", to: "/auth?role=CLIENT" },
+                { label: "Para Empresas", to: "/empresas" },
+                { label: "Para Divulgadores", to: "/divulgadores" },
+                { label: "Ofertas (em breve)", to: "/clientes" },
               ].map((link) => (
                 <li key={link.label}>
                   <Link to={link.to} className="text-muted-foreground hover:text-foreground transition-colors">
@@ -90,7 +90,7 @@ export function Footer() {
         </div>
 
         <div className="border-t border-border mt-12 pt-8 text-center text-sm text-muted-foreground">
-          <p className="mb-2">Servindo comunidades com propósito 💛</p>
+          <p className="mb-2">Servir. Conectar. Crescer.</p>
           <p>© {new Date().getFullYear()} clilin. Todos os direitos reservados.</p>
         </div>
       </div>

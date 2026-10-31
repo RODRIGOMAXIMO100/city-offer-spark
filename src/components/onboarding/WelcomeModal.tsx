@@ -30,9 +30,9 @@ export function WelcomeModal() {
   const getRoleDescription = () => {
     switch (role) {
       case 'AFFILIATE':
-        return 'Ajude negócios locais a crescerem e faça parte dessa comunidade! 💛';
+        return 'Pegue missões, poste com a palavra-chave e dispute prêmios todo mês.';
       case 'COMPANY':
-        return 'Conecte-se com clientes da sua cidade e fortaleça seu negócio! 💛';
+        return 'Lance sua primeira campanha e coloque seu nome na boca do povo.';
       case 'CLIENT':
         return 'Descubra ofertas incríveis e apoie os negócios da sua comunidade! 💛';
       default:
@@ -45,10 +45,10 @@ export function WelcomeModal() {
       <DialogContent className="sm:max-w-md [&>button]:hidden">
         <DialogHeader className="text-center">
           <div className="mx-auto mb-4 h-16 w-16 rounded-full bg-gradient-to-br from-primary to-affiliate flex items-center justify-center">
-            <Rocket className="h-8 w-8 text-white" />
+            <Rocket className="h-8 w-8 text-primary-foreground" />
           </div>
           <DialogTitle className="text-2xl">
-            Que bom ter você aqui, {profile?.name?.split(' ')[0] || getRoleTitle()}! 💛
+            Que bom ter você aqui, {profile?.name?.split(' ')[0] || getRoleTitle()}!
           </DialogTitle>
           <DialogDescription className="text-base mt-2">
             {getRoleDescription()}

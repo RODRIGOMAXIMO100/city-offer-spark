@@ -71,7 +71,7 @@ export default function AffiliateMissions() {
       <AffiliateSocialAccounts accounts={accounts} onChange={load} />
 
       <div className="space-y-3">
-        <h2 className="text-sm font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
+        <h2 data-tour="missions" className="text-sm font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
           <Target className="h-4 w-4" /> Missões para você ({missions.length})
         </h2>
 

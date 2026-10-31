@@ -11,12 +11,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Building2, Users, Sparkles, Loader2, Check, ChevronsUpDown, Eye, EyeOff } from 'lucide-react';
+import { Building2, Users, Loader2, Check, ChevronsUpDown, Eye, EyeOff } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { BRAZIL_STATES, getCitiesByState } from '@/data/brazilLocations';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
-import logoImg from '@/assets/logo.png';
+import { BrandLogo } from '@/components/brand/BrandLogo';
 import Turnstile from '@/components/Turnstile';
 
 const ROLES: { value: AppRole; label: string; icon: React.ReactNode; description: string; color: string }[] = [
@@ -24,22 +24,15 @@ const ROLES: { value: AppRole; label: string; icon: React.ReactNode; description
     value: 'COMPANY',
     label: 'Empresa',
     icon: <Building2 className="h-5 w-5" />,
-    description: 'Sirva sua comunidade com ofertas incríveis',
+    description: 'Lance campanhas e coloque seu nome na boca do povo',
     color: 'bg-company text-company-foreground',
   },
   {
     value: 'AFFILIATE',
     label: 'Divulgador',
     icon: <Users className="h-5 w-5" />,
-    description: 'Ajude negócios locais a crescer',
+    description: 'Poste, suba no ranking e ganhe prêmios todo mês',
     color: 'bg-affiliate text-affiliate-foreground',
-  },
-  {
-    value: 'CLIENT',
-    label: 'Cliente',
-    icon: <Sparkles className="h-5 w-5" />,
-    description: 'Descubra o melhor da sua cidade',
-    color: 'bg-client text-client-foreground',
   },
 ];
 
@@ -54,7 +47,10 @@ export default function AuthPage() {
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
   const [isLoading, setIsLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState<'login' | 'signup'>('login');
+  // ?role=COMPANY|AFFILIATE (vindo dos botões do site) abre direto no cadastro com o papel marcado
+  const roleParam = searchParams.get('role')?.toUpperCase();
+  const initialRole: AppRole | null = roleParam === 'COMPANY' || roleParam === 'AFFILIATE' ? roleParam : null;
+  const [activeTab, setActiveTab] = useState<'login' | 'signup'>(initialRole || searchParams.get('tab') === 'register' ? 'signup' : 'login');
 
   // Login state
   const [loginEmail, setLoginEmail] = useState('');
@@ -66,7 +62,7 @@ export default function AuthPage() {
   const [signupName, setSignupName] = useState('');
   const [signupState, setSignupState] = useState('');
   const [signupCity, setSignupCity] = useState('');
-  const [signupRole, setSignupRole] = useState<AppRole>('CLIENT');
+  const [signupRole, setSignupRole] = useState<AppRole>(initialRole ?? 'AFFILIATE');
   const [signupCnpj, setSignupCnpj] = useState('');
   const [signupTelefone, setSignupTelefone] = useState('');
   const [openCityCombobox, setOpenCityCombobox] = useState(false);
@@ -274,8 +270,8 @@ export default function AuthPage() {
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
-          <img src={logoImg} alt="clilin" className="h-14 mx-auto" />
-          <p className="text-muted-foreground mt-2">Conectando comunidades 💛</p>
+          <BrandLogo className="h-14 mx-auto" />
+          <p className="text-muted-foreground mt-2">Servir. Conectar. Crescer.</p>
         </div>
 
         <Card className="shadow-lg border-border/50">

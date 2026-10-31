@@ -66,6 +66,14 @@
     --client-foreground: 0 0% 100%;
     --client-muted: 258 90% 96%;
 
+    /* Destaque (prêmios, ranking, metas) */
+    --highlight: 43 96% 56%;
+    --highlight-foreground: 240 10% 4%;
+
+    /* Tipografia da marca (trocada pelos temas) */
+    --font-display: "Outfit";
+    --font-body: "Plus Jakarta Sans";
+
     /* Preços e Ofertas */
     --price-old: 0 0% 50%;
     --price-new: 152 69% 40%;
@@ -397,4 +405,154 @@
   .landing-section {
     @apply relative overflow-hidden;
   }
+}
+/* ===================================================================
+   Identidade visual: direções em avaliação (?tema=1|2|3)
+   O tema 0 (sem data-tema) é a identidade atual.
+   =================================================================== */
+
+/* Frase de destaque do título principal; cada direção tem o seu tratamento */
+.text-brand-gradient {
+  background-image: linear-gradient(90deg, hsl(var(--primary)), hsl(var(--accent)), hsl(var(--secondary)));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* 1. Feira: letreiro popular, cor de feira e de comércio de rua */
+:root[data-tema="1"] {
+  --background: 60 23% 98%;
+  --foreground: 234 48% 20%;
+  --card: 0 0% 100%;
+  --card-foreground: 234 48% 20%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 234 48% 20%;
+  --primary: 7 78% 53%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 150 82% 35%;
+  --secondary-foreground: 0 0% 100%;
+  --accent: 48 100% 55%;
+  --accent-foreground: 234 48% 20%;
+  --muted: 60 12% 94%;
+  --muted-foreground: 234 14% 40%;
+  --border: 60 8% 86%;
+  --input: 60 8% 86%;
+  --ring: 7 78% 53%;
+  --radius: 0.5rem;
+  --company: 7 78% 53%;
+  --company-foreground: 0 0% 100%;
+  --company-muted: 7 78% 96%;
+  --affiliate: 150 82% 33%;
+  --affiliate-foreground: 0 0% 100%;
+  --affiliate-muted: 150 60% 95%;
+  --client: 223 100% 59%;
+  --client-foreground: 0 0% 100%;
+  --client-muted: 223 100% 96%;
+  --highlight: 48 100% 55%;
+  --highlight-foreground: 234 48% 20%;
+  --gradient-company: linear-gradient(135deg, hsl(7 78% 53%), hsl(7 78% 45%));
+  --gradient-affiliate: linear-gradient(135deg, hsl(150 82% 35%), hsl(150 82% 27%));
+  --sidebar-ring: 7 78% 53%;
+  --font-display: "Bricolage Grotesque";
+  --font-body: "Figtree";
+}
+:root[data-tema="1"] .text-brand-gradient {
+  color: hsl(var(--foreground));
+  background-image: linear-gradient(transparent 58%, hsl(var(--highlight)) 58%, hsl(var(--highlight)) 92%, transparent 92%);
+  -webkit-background-clip: border-box;
+  background-clip: border-box;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  padding: 0 0.08em;
+}
+:root[data-tema="1"] .font-display { font-variation-settings: "opsz" 96; letter-spacing: -0.02em; }
+
+/* 2. Boca a boca: rede social, conversa, gente jovem */
+:root[data-tema="2"] {
+  --background: 270 100% 99%;
+  --foreground: 266 52% 13%;
+  --card: 0 0% 100%;
+  --card-foreground: 266 52% 13%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 266 52% 13%;
+  --primary: 262 69% 51%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 336 100% 62%;
+  --secondary-foreground: 0 0% 100%;
+  --accent: 336 100% 62%;
+  --accent-foreground: 0 0% 100%;
+  --muted: 270 40% 96%;
+  --muted-foreground: 266 14% 42%;
+  --border: 270 30% 90%;
+  --input: 270 30% 90%;
+  --ring: 262 69% 51%;
+  --radius: 1.25rem;
+  --company: 262 69% 51%;
+  --company-foreground: 0 0% 100%;
+  --company-muted: 262 69% 96%;
+  --affiliate: 336 90% 55%;
+  --affiliate-foreground: 0 0% 100%;
+  --affiliate-muted: 336 100% 96%;
+  --client: 175 100% 33%;
+  --client-foreground: 0 0% 100%;
+  --client-muted: 175 60% 94%;
+  --highlight: 35 100% 55%;
+  --highlight-foreground: 266 52% 13%;
+  --gradient-company: linear-gradient(135deg, hsl(262 69% 51%), hsl(262 69% 42%));
+  --gradient-affiliate: linear-gradient(135deg, hsl(336 90% 55%), hsl(336 90% 46%));
+  --sidebar-ring: 262 69% 51%;
+  --font-display: "Unbounded";
+  --font-body: "Onest";
+}
+:root[data-tema="2"] .text-brand-gradient {
+  background-image: linear-gradient(95deg, hsl(262 69% 51%), hsl(336 100% 58%) 70%, hsl(35 100% 55%));
+}
+:root[data-tema="2"] .font-display { letter-spacing: -0.03em; }
+
+/* 3. Pódio: placar, liga, conquista */
+:root[data-tema="3"] {
+  --background: 0 0% 100%;
+  --foreground: 211 53% 11%;
+  --card: 0 0% 100%;
+  --card-foreground: 211 53% 11%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 211 53% 11%;
+  --primary: 225 76% 31%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 152 82% 30%;
+  --secondary-foreground: 0 0% 100%;
+  --accent: 45 100% 48%;
+  --accent-foreground: 211 53% 11%;
+  --muted: 216 33% 96%;
+  --muted-foreground: 215 16% 38%;
+  --border: 216 20% 88%;
+  --input: 216 20% 88%;
+  --ring: 225 76% 31%;
+  --radius: 0.375rem;
+  --company: 225 76% 31%;
+  --company-foreground: 0 0% 100%;
+  --company-muted: 225 76% 96%;
+  --affiliate: 152 82% 30%;
+  --affiliate-foreground: 0 0% 100%;
+  --affiliate-muted: 152 60% 95%;
+  --client: 199 89% 42%;
+  --client-foreground: 0 0% 100%;
+  --client-muted: 199 89% 95%;
+  --highlight: 45 100% 48%;
+  --highlight-foreground: 211 53% 11%;
+  --gradient-company: linear-gradient(135deg, hsl(225 76% 31%), hsl(225 76% 22%));
+  --gradient-affiliate: linear-gradient(135deg, hsl(152 82% 30%), hsl(152 82% 22%));
+  --sidebar-ring: 225 76% 31%;
+  --font-display: "Archivo";
+  --font-body: "Archivo";
+}
+:root[data-tema="3"] .font-display { font-stretch: 72%; font-weight: 800; letter-spacing: -0.01em; }
+:root[data-tema="3"] h1.font-display { text-transform: uppercase; line-height: 0.95; }
+:root[data-tema="3"] .text-brand-gradient {
+  color: hsl(var(--primary));
+  background-image: linear-gradient(transparent 86%, hsl(var(--highlight)) 86%);
+  -webkit-background-clip: border-box;
+  background-clip: border-box;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
 }

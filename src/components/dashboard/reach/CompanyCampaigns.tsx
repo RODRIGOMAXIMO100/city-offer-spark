@@ -77,7 +77,7 @@ export default function CompanyCampaigns({ onNeedCredits }: Props) {
 
   return (
     <div className="space-y-4">
-      <Card className="bg-gradient-to-r from-company to-company/80 text-company-foreground border-0">
+      <Card data-tour="campaigns" className="bg-gradient-to-r from-company to-company/80 text-company-foreground border-0">
         <CardContent className="p-4 space-y-3">
           <div className="flex items-start gap-3">
             <div className="bg-company-foreground/20 p-2.5 rounded-full shrink-0">
