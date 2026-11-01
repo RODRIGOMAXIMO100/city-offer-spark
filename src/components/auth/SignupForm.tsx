@@ -14,7 +14,7 @@ import { BRAZIL_STATES, getCitiesByState } from '@/data/brazilLocations';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
 import { fetchAllCities } from '@/lib/cities';
-import Turnstile from '@/components/Turnstile';
+import Turnstile, { TURNSTILE_ENABLED } from '@/components/Turnstile';
 import CityWaitlistModal from './CityWaitlistModal';
 
 interface SignupFormProps {
@@ -212,7 +212,7 @@ export default function SignupForm({
       }
     }
 
-    if (!turnstileToken) {
+    if (TURNSTILE_ENABLED && !turnstileToken) {
       toast({
         title: 'Verificação necessária',
         description: 'Por favor, complete a verificação de segurança.',
@@ -517,7 +517,7 @@ export default function SignupForm({
           />
         </div>
 
-        <Button type="submit" className="w-full" size="lg" disabled={isLoading || !turnstileToken}>
+        <Button type="submit" className="w-full" size="lg" disabled={isLoading || (TURNSTILE_ENABLED && !turnstileToken)}>
           {isLoading ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />

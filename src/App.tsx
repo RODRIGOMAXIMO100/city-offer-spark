@@ -22,6 +22,7 @@ import AuthorPage from "./pages/AuthorPage";
 import HelpPage from "./pages/HelpPage";
 import NotFound from "./pages/NotFound";
 import AuthCallbackPage from "./pages/AuthCallbackPage";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
 import CompleteSignupPage from "./pages/CompleteSignupPage";
 import ParaEmpresasPage from "./pages/ParaEmpresasPage";
 import ParaDivulgadoresPage from "./pages/ParaDivulgadoresPage";
@@ -81,6 +82,7 @@ const AppRoutes = () => (
     <Route path="/chat" element={<Navigate to="/" replace />} />
     <Route path="/auth" element={<PublicRoute><AuthPage /></PublicRoute>} />
     <Route path="/auth/callback" element={<AuthCallbackPage />} />
+    <Route path="/redefinir-senha" element={<ResetPasswordPage />} />
     <Route path="/complete-signup" element={<CompleteSignupPage />} />
     <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
     <Route path="/admin/login" element={<AdminLoginPage />} />

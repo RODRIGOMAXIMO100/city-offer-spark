@@ -59,7 +59,7 @@ export function Footer() {
               {[
                 { label: "Central de Ajuda", to: "/ajuda" },
                 { label: "Blog", to: "/blog" },
-                { label: "Sobre o App", to: "/sobre" },
+                { label: "Sobre o Clilin", to: "/sobre" },
                 { label: "Transparência", to: "/transparencia" },
               ].map((link) => (
                 <li key={link.label}>

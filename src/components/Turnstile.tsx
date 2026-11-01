@@ -27,7 +27,10 @@ interface TurnstileProps {
   className?: string;
 }
 
-const TURNSTILE_SITE_KEY = '0x4AAAAAACGaRAy6os1CNP3H';
+// A verificação do Cloudflare só liga quando existe uma chave do site (VITE_TURNSTILE_SITE_KEY) e a chave secreta
+// correspondente (TURNSTILE_SECRET_KEY) está no Supabase. Sem chave, o componente não aparece e o cadastro segue normal.
+export const TURNSTILE_SITE_KEY = (import.meta.env.VITE_TURNSTILE_SITE_KEY as string | undefined) || '';
+export const TURNSTILE_ENABLED = TURNSTILE_SITE_KEY.length > 0;
 
 const Turnstile = forwardRef<HTMLDivElement, TurnstileProps>(
   function Turnstile({ onVerify, onExpire, onError, className }, ref) {
@@ -70,6 +73,7 @@ const Turnstile = forwardRef<HTMLDivElement, TurnstileProps>(
     }, [onVerify, onExpire, onError]);
 
     useEffect(() => {
+      if (!TURNSTILE_ENABLED) return;
       // Check if script is already loaded
       if (window.turnstile) {
         renderWidget();
@@ -107,6 +111,7 @@ const Turnstile = forwardRef<HTMLDivElement, TurnstileProps>(
       };
     }, [renderWidget]);
 
+    if (!TURNSTILE_ENABLED) return null;
     return <div ref={setRefs} className={className} />;
   }
 );

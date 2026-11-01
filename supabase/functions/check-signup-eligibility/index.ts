@@ -58,8 +58,14 @@ serve(async (req) => {
 
     console.log(`[check-signup-eligibility] Checking eligibility for email: ${email}, IP: ${clientIp}`);
 
-    // 0. TURNSTILE VERIFICATION - Must pass captcha
-    if (!turnstileToken) {
+    // 0. TURNSTILE VERIFICATION
+    // Só vale quando a chave secreta do Cloudflare está configurada. Sem ela, o cadastro segue
+    // com as outras proteções (honeypot, lista de bloqueio e limite de tentativas).
+    const turnstileEnabled = !!Deno.env.get('TURNSTILE_SECRET_KEY');
+    if (!turnstileEnabled) {
+      console.warn('[check-signup-eligibility] TURNSTILE_SECRET_KEY ausente: verificação do Cloudflare desligada');
+    }
+    if (turnstileEnabled && !turnstileToken) {
       console.log(`[check-signup-eligibility] BLOCKED: No Turnstile token provided`);
       return new Response(JSON.stringify({
         eligible: false,
@@ -71,7 +77,7 @@ serve(async (req) => {
       });
     }
 
-    const isTurnstileValid = await verifyTurnstileToken(turnstileToken, clientIp);
+    const isTurnstileValid = turnstileEnabled ? await verifyTurnstileToken(turnstileToken, clientIp) : true;
     if (!isTurnstileValid) {
       console.log(`[check-signup-eligibility] BLOCKED: Turnstile verification failed`);
       return new Response(JSON.stringify({

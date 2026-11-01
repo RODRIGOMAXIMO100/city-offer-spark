@@ -1,274 +1,192 @@
-import { Link } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
-import { ArrowLeft } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Footer } from '@/components/landing/Footer';
-import logo from '@/assets/logo.png';
+import { Link } from "react-router-dom";
+import { SEOHead } from "@/components/seo/SEOHead";
+import { DocPage, type DocSection } from "@/components/docs/DocPage";
+
+const UPDATED = "31 de outubro de 2026";
+
+const sections: DocSection[] = [
+  {
+    id: "aceitacao",
+    title: "Aceitação",
+    blocks: [
+      "Ao criar uma conta ou usar o Clilin, você concorda com estes Termos de Uso e com a nossa Política de Privacidade. Se não concordar com alguma parte, não use a plataforma.",
+      "O Clilin é destinado a maiores de 18 anos. Ao se cadastrar, você declara ter 18 anos ou mais e capacidade para aceitar estes termos.",
+    ],
+  },
+  {
+    id: "servico",
+    title: "O que é o Clilin",
+    blocks: [
+      "O Clilin é uma plataforma de **campanhas de alcance com gente de verdade**. Ela conecta dois tipos de usuário:",
+      {
+        list: [
+          ["Empresas", "criam campanhas com uma palavra-chave, um material de divulgação, as cidades atendidas e uma meta de visualizações. Pagam só pelo alcance verificado."],
+          ["Divulgadores", "recebem missões das campanhas, postam no próprio perfil nas redes sociais e acumulam pontos pelas visualizações verificadas. Os melhores de cada liga ganham prêmios em dinheiro todo mês."],
+        ],
+      },
+      {
+        note: "**Ofertas, cupons e captação de clientes:** este módulo está em breve. Quando for lançado, terá regras próprias, que serão publicadas nesta página antes de começar a valer.",
+      },
+    ],
+  },
+  {
+    id: "conta",
+    title: "Cadastro e conta",
+    blocks: [
+      {
+        list: [
+          "Os dados do cadastro precisam ser verdadeiros, completos e atualizados.",
+          "Cada pessoa pode ter **uma conta de divulgador por CPF**. Empresas se cadastram com o CNPJ ou com o CPF do responsável.",
+          "Os perfis de redes sociais cadastrados pelo divulgador precisam ser **dele**, estar **abertos** (públicos) e ter atividade real.",
+          "Você é responsável por guardar sua senha e por tudo que acontecer na sua conta. Se perceber uso indevido, avise a gente na hora.",
+        ],
+      },
+    ],
+  },
+  {
+    id: "empresas",
+    title: "Créditos e campanhas das empresas",
+    blocks: [
+      {
+        list: [
+          ["Preço", "R$ 5 a cada mil visualizações verificadas. 1 crédito vale R$ 1 e corresponde a 200 visualizações verificadas."],
+          ["Meta mínima", "cada campanha tem meta de pelo menos 20 mil visualizações (R$ 100)."],
+          ["Reserva", "ao criar a campanha, o valor da meta fica reservado no seu saldo de créditos."],
+          ["Cobrança", "o crédito é debitado conforme os posts são aprovados na verificação. Post reprovado não é cobrado."],
+          ["Sobra", "se a meta não for atingida até o fim da campanha, os créditos que sobraram voltam para o seu saldo. Se a meta for passada, o alcance extra não é cobrado."],
+          ["Créditos", "créditos são usados dentro da plataforma e não são convertidos em dinheiro, ressalvado o direito de arrependimento de 7 dias para compras online ainda não usadas (art. 49 do Código de Defesa do Consumidor)."],
+        ],
+      },
+      "O Clilin pode recusar ou pausar campanhas com conteúdo ilegal, enganoso, ofensivo, que viole direitos de terceiros ou as regras das redes sociais.",
+    ],
+  },
+  {
+    id: "missoes",
+    title: "Missões e posts dos divulgadores",
+    blocks: [
+      {
+        list: [
+          "O post é feito **no perfil do próprio divulgador**, com a palavra-chave da campanha e a identificação **#publi**.",
+          "Valem posts no feed e Reels do Instagram, TikTok, Kwai, YouTube Shorts, Facebook e X. Stories e Status não valem, porque somem e não dá para conferir depois.",
+          "O post precisa sair dentro da janela da missão e continuar no ar durante o período de verificação.",
+          "O divulgador envia o link do post e, quando pedido, o print das visualizações. Print editado ou de outro post é fraude.",
+          "Cada post passa por leitura automática dos dados públicos e conferência da equipe. Só entram na conta os posts aprovados.",
+          "O divulgador **não recebe por post**. O que conta são os pontos que levam ao ranking e aos prêmios.",
+        ],
+      },
+    ],
+  },
+  {
+    id: "premios",
+    title: "Pontos, ligas e prêmios",
+    blocks: [
+      {
+        list: [
+          ["Pontos", "cada visualização verificada vale 1 ponto."],
+          ["Ciclo", "o ranking é mensal. No começo de cada mês, os pontos começam do zero."],
+          ["Ligas", "Bronze (até 1 mil seguidores), Prata (de 1 mil a 5 mil) e Ouro (acima de 5 mil). Cada divulgador disputa com quem tem o seu tamanho."],
+          ["Mínimo", "para concorrer no mês, é preciso fazer pelo menos 2 mil pontos."],
+          ["Fundo", "35% de tudo que as empresas consomem no mês forma o fundo de prêmios."],
+          ["Prêmios", "os 3 primeiros de cada liga são premiados. Os valores de referência são R$ 150, R$ 80 e R$ 50. Se o fundo do mês não cobrir esses valores, todos são ajustados na mesma proporção. O que sobrar do fundo passa para o mês seguinte."],
+          ["Sem sorteio", "ganha quem fica no topo da sua liga. Não há sorteio nem pagamento para participar."],
+        ],
+      },
+      "O prêmio é creditado no saldo do divulgador e pode ser sacado via Pix a partir de R$ 100, para uma chave Pix do próprio titular da conta. Os tributos sobre prêmios seguem a legislação brasileira.",
+      "As regras de premiação podem ser ajustadas. Mudanças valem a partir do ciclo seguinte e são avisadas antes na plataforma.",
+    ],
+  },
+  {
+    id: "fraude",
+    title: "Fraude e penalidades",
+    blocks: [
+      "São proibidos, entre outros:",
+      {
+        list: [
+          "Comprar visualizações, seguidores ou engajamento, ou usar robôs e automação.",
+          "Usar perfis falsos, de terceiros ou criar mais de uma conta.",
+          "Editar prints, enviar post de outra pessoa ou apagar o post antes do fim da verificação.",
+          "Divulgar sem #publi ou de forma enganosa.",
+          "Tentar burlar ou testar os sistemas de segurança da plataforma.",
+        ],
+      },
+      "Quando há suspeita, o Clilin pode, conforme a gravidade:",
+      {
+        list: [
+          "Reprovar o post e anular os pontos.",
+          "Congelar o saldo de forma preventiva enquanto analisa.",
+          "Reter saques por até 30 dias para análise.",
+          "Suspender ou encerrar a conta, com perda dos pontos e prêmios obtidos por fraude.",
+          "Bloquear CPF, e-mail, chave Pix e dispositivos ligados à fraude.",
+        ],
+      },
+      "Você é avisado da decisão e pode pedir revisão por e-mail. Fraude comprovada pode ser comunicada às autoridades.",
+    ],
+  },
+  {
+    id: "responsabilidades",
+    title: "Responsabilidades",
+    blocks: [
+      "**Empresas:** garantem que o material e a palavra-chave da campanha são verdadeiros, legais e que têm os direitos de uso. Respondem pelo que anunciam perante o consumidor.",
+      "**Divulgadores:** postam de forma honesta e transparente, com #publi, seguem as regras das redes sociais e da publicidade e só usam perfis próprios.",
+      "O Clilin organiza as campanhas, verifica os posts e apura o ranking. O Clilin não é parceiro, representante nem afiliado do Instagram, TikTok, Kwai, YouTube, Facebook ou X. Mudanças nessas redes, como bloqueios, quedas ou mudanças de alcance, podem afetar as campanhas.",
+    ],
+  },
+  {
+    id: "conteudo",
+    title: "Conteúdo e métricas",
+    blocks: [
+      "O divulgador continua dono do seu post. Ao participar de uma missão, autoriza o Clilin e a empresa da campanha a ver e usar o link, o @ e as métricas públicas do post para a verificação e para mostrar o resultado da campanha no painel da empresa.",
+      "A empresa garante que tem os direitos sobre o material que envia e autoriza os divulgadores a usá-lo nos posts da campanha.",
+    ],
+  },
+  {
+    id: "limitacao",
+    title: "Limitação de responsabilidade",
+    blocks: [
+      "O Clilin não garante vendas nem resultado comercial: o que é vendido é alcance verificado. O Clilin também não responde pelos produtos e serviços das empresas anunciantes nem pelo conteúdo que cada divulgador escolhe postar além da missão.",
+    ],
+  },
+  {
+    id: "alteracoes",
+    title: "Alterações destes termos",
+    blocks: [
+      "Podemos atualizar estes termos. Mudanças importantes são avisadas por e-mail ou na plataforma antes de valerem. Continuar usando o Clilin depois disso significa concordar com a nova versão.",
+    ],
+  },
+  {
+    id: "lei",
+    title: "Lei aplicável e foro",
+    blocks: [
+      "Estes termos seguem as leis do Brasil. Fica eleito o foro do domicílio do usuário, quando ele for consumidor, e o foro de Belo Horizonte (MG) nos demais casos.",
+    ],
+  },
+  {
+    id: "contato",
+    title: "Contato",
+    blocks: ["Dúvidas sobre estes termos: **contato@clilin.com**."],
+  },
+];
 
 export default function TermsPage() {
   return (
-    <div className="min-h-screen bg-background">
-      <Helmet>
-        <title>Termos de Uso | Clilin</title>
-        <meta name="description" content="Termos de uso da Clilin: regras da plataforma de ofertas locais para empresas, divulgadores e clientes." />
-        <link rel="canonical" href="https://clilin.com/termos" />
-        <meta property="og:title" content="Termos de Uso | Clilin" />
-        <meta property="og:description" content="Termos de uso da Clilin: regras da plataforma de ofertas locais para empresas, divulgadores e clientes." />
-        <meta property="og:url" content="https://clilin.com/termos" />
-        <meta property="og:type" content="article" />
-      </Helmet>
-
-      {/* Header */}
-      <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-50">
-        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center gap-4">
-          <Button variant="ghost" size="icon" asChild>
-            <Link to="/">
-              <ArrowLeft className="h-5 w-5" />
-            </Link>
-          </Button>
-          <Link to="/">
-            <img src={logo} alt="clilin" className="h-8" />
-          </Link>
-        </div>
-      </header>
-
-      {/* Content */}
-      <main className="max-w-4xl mx-auto px-4 py-12">
-        <h1 className="text-4xl font-display font-bold mb-2">Termos de Uso</h1>
-        <p className="text-muted-foreground mb-8">Última atualização: {new Date().toLocaleDateString('pt-BR')}</p>
-
-        <div className="prose prose-neutral dark:prose-invert max-w-none space-y-8">
-          <section>
-            <h2 className="text-2xl font-display font-semibold mb-4">1. Aceitação dos Termos</h2>
-            <p className="text-muted-foreground leading-relaxed">
-              Ao acessar e utilizar a plataforma clilin, você concorda em cumprir e estar vinculado a estes 
-              Termos de Uso. Se você não concordar com qualquer parte destes termos, não deverá utilizar 
-              nossos serviços.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-display font-semibold mb-4">2. Descrição do Serviço</h2>
-            <p className="text-muted-foreground leading-relaxed">
-              O clilin é uma plataforma de marketing de ofertas locais que conecta três tipos de usuários:
-            </p>
-            <ul className="list-disc pl-6 mt-4 space-y-2 text-muted-foreground">
-              <li><strong>Empresas:</strong> Criam e publicam ofertas de seus produtos e serviços.</li>
-              <li><strong>Divulgadores (Afiliados):</strong> Compartilham ofertas e recebem comissões quando o cliente indicado vai à loja e usa o cupom.</li>
-              <li><strong>Clientes:</strong> Encontram e aproveitam ofertas locais.</li>
-            </ul>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-display font-semibold mb-4">3. Cadastro e Conta</h2>
-            <p className="text-muted-foreground leading-relaxed">
-              Para utilizar determinadas funcionalidades, você deve criar uma conta fornecendo informações 
-              verdadeiras, precisas e completas. Você é responsável por manter a confidencialidade de suas 
-              credenciais e por todas as atividades realizadas em sua conta.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-display font-semibold mb-4">4. Sistema de Créditos</h2>
-            <p className="text-muted-foreground leading-relaxed">
-              O clilin opera com um sistema de créditos baseado em resgates de cupom (clientes que vão à loja):
-            </p>
-            <ul className="list-disc pl-6 mt-4 space-y-2 text-muted-foreground">
-              <li>Empresas adquirem créditos para publicar ofertas e pagar por cada cliente que resgata o cupom na loja.</li>
-              <li>Divulgadores ganham créditos quando os clientes que indicaram resgatam o cupom na loja.</li>
-              <li>Créditos podem ser convertidos em valores monetários conforme as regras da plataforma.</li>
-              <li>A plataforma implementa sistemas anti-fraude para garantir a integridade dos resgates.</li>
-            </ul>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-display font-semibold mb-4">5. Política Anti-Fraude</h2>
-            <p className="text-muted-foreground leading-relaxed">
-              O clilin utiliza sistemas automatizados avançados para detectar e prevenir fraudes em leads, incluindo:
-            </p>
-            <ul className="list-disc pl-6 mt-4 space-y-2 text-muted-foreground">
-              <li>Limite de 1 lead válido por telefone por oferta a cada 7 dias.</li>
-              <li>Detecção de auto-cadastros por divulgadores (leads próprios).</li>
-              <li>Validação de formato e consistência de telefone brasileiro.</li>
-              <li>Verificação de geolocalização (apenas leads do Brasil são válidos).</li>
-              <li>Bloqueio de VPNs, proxies e IPs de data centers suspeitos.</li>
-              <li>Análise de padrões de comportamento suspeito (cadastros em massa, dados repetidos).</li>
-              <li>Verificação de timezone do navegador para detectar falsificação de localização.</li>
-              <li>Validação de sessão mínima na página antes do cadastro.</li>
-              <li>Score de fraude automático para solicitações de saque.</li>
-            </ul>
-            
-            <h3 className="text-xl font-display font-semibold mt-6 mb-3">5.1. Comportamentos Proibidos</h3>
-            <p className="text-muted-foreground leading-relaxed">
-              São expressamente proibidos e resultarão em penalidades:
-            </p>
-            <ul className="list-disc pl-6 mt-4 space-y-2 text-muted-foreground">
-              <li>Cadastrar-se como lead em suas próprias ofertas ou solicitar que terceiros façam cadastros falsos.</li>
-              <li>Usar VPN, proxy ou qualquer ferramenta para mascarar localização.</li>
-              <li>Utilizar bots, scripts ou automação para gerar leads falsos.</li>
-              <li>Criar múltiplas contas para obter vantagens indevidas.</li>
-              <li>Fazer spam ou divulgação enganosa de ofertas.</li>
-              <li>Falsificar informações de cadastro (CPF, telefone, dados bancários, etc).</li>
-              <li>Tentar burlar ou testar os sistemas de segurança da plataforma.</li>
-              <li>Qualquer outra ação que prejudique a integridade do sistema.</li>
-            </ul>
-
-            <h3 className="text-xl font-display font-semibold mt-6 mb-3">5.2. Cadastros Suspeitos ou Falsos</h3>
-            <p className="text-muted-foreground leading-relaxed">
-              São considerados cadastros suspeitos e estão sujeitos a análise e penalidades:
-            </p>
-            <ul className="list-disc pl-6 mt-4 space-y-2 text-muted-foreground">
-              <li>Dados pessoais inconsistentes ou comprovadamente falsos (CPF, nome, endereço).</li>
-              <li>Múltiplas contas com dados similares ou originadas do mesmo dispositivo/IP.</li>
-              <li>Cadastros realizados através de VPN, proxy ou IPs suspeitos.</li>
-              <li>Padrão de comportamento atípico imediatamente após o cadastro.</li>
-              <li>Dados bancários (PIX) incompatíveis com o titular da conta.</li>
-              <li>Informações que não podem ser verificadas ou confirmadas.</li>
-            </ul>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-display font-semibold mb-4">6. Penalidades por Fraude</h2>
-            <p className="text-muted-foreground leading-relaxed">
-              Em caso de detecção de atividade fraudulenta ou suspeita, a plataforma reserva-se o direito de aplicar as seguintes penalidades:
-            </p>
-            <ul className="list-disc pl-6 mt-4 space-y-2 text-muted-foreground">
-              <li><strong>Advertência:</strong> Para infrações leves ou primeira ocorrência.</li>
-              <li><strong>Congelamento de Saldo:</strong> Bloqueio preventivo do saldo para análise detalhada.</li>
-              <li><strong>Suspensão Temporária:</strong> Bloqueio do acesso à conta por período determinado.</li>
-              <li><strong>Banimento Permanente:</strong> Exclusão definitiva da plataforma.</li>
-              <li><strong>Confisco de Saldo:</strong> Perda total dos créditos acumulados em casos graves.</li>
-              <li><strong>Inclusão em Blacklist:</strong> CPF, email e dados bancários são bloqueados permanentemente.</li>
-            </ul>
-
-            <h3 className="text-xl font-display font-semibold mt-6 mb-3">6.1. Processo de Análise e Penalização</h3>
-            <p className="text-muted-foreground leading-relaxed">
-              Ao detectar comportamento suspeito, a plataforma seguirá o seguinte processo:
-            </p>
-            <ul className="list-decimal pl-6 mt-4 space-y-3 text-muted-foreground">
-              <li>
-                <strong>Bloqueio Preventivo de Saldo:</strong> Ao identificar atividade suspeita, o saldo do usuário 
-                será imediatamente bloqueado para análise detalhada. O usuário será notificado sobre o bloqueio.
-              </li>
-              <li>
-                <strong>Período de Análise:</strong> A equipe de segurança realizará análise completa do histórico 
-                de leads, padrões de comportamento, dados cadastrais e qualquer evidência relevante.
-              </li>
-              <li>
-                <strong>Decisão Final:</strong>
-                <ul className="list-disc pl-6 mt-2 space-y-1">
-                  <li>Se a fraude for confirmada: <strong>BANIMENTO PERMANENTE</strong> e confisco total do saldo.</li>
-                  <li>Se for falso positivo: Desbloqueio do saldo e continuidade normal da conta.</li>
-                </ul>
-              </li>
-              <li>
-                <strong>Comunicação:</strong> O usuário será notificado por email e/ou notificação na plataforma 
-                sobre a decisão final e as razões da mesma.
-              </li>
-            </ul>
-
-            <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-4 mt-6">
-              <h4 className="font-semibold text-destructive mb-2">⚠️ BANIMENTO IMEDIATO</h4>
-              <p className="text-muted-foreground text-sm leading-relaxed">
-                Em casos de fraude evidente ou grave, a plataforma reserva-se o direito de aplicar 
-                <strong> banimento imediato SEM período de análise prévia</strong>, incluindo:
-              </p>
-              <ul className="list-disc pl-6 mt-2 space-y-1 text-muted-foreground text-sm">
-                <li>Uso comprovado de bots, scripts ou automação.</li>
-                <li>Múltiplas contas confirmadas do mesmo usuário.</li>
-                <li>Dados cadastrais comprovadamente falsos ou de terceiros.</li>
-                <li>Tentativas deliberadas de burlar os sistemas de segurança.</li>
-                <li>Reincidência após advertência ou suspensão anterior.</li>
-              </ul>
-            </div>
-
-            <p className="text-muted-foreground leading-relaxed mt-6">
-              <strong>Retenção de Saques:</strong> O clilin reserva-se o direito de reter saques por até 
-              <strong> 30 dias úteis</strong> para análise de fraude. Usuários com comportamento suspeito ou 
-              score de fraude elevado terão seus saques submetidos a verificação manual adicional.
-            </p>
-            <p className="text-muted-foreground leading-relaxed mt-4">
-              <strong>Medidas Legais:</strong> Em casos de fraude comprovada, a plataforma pode tomar medidas 
-              legais cabíveis, incluindo notificação às autoridades competentes, registro de boletim de 
-              ocorrência e ações judiciais para recuperação de valores e danos.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-display font-semibold mb-4">7. Direitos da Plataforma</h2>
-            <p className="text-muted-foreground leading-relaxed">
-              A plataforma clilin reserva-se os seguintes direitos para proteção do ecossistema:
-            </p>
-            <ul className="list-disc pl-6 mt-4 space-y-2 text-muted-foreground">
-              <li>Bloquear saldos preventivamente sempre que houver suspeita de fraude ou irregularidade.</li>
-              <li>Reter solicitações de saque por até 30 dias para análise e verificação.</li>
-              <li>Banir usuários sem aviso prévio em casos de fraude evidente ou grave.</li>
-              <li>Invalidar leads considerados fraudulentos, mesmo após creditados.</li>
-              <li>Compartilhar informações com autoridades competentes em caso de crime ou investigação.</li>
-              <li>Adicionar CPF, email, telefone, dados PIX e dispositivos em lista negra permanente.</li>
-              <li>Solicitar documentação adicional para verificação de identidade a qualquer momento.</li>
-              <li>Recusar saques sem justificativa detalhada em casos de investigação ativa.</li>
-              <li>Alterar limites de saque, valores mínimos e regras de comissionamento a qualquer momento.</li>
-            </ul>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-display font-semibold mb-4">8. Responsabilidades das Empresas</h2>
-            <p className="text-muted-foreground leading-relaxed">
-              As empresas são responsáveis por:
-            </p>
-            <ul className="list-disc pl-6 mt-4 space-y-2 text-muted-foreground">
-              <li>Garantir que as ofertas publicadas sejam verdadeiras e cumpridas.</li>
-              <li>Manter créditos suficientes para suas campanhas ativas.</li>
-              <li>Responder aos clientes de forma adequada e profissional.</li>
-              <li>Cumprir todas as leis aplicáveis de proteção ao consumidor.</li>
-            </ul>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-display font-semibold mb-4">9. Responsabilidades dos Divulgadores</h2>
-            <p className="text-muted-foreground leading-relaxed">
-              Os divulgadores são responsáveis por:
-            </p>
-            <ul className="list-disc pl-6 mt-4 space-y-2 text-muted-foreground">
-              <li>Divulgar ofertas de forma ética e transparente.</li>
-              <li>Não utilizar práticas enganosas ou spam.</li>
-              <li>Não gerar leads falsos ou fraudulentos.</li>
-              <li>Identificar-se como divulgadores quando exigido por lei.</li>
-            </ul>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-display font-semibold mb-4">10. Limitação de Responsabilidade</h2>
-            <p className="text-muted-foreground leading-relaxed">
-              O clilin atua como intermediário e não se responsabiliza pela qualidade, segurança ou 
-              legalidade das ofertas publicadas, nem pela capacidade das empresas de cumpri-las. 
-              Recomendamos que os usuários avaliem cuidadosamente as ofertas antes de aproveitá-las.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-display font-semibold mb-4">11. Modificações nos Termos</h2>
-            <p className="text-muted-foreground leading-relaxed">
-              Reservamo-nos o direito de modificar estes termos a qualquer momento. Alterações 
-              significativas serão comunicadas por e-mail ou através da plataforma. O uso continuado 
-              após as modificações constitui aceitação dos novos termos.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-display font-semibold mb-4">12. Contato</h2>
-            <p className="text-muted-foreground leading-relaxed">
-              Para dúvidas sobre estes Termos de Uso, entre em contato através do e-mail:{' '}
-              <a href="mailto:contato@clilin.com" className="text-primary hover:underline">
-                contato@clilin.com
-              </a>
-            </p>
-          </section>
-        </div>
-      </main>
-
-      <Footer />
-    </div>
+    <>
+      <SEOHead
+        title="Termos de Uso | Clilin"
+        description="Regras do Clilin para empresas e divulgadores: créditos, campanhas, missões, pontos, ligas, prêmios e prevenção de fraude."
+        canonicalUrl="/termos"
+      />
+      <DocPage
+        title="Termos de Uso"
+        subtitle="As regras do jogo para empresas e divulgadores, escritas para serem entendidas."
+        updated={UPDATED}
+        sections={sections}
+        after={
+          <p className="text-sm text-muted-foreground border-t border-border pt-6">
+            Veja também a <Link to="/privacidade" className="text-primary hover:underline">Política de Privacidade</Link> e a página de{" "}
+            <Link to="/transparencia" className="text-primary hover:underline">Transparência</Link>.
+          </p>
+        }
+      />
+    </>
   );
 }

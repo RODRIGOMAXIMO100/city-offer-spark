@@ -5,6 +5,7 @@ Allow: /
 Disallow: /auth
 Disallow: /auth/callback
 Disallow: /complete-signup
+Disallow: /redefinir-senha
 Disallow: /dashboard
 Disallow: /chat
 Disallow: /admin

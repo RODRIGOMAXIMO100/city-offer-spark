@@ -17,7 +17,7 @@ import { BRAZIL_STATES, getCitiesByState } from '@/data/brazilLocations';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
 import { BrandLogo } from '@/components/brand/BrandLogo';
-import Turnstile from '@/components/Turnstile';
+import Turnstile, { TURNSTILE_ENABLED } from '@/components/Turnstile';
 
 const ROLES: { value: AppRole; label: string; icon: React.ReactNode; description: string; color: string }[] = [
   {
@@ -135,7 +135,7 @@ export default function AuthPage() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!loginTurnstileToken) {
+    if (TURNSTILE_ENABLED && !loginTurnstileToken) {
       toast({
         title: 'Verificação necessária',
         description: 'Por favor, complete a verificação de segurança.',
@@ -167,6 +167,27 @@ export default function AuthPage() {
     setIsLoading(false);
   };
 
+  const [isSendingReset, setIsSendingReset] = useState(false);
+
+  // Envia o e-mail para criar uma senha nova
+  const handleForgotPassword = async () => {
+    const email = loginEmail.trim();
+    if (!email) {
+      toast({ title: 'Digite seu e-mail', description: 'Preencha o campo de e-mail acima e clique de novo.', variant: 'destructive' });
+      return;
+    }
+    setIsSendingReset(true);
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/redefinir-senha`,
+    });
+    setIsSendingReset(false);
+    if (error) {
+      toast({ title: 'Não foi possível enviar', description: 'Tente de novo em alguns minutos.', variant: 'destructive' });
+      return;
+    }
+    toast({ title: 'Confira seu e-mail', description: `Se ${email} tiver conta no Clilin, você vai receber um link para criar uma senha nova.` });
+  };
+
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -195,7 +216,7 @@ export default function AuthPage() {
     }
 
     // Check eligibility before signup (honeypot, blacklist, rate limit, turnstile)
-    if (!signupTurnstileToken) {
+    if (TURNSTILE_ENABLED && !signupTurnstileToken) {
       toast({
         title: 'Verificação necessária',
         description: 'Por favor, complete a verificação de segurança.',
@@ -299,7 +320,17 @@ export default function AuthPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="login-password">Senha</Label>
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="login-password">Senha</Label>
+                      <button
+                        type="button"
+                        onClick={handleForgotPassword}
+                        disabled={isSendingReset}
+                        className="text-xs text-primary hover:underline disabled:opacity-60"
+                      >
+                        {isSendingReset ? 'Enviando...' : 'Esqueci minha senha'}
+                      </button>
+                    </div>
                     <Input
                       id="login-password"
                       type="password"
@@ -318,7 +349,7 @@ export default function AuthPage() {
                     />
                   </div>
 
-                  <Button type="submit" className="w-full" disabled={isLoading || !loginTurnstileToken}>
+                  <Button type="submit" className="w-full" disabled={isLoading || (TURNSTILE_ENABLED && !loginTurnstileToken)}>
                     {isLoading ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -623,7 +654,7 @@ export default function AuthPage() {
                     />
                   </div>
 
-                  <Button type="submit" className="w-full" disabled={isLoading || !signupTurnstileToken}>
+                  <Button type="submit" className="w-full" disabled={isLoading || (TURNSTILE_ENABLED && !signupTurnstileToken)}>
                     {isLoading ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />

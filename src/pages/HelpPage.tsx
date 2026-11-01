@@ -1,671 +1,177 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/hooks/useAuth';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { ArrowLeft, Building2, Users, MessageCircle, DollarSign, Star, TrendingUp, Shield, HelpCircle, Calculator, Clock, CheckCircle, AlertCircle, Zap } from 'lucide-react';
-import { SEOHead } from '@/components/seo/SEOHead';
+import { useMemo, useState } from "react";
+import { Link } from "react-router-dom";
+import { Mail, Search } from "lucide-react";
+import { SEOHead } from "@/components/seo/SEOHead";
+import { StructuredData } from "@/components/seo/StructuredData";
+import { Navbar } from "@/components/landing/Navbar";
+import { Footer } from "@/components/landing/Footer";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
-const HelpPage = () => {
-  const navigate = useNavigate();
-  const { role } = useAuth();
-  const [activeTab, setActiveTab] = useState<string>('company');
+type Faq = { q: string; a: string };
+type Group = { id: string; title: string; tone: string; faqs: Faq[] };
 
-  useEffect(() => {
-    if (role === 'COMPANY') setActiveTab('company');
-    else if (role === 'AFFILIATE') setActiveTab('affiliate');
-    else if (role === 'CLIENT') setActiveTab('client');
-  }, [role]);
+const GROUPS: Group[] = [
+  {
+    id: "geral",
+    title: "Começando",
+    tone: "text-primary",
+    faqs: [
+      { q: "O que é o Clilin?", a: "Uma rede de divulgadores. Empresas criam campanhas com uma palavra-chave, e gente de verdade da cidade posta sobre a marca no mesmo período, cada um no seu perfil. A empresa paga só pelas visualizações verificadas e os melhores divulgadores de cada liga ganham prêmio em dinheiro todo mês." },
+      { q: "Quanto custa para usar?", a: "Para o divulgador, nada. Para a empresa, R$ 5 a cada mil visualizações verificadas, com campanhas a partir de 20 mil visualizações (R$ 100)." },
+      { q: "Em quais cidades funciona?", a: "No Brasil inteiro. A empresa escolhe as cidades da campanha e só os divulgadores dessas cidades recebem a missão." },
+      { q: "Preciso ter 18 anos?", a: "Sim. O Clilin é só para maiores de 18 anos." },
+    ],
+  },
+  {
+    id: "empresas",
+    title: "Para empresas",
+    tone: "text-company",
+    faqs: [
+      { q: "Como crio uma campanha?", a: "Entre no painel, vá em Campanhas e clique em criar. Você informa o nome, a palavra-chave ou hashtag, o que os divulgadores devem falar, o link do material (opcional), as redes aceitas, a meta de visualizações e as datas de começo e fim." },
+      { q: "Como funciona a cobrança?", a: "O valor da meta fica reservado nos seus créditos quando a campanha é criada. O débito acontece conforme cada post é aprovado. Post reprovado não é cobrado. Se a meta não for atingida, o que sobrou volta para o seu saldo quando a campanha termina." },
+      { q: "Quais são os pacotes?", a: "Largada: 20 mil visualizações por R$ 100. Cidade: 50 mil por R$ 250. Região: 100 mil por R$ 500. Brasil: 300 mil por R$ 1.500. Você também pode definir uma meta própria, a partir de 20 mil." },
+      { q: "Como sei que as visualizações são reais?", a: "Cada post passa por leitura automática dos dados públicos (se existe, se está no perfil cadastrado, se tem a palavra-chave e o #publi) e por conferência da equipe, comparando com o print das visualizações. Perfil com seguidor comprado ou pico fora do padrão é reprovado." },
+      { q: "Onde acompanho os resultados?", a: "No painel da empresa, em Campanhas. Cada campanha mostra o total de visualizações verificadas em relação à meta e a lista de posts com a rede, a situação da conferência, as visualizações aprovadas e o link para abrir o post." },
+      { q: "Posso encerrar uma campanha antes?", a: "Pode. Em Campanhas, clique em Encerrar. Os créditos que não foram usados voltam para o seu saldo." },
+      { q: "Quem cria o conteúdo do post?", a: "Cada divulgador posta do seu jeito, seguindo o que você escreveu em \"O que os divulgadores devem falar\" e o material enviado. É isso que faz parecer conversa de verdade, e não anúncio." },
+    ],
+  },
+  {
+    id: "divulgadores",
+    title: "Para divulgadores",
+    tone: "text-affiliate",
+    faqs: [
+      { q: "Como começo a divulgar?", a: "Crie sua conta como divulgador, cadastre seus perfis nas redes (o @, o número de seguidores e o link) e espere a conferência. Com o perfil aprovado, as missões das marcas da sua cidade aparecem em Missões." },
+      { q: "Como envio um post?", a: "Poste no seu perfil com a palavra-chave da campanha e #publi. Depois, na missão, informe o perfil onde postou, cole o link do post e, se quiser, as visualizações e o print delas. O print ajuda a aprovar mais rápido." },
+      { q: "Quanto eu ganho?", a: "Você não recebe por post. Cada visualização verificada vale 1 ponto, e os 3 primeiros de cada liga no mês ganham prêmio em dinheiro. Os valores de referência são R$ 150, R$ 80 e R$ 50, pagos por um fundo formado por 35% do que as empresas investem." },
+      { q: "O que são as ligas?", a: "São divisões por tamanho de perfil: Bronze (até 1 mil seguidores), Prata (de 1 mil a 5 mil) e Ouro (acima de 5 mil). Você disputa com quem tem o seu tamanho." },
+      { q: "Tem pontuação mínima?", a: "Sim. Para concorrer no mês, é preciso fazer pelo menos 2 mil pontos." },
+      { q: "Por que meu post foi reprovado?", a: "Os motivos mais comuns: faltou a palavra-chave ou o #publi, o post saiu fora da janela da missão, foi feito em Stories, o perfil não é o cadastrado ou os números não batem com o print. Você vê o motivo na própria missão." },
+      { q: "Posso apagar o post depois?", a: "Só depois que a missão terminar. Se o post sumir durante a conferência, ele é reprovado e os pontos são anulados." },
+      { q: "Quais redes valem?", a: "Feed e Reels do Instagram, TikTok, Kwai, YouTube Shorts, Facebook e X. Stories e Status do WhatsApp não valem." },
+    ],
+  },
+  {
+    id: "pagamentos",
+    title: "Prêmios e saques",
+    tone: "text-highlight-foreground",
+    faqs: [
+      { q: "Quando recebo o prêmio?", a: "Quando o ciclo do mês é fechado, os prêmios caem no seu saldo e você recebe uma notificação." },
+      { q: "Como saco meu saldo?", a: "No painel, peça o saque via Pix a partir de R$ 100. A chave Pix precisa ser do titular da conta." },
+      { q: "E se o fundo do mês for pequeno?", a: "Os prêmios são ajustados na mesma proporção para todos os premiados. O que sobrar do fundo passa para o mês seguinte." },
+      { q: "Tem sorteio?", a: "Não. Ganha quem fica no topo da sua liga e bate a pontuação mínima." },
+    ],
+  },
+  {
+    id: "conta",
+    title: "Conta e segurança",
+    tone: "text-primary",
+    faqs: [
+      { q: "Posso ter mais de uma conta?", a: "Não. É uma conta de divulgador por CPF. Contas duplicadas são encerradas." },
+      { q: "Esqueci minha senha. E agora?", a: "Na tela de entrar, clique em \"Esqueci minha senha\" e siga o link enviado para o seu e-mail." },
+      { q: "O que acontece se houver fraude?", a: "Visualização comprada, robô, perfil falso ou print editado levam à reprovação do post, anulação dos pontos e, conforme a gravidade, ao bloqueio do saldo e da conta. Os detalhes estão nos Termos de Uso." },
+      { q: "Como apago meus dados?", a: "Escreva para contato@clilin.com com o assunto \"Privacidade\". Respondemos em até 15 dias." },
+    ],
+  },
+  {
+    id: "em-breve",
+    title: "Em breve",
+    tone: "text-client",
+    faqs: [
+      { q: "E as ofertas e cupons?", a: "A parte de ofertas, cupons e captação de clientes para as empresas está em breve. Na página de clientes você deixa seu contato e fica sabendo primeiro quando for lançada." },
+    ],
+  },
+];
+
+const normalize = (s: string) =>
+  s
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "");
+
+export default function HelpPage() {
+  const [term, setTerm] = useState("");
+
+  const groups = useMemo(() => {
+    const t = normalize(term.trim());
+    if (!t) return GROUPS;
+    return GROUPS.map((g) => ({ ...g, faqs: g.faqs.filter((f) => normalize(f.q + " " + f.a).includes(t)) })).filter((g) => g.faqs.length > 0);
+  }, [term]);
 
   return (
     <div className="min-h-screen bg-background">
-      <SEOHead 
-        title="Central de Ajuda | Clilin"
-        description="Encontre todas as informações sobre como usar a Clilin. Guia completo para empresas, divulgadores e clientes."
+      <SEOHead
+        title="Central de Ajuda do Clilin"
+        description="Respostas sobre campanhas, créditos, verificação de posts, ligas, prêmios, saques e segurança no Clilin."
+        keywords={["ajuda clilin", "como funciona", "divulgador", "campanha", "prêmios", "saque pix"]}
+        canonicalUrl="/ajuda"
       />
-      
-      {/* Header */}
-      <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container mx-auto px-4 py-4 flex items-center gap-4">
-          <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <div className="flex items-center gap-2">
-            <HelpCircle className="h-6 w-6 text-primary" />
-            <div>
-              <h1 className="text-xl font-bold">Central de Ajuda</h1>
-              <p className="text-xs text-muted-foreground">Estamos aqui para te ajudar a crescer! 💛</p>
-            </div>
+      <StructuredData type="FAQPage" faqs={GROUPS.flatMap((g) => g.faqs.map((f) => ({ question: f.q, answer: f.a })))} />
+      <Navbar />
+
+      <section className="pt-28 sm:pt-36 pb-10 bg-gradient-to-b from-muted/60 to-background">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center">
+          <h1 className="text-3xl sm:text-5xl font-display font-bold text-foreground mb-4">Central de Ajuda</h1>
+          <p className="text-lg text-muted-foreground mb-8">Tudo sobre campanhas, missões, ranking e prêmios.</p>
+          <div className="relative max-w-xl mx-auto">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+            <Input
+              value={term}
+              onChange={(e) => setTerm(e.target.value)}
+              placeholder="Busque: saque, liga, cobrança, #publi..."
+              className="pl-12 h-12 rounded-full text-base"
+              aria-label="Buscar na ajuda"
+            />
+          </div>
+          <div className="flex flex-wrap justify-center gap-2 mt-6">
+            {GROUPS.map((g) => (
+              <a key={g.id} href={`#${g.id}`} className="rounded-full bg-muted px-4 py-2 text-sm text-foreground hover:bg-muted/70 transition-colors">
+                {g.title}
+              </a>
+            ))}
           </div>
         </div>
-      </header>
+      </section>
 
-      <main className="container mx-auto px-4 py-8 max-w-4xl">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="company" className="flex items-center gap-2">
-              <Building2 className="h-4 w-4" />
-              <span className="hidden sm:inline">Empresas</span>
-            </TabsTrigger>
-            <TabsTrigger value="affiliate" className="flex items-center gap-2">
-              <Users className="h-4 w-4" />
-              <span className="hidden sm:inline">Divulgadores</span>
-            </TabsTrigger>
-            <TabsTrigger value="client" className="flex items-center gap-2">
-              <MessageCircle className="h-4 w-4" />
-              <span className="hidden sm:inline">Clientes</span>
-            </TabsTrigger>
-          </TabsList>
-
-          {/* EMPRESAS */}
-          <TabsContent value="company" className="space-y-6">
-            <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-transparent">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Building2 className="h-5 w-5 text-primary" />
-                  Guia para Empresas
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  Conecte-se com clientes da sua comunidade! Aqui você aprende como criar ofertas incríveis e fortalecer seu negócio local. 💛
-                </p>
-              </CardContent>
-            </Card>
-
-            <Accordion type="single" collapsible className="space-y-2">
-              <AccordionItem value="cpl" className="border rounded-lg px-4 border-primary/30 bg-primary/5">
-                <AccordionTrigger className="hover:no-underline">
-                  <div className="flex items-center gap-3">
-                    <Calculator className="h-5 w-5 text-primary" />
-                    <span className="font-bold">⭐ Como funciona o pagamento por resgate</span>
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className="space-y-4 pt-2">
-                  <div className="p-3 rounded-lg bg-primary/10 border border-primary/20 mb-4">
-                    <p className="text-sm font-medium text-primary mb-2">
-                      💡 Você só paga por cliente que aparece na loja
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      Na Clilin você paga apenas quando um cliente novo <strong>vai até a sua loja e usa o cupom</strong>. Resultado de verdade — não clique, não cadastro.
-                    </p>
-                    <ul className="mt-2 space-y-1 text-sm text-muted-foreground">
-                      <li className="flex items-start gap-2">
-                        <span>📝</span>
-                        <span><strong>Divulgadores locais</strong> espalham a sua oferta pela cidade</span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span>✅</span>
-                        <span><strong>O cliente pega o cupom</strong> e leva até a sua loja</span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span>📱</span>
-                        <span><strong>Você confirma o resgate</strong> no balcão — e só aí a taxa é cobrada</span>
-                      </li>
-                    </ul>
-                    <p className="text-xs text-muted-foreground mt-2 italic">
-                      Cliques e cadastros no caminho são de graça: servem só pra você medir o alcance.
-                    </p>
-                  </div>
-                  <p className="text-muted-foreground">
-                    A taxa é 15% do preço da oferta (mínimo R$ 3,00), cobrada só quando o cliente aparece na loja. Exemplos:
-                  </p>
-                  <div className="grid gap-3">
-                    <div className="flex items-center justify-between p-3 rounded-lg bg-green-500/10 border border-green-500/20">
-                      <span className="font-medium text-green-600">Oferta de R$ 20</span>
-                      <span className="font-bold text-green-600">R$ 3,00 por cliente</span>
-                    </div>
-                    <div className="flex items-center justify-between p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
-                      <span className="font-medium text-yellow-600">Oferta de R$ 50</span>
-                      <span className="font-bold text-yellow-600">R$ 7,50 por cliente</span>
-                    </div>
-                    <div className="flex items-center justify-between p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
-                      <span className="font-medium text-blue-600">Oferta de R$ 100</span>
-                      <span className="font-bold text-blue-600">R$ 15,00 por cliente</span>
-                    </div>
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    Quanto maior o valor da oferta, maior a taxa — e mais atrativo fica para os divulgadores levarem clientes até você.
-                  </p>
-                  <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20 mt-4">
-                    <p className="text-sm text-blue-600">
-                      📊 <strong>Sem risco:</strong> se ninguém aparecer na loja, você não paga nada. Você investe só quando o cliente já está na sua frente.
-                    </p>
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="score" className="border rounded-lg px-4">
-                <AccordionTrigger className="hover:no-underline">
-                  <div className="flex items-center gap-3">
-                    <Star className="h-5 w-5 text-primary" />
-                    <span>Sistema de Notas</span>
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className="space-y-4 pt-2">
-                  <p className="text-muted-foreground">
-                    Sua nota é calculada com base em 3 fatores e influencia o destaque da sua oferta:
-                  </p>
-                  <div className="space-y-3">
-                    <div className="p-3 rounded-lg bg-muted/50">
-                      <div className="flex justify-between items-center mb-1">
-                        <span className="font-medium">Taxa de Conversão (Leads/Views)</span>
-                        <span className="text-primary font-bold">40%</span>
-                      </div>
-                      <p className="text-sm text-muted-foreground">
-                        Proporção entre visualizações e leads gerados. Ofertas que convertem mais têm nota maior.
-                      </p>
-                    </div>
-                    <div className="p-3 rounded-lg bg-muted/50">
-                      <div className="flex justify-between items-center mb-1">
-                        <span className="font-medium">Qualidade da Oferta</span>
-                        <span className="text-primary font-bold">35%</span>
-                      </div>
-                      <p className="text-sm text-muted-foreground">
-                        Desconto real, descrição completa, imagens de qualidade.
-                      </p>
-                    </div>
-                    <div className="p-3 rounded-lg bg-muted/50">
-                      <div className="flex justify-between items-center mb-1">
-                        <span className="font-medium">Reputação</span>
-                        <span className="text-primary font-bold">25%</span>
-                      </div>
-                      <p className="text-sm text-muted-foreground">
-                        Instagram vinculado, tempo na plataforma, histórico de ofertas.
-                      </p>
-                    </div>
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="offers" className="border rounded-lg px-4">
-                <AccordionTrigger className="hover:no-underline">
-                  <div className="flex items-center gap-3">
-                    <TrendingUp className="h-5 w-5 text-primary" />
-                    <span>Regras de Ofertas</span>
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className="space-y-4 pt-2">
-                  <ul className="space-y-3">
-                    <li className="flex items-start gap-3">
-                      <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-                      <span>Máximo de <strong>3 ofertas ativas</strong> simultaneamente</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <Clock className="h-5 w-5 text-yellow-500 mt-0.5 flex-shrink-0" />
-                      <span>Você define a <strong>data de expiração</strong> da sua oferta</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <Zap className="h-5 w-5 text-blue-500 mt-0.5 flex-shrink-0" />
-                      <span>Você pode <strong>editar ou renovar</strong> ofertas existentes</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <Shield className="h-5 w-5 text-purple-500 mt-0.5 flex-shrink-0" />
-                      <span>Ofertas só são exibidas se você tiver <strong>saldo suficiente</strong></span>
-                    </li>
-                  </ul>
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="credits" className="border rounded-lg px-4">
-                <AccordionTrigger className="hover:no-underline">
-                  <div className="flex items-center gap-3">
-                    <DollarSign className="h-5 w-5 text-primary" />
-                    <span>Créditos e Pagamentos</span>
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className="space-y-4 pt-2">
-                  <p className="text-muted-foreground">
-                    Adicione créditos para manter suas ofertas ativas:
-                  </p>
-                  <ul className="space-y-3">
-                    <li className="flex items-start gap-3">
-                      <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-                      <span><strong>PIX:</strong> Confirmação instantânea, sem taxa adicional</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-                      <span><strong>Cartão:</strong> Parcelamento em até 12x (com juros)</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <AlertCircle className="h-5 w-5 text-yellow-500 mt-0.5 flex-shrink-0" />
-                      <span>Créditos são descontados apenas quando um cliente <strong>usa o cupom na sua loja</strong></span>
-                    </li>
-                  </ul>
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="faq-company" className="border rounded-lg px-4">
-                <AccordionTrigger className="hover:no-underline">
-                  <div className="flex items-center gap-3">
-                    <HelpCircle className="h-5 w-5 text-primary" />
-                    <span>Perguntas Frequentes</span>
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className="space-y-4 pt-2">
-                  <div className="space-y-4">
-                    <div>
-                      <p className="font-medium">O que é um lead válido?</p>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        Quando um usuário real preenche o formulário com nome e WhatsApp. Nosso sistema anti-fraude verifica automaticamente a autenticidade do contato.
-                      </p>
-                    </div>
-                    <div>
-                      <p className="font-medium">Como recebo os leads captados?</p>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        Todos os leads aparecem no seu dashboard com nome e WhatsApp. Você pode iniciar uma conversa diretamente ou exportar em CSV.
-                      </p>
-                    </div>
-                    <div>
-                      <p className="font-medium">Por que minha oferta não aparece?</p>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        Verifique se: 1) Você tem saldo suficiente; 2) A oferta não expirou; 3) A oferta está marcada como ativa.
-                      </p>
-                    </div>
-                    <div>
-                      <p className="font-medium">Posso alterar o preço depois de criar a oferta?</p>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        Sim! Você pode editar todos os detalhes da oferta a qualquer momento.
-                      </p>
-                    </div>
-                    <div>
-                      <p className="font-medium">O que acontece se meu saldo acabar?</p>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        Suas ofertas ficam pausadas automaticamente e voltam a aparecer quando você adicionar créditos.
-                      </p>
-                    </div>
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
+      <main className="max-w-3xl mx-auto px-4 sm:px-6 pb-16 space-y-12">
+        {groups.length === 0 && (
+          <p className="text-center text-muted-foreground py-10">Nada encontrado para "{term}". Tente outra palavra ou fale com a gente.</p>
+        )}
+        {groups.map((g) => (
+          <section key={g.id} id={g.id} className="scroll-mt-28">
+            <h2 className={`text-xl sm:text-2xl font-display font-bold mb-4 ${g.tone === "text-highlight-foreground" ? "text-foreground" : g.tone}`}>{g.title}</h2>
+            <Accordion type="multiple" className="space-y-3">
+              {g.faqs.map((f, i) => (
+                <AccordionItem key={i} value={`${g.id}-${i}`} className="bg-card border border-border rounded-2xl px-5 data-[state=open]:shadow-md">
+                  <AccordionTrigger className="text-left hover:no-underline py-4 font-semibold">{f.q}</AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground pb-4 leading-relaxed">{f.a}</AccordionContent>
+                </AccordionItem>
+              ))}
             </Accordion>
-          </TabsContent>
+          </section>
+        ))}
 
-          {/* DIVULGADORES */}
-          <TabsContent value="affiliate" className="space-y-6">
-            <Card className="border-green-500/20 bg-gradient-to-br from-green-500/5 to-transparent">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Users className="h-5 w-5 text-green-500" />
-                  Guia para Divulgadores
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  Ajude negócios locais a crescerem e seja recompensado por isso! Entenda como funciona o sistema de comissões e níveis. 💛
-                </p>
-              </CardContent>
-            </Card>
-
-            <Accordion type="single" collapsible className="space-y-2">
-              <AccordionItem value="withdrawal" className="border rounded-lg px-4 border-yellow-500/30 bg-yellow-500/5">
-                <AccordionTrigger className="hover:no-underline">
-                  <div className="flex items-center gap-3">
-                    <DollarSign className="h-5 w-5 text-yellow-500" />
-                    <span className="font-bold">⭐ Regras de Saque</span>
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className="space-y-4 pt-2">
-                  <div className="grid gap-3">
-                    <div className="flex items-center justify-between p-3 rounded-lg bg-background border">
-                      <span className="text-muted-foreground">Saque Mínimo</span>
-                      <span className="font-bold text-primary text-lg">R$ 100,00</span>
-                    </div>
-                    <div className="flex items-center justify-between p-3 rounded-lg bg-background border">
-                      <span className="text-muted-foreground">Método</span>
-                      <span className="font-bold">PIX Instantâneo</span>
-                    </div>
-                    <div className="flex items-center justify-between p-3 rounded-lg bg-background border">
-                      <span className="text-muted-foreground">Prazo de Análise</span>
-                      <span className="font-bold">Até 48h úteis</span>
-                    </div>
-                  </div>
-                  <div className="p-3 rounded-lg bg-muted/50 mt-4">
-                    <p className="text-sm font-medium mb-2">📋 Dados Necessários:</p>
-                    <ul className="text-sm text-muted-foreground space-y-1">
-                      <li>• CPF válido</li>
-                      <li>• Nome completo (igual ao CPF)</li>
-                      <li>• Chave PIX (CPF, e-mail, telefone ou aleatória)</li>
-                    </ul>
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="commission" className="border rounded-lg px-4">
-                <AccordionTrigger className="hover:no-underline">
-                  <div className="flex items-center gap-3">
-                    <TrendingUp className="h-5 w-5 text-green-500" />
-                    <span>Como Funciona a Comissão</span>
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className="space-y-4 pt-2">
-                  <div className="p-4 rounded-lg bg-green-500/10 border border-green-500/20">
-                    <p className="text-center text-lg font-bold text-green-600 mb-2">
-                      Ganhe 50% da taxa por cliente que você leva à loja! 🚀
-                    </p>
-                    <p className="text-center text-sm text-muted-foreground">
-                      Comece com 50% da taxa e chegue a 70% subindo de nível
-                    </p>
-                  </div>
-                  <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20 mb-4">
-                    <p className="text-sm text-blue-600">
-                      📝 <strong>Você ganha por resultado:</strong> a comissão cai na sua conta quando o cliente que você indicou vai até a loja e usa o cupom — não por clique.
-                    </p>
-                  </div>
-                  <div className="grid gap-3 mt-4">
-                    <div className="flex items-center justify-between p-3 rounded-lg bg-orange-500/10 border border-orange-500/20">
-                      <span>Bronze (base)</span>
-                      <span className="font-bold text-orange-600">50% da taxa</span>
-                    </div>
-                    <div className="flex items-center justify-between p-3 rounded-lg bg-slate-400/10 border border-slate-400/20">
-                      <span>Prata (10 resgates)</span>
-                      <span className="font-bold text-slate-600">55% da taxa</span>
-                    </div>
-                    <div className="flex items-center justify-between p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
-                      <span>Ouro (30 resgates)</span>
-                      <span className="font-bold text-yellow-600">60% da taxa</span>
-                    </div>
-                  </div>
-                  <p className="text-sm text-muted-foreground mt-2">
-                    <strong>Dica:</strong> Quanto mais clientes você leva até a loja, mais rápido sobe de nível e maior sua comissão!
-                  </p>
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="levels" className="border rounded-lg px-4">
-                <AccordionTrigger className="hover:no-underline">
-                  <div className="flex items-center gap-3">
-                    <Star className="h-5 w-5 text-yellow-500" />
-                    <span>Sistema de Níveis</span>
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className="space-y-4 pt-2">
-                  <p className="text-muted-foreground">
-                    Quanto mais clientes você leva até a loja, maior sua comissão:
-                  </p>
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between p-3 rounded-lg bg-orange-500/10 border border-orange-500/20">
-                      <div className="flex items-center gap-2">
-                        <span className="text-xl">🥉</span>
-                        <div>
-                          <span className="font-medium">Bronze</span>
-                          <p className="text-xs text-muted-foreground">0 resgates</p>
-                        </div>
-                      </div>
-                      <span className="font-bold text-orange-600">50%</span>
-                    </div>
-                    <div className="flex items-center justify-between p-3 rounded-lg bg-slate-400/10 border border-slate-400/20">
-                      <div className="flex items-center gap-2">
-                        <span className="text-xl">🥈</span>
-                        <div>
-                          <span className="font-medium">Prata</span>
-                          <p className="text-xs text-muted-foreground">10 resgates</p>
-                        </div>
-                      </div>
-                      <span className="font-bold text-slate-600">55%</span>
-                    </div>
-                    <div className="flex items-center justify-between p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
-                      <div className="flex items-center gap-2">
-                        <span className="text-xl">🥇</span>
-                        <div>
-                          <span className="font-medium">Ouro</span>
-                          <p className="text-xs text-muted-foreground">30 resgates</p>
-                        </div>
-                      </div>
-                      <span className="font-bold text-yellow-600">60%</span>
-                    </div>
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="valid-leads" className="border rounded-lg px-4">
-                <AccordionTrigger className="hover:no-underline">
-                  <div className="flex items-center gap-3">
-                    <Shield className="h-5 w-5 text-blue-500" />
-                    <span>O que conta como cliente</span>
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className="space-y-4 pt-2">
-                  <p className="text-muted-foreground">
-                    Para gerar comissão, o cliente precisa:
-                  </p>
-                  <ul className="space-y-3">
-                    <li className="flex items-start gap-3">
-                      <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-                      <span>Pegar o cupom e <strong>usar na loja</strong> (resgate confirmado pelo lojista)</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-                      <span>Ser um <strong>cliente novo</strong> (1 resgate por telefone/oferta)</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-                      <span>Passar pela <strong>validação anti-fraude</strong> (sessão válida, dispositivo real)</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-                      <span>Ter <strong>telefone válido</strong> no formato brasileiro</span>
-                    </li>
-                  </ul>
-                  <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 mt-4">
-                    <p className="text-sm text-red-600">
-                      ⚠️ Leads fraudulentos (dados falsos, auto-cadastro, bots) são automaticamente bloqueados e podem resultar em banimento.
-                    </p>
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="faq-affiliate" className="border rounded-lg px-4">
-                <AccordionTrigger className="hover:no-underline">
-                  <div className="flex items-center gap-3">
-                    <HelpCircle className="h-5 w-5 text-green-500" />
-                    <span>Perguntas Frequentes</span>
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className="space-y-4 pt-2">
-                  <div className="space-y-4">
-                    <div>
-                      <p className="font-medium">Quando recebo meu saque?</p>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        Após solicitar, o saque passa por análise (até 48h úteis). Aprovado, o PIX é instantâneo.
-                      </p>
-                    </div>
-                    <div>
-                      <p className="font-medium">Por que meu saque foi rejeitado?</p>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        Possíveis motivos: dados incorretos, CPF inválido, chave PIX não pertence a você, ou atividade suspeita detectada.
-                      </p>
-                    </div>
-                    <div>
-                      <p className="font-medium">Como aumento meu nível?</p>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        Levando clientes até a loja! Quanto mais pessoas usam o cupom que você indicou, mais rápido você sobe de nível.
-                      </p>
-                    </div>
-                    <div>
-                      <p className="font-medium">Posso divulgar em qualquer lugar?</p>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        Sim, desde que seja de forma ética. Grupos de WhatsApp, redes sociais, e-mail são ótimos canais. Evite spam.
-                      </p>
-                    </div>
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-          </TabsContent>
-
-          {/* CLIENTES */}
-          <TabsContent value="client" className="space-y-6">
-            <Card className="border-blue-500/20 bg-gradient-to-br from-blue-500/5 to-transparent">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <MessageCircle className="h-5 w-5 text-blue-500" />
-                  Guia para Clientes
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  Descubra ofertas incríveis e apoie os negócios da sua comunidade! Aqui você aprende a usar a Clilin. 💛
-                </p>
-              </CardContent>
-            </Card>
-
-            <Accordion type="single" collapsible className="space-y-2">
-              <AccordionItem value="how-it-works" className="border rounded-lg px-4">
-                <AccordionTrigger className="hover:no-underline">
-                  <div className="flex items-center gap-3">
-                    <Zap className="h-5 w-5 text-blue-500" />
-                    <span>Como Funciona a Clilin</span>
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className="space-y-4 pt-2">
-                  <div className="space-y-3">
-                    <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
-                      <span className="text-2xl">1️⃣</span>
-                      <div>
-                        <p className="font-medium">Pergunte o que você quer</p>
-                        <p className="text-sm text-muted-foreground">
-                          Digite no chat: "Quero pizza", "Busco desconto em academia", "Preciso de um pet shop"
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
-                      <span className="text-2xl">2️⃣</span>
-                      <div>
-                        <p className="font-medium">A IA busca as melhores ofertas</p>
-                        <p className="text-sm text-muted-foreground">
-                          Nossa inteligência artificial encontra ofertas relevantes na sua cidade
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
-                      <span className="text-2xl">3️⃣</span>
-                      <div>
-                        <p className="font-medium">Escolha e aproveite</p>
-                        <p className="text-sm text-muted-foreground">
-                          Clique na oferta que te interessar e seja direcionado para a empresa
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="chat-tips" className="border rounded-lg px-4">
-                <AccordionTrigger className="hover:no-underline">
-                  <div className="flex items-center gap-3">
-                    <MessageCircle className="h-5 w-5 text-blue-500" />
-                    <span>Dicas para Usar o Chat</span>
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className="space-y-4 pt-2">
-                  <ul className="space-y-3">
-                    <li className="flex items-start gap-3">
-                      <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-                      <span>Seja específico: "Pizza com desconto" é melhor que só "comida"</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-                      <span>Você pode perguntar várias vezes para encontrar mais opções</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-                      <span>A IA entende português naturalmente, escreva como preferir</span>
-                    </li>
-                  </ul>
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="security-client" className="border rounded-lg px-4">
-                <AccordionTrigger className="hover:no-underline">
-                  <div className="flex items-center gap-3">
-                    <Shield className="h-5 w-5 text-green-500" />
-                    <span>Segurança e Confiança</span>
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className="space-y-4 pt-2">
-                  <ul className="space-y-3">
-                    <li className="flex items-start gap-3">
-                      <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-                      <span>Todas as empresas são <strong>verificadas</strong> antes de entrar na plataforma</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-                      <span>Empresas com <strong>Instagram vinculado</strong> são mais confiáveis</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-                      <span>Descontos são <strong>reais</strong> - mostramos preço antigo e novo</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-                      <span>Você é direcionado diretamente para o <strong>canal oficial</strong> da empresa (WhatsApp, site ou cardápio)</span>
-                    </li>
-                  </ul>
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="faq-client" className="border rounded-lg px-4">
-                <AccordionTrigger className="hover:no-underline">
-                  <div className="flex items-center gap-3">
-                    <HelpCircle className="h-5 w-5 text-blue-500" />
-                    <span>Perguntas Frequentes</span>
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className="space-y-4 pt-2">
-                  <div className="space-y-4">
-                    <div>
-                      <p className="font-medium">A Clilin é gratuita?</p>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        Sim! Para clientes, a Clilin é 100% gratuita. Você só aproveita os descontos.
-                      </p>
-                    </div>
-                    <div>
-                      <p className="font-medium">Preciso criar conta?</p>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        Para usar o chat e ver ofertas, sim. Mas é rápido e simples!
-                      </p>
-                    </div>
-                    <div>
-                      <p className="font-medium">Como sei se a empresa é confiável?</p>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        Empresas com Instagram vinculado passaram por verificação. Você pode conferir o perfil antes de entrar em contato.
-                      </p>
-                    </div>
-                    <div>
-                      <p className="font-medium">E se o desconto não for real?</p>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        Denuncie! Ofertas enganosas são removidas e a empresa pode ser banida da plataforma.
-                      </p>
-                    </div>
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-          </TabsContent>
-        </Tabs>
-
-        {/* Contact Section */}
-        <Card className="mt-8">
-          <CardContent className="p-6 text-center">
-            <h3 className="text-lg font-semibold mb-2">Ainda tem dúvidas?</h3>
-            <p className="text-muted-foreground mb-4">
-              Visite nossa página de transparência ou entre em contato conosco.
-            </p>
-            <div className="flex flex-wrap gap-3 justify-center">
-              <Button variant="outline" onClick={() => navigate('/transparencia')}>
-                Página de Transparência
-              </Button>
-              <Button variant="outline" onClick={() => navigate('/termos')}>
-                Termos de Uso
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+        <section className="rounded-3xl border border-border bg-card p-6 sm:p-8 text-center">
+          <Mail className="h-7 w-7 text-primary mx-auto mb-3" />
+          <h2 className="text-xl sm:text-2xl font-display font-bold text-foreground mb-2">Ainda tem dúvidas?</h2>
+          <p className="text-muted-foreground mb-6">Escreva para a gente. Veja também a página de Transparência e os Termos de Uso.</p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Button asChild>
+              <a href="mailto:contato@clilin.com">contato@clilin.com</a>
+            </Button>
+            <Button asChild variant="outline">
+              <Link to="/transparencia">Transparência</Link>
+            </Button>
+            <Button asChild variant="outline">
+              <Link to="/termos">Termos de Uso</Link>
+            </Button>
+          </div>
+        </section>
       </main>
+
+      <Footer />
     </div>
   );
-};
-
-export default HelpPage;
+}
