@@ -182,7 +182,14 @@ export default function AuthPage() {
     });
     setIsSendingReset(false);
     if (error) {
-      toast({ title: 'Não foi possível enviar', description: 'Tente de novo em alguns minutos.', variant: 'destructive' });
+      const tooSoon = error.status === 429 || /rate limit|security purposes/i.test(error.message);
+      toast({
+        title: tooSoon ? 'Link já enviado' : 'Não foi possível enviar',
+        description: tooSoon
+          ? 'Mandamos um link para esse e-mail há pouco. Confira a caixa de entrada e o spam antes de pedir de novo.'
+          : 'Tente de novo em alguns minutos.',
+        variant: tooSoon ? undefined : 'destructive',
+      });
       return;
     }
     toast({ title: 'Confira seu e-mail', description: `Se ${email} tiver conta no Clilin, você vai receber um link para criar uma senha nova.` });
