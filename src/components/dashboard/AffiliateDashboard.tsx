@@ -267,11 +267,11 @@ function AffiliateDashboardContent() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'PENDING':
-        return <Badge variant="outline" className="text-yellow-500 border-yellow-500">Pendente</Badge>;
+        return <Badge variant="outline" className="text-foreground border-highlight bg-highlight/10">Pendente</Badge>;
       case 'APPROVED':
-        return <Badge variant="outline" className="text-blue-500 border-blue-500">Aprovado</Badge>;
+        return <Badge variant="outline" className="text-company border-company/40 bg-company/5">Aprovado</Badge>;
       case 'COMPLETED':
-        return <Badge className="bg-green-500">Pago</Badge>;
+        return <Badge className="bg-affiliate text-affiliate-foreground hover:bg-affiliate">Pago</Badge>;
       case 'REJECTED':
         return <Badge variant="destructive">Rejeitado</Badge>;
       default:

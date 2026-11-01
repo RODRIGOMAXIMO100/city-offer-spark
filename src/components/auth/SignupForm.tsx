@@ -437,7 +437,7 @@ export default function SignupForm({
                             />
                             <span className="flex-1">{c}</span>
                             {!isAvailable && (
-                              <span className="ml-2 text-xs bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 px-1.5 py-0.5 rounded">
+                              <span className="ml-2 text-xs bg-highlight/15 text-foreground px-1.5 py-0.5 rounded">
                                 Em breve
                               </span>
                             )}
@@ -449,7 +449,7 @@ export default function SignupForm({
                 </PopoverContent>
               </Popover>
               {city && (
-                <p className="text-xs text-green-600 dark:text-green-400 flex items-center gap-1">
+                <p className="text-xs text-company flex items-center gap-1">
                   <Check className="h-3 w-3" />
                   Cidade disponível!
                 </p>

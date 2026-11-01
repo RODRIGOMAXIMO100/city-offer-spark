@@ -21,13 +21,13 @@ export function Footer() {
                 href="https://www.instagram.com/clilinapp"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center text-muted-foreground hover:bg-primary hover:text-white transition-all"
+                className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center text-muted-foreground hover:bg-primary hover:text-primary-foreground transition-all"
               >
                 <Instagram className="h-5 w-5" />
               </a>
               <a
                 href="mailto:contato@clilin.com"
-                className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center text-muted-foreground hover:bg-primary hover:text-white transition-all"
+                className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center text-muted-foreground hover:bg-primary hover:text-primary-foreground transition-all"
               >
                 <Mail className="h-5 w-5" />
               </a>
