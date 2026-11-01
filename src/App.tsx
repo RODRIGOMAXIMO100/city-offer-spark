@@ -31,7 +31,6 @@ import MarcaPage from "./pages/MarcaPage";
 import MarcaCorrentePage from "./pages/MarcaCorrentePage";
 
 import WhatsAppButton from "./components/WhatsAppButton";
-import { ThemePreviewSwitcher } from "./components/brand/ThemePreviewSwitcher";
 
 const queryClient = new QueryClient();
 
@@ -119,7 +118,6 @@ const App = () => (
           <OnboardingProvider>
             <AppRoutes />
             <WhatsAppButton />
-            <ThemePreviewSwitcher />
           </OnboardingProvider>
         </AuthProvider>
       </BrowserRouter>

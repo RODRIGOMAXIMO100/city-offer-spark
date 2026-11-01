@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import logoPng from "@/assets/logo.png";
 import { currentLogo, currentTheme, type LogoId, type ThemeId } from "@/lib/theme";
 import { CorrenteRings, CorrenteDots, CORRENTE_VIEWBOX } from "./CorrenteMark";
 import { TresCs, TRES_CS_VIEWBOX } from "./TresCsMark";
@@ -178,11 +177,8 @@ export function LogoGraphic({
 
 export function BrandLogo({ className = "h-10", variant = "full", inverse = false, logo }: Props) {
   const { tema, logo: chosen } = useBrandState();
-  const active = logo ?? chosen ?? (tema === "0" ? null : "a");
-
-  if (!active) {
-    return <img src={logoPng} alt="Clilin" className={className} />;
-  }
+  // 3 Cs é o logo oficial; as outras opções só aparecem na página /marca
+  const active = logo ?? (tema === "0" ? "e" : chosen ?? "e");
   return <LogoGraphic logo={active} variant={variant} inverse={inverse} className={className} />;
 }
 

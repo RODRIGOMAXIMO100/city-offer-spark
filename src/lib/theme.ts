@@ -86,10 +86,14 @@ export function isThemePreview(): boolean {
 }
 
 export function initTheme() {
-  const param = new URLSearchParams(window.location.search).get("tema");
-  const fromUrl = param && THEMES.some((t) => t.id === param) ? (param as ThemeId) : null;
-  const id = fromUrl ?? readStored();
-  if (id) applyTheme(id);
+  // A identidade foi escolhida (Boca a boca + 3 Cs). Limpa o que ficou da fase de testes.
+  try {
+    localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem("clilin_logo_preview");
+  } catch {
+    /* ignora */
+  }
+  delete document.documentElement.dataset.tema;
 }
 
 // ------------------------------------------------------------------
@@ -126,6 +130,5 @@ export function applyLogo(id: LogoId) {
 }
 
 export function initLogo() {
-  const param = new URLSearchParams(window.location.search).get("logo");
-  if (param && LOGOS.some((l) => l.id === param)) applyLogo(param as LogoId);
+  /* logo fixo: 3 Cs */
 }

@@ -1,5 +1,5 @@
 {
-  "name": "Clilin - Ofertas Locais com Inteligência",
+  "name": "Clilin - Sua marca na boca do Brasil",
   "short_name": "Clilin",
   "icons": [
     {
@@ -13,7 +13,7 @@
       "type": "image/png"
     }
   ],
-  "theme_color": "#7c3aed",
-  "background_color": "#ffffff",
+  "theme_color": "#6B2CD8",
+  "background_color": "#FCFAFF",
   "display": "standalone"
 }

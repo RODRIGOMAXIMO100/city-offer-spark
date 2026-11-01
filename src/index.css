@@ -469,6 +469,7 @@
 :root[data-tema="1"] .font-display, [data-tema-scope="1"] .font-display { font-variation-settings: "opsz" 96; letter-spacing: -0.02em; }
 
 /* 2. Boca a boca: rede social, conversa, gente jovem */
+:root,
 :root[data-tema="2"],
 [data-tema-scope="2"] {
   --background: 270 100% 99%;
@@ -506,10 +507,11 @@
   --font-display: "Unbounded";
   --font-body: "Onest";
 }
+:root .text-brand-gradient,
 :root[data-tema="2"] .text-brand-gradient {
   background-image: linear-gradient(95deg, hsl(262 69% 51%), hsl(336 100% 58%) 70%, hsl(35 100% 55%));
 }
-:root[data-tema="2"] .font-display, [data-tema-scope="2"] .font-display { letter-spacing: -0.03em; }
+:root .font-display, :root[data-tema="2"] .font-display, [data-tema-scope="2"] .font-display { letter-spacing: -0.03em; }
 
 /* 3. Pódio: placar, liga, conquista */
 :root[data-tema="3"],

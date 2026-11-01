@@ -81,7 +81,8 @@ supabase/
 
 ### Frontend
 - **Design tokens** em `src/index.css` (HSL). **Nunca** hardcode `text-white`, `bg-black`, `bg-[#fff]` — use tokens semânticos.
-- Cores por papel: **Empresas = Azul**, **Divulgadores = Verde**, **Clientes = Roxo**.
+- Identidade (out/2026): logo **3 Cs** (`src/components/brand/BrandLogo.tsx`, símbolo em `TresCsMark.tsx`), fontes **Unbounded** (títulos) e **Onest** (texto).
+- Cores por papel: **Empresas = Violeta (#6B2CD8, também a cor da marca)**, **Divulgadores = Rosa (#F42578)**, **Prêmios/ranking = Laranja (`highlight`, #FF9F1A)**, **Clientes (em breve) = Teal**. O violeta nunca aparece sozinho: sempre com rosa e laranja (para não parecer Nubank).
 - Mobile-first. Tabelas em mobile viram **cards empilhados**.
 - SEO: cada rota pública usa `<Helmet>` com `title`, `description`, canonical, og. Rotas privadas usam `useNoIndex()`.
 - Sitemap `public/sitemap.xml` é **estático** — atualização manual quando criar página nova.
