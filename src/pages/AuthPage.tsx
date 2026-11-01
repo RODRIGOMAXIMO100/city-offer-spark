@@ -17,6 +17,8 @@ import { BRAZIL_STATES, getCitiesByState } from '@/data/brazilLocations';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
 import { BrandLogo } from '@/components/brand/BrandLogo';
+import { GOOGLE_AUTH } from '@/lib/contact';
+import { ConfirmEmailNotice } from '@/components/auth/ConfirmEmailNotice';
 import Turnstile, { TURNSTILE_ENABLED } from '@/components/Turnstile';
 
 const ROLES: { value: AppRole; label: string; icon: React.ReactNode; description: string; color: string }[] = [
@@ -45,6 +47,7 @@ export default function AuthPage() {
   const { signIn, signUp, signInWithGoogle } = useAuth();
   const { toast } = useToast();
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  const [confirmEmail, setConfirmEmail] = useState<string | null>(null);
 
   const [isLoading, setIsLoading] = useState(false);
   // ?role=COMPANY|AFFILIATE (vindo dos botões do site) abre direto no cadastro com o papel marcado
@@ -261,7 +264,7 @@ export default function AuthPage() {
     }
 
     const telefoneNumbers = signupTelefone.replace(/\D/g, '');
-    const { error } = await signUp(
+    const { error, needsConfirmation } = await signUp(
       signupEmail, 
       signupPassword, 
       signupName, 
@@ -281,6 +284,8 @@ export default function AuthPage() {
         description: message,
         variant: 'destructive',
       });
+    } else if (needsConfirmation) {
+      setConfirmEmail(signupEmail);
     } else {
       toast({
         title: 'Conta criada!',
@@ -367,6 +372,8 @@ export default function AuthPage() {
                     )}
                   </Button>
 
+                  {GOOGLE_AUTH && (
+                  <>
                   <div className="relative my-4">
                     <div className="absolute inset-0 flex items-center">
                       <span className="w-full border-t" />
@@ -407,11 +414,18 @@ export default function AuthPage() {
                     )}
                     Continuar com Google
                   </Button>
+                  </>
+                  )}
                 </form>
               </TabsContent>
 
               <TabsContent value="signup" className="mt-0">
+                {confirmEmail ? (
+                  <ConfirmEmailNotice email={confirmEmail} />
+                ) : (
                 <form onSubmit={handleSignup} className="space-y-4">
+                  {GOOGLE_AUTH && (
+                  <>
                   {/* Google Sign Up Button */}
                   <Button
                     type="button"
@@ -453,6 +467,8 @@ export default function AuthPage() {
                       <span className="bg-card px-2 text-muted-foreground">ou continue com email</span>
                     </div>
                   </div>
+                  </>
+                  )}
 
                   {/* Role Selection */}
                   <div className="space-y-2">
@@ -672,6 +688,7 @@ export default function AuthPage() {
                     )}
                   </Button>
                 </form>
+                )}
               </TabsContent>
             </CardContent>
           </Tabs>

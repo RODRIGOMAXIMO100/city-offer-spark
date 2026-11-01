@@ -15,6 +15,8 @@ import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
 import { fetchAllCities } from '@/lib/cities';
 import Turnstile, { TURNSTILE_ENABLED } from '@/components/Turnstile';
+import { GOOGLE_AUTH } from '@/lib/contact';
+import { ConfirmEmailNotice } from '@/components/auth/ConfirmEmailNotice';
 import CityWaitlistModal from './CityWaitlistModal';
 
 interface SignupFormProps {
@@ -40,6 +42,8 @@ export default function SignupForm({
 
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  // E-mail que acabou de se cadastrar e precisa confirmar a conta
+  const [confirmEmail, setConfirmEmail] = useState<string | null>(null);
   
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -248,7 +252,7 @@ export default function SignupForm({
     }
 
     const telefoneNumbers = telefone.replace(/\D/g, '');
-    const { error } = await signUp(
+    const { error, needsConfirmation } = await signUp(
       email, 
       password, 
       name, 
@@ -268,6 +272,8 @@ export default function SignupForm({
         description: message,
         variant: 'destructive',
       });
+    } else if (needsConfirmation) {
+      setConfirmEmail(email);
     } else {
       toast({
         title: 'Conta criada!',
@@ -292,6 +298,10 @@ export default function SignupForm({
     }
   };
 
+  if (confirmEmail) {
+    return <ConfirmEmailNotice email={confirmEmail} />;
+  }
+
   return (
     <div className={cn("w-full", className)}>
       {(title || description) && (
@@ -302,6 +312,8 @@ export default function SignupForm({
       )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
+        {GOOGLE_AUTH && (
+        <>
         {/* Google Sign Up Button */}
         <Button
           type="button"
@@ -331,6 +343,8 @@ export default function SignupForm({
             <span className="bg-card px-2 text-muted-foreground">ou continue com email</span>
           </div>
         </div>
+        </>
+        )}
 
         <div className="space-y-2">
           <Label htmlFor={`signup-name-${role}`}>

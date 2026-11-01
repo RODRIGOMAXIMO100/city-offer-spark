@@ -11,6 +11,8 @@ import { Loader2, CreditCard, QrCode, Copy, Check, AlertCircle, Info } from 'luc
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { CONFIG } from '@/types/database';
+import { ONLINE_PAYMENTS } from '@/lib/contact';
+import { ManualCreditsDialog } from './ManualCreditsDialog';
 
 interface AddCreditsModalProps {
   open: boolean;
@@ -57,7 +59,15 @@ const AcceptedBrands = () => (
   </span>
 );
 
-export function AddCreditsModal({ 
+// Enquanto o pagamento online não estiver ligado, a compra é pelo WhatsApp com Pix (o admin lança os créditos)
+export function AddCreditsModal(props: AddCreditsModalProps) {
+  if (!ONLINE_PAYMENTS) {
+    return <ManualCreditsDialog open={props.open} onOpenChange={props.onOpenChange} userName={props.userName} userEmail={props.userEmail} />;
+  }
+  return <OnlineCreditsModal {...props} />;
+}
+
+function OnlineCreditsModal({ 
   open, 
   onOpenChange, 
   onSuccess,

@@ -1,5 +1,6 @@
 import { MessageCircle } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
+import { SUPPORT_WHATSAPP } from '@/lib/contact';
 
 const WhatsAppButton = () => {
   const location = useLocation();
@@ -9,7 +10,7 @@ const WhatsAppButton = () => {
     return null;
   }
 
-  const phoneNumber = '5531995118248';
+  const phoneNumber = SUPPORT_WHATSAPP;
   const message = encodeURIComponent('Olá! Preciso de ajuda com a plataforma.');
   const whatsappUrl = `https://wa.me/${phoneNumber}?text=${message}`;
 

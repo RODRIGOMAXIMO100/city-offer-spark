@@ -20,6 +20,7 @@ import { ValidatedInput } from '@/components/ui/validated-input';
 import { validateCNPJ, formatCNPJ, isCNPJComplete } from '@/lib/validators';
 import CityWaitlistModal from '@/components/auth/CityWaitlistModal';
 import { Badge } from '@/components/ui/badge';
+import { ensureProfileFromSignup } from '@/lib/signupProfile';
 
 type UserRole = 'COMPANY' | 'AFFILIATE' | 'CLIENT';
 
@@ -138,6 +139,16 @@ export default function CompleteSignupPage() {
         return;
       }
 
+      // Cadastro feito pelo formulário: os dados vieram junto com a conta, então cria o perfil sem perguntar de novo
+      const created = await ensureProfileFromSignup(session.user);
+      if (!mounted) return;
+      if (created) {
+        await refreshProfile();
+        toast.success('Cadastro confirmado! Bem-vindo ao Clilin.');
+        navigate('/dashboard');
+        return;
+      }
+
       // Pre-fill from Google data
       setEmail(session.user.email || '');
       const googleName = session.user.user_metadata?.full_name || 
@@ -152,7 +163,7 @@ export default function CompleteSignupPage() {
     return () => {
       mounted = false;
     };
-  }, [navigate]);
+  }, [navigate, refreshProfile]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

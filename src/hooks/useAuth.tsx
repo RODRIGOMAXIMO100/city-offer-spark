@@ -1,4 +1,5 @@
 import { useState, useEffect, createContext, useContext, ReactNode } from 'react';
+import { buildSignupMeta, ensureProfileFromSignup } from '@/lib/signupProfile';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { Profile, UserRole, AppRole } from '@/types/database';
@@ -9,7 +10,7 @@ interface AuthContextType {
   profile: Profile | null;
   role: AppRole | null;
   loading: boolean;
-  signUp: (email: string, password: string, name: string, city: string, role: AppRole, cnpj?: string, telefone?: string) => Promise<{ error: Error | null }>;
+  signUp: (email: string, password: string, name: string, city: string, role: AppRole, cnpj?: string, telefone?: string) => Promise<{ error: Error | null; needsConfirmation?: boolean }>;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signInWithGoogle: () => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
@@ -139,59 +140,40 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signUp = async (email: string, password: string, name: string, city: string, userRole: AppRole, cnpj?: string, telefone?: string) => {
     try {
-      // Garante que o link de confirmação sempre use o domínio personalizado em produção
-      const baseUrl = window.location.hostname.includes('lovableproject.com')
-        ? 'https://clilin.com'
-        : window.location.origin;
-      const redirectUrl = `${baseUrl}/`;
-      
+      const redirectUrl = `${window.location.origin}/auth/callback`;
+
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
           emailRedirectTo: redirectUrl,
+          // Os dados do cadastro vão junto com a conta; o perfil é criado no primeiro login (ver ensureProfileFromSignup)
+          data: buildSignupMeta({
+            clilin_role: userRole === 'COMPANY' ? 'COMPANY' : 'AFFILIATE',
+            clilin_name: name,
+            clilin_city: city,
+            clilin_cnpj: cnpj,
+            clilin_telefone: telefone,
+          }),
         },
       });
 
       if (error) {
-        return { error };
+        return { error, needsConfirmation: false };
       }
 
-      if (data.user) {
-        // Create profile
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .insert({
-            user_id: data.user.id,
-            name,
-            city: city || '', // City can be empty for clients
-            balance: userRole === 'COMPANY' ? 100 : 0,
-            cnpj: cnpj || null,
-            telefone: telefone || null,
-          });
-
-        if (profileError) {
-          console.error('Error creating profile:', profileError);
-          return { error: profileError };
-        }
-
-        // Create role
-        const { error: roleError } = await supabase
-          .from('user_roles')
-          .insert({
-            user_id: data.user.id,
-            role: userRole,
-          });
-
-        if (roleError) {
-          console.error('Error creating role:', roleError);
-          return { error: roleError };
-        }
+      // Com confirmação de e-mail ligada não há sessão ainda: o perfil nasce depois, no primeiro login
+      if (!data.session || !data.user) {
+        return { error: null, needsConfirmation: true };
       }
 
-      return { error: null };
+      const ok = await ensureProfileFromSignup(data.user);
+      if (!ok) {
+        return { error: new Error('Não foi possível concluir o cadastro. Tente entrar com seu e-mail e senha.'), needsConfirmation: false };
+      }
+      return { error: null, needsConfirmation: false };
     } catch (error) {
-      return { error: error as Error };
+      return { error: error as Error, needsConfirmation: false };
     }
   };
 
