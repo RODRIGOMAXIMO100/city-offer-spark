@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { BLOG_CATEGORIES, categoryLabel } from '@/lib/blog';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -44,12 +45,7 @@ interface BlogTheme {
   active: boolean;
 }
 
-const CATEGORIES = [
-  { value: 'empresas', label: 'Para Empresas' },
-  { value: 'afiliados', label: 'Para Divulgadores' },
-  { value: 'clientes', label: 'Para Clientes' },
-  { value: 'geral', label: 'Geral' },
-];
+const CATEGORIES = BLOG_CATEGORIES.map(({ value, label }) => ({ value, label }));
 
 export function AdminBlog() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
@@ -69,7 +65,7 @@ export function AdminBlog() {
     meta_title: '',
     meta_description: '',
     keywords: '',
-    category: 'geral',
+    category: 'tendencias',
     status: 'draft',
     scheduled_for: '',
   });
@@ -77,7 +73,7 @@ export function AdminBlog() {
   const [themeFormData, setThemeFormData] = useState({
     theme: '',
     keywords: '',
-    category: 'geral',
+    category: 'tendencias',
   });
 
   useEffect(() => {
@@ -218,7 +214,7 @@ export function AdminBlog() {
       meta_title: '',
       meta_description: '',
       keywords: '',
-      category: 'geral',
+      category: 'tendencias',
       status: 'draft',
       scheduled_for: '',
     });
@@ -237,7 +233,7 @@ export function AdminBlog() {
       fetchPosts();
     } catch (error: any) {
       console.error('Error generating post:', error);
-      toast.error(error.message || 'Erro ao gerar post com IA');
+      toast.error('O gerador automático está desligado: falta cadastrar uma chave de IA no Supabase. Peça o post pelo Claude.');
     } finally {
       setGenerating(false);
     }
@@ -473,7 +469,7 @@ export function AdminBlog() {
                       <TableCell className="font-medium max-w-xs truncate">{post.title}</TableCell>
                       <TableCell>
                         <Badge variant="outline">
-                          {CATEGORIES.find((c) => c.value === post.category)?.label || post.category}
+                          {categoryLabel(post.category)}
                         </Badge>
                       </TableCell>
                       <TableCell>{getStatusBadge(post.status)}</TableCell>

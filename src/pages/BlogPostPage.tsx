@@ -13,6 +13,8 @@ import { Button } from '@/components/ui/button';
 import { ReadingProgress } from '@/components/blog/ReadingProgress';
 import { TableOfContents } from '@/components/blog/TableOfContents';
 import { ShareSidebar } from '@/components/blog/ShareSidebar';
+import { BlogCTA, BlogSideCTA } from '@/components/blog/BlogCTA';
+import { authorSlug, categoryBadge, categoryLabel, normalizeCategory } from '@/lib/blog';
 import { Calendar, User, ArrowLeft, Clock, ArrowRight, Eye, ChevronRight, Home } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -93,7 +95,7 @@ export default function BlogPostPage() {
       setPost(parsedPost);
 
       // Increment views
-      await supabase
+      void supabase
         .from('blog_posts')
         .update({ views: (data.views || 0) + 1 })
         .eq('id', data.id);
@@ -103,7 +105,7 @@ export default function BlogPostPage() {
         .from('blog_posts')
         .select('id, title, slug, excerpt, category, featured_image')
         .eq('status', 'published')
-        .eq('category', data.category)
+        .in('category', normalizeCategory(data.category) === 'divulgadores' ? ['divulgadores', 'afiliados'] : [normalizeCategory(data.category)])
         .neq('id', data.id)
         .limit(3);
 
@@ -140,31 +142,8 @@ export default function BlogPostPage() {
     }
   };
 
-  const getCategoryLabel = (category: string) => {
-    switch (category) {
-      case 'empresas':
-        return 'Para Empresas';
-      case 'afiliados':
-        return 'Para Afiliados';
-      case 'clientes':
-        return 'Para Clientes';
-      default:
-        return 'Geral';
-    }
-  };
-
-  const getCategoryColor = (category: string) => {
-    switch (category) {
-      case 'empresas':
-        return 'bg-company/10 text-company border-company/20';
-      case 'afiliados':
-        return 'bg-affiliate/10 text-affiliate border-affiliate/20';
-      case 'clientes':
-        return 'bg-client/10 text-client border-client/20';
-      default:
-        return 'bg-primary/10 text-primary border-primary/20';
-    }
-  };
+  const getCategoryLabel = categoryLabel;
+  const getCategoryColor = categoryBadge;
 
   const estimateReadTime = (content: string) => {
     const wordsPerMinute = 200;
@@ -276,7 +255,7 @@ export default function BlogPostPage() {
             <span className="sm:hidden">Voltar</span>
           </Link>
 
-          <Badge className={`mb-3 sm:mb-4 ${getCategoryColor(post.category)} border`}>
+          <Badge variant="outline" className={`mb-3 sm:mb-4 ${getCategoryColor(post.category)}`}>
             {getCategoryLabel(post.category)}
           </Badge>
 
@@ -290,7 +269,7 @@ export default function BlogPostPage() {
 
           {/* Author and metadata - responsive grid */}
           <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-3 sm:gap-4 text-sm text-muted-foreground">
-            <Link to={`/autor/${post.author_name.toLowerCase().replace(/\s+/g, '-')}`} className="flex items-center gap-2 hover:text-primary transition-colors">
+            <Link to={`/autor/${authorSlug(post.author_name)}`} className="flex items-center gap-2 hover:text-primary transition-colors">
               <div className="h-9 w-9 sm:h-10 sm:w-10 rounded-full bg-primary/10 flex items-center justify-center">
                 <User className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
               </div>
@@ -459,24 +438,24 @@ export default function BlogPostPage() {
             <div className="mt-8 sm:mt-12 p-4 sm:p-6 bg-card border border-border rounded-xl sm:rounded-2xl">
               <div className="flex flex-col sm:flex-row items-center sm:items-start gap-3 sm:gap-4 text-center sm:text-left">
                 <Link 
-                  to={`/autor/${post.author_name.toLowerCase().replace(/\s+/g, '-')}`}
-                  className="h-14 w-14 sm:h-16 sm:w-16 rounded-full bg-gradient-to-br from-primary to-affiliate flex items-center justify-center text-white font-bold text-lg sm:text-xl shrink-0 hover:scale-105 transition-transform"
+                  to={`/autor/${authorSlug(post.author_name)}`}
+                  className="h-14 w-14 sm:h-16 sm:w-16 rounded-full bg-gradient-to-br from-primary to-affiliate flex items-center justify-center text-primary-foreground font-bold text-lg sm:text-xl shrink-0 hover:scale-105 transition-transform"
                 >
                   {post.author_name.charAt(0)}
                 </Link>
                 <div className="flex-1">
                   <Link 
-                    to={`/autor/${post.author_name.toLowerCase().replace(/\s+/g, '-')}`}
+                    to={`/autor/${authorSlug(post.author_name)}`}
                     className="font-semibold text-foreground text-base sm:text-lg hover:text-primary transition-colors"
                   >
                     {post.author_name}
                   </Link>
                   <p className="text-xs sm:text-sm text-muted-foreground mt-1 leading-relaxed">
-                    Especialista em marketing digital, ofertas locais e estratégias de afiliados. 
-                    Compartilhando conhecimento prático para ajudar você a economizar e ganhar dinheiro na sua cidade.
+                    Conteúdo sobre marketing local, redes sociais e o boca a boca que faz uma marca ser lembrada.
+                    Para empresas que querem alcance de verdade e para quem quer ganhar divulgando.
                   </p>
                   <div className="flex justify-center sm:justify-start gap-3 mt-3">
-                    <Link to={`/autor/${post.author_name.toLowerCase().replace(/\s+/g, '-')}`} className="text-sm text-primary hover:underline">
+                    <Link to={`/autor/${authorSlug(post.author_name)}`} className="text-sm text-primary hover:underline">
                       Ver todos os artigos →
                     </Link>
                   </div>
@@ -487,7 +466,10 @@ export default function BlogPostPage() {
 
           {/* Sidebar Right - TOC */}
           <aside className="hidden lg:block lg:col-span-3">
-            <TableOfContents content={post.content} />
+            <div className="sticky top-24">
+              <TableOfContents content={post.content} />
+              <BlogSideCTA category={post.category} />
+            </div>
           </aside>
         </div>
 
@@ -537,21 +519,7 @@ export default function BlogPostPage() {
           </section>
         )}
 
-        {/* CTA */}
-        <div className="mt-16 p-8 md:p-12 bg-gradient-to-br from-primary/10 via-affiliate/5 to-client/10 rounded-2xl text-center border border-border">
-          <h3 className="text-2xl font-display font-bold mb-3 text-foreground">
-            Gostou do conteúdo?
-          </h3>
-          <p className="text-muted-foreground mb-6 max-w-lg mx-auto">
-            Cadastre-se grátis e comece a aproveitar as melhores ofertas da sua cidade!
-          </p>
-          <Link to="/auth">
-            <Button size="lg" className="px-8">
-              Criar conta grátis
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-          </Link>
-        </div>
+        <BlogCTA category={post.category} />
       </main>
 
       <Footer />

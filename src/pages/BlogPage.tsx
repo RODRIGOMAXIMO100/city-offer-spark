@@ -12,6 +12,8 @@ import { Button } from '@/components/ui/button';
 import { Calendar, User, ArrowRight, Search, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { format } from 'date-fns';
+import { BLOG_FILTERS, categoryBadge, categoryLabel, normalizeCategory } from '@/lib/blog';
+import { BlogCTA } from '@/components/blog/BlogCTA';
 import { ptBR } from 'date-fns/locale';
 
 interface BlogPost {
@@ -26,28 +28,37 @@ interface BlogPost {
   keywords: string[];
 }
 
-const CATEGORIES = [
-  { value: 'todos', label: 'Todos' },
-  { value: 'empresas', label: 'Para Empresas' },
-  { value: 'afiliados', label: 'Para Afiliados' },
-  { value: 'clientes', label: 'Para Clientes' },
-  { value: 'geral', label: 'Geral' },
-];
+const CATEGORIES = BLOG_FILTERS;
 
 const POSTS_PER_PAGE = 9;
+
+// inclui os valores antigos para não sumir post que ainda esteja com a categoria velha
+const categoryValues = (c: string) =>
+  c === 'divulgadores' ? ['divulgadores', 'afiliados'] : c === 'tendencias' ? ['tendencias', 'geral', 'clientes'] : [c];
 
 export default function BlogPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState(searchParams.get('categoria') || 'todos');
+  const [search, setSearch] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState(searchParams.get('categoria') ? normalizeCategory(searchParams.get('categoria')) : 'todos');
   const [currentPage, setCurrentPage] = useState(Number(searchParams.get('pagina')) || 1);
   const [totalPosts, setTotalPosts] = useState(0);
 
+  // espera a pessoa parar de digitar antes de buscar
+  useEffect(() => {
+    if (searchTerm.trim() === search) return;
+    const t = setTimeout(() => {
+      setSearch(searchTerm.trim());
+      setCurrentPage(1);
+    }, 350);
+    return () => clearTimeout(t);
+  }, [searchTerm]);
+
   useEffect(() => {
     fetchPosts();
-  }, [currentPage, selectedCategory]);
+  }, [currentPage, selectedCategory, search]);
 
   useEffect(() => {
     // Update URL params
@@ -68,9 +79,13 @@ export default function BlogPage() {
         .eq('status', 'published');
       
       if (selectedCategory !== 'todos') {
-        countQuery = countQuery.eq('category', selectedCategory);
+        countQuery = countQuery.in('category', categoryValues(selectedCategory));
       }
       
+      const term = search.replace(/[%,()*]/g, ' ').trim();
+      const searchFilter = term ? `title.ilike.%${term}%,excerpt.ilike.%${term}%` : null;
+      if (searchFilter) countQuery = countQuery.or(searchFilter);
+
       const { count } = await countQuery;
       setTotalPosts(count || 0);
 
@@ -86,8 +101,10 @@ export default function BlogPage() {
         .range(from, to);
 
       if (selectedCategory !== 'todos') {
-        query = query.eq('category', selectedCategory);
+        query = query.in('category', categoryValues(selectedCategory));
       }
+
+      if (searchFilter) query = query.or(searchFilter);
 
       const { data, error } = await query;
 
@@ -100,12 +117,7 @@ export default function BlogPage() {
     }
   };
 
-  const filteredPosts = posts.filter((post) => {
-    const matchesSearch =
-      post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      post.excerpt.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchesSearch;
-  });
+  const filteredPosts = posts;
 
   const totalPages = Math.ceil(totalPosts / POSTS_PER_PAGE);
 
@@ -119,23 +131,8 @@ export default function BlogPage() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const getCategoryLabel = (category: string) => {
-    const cat = CATEGORIES.find((c) => c.value === category);
-    return cat?.label || category;
-  };
-
-  const getCategoryColor = (category: string) => {
-    switch (category) {
-      case 'empresas':
-        return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
-      case 'afiliados':
-        return 'bg-green-500/20 text-green-400 border-green-500/30';
-      case 'clientes':
-        return 'bg-purple-500/20 text-purple-400 border-purple-500/30';
-      default:
-        return 'bg-primary/20 text-primary border-primary/30';
-    }
-  };
+  const getCategoryLabel = categoryLabel;
+  const getCategoryColor = categoryBadge;
 
   // Generate page numbers to display
   const getPageNumbers = () => {
@@ -162,9 +159,9 @@ export default function BlogPage() {
   return (
     <div className="min-h-screen bg-background">
       <SEOHead
-        title={`Blog - Dicas de Marketing Local e Afiliados${currentPage > 1 ? ` | Página ${currentPage}` : ''}`}
-        description="Aprenda estratégias de marketing local, dicas para ganhar dinheiro como afiliado e como encontrar as melhores ofertas. Blog atualizado diariamente."
-        keywords={['blog', 'marketing local', 'afiliados', 'dicas', 'ofertas', 'ganhar dinheiro']}
+        title={`Blog do Clilin: marketing local, redes sociais e boca a boca${currentPage > 1 ? ` | Página ${currentPage}` : ''}`}
+        description="Estratégias de marketing local, redes sociais e boca a boca para empresas, e dicas para quem quer ganhar divulgando marcas no próprio perfil."
+        keywords={['blog', 'marketing local', 'divulgadores', 'boca a boca', 'redes sociais', 'ganhar dinheiro divulgando']}
         canonicalUrl={currentPage > 1 ? `/blog?pagina=${currentPage}` : '/blog'}
       />
       <StructuredData
@@ -181,14 +178,11 @@ export default function BlogPage() {
         <div className="container mx-auto px-4">
           {/* Header */}
           <div className="text-center mb-12">
-            <h1 className="text-4xl md:text-5xl font-bold mb-6 pb-2 bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent will-change-transform leading-normal">
-              Blog Clilin
+            <h1 className="text-4xl md:text-5xl font-display font-bold mb-4 leading-tight text-foreground">
+              Blog do <span className="text-brand-gradient">Clilin</span>
             </h1>
-            <p className="text-muted-foreground text-lg max-w-2xl mx-auto mb-2">
-              Compartilhando conhecimento para todos crescerem juntos 💛
-            </p>
-            <p className="text-muted-foreground text-sm max-w-2xl mx-auto">
-              Dicas, estratégias e novidades sobre marketing local e como fortalecer sua comunidade.
+            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+              Marketing local, redes sociais e o boca a boca que faz uma marca ser lembrada. Para empresas e para quem quer ganhar divulgando.
             </p>
           </div>
 
@@ -227,7 +221,7 @@ export default function BlogPage() {
           {loading ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               {[...Array(6)].map((_, i) => (
-                <Card key={i} className="overflow-hidden">
+                <Card key={i} className="overflow-hidden rounded-2xl">
                   <Skeleton className="h-40 sm:h-48 w-full" />
                   <CardHeader className="p-4 sm:p-6">
                     <Skeleton className="h-6 w-3/4" />
@@ -253,7 +247,7 @@ export default function BlogPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                 {filteredPosts.map((post) => (
                   <Link key={post.id} to={`/blog/${post.slug}`}>
-                    <Card className="overflow-hidden h-full hover:border-primary/50 transition-all duration-300 group">
+                    <Card className="overflow-hidden h-full rounded-2xl hover:border-primary/50 hover:shadow-lg transition-all duration-300 group">
                       {post.featured_image ? (
                         <img
                           src={post.featured_image}
@@ -262,12 +256,10 @@ export default function BlogPage() {
                           loading="lazy"
                         />
                       ) : (
-                        <div className="w-full h-40 sm:h-48 bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
-                          <span className="text-5xl sm:text-6xl opacity-50">📝</span>
-                        </div>
+                        <div className="w-full h-40 sm:h-48 bg-gradient-to-br from-company/15 via-affiliate/10 to-highlight/15" />
                       )}
                       <CardHeader className="p-4 sm:p-6 pb-2">
-                        <Badge className={`w-fit text-xs ${getCategoryColor(post.category)}`}>
+                        <Badge variant="outline" className={`w-fit text-xs ${getCategoryColor(post.category)}`}>
                           {getCategoryLabel(post.category)}
                         </Badge>
                         <CardTitle className="line-clamp-2 text-base sm:text-lg group-hover:text-primary transition-colors">
@@ -351,10 +343,11 @@ export default function BlogPage() {
 
               {/* Posts count info */}
               <div className="mt-4 text-center text-sm text-muted-foreground">
-                Mostrando {(currentPage - 1) * POSTS_PER_PAGE + 1} - {Math.min(currentPage * POSTS_PER_PAGE, totalPosts)} de {totalPosts} posts
+                Mostrando {(currentPage - 1) * POSTS_PER_PAGE + 1} a {Math.min(currentPage * POSTS_PER_PAGE, totalPosts)} de {totalPosts} posts
               </div>
             </>
           )}
+          <BlogCTA />
         </div>
       </main>
 

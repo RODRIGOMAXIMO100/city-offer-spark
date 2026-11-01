@@ -78,7 +78,7 @@ export function TableOfContents({ content }: TableOfContentsProps) {
   if (items.length < 2) return null;
 
   return (
-    <nav className="bg-card border border-border rounded-xl p-4 sticky top-24">
+    <nav className="bg-card border border-border rounded-xl p-4 max-h-[55vh] overflow-y-auto">
       <button
         onClick={() => setIsCollapsed(!isCollapsed)}
         className="flex items-center justify-between w-full text-sm font-semibold text-foreground mb-3"

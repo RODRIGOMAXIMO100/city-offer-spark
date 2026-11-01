@@ -11,6 +11,8 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Calendar, ArrowRight, BookOpen, Eye } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { categoryBadge, categoryLabel } from '@/lib/blog';
+import { BlogCTA } from '@/components/blog/BlogCTA';
 
 interface AuthorPost {
   id: string;
@@ -31,8 +33,8 @@ interface AuthorStats {
 const AUTHOR_INFO: Record<string, { name: string; bio: string; expertise: string[] }> = {
   'equipe-clilin': {
     name: 'Equipe Clilin',
-    bio: 'A Equipe Clilin é formada por especialistas em marketing digital, ofertas locais e estratégias de afiliados. Compartilhamos conhecimento prático para ajudar você a economizar e ganhar dinheiro na sua cidade. Nossa missão é democratizar o acesso a promoções e oportunidades de renda extra.',
-    expertise: ['Marketing Digital', 'Programa de Afiliados', 'Ofertas Locais', 'E-commerce', 'SEO'],
+    bio: 'A Equipe Clilin escreve sobre marketing local, redes sociais e o boca a boca que faz uma marca ser lembrada. Conteúdo prático para empresas que querem alcance de verdade na sua cidade e para quem quer ganhar divulgando marcas no próprio perfil.',
+    expertise: ['Marketing Local', 'Redes Sociais', 'Boca a Boca', 'Divulgação', 'Pequenas Empresas'],
   },
 };
 
@@ -77,31 +79,8 @@ export default function AuthorPage() {
     }
   };
 
-  const getCategoryLabel = (category: string) => {
-    switch (category) {
-      case 'empresas':
-        return 'Para Empresas';
-      case 'afiliados':
-        return 'Para Afiliados';
-      case 'clientes':
-        return 'Para Clientes';
-      default:
-        return 'Geral';
-    }
-  };
-
-  const getCategoryColor = (category: string) => {
-    switch (category) {
-      case 'empresas':
-        return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
-      case 'afiliados':
-        return 'bg-green-500/20 text-green-400 border-green-500/30';
-      case 'clientes':
-        return 'bg-purple-500/20 text-purple-400 border-purple-500/30';
-      default:
-        return 'bg-primary/20 text-primary border-primary/30';
-    }
-  };
+  const getCategoryLabel = categoryLabel;
+  const getCategoryColor = categoryBadge;
 
   // Person Schema for SEO
   const personSchema = {
@@ -109,19 +88,19 @@ export default function AuthorPage() {
     '@type': 'Person',
     name: author.name,
     description: author.bio,
-    url: `https://clilin.com.br/autor/${authorSlug}`,
+    url: `https://clilin.com/autor/${authorSlug}`,
     knowsAbout: author.expertise,
     worksFor: {
       '@type': 'Organization',
       name: 'Clilin',
-      url: 'https://clilin.com.br',
+      url: 'https://clilin.com',
     },
   };
 
   return (
     <div className="min-h-screen bg-background">
       <SEOHead
-        title={`${author.name} - Autor no Blog Clilin`}
+        title={`${author.name}, autor no blog do Clilin`}
         description={author.bio.substring(0, 160)}
         keywords={author.expertise}
         canonicalUrl={`/autor/${authorSlug}`}
@@ -147,7 +126,7 @@ export default function AuthorPage() {
           {/* Author Header */}
           <div className="mb-12 p-8 bg-gradient-to-br from-primary/10 via-muted/50 to-background rounded-2xl border border-border">
             <div className="flex flex-col md:flex-row items-start gap-6">
-              <div className="h-24 w-24 md:h-32 md:w-32 rounded-full bg-gradient-to-br from-primary to-affiliate flex items-center justify-center text-white font-bold text-4xl md:text-5xl shrink-0">
+              <div className="h-24 w-24 md:h-32 md:w-32 rounded-full bg-gradient-to-br from-primary to-affiliate flex items-center justify-center text-primary-foreground font-bold text-4xl md:text-5xl shrink-0">
                 {author.name.charAt(0)}
               </div>
               <div className="flex-1">
@@ -219,12 +198,10 @@ export default function AuthorPage() {
                           loading="lazy"
                         />
                       ) : (
-                        <div className="w-full h-48 bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
-                          <span className="text-6xl opacity-50">📝</span>
-                        </div>
+                        <div className="w-full h-48 bg-gradient-to-br from-company/15 via-affiliate/10 to-highlight/15" />
                       )}
                       <CardHeader className="pb-2">
-                        <Badge className={`w-fit ${getCategoryColor(post.category)}`}>
+                        <Badge variant="outline" className={`w-fit ${getCategoryColor(post.category)}`}>
                           {getCategoryLabel(post.category)}
                         </Badge>
                         <CardTitle className="line-clamp-2 group-hover:text-primary transition-colors">
@@ -255,6 +232,7 @@ export default function AuthorPage() {
               </div>
             )}
           </section>
+          <BlogCTA />
         </div>
       </main>
 

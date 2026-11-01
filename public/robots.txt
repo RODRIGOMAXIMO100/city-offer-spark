@@ -12,3 +12,4 @@ Disallow: /admin/login
 
 # Sitemaps
 Sitemap: https://clilin.com/sitemap.xml
+Sitemap: https://clilin.com/sitemap-blog.xml
