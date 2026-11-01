@@ -91,6 +91,17 @@ export function Footer() {
 
         <div className="border-t border-border mt-12 pt-8 text-center text-sm text-muted-foreground">
           <p className="mb-2">Servir. Conectar. Crescer.</p>
+          <p className="mb-2">
+            Um produto do{" "}
+            <a
+              href="https://www.maximoacelera.com.br/empresas"
+              target="_blank"
+              rel="noopener"
+              className="font-semibold text-foreground hover:underline tracking-wide"
+            >
+              Grupo MAXIMO
+            </a>
+          </p>
           <p>© {new Date().getFullYear()} Clilin. Todos os direitos reservados.</p>
           <p className="mt-1 text-xs">Maximo Aceleradora de Produtos Digitais Ltda - ME · CNPJ 40.695.326/0001-03</p>
         </div>

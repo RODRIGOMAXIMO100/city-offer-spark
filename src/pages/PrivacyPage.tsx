@@ -58,6 +58,7 @@ const sections: DocSection[] = [
           ["Proteger", "detectar cupons com dados falsos, validações sem cliente, contas duplicadas e outras fraudes."],
           ["Avisar", "mandar o cupom no WhatsApp e notificações sobre sua conta, ofertas, comissões e mudanças nas regras."],
           ["Melhorar", "entender como a plataforma é usada para corrigir problemas e criar recursos."],
+          ["Oferecer serviços do Grupo MAXIMO", "o Clilin é um produto do Grupo MAXIMO, a mesma empresa que opera a plataforma. Empresas cadastradas podem receber contato da MAXIMO Empresas com serviços de gestão, marketing e vendas. Para não receber, é só pedir em contato@clilin.com. Dados de clientes que pegam cupom e de divulgadores não são usados para isso."],
           ["Cumprir a lei", "guardar registros fiscais e atender pedidos de autoridades."],
         ],
       },
@@ -70,7 +71,7 @@ const sections: DocSection[] = [
       {
         list: [
           ["Execução de contrato (art. 7º, V)", "para prestar o serviço que você contratou ou aceitou."],
-          ["Legítimo interesse (art. 7º, IX)", "para segurança, prevenção de fraude e melhoria da plataforma."],
+          ["Legítimo interesse (art. 7º, IX)", "para segurança, prevenção de fraude, melhoria da plataforma e para apresentar às empresas cadastradas os serviços do Grupo MAXIMO, sempre com a opção de não receber."],
           ["Obrigação legal (art. 7º, II)", "para registros fiscais e financeiros."],
           ["Consentimento (art. 7º, I)", "para comunicações de marketing, que você pode cancelar quando quiser."],
         ],

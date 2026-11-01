@@ -112,6 +112,26 @@ const AboutPage = () => {
         </div>
       </section>
 
+      {/* Quem está por trás */}
+      <section className="py-14 sm:py-20">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6">
+          <h2 className="text-2xl sm:text-4xl font-display font-bold text-foreground mb-4">Quem está por trás</h2>
+          <p className="text-lg text-muted-foreground leading-relaxed mb-4">
+            O Clilin é um produto do <strong className="text-foreground">Grupo MAXIMO</strong>, que trabalha com gestão, marketing e vendas
+            para empresas e já passou dos R$ 20 milhões investidos em tráfego pago. Muita coisa deu errado no caminho, a gente corrigiu, aprendeu,
+            e muita coisa deu certo depois. O Clilin junta esse aprendizado num jeito simples de levar cliente até o comércio da cidade.
+          </p>
+          <p className="text-muted-foreground leading-relaxed mb-6">
+            Se o seu negócio quiser ir além das ofertas, a MAXIMO Empresas cuida da gestão, do marketing e das vendas junto com você.
+          </p>
+          <Button asChild variant="outline">
+            <a href="https://www.maximoacelera.com.br/empresas" target="_blank" rel="noopener">
+              Conhecer a MAXIMO Empresas <ArrowRight className="ml-2 h-4 w-4" />
+            </a>
+          </Button>
+        </div>
+      </section>
+
       {/* Dados e login (exigido pelo Google para o login com conta Google) */}
       <section className="py-14 sm:py-20">
         <div className="max-w-3xl mx-auto px-4 sm:px-6">
