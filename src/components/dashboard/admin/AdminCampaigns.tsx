@@ -347,14 +347,24 @@ function PrizeCycles() {
   );
 }
 
-export default function AdminCampaigns() {
+export type AdminCampaignsTab = 'posts' | 'campaigns' | 'accounts' | 'prizes';
+
+const TAB_HEADER: Record<AdminCampaignsTab, { title: string; text: string }> = {
+  posts: { title: 'Conferir posts', text: 'Abra cada post, compare com o print e aprove as visualizações ou recuse com o motivo.' },
+  campaigns: { title: 'Campanhas', text: 'Todas as campanhas das empresas, com meta, visualizações verificadas e valor consumido.' },
+  accounts: { title: 'Aprovar perfis', text: 'Confira se o perfil é da pessoa, está aberto e tem seguidores reais. É isso que define a liga.' },
+  prizes: { title: 'Prêmios do mês', text: 'Ranking de cada liga, fundo do mês e fechamento do ciclo com o pagamento dos prêmios.' },
+};
+
+export default function AdminCampaigns({ tab = 'posts' }: { tab?: AdminCampaignsTab }) {
+  const header = TAB_HEADER[tab];
   return (
     <div className="space-y-4">
       <div>
-        <h2 className="text-xl font-bold">Campanhas de alcance</h2>
-        <p className="text-sm text-muted-foreground">Confira os posts, acompanhe as campanhas e feche o ranking do mês.</p>
+        <h2 className="text-xl font-display font-bold">{header.title}</h2>
+        <p className="text-sm text-muted-foreground">{header.text}</p>
       </div>
-      <Tabs defaultValue="posts">
+      <Tabs key={tab} defaultValue={tab}>
         <TabsList className="flex-wrap h-auto">
           <TabsTrigger value="posts">Posts para conferir</TabsTrigger>
           <TabsTrigger value="campaigns">Campanhas</TabsTrigger>

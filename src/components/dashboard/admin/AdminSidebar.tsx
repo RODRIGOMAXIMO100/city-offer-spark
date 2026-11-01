@@ -16,7 +16,11 @@ import {
   MapPin,
   Search,
   MessageCircle,
-  Target
+  Target,
+  ClipboardCheck,
+  UserCheck,
+  Trophy,
+  Coins,
 
 } from 'lucide-react';
 import {
@@ -33,56 +37,68 @@ import {
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { cn } from '@/lib/utils';
 
-export type AdminSection = 
-  | 'overview' 
-  | 'analytics' 
-  | 'users' 
-  | 'offers' 
-  | 'leads' 
-  | 'transactions' 
-  | 'payments' 
-  | 'withdrawals' 
-  | 'financeiro' 
-  | 'fraud' 
-  | 'security' 
-  | 'niches' 
+export type AdminSection =
+  | 'home'
+  | 'review-posts'
+  | 'review-accounts'
+  | 'campaigns'
+  | 'prizes'
+  | 'credits'
+  | 'reach-finance'
+  | 'overview'
+  | 'analytics'
+  | 'users'
+  | 'offers'
+  | 'leads'
+  | 'transactions'
+  | 'payments'
+  | 'withdrawals'
+  | 'financeiro'
+  | 'fraud'
+  | 'security'
+  | 'niches'
   | 'cities'
   | 'blog'
   | 'seo'
-  | 'wa-templates'
-  | 'campaigns';
+  | 'wa-templates';
 
+/** Contadores que aparecem ao lado dos itens que pedem ação */
+export type AdminBadges = Partial<Record<AdminSection, number>>;
 
 interface AdminSidebarProps {
   currentSection: AdminSection;
   onSectionChange: (section: AdminSection) => void;
+  badges?: AdminBadges;
 }
 
 const menuGroups = [
   {
-    label: 'Visão Geral',
+    label: 'Hoje',
     icon: LayoutDashboard,
     items: [
-      { id: 'overview' as AdminSection, label: 'Dashboard', icon: LayoutDashboard },
-      { id: 'analytics' as AdminSection, label: 'Analytics', icon: BarChart3 },
+      { id: 'home' as AdminSection, label: 'Início', icon: LayoutDashboard },
+      { id: 'review-posts' as AdminSection, label: 'Conferir posts', icon: ClipboardCheck },
+      { id: 'review-accounts' as AdminSection, label: 'Aprovar perfis', icon: UserCheck },
+      { id: 'withdrawals' as AdminSection, label: 'Saques', icon: Banknote },
+    ]
+  },
+  {
+    label: 'Operação',
+    icon: Target,
+    items: [
+      { id: 'campaigns' as AdminSection, label: 'Campanhas', icon: Target },
+      { id: 'prizes' as AdminSection, label: 'Prêmios do mês', icon: Trophy },
+      { id: 'credits' as AdminSection, label: 'Créditos das empresas', icon: Coins },
     ]
   },
   {
     label: 'Gestão',
     icon: Users,
     items: [
-      { id: 'campaigns' as AdminSection, label: 'Campanhas', icon: Target },
       { id: 'users' as AdminSection, label: 'Usuários', icon: Users },
-    ]
-  },
-  {
-    label: 'Financeiro',
-    icon: DollarSign,
-    items: [
+      { id: 'reach-finance' as AdminSection, label: 'Financeiro', icon: Landmark },
       { id: 'transactions' as AdminSection, label: 'Transações', icon: DollarSign },
-      { id: 'payments' as AdminSection, label: 'Pagamentos', icon: CreditCard },
-      { id: 'withdrawals' as AdminSection, label: 'Saques', icon: Banknote },
-      { id: 'financeiro' as AdminSection, label: 'Resumo', icon: Landmark },
+      { id: 'payments' as AdminSection, label: 'Pagamentos online', icon: CreditCard },
     ]
   },
   {
@@ -94,12 +110,12 @@ const menuGroups = [
     ]
   },
   {
-    label: 'Configurações',
-    icon: Tags,
+    label: 'Site',
+    icon: FileText,
     items: [
-      { id: 'cities' as AdminSection, label: 'Cidades', icon: MapPin },
       { id: 'blog' as AdminSection, label: 'Blog', icon: FileText },
       { id: 'seo' as AdminSection, label: 'SEO / Google', icon: Search },
+      { id: 'cities' as AdminSection, label: 'Cidades', icon: MapPin },
     ]
   },
   {
@@ -107,15 +123,18 @@ const menuGroups = [
     label: 'Captação (em breve)',
     icon: Megaphone,
     items: [
+      { id: 'overview' as AdminSection, label: 'Painel de ofertas', icon: BarChart3 },
+      { id: 'analytics' as AdminSection, label: 'Analytics de ofertas', icon: BarChart3 },
       { id: 'offers' as AdminSection, label: 'Ofertas', icon: Megaphone },
       { id: 'leads' as AdminSection, label: 'Leads', icon: Phone },
+      { id: 'financeiro' as AdminSection, label: 'Financeiro de ofertas', icon: Landmark },
       { id: 'niches' as AdminSection, label: 'Nichos', icon: Tags },
       { id: 'wa-templates' as AdminSection, label: 'Templates WhatsApp', icon: MessageCircle },
     ]
   },
 ];
 
-export function AdminSidebar({ currentSection, onSectionChange }: AdminSidebarProps) {
+export function AdminSidebar({ currentSection, onSectionChange, badges = {} }: AdminSidebarProps) {
   const { state } = useSidebar();
   const isCollapsed = state === 'collapsed';
 
@@ -131,7 +150,7 @@ export function AdminSidebar({ currentSection, onSectionChange }: AdminSidebarPr
           
           return (
             <SidebarGroup key={group.label}>
-              <Collapsible defaultOpen={groupActive || group.label === 'Visão Geral'}>
+              <Collapsible defaultOpen={groupActive || group.label === 'Hoje' || group.label === 'Operação'}>
                 <CollapsibleTrigger className="w-full">
                   <SidebarGroupLabel className={cn(
                     "flex items-center justify-between cursor-pointer hover:bg-accent/50 rounded-md px-2 py-1.5 transition-colors",
@@ -165,7 +184,12 @@ export function AdminSidebar({ currentSection, onSectionChange }: AdminSidebarPr
                               )}
                             >
                               <ItemIcon className={cn("h-4 w-4", isActive && "text-primary")} />
-                              {!isCollapsed && <span>{item.label}</span>}
+                              {!isCollapsed && <span className="flex-1">{item.label}</span>}
+                              {!isCollapsed && (badges[item.id] ?? 0) > 0 && (
+                                <span className="ml-auto rounded-full bg-affiliate text-affiliate-foreground text-[10px] font-semibold px-1.5 min-w-[1.25rem] text-center">
+                                  {badges[item.id]}
+                                </span>
+                              )}
                             </SidebarMenuButton>
                           </SidebarMenuItem>
                         );

@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button';
-import { Shield, RefreshCw, LogOut, Menu } from 'lucide-react';
+import { RefreshCw, LogOut, Menu } from 'lucide-react';
+import { BrandLogo } from '@/components/brand/BrandLogo';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import AdminAlerts from './AdminAlerts';
 
@@ -19,9 +20,9 @@ export function AdminHeader({ profileName, loading, onRefresh, onSignOut }: Admi
             <SidebarTrigger className="shrink-0">
               <Menu className="h-5 w-5" />
             </SidebarTrigger>
-            <Shield className="h-6 w-6 text-destructive shrink-0" />
+            <BrandLogo variant="mark" className="h-7 shrink-0" />
             <div className="min-w-0">
-              <h1 className="text-lg font-bold text-foreground truncate">Painel Admin</h1>
+              <h1 className="text-lg font-display font-bold text-foreground truncate">Admin do Clilin</h1>
               <p className="text-xs text-muted-foreground truncate">{profileName}</p>
             </div>
           </div>

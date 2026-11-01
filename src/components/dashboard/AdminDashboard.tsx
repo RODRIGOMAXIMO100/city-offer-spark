@@ -12,6 +12,10 @@ import { DateRange } from 'react-day-picker';
 import { Eye } from 'lucide-react';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { AdminSidebar, AdminSection } from './admin/AdminSidebar';
+import { AdminHome } from './admin/AdminHome';
+import { AdminCredits } from './admin/AdminCredits';
+import { AdminReachFinance } from './admin/AdminReachFinance';
+import { useReachSummary } from './admin/useReachSummary';
 import { AdminHeader } from './admin/AdminHeader';
 import { AdminOverview } from './admin/AdminOverview';
 import { AdminBlog } from './admin/AdminBlog';
@@ -94,7 +98,10 @@ interface TransactionData {
 export default function AdminDashboard() {
   const { signOut, profile } = useAuth();
   const navigate = useNavigate();
-  const [currentSection, setCurrentSection] = useState<AdminSection>('overview');
+  const [currentSection, setCurrentSection] = useState<AdminSection>('home');
+  // Contadores do menu e da tela inicial; recarregam a cada troca de seção
+  const [refreshKey, setRefreshKey] = useState(0);
+  const { data: reach } = useReachSummary('month', refreshKey);
   const [stats, setStats] = useState<Stats>({
     receita: 0,
     custos: 0,
@@ -390,10 +397,29 @@ export default function AdminDashboard() {
   const handleSectionChange = (section: AdminSection) => {
     setCurrentSection(section);
     resetFilters();
+    setRefreshKey((k) => k + 1);
   };
 
   const renderContent = () => {
     switch (currentSection) {
+      case 'home':
+        return <AdminHome onNavigate={handleSectionChange} refreshKey={refreshKey} />;
+
+      case 'review-posts':
+        return <AdminCampaigns tab="posts" />;
+
+      case 'review-accounts':
+        return <AdminCampaigns tab="accounts" />;
+
+      case 'prizes':
+        return <AdminCampaigns tab="prizes" />;
+
+      case 'credits':
+        return <AdminCredits />;
+
+      case 'reach-finance':
+        return <AdminReachFinance />;
+
       case 'overview':
         return (
           <AdminOverview
@@ -637,7 +663,7 @@ export default function AdminDashboard() {
         return <AdminWhatsAppTemplates />;
 
       case 'campaigns':
-        return <AdminCampaigns />;
+        return <AdminCampaigns tab="campaigns" />;
 
       
       
@@ -652,13 +678,18 @@ export default function AdminDashboard() {
         <AdminSidebar 
           currentSection={currentSection} 
           onSectionChange={handleSectionChange} 
+          badges={{
+            'review-posts': reach?.posts_pending ?? 0,
+            'review-accounts': reach?.accounts_pending ?? 0,
+            withdrawals: reach?.withdrawals_pending_count ?? 0,
+          }}
         />
         
         <div className="flex-1 flex flex-col min-w-0">
           <AdminHeader
             profileName={profile?.name}
             loading={loading}
-            onRefresh={fetchAllData}
+            onRefresh={() => { fetchAllData(); setRefreshKey((k) => k + 1); }}
             onSignOut={async () => {
               await signOut();
               navigate('/', { replace: true });
