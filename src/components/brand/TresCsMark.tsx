@@ -13,20 +13,24 @@ const CS: C[] = [
   { cx: 21.6, r: 4.2, open: 72 },
 ];
 
-function cPath({ cx, r, open }: C, cy = 20) {
-  const a = (open * Math.PI) / 180;
-  const x1 = cx + r * Math.cos(-a);
-  const y1 = cy + r * Math.sin(-a);
-  const x2 = cx + r * Math.cos(a);
-  const y2 = cy + r * Math.sin(a);
-  return `M${x1.toFixed(2)} ${y1.toFixed(2)} A${r} ${r} 0 1 0 ${x2.toFixed(2)} ${y2.toFixed(2)}`;
+// Cada C é um círculo com um recorte à direita (traço tracejado), que fica liso em qualquer tamanho
+function cProps({ cx, r, open }: C, cy = 20) {
+  const len = 2 * Math.PI * r;
+  const visible = (len * (360 - 2 * open)) / 360;
+  return {
+    cx,
+    cy,
+    r,
+    strokeDasharray: `${visible.toFixed(3)} ${len.toFixed(3)}`,
+    strokeDashoffset: (-(open / 360) * len).toFixed(3),
+  };
 }
 
 export function TresCs({ colors, strokeWidth = SW }: { colors: [string, string, string]; strokeWidth?: number }) {
   return (
     <g fill="none" strokeLinecap="round" strokeWidth={strokeWidth}>
       {CS.map((c, i) => (
-        <path key={i} d={cPath(c)} stroke={colors[i]} />
+        <circle key={i} {...cProps(c)} stroke={colors[i]} />
       ))}
     </g>
   );
