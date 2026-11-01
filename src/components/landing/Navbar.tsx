@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X } from "lucide-react";
+import { Menu, X, LogOut } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 import { BrandLogo } from "@/components/brand/BrandLogo";
 
 export function Navbar() {
@@ -9,6 +10,14 @@ export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  const { user, role, signOut } = useAuth();
+  const panelPath = role === "ADMIN" ? "/admin" : "/dashboard";
+
+  const handleSignOut = async () => {
+    setIsOpen(false);
+    await signOut();
+    navigate("/", { replace: true });
+  };
   
   // Navbar should be solid (not transparent) on pages other than landing
   const isLandingPage = location.pathname === "/";
@@ -84,12 +93,26 @@ export function Navbar() {
 
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center gap-3">
-            <Button variant="ghost" asChild className="font-medium">
-              <Link to="/auth">Entrar</Link>
-            </Button>
-            <Button asChild className="font-medium shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all">
-              <Link to="/auth">Fazer Parte</Link>
-            </Button>
+            {user ? (
+              <>
+                <Button variant="ghost" onClick={handleSignOut} className="font-medium">
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Sair
+                </Button>
+                <Button asChild className="font-medium shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all">
+                  <Link to={panelPath}>Meu painel</Link>
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button variant="ghost" asChild className="font-medium">
+                  <Link to="/auth">Entrar</Link>
+                </Button>
+                <Button asChild className="font-medium shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all">
+                  <Link to="/auth">Fazer Parte</Link>
+                </Button>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -149,12 +172,26 @@ export function Navbar() {
                 Transparência
               </Link>
               <div className="flex flex-col gap-2 pt-4 mt-2 border-t border-border">
-                <Button variant="outline" asChild className="w-full">
-                  <Link to="/auth">Entrar</Link>
-                </Button>
-                <Button asChild className="w-full">
-                  <Link to="/auth">Fazer Parte</Link>
-                </Button>
+                {user ? (
+                  <>
+                    <Button asChild className="w-full">
+                      <Link to={panelPath} onClick={() => setIsOpen(false)}>Meu painel</Link>
+                    </Button>
+                    <Button variant="outline" onClick={handleSignOut} className="w-full">
+                      <LogOut className="h-4 w-4 mr-2" />
+                      Sair da conta
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button variant="outline" asChild className="w-full">
+                      <Link to="/auth">Entrar</Link>
+                    </Button>
+                    <Button asChild className="w-full">
+                      <Link to="/auth">Fazer Parte</Link>
+                    </Button>
+                  </>
+                )}
               </div>
             </div>
           </div>

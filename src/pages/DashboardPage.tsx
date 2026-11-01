@@ -1,14 +1,16 @@
 import { useEffect, useState, useRef } from 'react';
 import { useNoIndex } from '@/components/seo/NoIndex';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Navigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
-import { Loader2 } from 'lucide-react';
+import { Loader2, LogOut, MessageCircle } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { whatsappLink } from '@/lib/contact';
 import CompanyDashboard from '@/components/dashboard/CompanyDashboard';
 import AffiliateDashboard from '@/components/dashboard/AffiliateDashboard';
 import ClientDashboard from '@/components/dashboard/ClientDashboard';
 
 export default function DashboardPage() {
-  const { role, loading, user, refreshProfile } = useAuth();
+  const { role, loading, user, refreshProfile, signOut } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const hasRefreshed = useRef(false);
@@ -62,11 +64,30 @@ export default function DashboardPage() {
       return <AffiliateDashboard />;
     case 'CLIENT':
       return <ClientDashboard />;
+    case 'ADMIN':
+      return <Navigate to="/admin" replace />;
     default:
       return (
-        <div className="min-h-screen bg-background flex items-center justify-center">
-          <div className="text-center">
-            <p className="text-muted-foreground">Perfil não reconhecido. Por favor, faça login novamente.</p>
+        <div className="min-h-screen bg-background flex items-center justify-center px-6">
+          <div className="text-center max-w-sm space-y-4">
+            <p className="text-muted-foreground">Não encontramos o tipo da sua conta. Saia e entre de novo. Se continuar, fale com a gente.</p>
+            <div className="flex flex-col gap-2">
+              <Button
+                onClick={async () => {
+                  await signOut();
+                  navigate('/auth', { replace: true });
+                }}
+              >
+                <LogOut className="h-4 w-4 mr-2" />
+                Sair da conta
+              </Button>
+              <Button variant="outline" asChild>
+                <a href={whatsappLink(`Oi! Minha conta no Clilin (${user.email ?? ''}) não abre o painel.`)} target="_blank" rel="noopener noreferrer">
+                  <MessageCircle className="h-4 w-4 mr-2" />
+                  Falar no WhatsApp
+                </a>
+              </Button>
+            </div>
           </div>
         </div>
       );
