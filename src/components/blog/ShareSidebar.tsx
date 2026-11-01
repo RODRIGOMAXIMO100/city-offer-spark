@@ -70,9 +70,7 @@ export function ShareSidebar({ title, url, horizontal = false }: ShareSidebarPro
 
   return (
     <div className="flex flex-col gap-2">
-      <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">
-        Compartilhar
-      </span>
+      <span className="sr-only">Compartilhar</span>
       {shareButtons.map((button) => (
         <Button
           key={button.label}

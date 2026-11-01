@@ -14,6 +14,7 @@ import { Input } from '@/components/ui/input';
 import { format } from 'date-fns';
 import { BLOG_FILTERS, categoryBadge, categoryLabel, normalizeCategory } from '@/lib/blog';
 import { BlogCTA } from '@/components/blog/BlogCTA';
+import { BlogCover } from '@/components/blog/BlogCover';
 import { ptBR } from 'date-fns/locale';
 
 interface BlogPost {
@@ -207,7 +208,7 @@ export default function BlogPage() {
                     className={`px-4 py-2 rounded-full text-sm transition-all whitespace-nowrap shrink-0 ${
                       selectedCategory === cat.value
                         ? 'bg-primary text-primary-foreground'
-                        : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
+                        : 'bg-muted text-foreground hover:bg-muted/70'
                     }`}
                   >
                     {cat.label}
@@ -256,7 +257,7 @@ export default function BlogPage() {
                           loading="lazy"
                         />
                       ) : (
-                        <div className="w-full h-40 sm:h-48 bg-gradient-to-br from-company/15 via-affiliate/10 to-highlight/15" />
+                        <BlogCover title={post.keywords?.[0] || post.title} category={post.category} className="w-full h-40 sm:h-48" />
                       )}
                       <CardHeader className="p-4 sm:p-6 pb-2">
                         <Badge variant="outline" className={`w-fit text-xs ${getCategoryColor(post.category)}`}>

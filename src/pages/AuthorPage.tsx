@@ -13,6 +13,7 @@ import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { categoryBadge, categoryLabel } from '@/lib/blog';
 import { BlogCTA } from '@/components/blog/BlogCTA';
+import { BlogCover } from '@/components/blog/BlogCover';
 
 interface AuthorPost {
   id: string;
@@ -23,6 +24,7 @@ interface AuthorPost {
   category: string;
   published_at: string;
   views: number;
+  keywords: string[] | null;
 }
 
 interface AuthorStats {
@@ -57,7 +59,7 @@ export default function AuthorPage() {
       
       const { data, error } = await supabase
         .from('blog_posts')
-        .select('id, title, slug, excerpt, featured_image, category, published_at, views')
+        .select('id, title, slug, excerpt, featured_image, category, published_at, views, keywords')
         .eq('status', 'published')
         .eq('author_name', authorName)
         .order('published_at', { ascending: false });
@@ -198,7 +200,7 @@ export default function AuthorPage() {
                           loading="lazy"
                         />
                       ) : (
-                        <div className="w-full h-48 bg-gradient-to-br from-company/15 via-affiliate/10 to-highlight/15" />
+                        <BlogCover title={post.keywords?.[0] || post.title} category={post.category} className="w-full h-48" />
                       )}
                       <CardHeader className="pb-2">
                         <Badge variant="outline" className={`w-fit ${getCategoryColor(post.category)}`}>

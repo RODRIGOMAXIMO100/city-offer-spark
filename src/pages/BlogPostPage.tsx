@@ -14,6 +14,7 @@ import { ReadingProgress } from '@/components/blog/ReadingProgress';
 import { TableOfContents } from '@/components/blog/TableOfContents';
 import { ShareSidebar } from '@/components/blog/ShareSidebar';
 import { BlogCTA, BlogSideCTA } from '@/components/blog/BlogCTA';
+import { BlogCover } from '@/components/blog/BlogCover';
 import { authorSlug, categoryBadge, categoryLabel, normalizeCategory } from '@/lib/blog';
 import { Calendar, User, ArrowLeft, Clock, ArrowRight, Eye, ChevronRight, Home } from 'lucide-react';
 import { format } from 'date-fns';
@@ -49,6 +50,7 @@ interface RelatedPost {
   excerpt: string;
   category: string;
   featured_image: string | null;
+  keywords: string[] | null;
 }
 
 interface AdjacentPost {
@@ -103,7 +105,7 @@ export default function BlogPostPage() {
       // Fetch related posts
       const { data: related } = await supabase
         .from('blog_posts')
-        .select('id, title, slug, excerpt, category, featured_image')
+        .select('id, title, slug, excerpt, category, featured_image, keywords')
         .eq('status', 'published')
         .in('category', normalizeCategory(data.category) === 'divulgadores' ? ['divulgadores', 'afiliados'] : [normalizeCategory(data.category)])
         .neq('id', data.id)
@@ -248,7 +250,7 @@ export default function BlogPostPage() {
         <div className="container mx-auto px-4 max-w-5xl">
           <Link
             to="/blog"
-            className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors mb-4 sm:mb-6 text-sm"
+            className="flex w-fit items-center gap-2 text-muted-foreground hover:text-primary transition-colors mb-4 sm:mb-6 text-sm"
           >
             <ArrowLeft className="h-4 w-4" />
             <span className="hidden sm:inline">Voltar para o blog</span>
@@ -291,7 +293,7 @@ export default function BlogPostPage() {
               </span>
               <span className="flex items-center gap-1.5 text-xs">
                 <Eye className="h-3.5 w-3.5" />
-                {(post.views || 0).toLocaleString('pt-BR')} views
+                {(post.views || 0).toLocaleString('pt-BR')} visualizações
               </span>
               {post.updated_at && post.updated_at !== post.published_at && (
                 <span className="flex items-center gap-1.5 text-xs">
@@ -492,12 +494,10 @@ export default function BlogPostPage() {
                         />
                       </div>
                     ) : (
-                      <div className="aspect-video bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
-                        <span className="text-3xl sm:text-4xl opacity-50">📝</span>
-                      </div>
+                      <BlogCover title={relatedPost.keywords?.[0] || relatedPost.title} category={relatedPost.category} className="aspect-video" />
                     )}
                     <CardHeader className="p-3 sm:p-4 pb-2">
-                      <Badge variant="secondary" className="w-fit text-xs mb-2">
+                      <Badge variant="outline" className={`w-fit text-xs mb-2 ${getCategoryColor(relatedPost.category)}`}>
                         {getCategoryLabel(relatedPost.category)}
                       </Badge>
                       <CardTitle className="text-base sm:text-lg line-clamp-2 group-hover:text-primary transition-colors">
