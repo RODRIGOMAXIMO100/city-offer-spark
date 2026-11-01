@@ -102,7 +102,8 @@ const AppRoutes = () => (
         <Route path="/divulgadores" element={<ParaDivulgadoresPage />} />
         <Route path="/clientes" element={<ParaClientesPage />} />
         <Route path="/marca" element={<MarcaPage />} />
-        <Route path="/marca/corrente" element={<MarcaCorrentePage />} />
+        <Route path="/marca/corrente" element={<MarcaCorrentePage variant="corrente" />} />
+        <Route path="/marca/3cs" element={<MarcaCorrentePage variant="3cs" />} />
         <Route path="/.lovable/oauth/consent" element={<OAuthConsentPage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>

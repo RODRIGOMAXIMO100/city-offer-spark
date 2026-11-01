@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import logoPng from "@/assets/logo.png";
 import { currentLogo, currentTheme, type LogoId, type ThemeId } from "@/lib/theme";
 import { CorrenteRings, CorrenteDots, CORRENTE_VIEWBOX } from "./CorrenteMark";
+import { TresCs, TRES_CS_VIEWBOX } from "./TresCsMark";
 
 interface Props {
   className?: string;
@@ -112,6 +113,26 @@ export function LogoGraphic({
   small?: boolean;
 }) {
   const ink = mono === "dark" ? "#111827" : mono === "light" ? "#ffffff" : inverse ? "hsl(var(--primary-foreground))" : "hsl(var(--foreground))";
+
+  if (logo === "e") {
+    const colors: [string, string, string] = mono
+      ? [ink, ink, ink]
+      : [inverse ? "hsl(var(--primary-foreground))" : "hsl(var(--primary))", "hsl(var(--affiliate))", "hsl(var(--highlight))"];
+    const mark = <TresCs colors={colors} strokeWidth={small ? 4.6 : 3.8} />;
+    if (variant === "mark") {
+      return (
+        <svg viewBox={TRES_CS_VIEWBOX} className={`${className} w-auto`} role="img" aria-label="Clilin">
+          {mark}
+        </svg>
+      );
+    }
+    return (
+      <svg viewBox="-1 0.5 124 39" className={`${className} w-auto`} role="img" aria-label="Clilin">
+        {mark}
+        <Wordmark x={42} ink={ink} inverse={inverse || mono === "light"} mono={!!mono} />
+      </svg>
+    );
+  }
 
   if (logo === "c") {
     const gap = bg ?? (mono === "light" || inverse ? "hsl(var(--primary))" : "hsl(var(--background))");

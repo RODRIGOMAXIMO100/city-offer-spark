@@ -95,13 +95,14 @@ export function initTheme() {
 // ------------------------------------------------------------------
 // Opções de logo em avaliação (?logo=a|b|c|d). Valem junto com o tema.
 // ------------------------------------------------------------------
-export type LogoId = "a" | "b" | "c" | "d";
+export type LogoId = "a" | "b" | "c" | "d" | "e";
 
 export const LOGOS: { id: LogoId; name: string; idea: string }[] = [
   { id: "a", name: "Pingos", idea: "Só o nome. Os pingos dos dois i são duas pessoas: a empresa e quem divulga." },
   { id: "b", name: "Alcance", idea: "Um ponto que se espalha em ondas: o assunto ganhando a rede." },
   { id: "c", name: "Corrente", idea: "Três círculos de mãos dadas: gente junta falando a mesma coisa." },
   { id: "d", name: "Tlin!", idea: "Ícone de app com o c e o aviso de notificação: o som do nome." },
+  { id: "e", name: "3 Cs", idea: "Três Cs, um dentro do outro: a inicial do nome e o som saindo da boca." },
 ];
 
 const LOGO_KEY = "clilin_logo_preview";
