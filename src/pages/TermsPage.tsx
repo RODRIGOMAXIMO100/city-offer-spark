@@ -9,6 +9,7 @@ const sections: DocSection[] = [
     id: "aceitacao",
     title: "Aceitação",
     blocks: [
+      "O Clilin é operado pela **Maximo Aceleradora de Produtos Digitais Ltda - ME**, CNPJ 40.695.326/0001-03 (\"Clilin\" ou \"nós\").",
       "Ao criar uma conta ou usar o Clilin, você concorda com estes Termos de Uso e com a nossa Política de Privacidade. Se não concordar com alguma parte, não use a plataforma.",
       "O Clilin é destinado a maiores de 18 anos. Ao se cadastrar, você declara ter 18 anos ou mais e capacidade para aceitar estes termos.",
     ],

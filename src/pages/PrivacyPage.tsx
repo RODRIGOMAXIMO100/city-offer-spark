@@ -9,7 +9,8 @@ const sections: DocSection[] = [
     id: "quem-somos",
     title: "Quem cuida dos seus dados",
     blocks: [
-      "O Clilin é o controlador dos dados pessoais tratados na plataforma, nos termos da Lei Geral de Proteção de Dados (LGPD, Lei nº 13.709/2018). Esta política explica quais dados usamos, para quê, com quem compartilhamos e como você exerce seus direitos.",
+      "O controlador dos dados pessoais tratados no Clilin é a **Maximo Aceleradora de Produtos Digitais Ltda - ME**, CNPJ 40.695.326/0001-03, empresa que opera a plataforma, nos termos da Lei Geral de Proteção de Dados (LGPD, Lei nº 13.709/2018).",
+      "Esta política explica quais dados usamos, para quê, com quem compartilhamos e como você exerce seus direitos. Pedidos sobre seus dados vão para **contato@clilin.com**.",
     ],
   },
   {
