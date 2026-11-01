@@ -14,7 +14,7 @@ interface SEOHeadProps {
 
 const BASE_URL = 'https://clilin.com';
 const DEFAULT_TITLE = 'Clilin - Sua marca na boca do Brasil';
-const DEFAULT_DESCRIPTION = 'Campanhas de alcance com divulgadores reais: você lança uma palavra-chave, gente de verdade posta ao mesmo tempo e você paga só pelas visualizações verificadas, R$ 5 a cada mil. Divulgadores ganham prêmios todo mês.';
+const DEFAULT_DESCRIPTION = 'Ondas de divulgação com gente real: você marca o dia, divulgadores postam vídeos sobre a sua marca ao mesmo tempo e você paga só pelas visualizações verificadas, R$ 5 a cada mil. Divulgadores ganham prêmios todo mês.';
 const DEFAULT_OG_IMAGE = `${BASE_URL}/og-image.png`;
 
 export function SEOHead({
@@ -34,7 +34,7 @@ export function SEOHead({
     'campanha de alcance',
     'divulgadores',
     'marketing de influência',
-    'palavra-chave',
+    'divulgação com vídeos',
     'divulgação nas redes sociais',
     'ganhar dinheiro divulgando',
     'ranking de divulgadores',

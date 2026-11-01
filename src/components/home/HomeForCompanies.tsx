@@ -31,8 +31,8 @@ export function HomeForCompanies() {
               Seu nome falado <span className="text-company">por quem o povo escuta</span>
             </h2>
             <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
-              Inauguração, lançamento, evento ou o nome da sua marca: você define a palavra-chave e a meta,
-              e uma rede de divulgadores coloca o assunto para rodar. Você investe a partir de R$ 100.
+              Inauguração, lançamento, evento ou o nome da sua marca: você marca o dia e a meta,
+              e uma rede de divulgadores posta sobre você na mesma janela. Você investe a partir de R$ 100.
             </p>
             <ul className="space-y-4 mb-8">
               {perks.map((p) => (

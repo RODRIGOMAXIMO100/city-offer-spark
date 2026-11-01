@@ -4,8 +4,8 @@ import { ArrowRight, Trophy, UserPlus, Target, Star, Medal } from "lucide-react"
 
 const steps = [
   { icon: UserPlus, title: "Cadastre seus perfis", text: "Instagram, TikTok, Kwai, YouTube, Facebook ou X. O perfil precisa estar aberto." },
-  { icon: Target, title: "Pegue as missões", text: "Campanhas da sua cidade ou do Brasil todo. Poste com a palavra-chave e o #publi." },
-  { icon: Star, title: "Some pontos", text: "Cada visualização verificada vale 1 ponto no ranking do mês." },
+  { icon: Target, title: "Pegue as missões", text: "Ondas de marcas da sua cidade ou do Brasil. Poste um vídeo seu falando da marca, com o nome na legenda e o #publi." },
+  { icon: Star, title: "Some pontos", text: "Cada visualização verificada vale 1 ponto. Quem posta nas primeiras 12 horas da onda ganha 20% a mais." },
   { icon: Trophy, title: "Ganhe prêmios", text: "Os melhores de cada liga ganham prêmio em dinheiro todo mês, direto no Pix." },
 ];
 

@@ -30,7 +30,7 @@ export function WelcomeModal() {
   const getRoleDescription = () => {
     switch (role) {
       case 'AFFILIATE':
-        return 'Pegue missões, poste com a palavra-chave e dispute prêmios todo mês.';
+        return 'Pegue missões, poste sobre a marca na hora da onda e dispute prêmios todo mês.';
       case 'COMPANY':
         return 'Lance sua primeira campanha e coloque seu nome na boca do povo.';
       case 'CLIENT':

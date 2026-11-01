@@ -55,7 +55,7 @@ function generateOrganizationSchema() {
     name: 'Clilin',
     url: BASE_URL,
     logo: `${BASE_URL}/android-chrome-512x512.png`,
-    description: 'Rede de divulgadores: campanhas de alcance com gente de verdade. A empresa paga só pelas visualizações verificadas e os melhores divulgadores ganham prêmios todo mês.',
+    description: 'Rede de divulgadores: muita gente real postando sobre a sua marca no mesmo dia. A empresa paga só pelas visualizações verificadas e os melhores divulgadores ganham prêmios todo mês.',
     sameAs: ['https://www.instagram.com/clilinapp'],
     contactPoint: {
       '@type': 'ContactPoint',
@@ -78,7 +78,7 @@ function generateWebSiteSchema() {
     '@type': 'WebSite',
     name: 'Clilin',
     url: BASE_URL,
-    description: 'Sua marca na boca do Brasil: campanhas de alcance com divulgadores de verdade.',
+    description: 'Sua marca na boca do Brasil: ondas de divulgação com gente de verdade.',
     inLanguage: 'pt-BR',
   };
 }

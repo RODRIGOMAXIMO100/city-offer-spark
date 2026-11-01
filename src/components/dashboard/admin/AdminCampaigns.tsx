@@ -8,17 +8,17 @@ import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription,
   AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { Loader2, ExternalLink, CheckCircle2, XCircle, RefreshCw, Image as ImageIcon, BadgeCheck, Trophy } from 'lucide-react';
+import { Loader2, ExternalLink, CheckCircle2, XCircle, RefreshCw, Image as ImageIcon, BadgeCheck, Trophy, Hourglass, Zap } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { formatCentsToBRL } from '@/types/database';
 import {
-  reachDb, networkLabel, formatViews, formatDateTime, formatMonth, reachErrorMessage, LEAGUES, leagueFor,
+  reachDb, networkLabel, formatViews, formatDateTime, formatDay, formatMonth, reachErrorMessage, LEAGUES, leagueFor, isCounting,
   CAMPAIGN_STATUS_LABEL, type Campaign, type CampaignPost, type SocialAccount, type PrizeCycle,
 } from '@/lib/reach';
 
 type PendingPost = CampaignPost & {
-  campaigns: Pick<Campaign, 'title' | 'keyword' | 'starts_at' | 'ends_at'> | null;
+  campaigns: Pick<Campaign, 'title' | 'keyword' | 'starts_at' | 'ends_at' | 'reserved_cents' | 'cpm_cents'> | null;
   profiles: { name: string; nome_completo: string | null; city: string } | null;
   affiliate_social_accounts: Pick<SocialAccount, 'handle' | 'followers' | 'verified'> | null;
 };
@@ -39,10 +39,10 @@ function PendingPosts() {
   const load = useCallback(async () => {
     const { data } = await reachDb
       .from('campaign_posts')
-      .select('*, campaigns(title, keyword, starts_at, ends_at), profiles!campaign_posts_affiliate_id_fkey(name, nome_completo, city), affiliate_social_accounts(handle, followers, verified)')
+      .select('*, campaigns(title, keyword, starts_at, ends_at, reserved_cents, cpm_cents), profiles!campaign_posts_affiliate_id_fkey(name, nome_completo, city), affiliate_social_accounts(handle, followers, verified)')
       .eq('status', 'PENDING')
-      .order('submitted_at', { ascending: true })
-      .limit(50);
+      .order('count_at', { ascending: true })
+      .limit(100);
     setPosts((data ?? []) as PendingPost[]);
     setLoading(false);
   }, []);
@@ -84,13 +84,23 @@ function PendingPosts() {
   };
 
   if (loading) return <div className="py-8 text-center"><Loader2 className="h-6 w-6 animate-spin mx-auto" /></div>;
-  if (posts.length === 0) return <p className="text-sm text-muted-foreground py-6 text-center">Nenhum post esperando conferência. 🎉</p>;
+
+  const ready = posts.filter((p) => !isCounting(p));
+  const counting = posts.filter((p) => isCounting(p));
 
   return (
     <div className="space-y-3">
-      {posts.map((p) => {
+      <p className="text-xs text-muted-foreground">
+        Cada post conta as visualizações dos 7 primeiros dias. No 7º dia o sistema lê o post de novo e ele aparece aqui pronto para conferir.
+        Antes disso dá para recusar (link errado, Stories, perfil de outra pessoa), mas não aprovar.
+      </p>
+      {ready.length === 0 && (
+        <p className="text-sm text-muted-foreground py-4 text-center">Nenhum post pronto para conferir agora. 🎉</p>
+      )}
+      {ready.map((p) => {
         const ac = p.auto_check ?? {};
         const suggested = views[p.id] ?? String(ac.views ?? p.reported_views ?? '');
+        const capViews = p.campaigns ? Math.floor((Math.floor(p.campaigns.reserved_cents * 0.2) * 1000) / p.campaigns.cpm_cents) : null;
         return (
           <Card key={p.id}>
             <CardContent className="p-4 space-y-3">
@@ -103,8 +113,11 @@ function PendingPosts() {
                     {p.affiliate_social_accounts?.verified && ' · perfil conferido'}
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    Enviado {formatDateTime(p.submitted_at)} · janela {p.campaigns && `${formatDateTime(p.campaigns.starts_at)} a ${formatDateTime(p.campaigns.ends_at)}`}
+                    Enviado {formatDateTime(p.submitted_at)} · onda {p.campaigns && `${formatDateTime(p.campaigns.starts_at)} a ${formatDateTime(p.campaigns.ends_at)}`}
                   </p>
+                  {p.early_bonus && (
+                    <p className="text-xs flex items-center gap-1"><Zap className="h-3 w-3 text-highlight" /> Postou nas primeiras horas: ganha bônus de 20% nos pontos</p>
+                  )}
                 </div>
                 <div className="flex gap-2">
                   <Button asChild size="sm" variant="outline">
@@ -118,13 +131,13 @@ function PendingPosts() {
 
               <div className="rounded-md bg-muted p-2.5 text-xs space-y-0.5">
                 <p className="font-medium flex items-center justify-between">
-                  Leitura automática {ac.checked_at ? `(${formatDateTime(ac.checked_at)})` : '(ainda não feita)'}
+                  Leitura automática {ac.checked_at ? `(${formatDateTime(ac.checked_at)}${ac.final ? ', leitura do dia 7' : ''})` : '(ainda não feita)'}
                   <Button size="sm" variant="ghost" className="h-6 px-2" disabled={busy === p.id} onClick={() => recheck(p.id)}>
                     <RefreshCw className="h-3 w-3 mr-1" />Ler de novo
                   </Button>
                 </p>
                 <p>Post encontrado: {yesNo(ac.exists)} · Autor confere: {yesNo(ac.author_matches)}{ac.author ? ` (@${ac.author})` : ''}</p>
-                <p>Palavra-chave: {yesNo(ac.has_keyword)} · #publi: {yesNo(ac.has_publi)} · Visualizações lidas: {ac.views != null ? formatViews(ac.views) : 'não disponível'}</p>
+                <p>Assinatura na legenda: {yesNo(ac.has_keyword)} · #publi: {yesNo(ac.has_publi)} · Visualizações lidas: {ac.views != null ? formatViews(ac.views) : 'não disponível'}</p>
                 {ac.caption && <p className="text-muted-foreground line-clamp-2">Legenda: {ac.caption}</p>}
                 {ac.note && <p className="text-muted-foreground">{ac.note}</p>}
                 <p>Visualizações informadas pelo divulgador: {formatViews(p.reported_views)}</p>
@@ -132,7 +145,9 @@ function PendingPosts() {
 
               <div className="grid gap-2 sm:grid-cols-[1fr_auto] items-end">
                 <div className="space-y-1">
-                  <label className="text-xs text-muted-foreground" htmlFor={`v-${p.id}`}>Visualizações verificadas (viram pontos e cobrança)</label>
+                  <label className="text-xs text-muted-foreground" htmlFor={`v-${p.id}`}>
+                    Visualizações verificadas no dia 7 (viram pontos e cobrança{capViews ? `, até o teto de ${formatViews(capViews)} por post` : ''})
+                  </label>
                   <Input id={`v-${p.id}`} type="number" min={0} value={suggested}
                     onChange={(e) => setViews((s) => ({ ...s, [p.id]: e.target.value }))} />
                 </div>
@@ -151,6 +166,35 @@ function PendingPosts() {
           </Card>
         );
       })}
+
+      {counting.length > 0 && (
+        <div className="space-y-2 pt-2">
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+            <Hourglass className="h-3.5 w-3.5" /> Contando visualizações ({counting.length})
+          </h3>
+          {counting.map((p) => (
+            <div key={p.id} className="rounded-md border border-border p-2.5 text-xs flex flex-wrap items-center justify-between gap-2">
+              <div className="min-w-0">
+                <p className="font-medium truncate">{p.campaigns?.title} · {networkLabel(p.network)} @{p.affiliate_social_accounts?.handle}</p>
+                <p className="text-muted-foreground">
+                  {p.profiles?.nome_completo || p.profiles?.name} · conta até {formatDay(p.count_at)}
+                  {p.auto_check?.exists === false && ' · leitura não achou o post'}
+                  {p.auto_check?.has_publi === false && ' · sem #publi na legenda'}
+                </p>
+              </div>
+              <div className="flex gap-1.5">
+                <Button asChild size="sm" variant="outline" className="h-7 px-2">
+                  <a href={p.post_url} target="_blank" rel="noopener noreferrer"><ExternalLink className="h-3 w-3" /></a>
+                </Button>
+                <Button size="sm" variant="outline" className="h-7 px-2" disabled={busy === p.id}
+                  onClick={() => review(p, false)} title="Recusar (use o motivo padrão)">
+                  <XCircle className="h-3 w-3 mr-1" /> Recusar
+                </Button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

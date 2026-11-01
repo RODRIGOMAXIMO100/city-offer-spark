@@ -8,14 +8,15 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Loader2, X, MapPin, Wallet } from 'lucide-react';
+import { Loader2, X, MapPin, Wallet, Waves } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
 import { useAvailableCities } from '@/hooks/useAvailableCities';
 import { useReachConfig } from '@/hooks/useReachConfig';
 import { formatCentsToBRL } from '@/types/database';
 import {
-  REACH_NETWORKS, reachDb, reserveForGoal, formatViews, reachErrorMessage, type ReachNetwork,
+  REACH_NETWORKS, reachDb, reserveForGoal, formatViews, formatDateTime, reachErrorMessage,
+  WINDOW_PRESETS, DEFAULT_WINDOW_HOURS, type ReachNetwork,
 } from '@/lib/reach';
 
 interface Props {
@@ -41,30 +42,32 @@ export default function CreateCampaignModal({ open, onClose, onCreated, onNeedCr
   const [keyword, setKeyword] = useState('');
   const [briefing, setBriefing] = useState('');
   const [kitUrl, setKitUrl] = useState('');
-  const [networks, setNetworks] = useState<ReachNetwork[]>(['INSTAGRAM', 'TIKTOK']);
+  const [networks, setNetworks] = useState<ReachNetwork[]>(['TIKTOK', 'INSTAGRAM', 'YOUTUBE', 'KWAI']);
   const [nationwide, setNationwide] = useState(false);
   const [cities, setCities] = useState<string[]>([]);
   const [stateCode, setStateCode] = useState('');
   const [cityName, setCityName] = useState('');
   const [goal, setGoal] = useState(50000);
   const [startsAt, setStartsAt] = useState('');
-  const [endsAt, setEndsAt] = useState('');
+  const [windowHours, setWindowHours] = useState(DEFAULT_WINDOW_HOURS);
   const [saving, setSaving] = useState(false);
 
   const { availableStates, citiesForState } = useAvailableCities(stateCode);
 
-  // Valores iniciais a cada abertura: cidade da empresa e janela de 7 dias
+  // Valores iniciais a cada abertura: cidade da empresa e onda de 48h começando agora
   useEffect(() => {
     if (!open) return;
-    const now = new Date();
-    const end = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
-    setStartsAt(toLocalInput(now));
-    setEndsAt(toLocalInput(end));
+    setStartsAt(toLocalInput(new Date()));
+    setWindowHours(DEFAULT_WINDOW_HOURS);
     if (profile?.city && cities.length === 0) setCities([profile.city]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
   const reserve = reserveForGoal(goal || 0, config.cpm_cents);
+  const capCents = Math.floor(reserve * config.post_cap_share);
+  const startDate = startsAt ? new Date(startsAt) : null;
+  const endDate = startDate ? new Date(startDate.getTime() + windowHours * 3600_000) : null;
+  const presets = WINDOW_PRESETS.filter((w) => w.hours <= config.max_window_days * 24);
   const balance = profile?.balance ?? 0;
   const missing = Math.max(reserve - balance, 0);
 
@@ -72,11 +75,12 @@ export default function CreateCampaignModal({ open, onClose, onCreated, onNeedCr
     () =>
       title.trim().length >= 3 &&
       keyword.trim().length >= 2 &&
+      briefing.trim().length >= 30 &&
       networks.length > 0 &&
       (nationwide || cities.length > 0) &&
       goal >= config.min_goal_views &&
-      !!startsAt && !!endsAt,
-    [title, keyword, networks, nationwide, cities, goal, config.min_goal_views, startsAt, endsAt],
+      !!startDate && !!endDate,
+    [title, keyword, briefing, networks, nationwide, cities, goal, config.min_goal_views, startDate, endDate],
   );
 
   const toggleNetwork = (id: ReachNetwork) =>
@@ -99,13 +103,13 @@ export default function CreateCampaignModal({ open, onClose, onCreated, onNeedCr
     const { error } = await reachDb.rpc('create_campaign', {
       p_title: title.trim(),
       p_keyword: keyword.trim(),
-      p_briefing: briefing.trim() || null,
+      p_briefing: briefing.trim(),
       p_kit_url: kitUrl.trim() || null,
       p_networks: networks,
       p_cities: nationwide ? [] : cities,
       p_goal_views: goal,
-      p_starts_at: new Date(startsAt).toISOString(),
-      p_ends_at: new Date(endsAt).toISOString(),
+      p_starts_at: startDate!.toISOString(),
+      p_ends_at: endDate!.toISOString(),
     });
     setSaving(false);
 
@@ -114,8 +118,8 @@ export default function CreateCampaignModal({ open, onClose, onCreated, onNeedCr
       return;
     }
     toast({
-      title: 'Campanha no ar! 🚀',
-      description: `${formatCentsToBRL(reserve)} ficaram reservados. Você só paga pelo alcance verificado.`,
+      title: 'Onda marcada! 🌊',
+      description: `${formatCentsToBRL(reserve)} ficaram reservados. Os divulgadores já veem a missão. Você só paga pelo que foi visto.`,
     });
     await refreshProfile();
     setTitle(''); setKeyword(''); setBriefing(''); setKitUrl('');
@@ -126,9 +130,9 @@ export default function CreateCampaignModal({ open, onClose, onCreated, onNeedCr
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
       <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Nova campanha de alcance</DialogTitle>
+          <DialogTitle>Nova campanha</DialogTitle>
           <DialogDescription>
-            Divulgadores da sua cidade postam a sua palavra-chave no mesmo período. Você paga só pelas visualizações verificadas.
+            Muita gente real postando sobre a sua marca na mesma janela, cada um no próprio perfil. Você paga só pelas visualizações verificadas.
           </DialogDescription>
         </DialogHeader>
 
@@ -140,16 +144,21 @@ export default function CreateCampaignModal({ open, onClose, onCreated, onNeedCr
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="c-keyword">Palavra-chave ou hashtag</Label>
+            <Label htmlFor="c-keyword">Assinatura da campanha</Label>
             <Input id="c-keyword" value={keyword} maxLength={60} onChange={(e) => setKeyword(e.target.value)}
-              placeholder="Ex.: #PizzariaDoZe" />
-            <p className="text-xs text-muted-foreground">Todo post precisa ter essa palavra. É ela que faz a sua marca circular.</p>
+              placeholder="Ex.: Pizzaria do Zé" />
+            <p className="text-xs text-muted-foreground">
+              O nome ou a frase que todo mundo vai falar no vídeo e escrever na legenda. É assim que a gente confere cada post e que quem viu acha a sua marca na busca. Hashtag é opcional.
+            </p>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="c-briefing">O que os divulgadores devem falar</Label>
-            <Textarea id="c-briefing" value={briefing} maxLength={2000} rows={3} onChange={(e) => setBriefing(e.target.value)}
-              placeholder="Ex.: Mostrar a pizza de calabresa e chamar para a promoção de sexta" />
+            <Label htmlFor="c-briefing">Roteiro para os divulgadores</Label>
+            <Textarea id="c-briefing" value={briefing} maxLength={2000} rows={4} onChange={(e) => setBriefing(e.target.value)}
+              placeholder={'O que falar e mostrar, e 2 ou 3 ideias de vídeo diferentes. Ex.:\n1. Provar a pizza nova e dar a nota\n2. Mostrar a fila de sexta\n3. Contar a promoção da semana'} />
+            <p className={`text-xs ${briefing.trim().length > 0 && briefing.trim().length < 30 ? 'text-destructive' : 'text-muted-foreground'}`}>
+              Ideias variadas fazem cada post parecer de gente de verdade, e não tudo igual. Mínimo de 30 letras.
+            </p>
           </div>
 
           <div className="space-y-2">
@@ -162,12 +171,16 @@ export default function CreateCampaignModal({ open, onClose, onCreated, onNeedCr
             <Label>Redes aceitas</Label>
             <div className="grid grid-cols-2 gap-2">
               {REACH_NETWORKS.map((n) => (
-                <label key={n.id} className="flex items-center gap-2 rounded-md border border-border p-2 text-sm cursor-pointer">
-                  <Checkbox checked={networks.includes(n.id)} onCheckedChange={() => toggleNetwork(n.id)} />
-                  {n.label}
+                <label key={n.id} className="flex items-start gap-2 rounded-md border border-border p-2 text-sm cursor-pointer">
+                  <Checkbox className="mt-0.5" checked={networks.includes(n.id)} onCheckedChange={() => toggleNetwork(n.id)} />
+                  <span>
+                    {n.label}
+                    {n.secondary && <span className="block text-[11px] text-muted-foreground">conferido pelo print</span>}
+                  </span>
                 </label>
               ))}
             </div>
+            <p className="text-xs text-muted-foreground">Vídeo curto (TikTok, Reels, Shorts e Kwai) é onde a onda rende mais.</p>
           </div>
 
           <div className="space-y-3">
@@ -226,23 +239,36 @@ export default function CreateCampaignModal({ open, onClose, onCreated, onNeedCr
             </p>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
-            <div className="space-y-2">
-              <Label htmlFor="c-start">Começa</Label>
-              <Input id="c-start" type="datetime-local" value={startsAt} onChange={(e) => setStartsAt(e.target.value)} />
+          <div className="space-y-2">
+            <Label htmlFor="c-start" className="flex items-center gap-1.5"><Waves className="h-4 w-4" /> Janela da onda</Label>
+            <p className="text-xs text-muted-foreground">
+              O período em que todo mundo posta. Onda boa é curta: muita gente falando ao mesmo tempo. Dá para casar com uma inauguração, um lançamento ou um evento.
+            </p>
+            <Input id="c-start" type="datetime-local" value={startsAt} onChange={(e) => setStartsAt(e.target.value)} />
+            <div className="flex flex-wrap gap-2">
+              {presets.map((w) => (
+                <Button key={w.hours} type="button" size="sm" variant={windowHours === w.hours ? 'default' : 'outline'} onClick={() => setWindowHours(w.hours)}>
+                  {w.label}
+                </Button>
+              ))}
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="c-end">Termina</Label>
-              <Input id="c-end" type="datetime-local" value={endsAt} onChange={(e) => setEndsAt(e.target.value)} />
-            </div>
+            {startDate && endDate && (
+              <p className="text-xs text-muted-foreground">
+                Divulgadores postam de {formatDateTime(startDate.toISOString())} até {formatDateTime(endDate.toISOString())}.
+                Quem posta nas primeiras {config.early_hours} horas ganha bônus no ranking.
+              </p>
+            )}
           </div>
 
           <div className="rounded-lg bg-company-muted p-3 space-y-1 text-sm">
             <div className="flex justify-between"><span>Fica reservado do seu saldo</span><strong>{formatCentsToBRL(reserve)}</strong></div>
             <div className="flex justify-between text-muted-foreground"><span>Seu saldo</span><span>{formatCentsToBRL(balance)}</span></div>
-            <p className="text-xs text-muted-foreground pt-1">
-              Você só paga pelas visualizações verificadas. O que não for usado volta para o seu saldo quando a campanha terminar.
-            </p>
+            <ul className="text-xs text-muted-foreground pt-1 space-y-1 list-disc pl-4">
+              <li>Você só paga pelas visualizações verificadas.</li>
+              <li>Cada post conta as visualizações dos {config.count_days} primeiros dias.</li>
+              <li>Nenhum post passa de {formatCentsToBRL(capCents)} ({Math.round(config.post_cap_share * 100)}% da campanha): são muitas vozes, não uma só.</li>
+              <li>O que não for usado volta para o seu saldo quando a campanha terminar.</li>
+            </ul>
           </div>
 
           {missing > 0 ? (
@@ -253,7 +279,7 @@ export default function CreateCampaignModal({ open, onClose, onCreated, onNeedCr
           ) : (
             <Button className="w-full bg-company text-company-foreground hover:bg-company/90" disabled={!canSubmit || saving} onClick={handleSubmit}>
               {saving && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-              Lançar campanha
+              Marcar a onda
             </Button>
           )}
         </div>

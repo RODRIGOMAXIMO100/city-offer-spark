@@ -1,16 +1,19 @@
 // check-post — leitura automatica dos dados PUBLICOS de um post de campanha.
 //
 // Le o que cada rede deixa ver sem login (oEmbed oficial e paginas publicas de
-// incorporacao): se o post existe, quem postou, a legenda, se tem a palavra-chave
-// e o #publi e, quando a rede mostra, o numero de visualizacoes. O resultado vai
-// para campaign_posts.auto_check e ajuda o admin na conferencia; a aprovacao
-// continua sendo humana. Quem chama: o proprio divulgador (logo apos enviar) ou
-// um admin (botao "Ler de novo").
+// incorporacao): se o post existe, quem postou, a legenda, se tem a assinatura
+// da campanha e o #publi e, quando a rede mostra, o numero de visualizacoes. O
+// resultado vai para campaign_posts.auto_check e ajuda o admin na conferencia; a
+// aprovacao continua sendo humana.
+// Quem chama:
+// * o proprio divulgador (logo apos enviar) ou um admin (botao "Ler de novo");
+// * o agendador, de hora em hora, com o header x-cron-secret: le os posts que
+//   completaram os 7 dias de contagem (leitura final, que vai para a conferencia).
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-cron-secret",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
@@ -155,6 +158,35 @@ async function readPost(network: string, url: string): Promise<Reading> {
   }
 }
 
+// deno-lint-ignore no-explicit-any
+type PostRow = any;
+
+const POST_SELECT =
+  "id, network, post_url, affiliate_id, status, count_at, final_check_at, campaigns(keyword), affiliate_social_accounts(handle), profiles!campaign_posts_affiliate_id_fkey(user_id)";
+
+async function analyze(p: PostRow, final: boolean) {
+  let reading: Reading;
+  try {
+    reading = await readPost(p.network, p.post_url);
+  } catch (e) {
+    reading = { method: "erro", exists: null, author: null, caption: null, views: null, note: `Falha na leitura: ${(e as Error).message}`.slice(0, 200) };
+  }
+  const keyword: string = p.campaigns?.keyword ?? "";
+  const caption = reading.caption ?? "";
+  const handle: string = p.affiliate_social_accounts?.handle ?? "";
+  return {
+    ...reading,
+    caption: caption ? caption.slice(0, 600) : null,
+    checked_at: new Date().toISOString(),
+    final,
+    has_keyword: caption ? norm(caption).includes(norm(keyword.replace(/^#/, ""))) : null,
+    has_publi: caption ? /#publi\b|#publicidade\b|parceria paga|paid partnership/i.test(caption) : null,
+    author_matches: reading.author && handle ? norm(reading.author).replace(/^@/, "") === norm(handle) : null,
+  };
+}
+
+const isDue = (p: PostRow) => p.status === "PENDING" && !p.final_check_at && new Date(p.count_at).getTime() <= Date.now();
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
@@ -162,6 +194,31 @@ Deno.serve(async (req) => {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const anonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
     const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const admin = createClient(supabaseUrl, serviceKey);
+
+    // Agendador: leitura final dos posts que completaram a contagem
+    const cronSecret = req.headers.get("x-cron-secret");
+    if (cronSecret) {
+      const { data: ok } = await admin.rpc("check_cron_secret", { p_name: "check_post_cron", p_value: cronSecret });
+      if (!ok) return json({ error: "Sem permissão" }, 403);
+
+      const { data: due } = await admin
+        .from("campaign_posts")
+        .select(POST_SELECT)
+        .eq("status", "PENDING")
+        .is("final_check_at", null)
+        .lte("count_at", new Date().toISOString())
+        .order("count_at", { ascending: true })
+        .limit(25);
+
+      let done = 0;
+      for (const p of due ?? []) {
+        const result = await analyze(p, true);
+        await admin.rpc("set_post_final_check", { p_post_id: p.id, p_result: result });
+        done++;
+      }
+      return json({ ok: true, checked: done });
+    }
 
     const authHeader = req.headers.get("Authorization") ?? "";
     if (!authHeader.startsWith("Bearer ")) return json({ error: "Não autenticado" }, 401);
@@ -174,44 +231,25 @@ Deno.serve(async (req) => {
     const postId = String(body?.post_id ?? "");
     if (!/^[0-9a-f-]{36}$/i.test(postId)) return json({ error: "post_id inválido" }, 400);
 
-    const admin = createClient(supabaseUrl, serviceKey);
-
-    const { data: post } = await admin
-      .from("campaign_posts")
-      .select("id, network, post_url, affiliate_id, campaigns(keyword), affiliate_social_accounts(handle), profiles!campaign_posts_affiliate_id_fkey(user_id)")
-      .eq("id", postId)
-      .maybeSingle();
+    const { data: post } = await admin.from("campaign_posts").select(POST_SELECT).eq("id", postId).maybeSingle();
     if (!post) return json({ error: "Post não encontrado" }, 404);
 
     // Pode chamar: o autor do post ou um admin
-    // deno-lint-ignore no-explicit-any
-    const p = post as any;
+    const p = post as PostRow;
     const isAuthor = p.profiles?.user_id === userData.user.id;
     if (!isAuthor) {
       const { data: isAdmin } = await admin.rpc("has_role", { _user_id: userData.user.id, _role: "ADMIN" });
       if (!isAdmin) return json({ error: "Sem permissão" }, 403);
     }
 
-    let reading: Reading;
-    try {
-      reading = await readPost(p.network, p.post_url);
-    } catch (e) {
-      reading = { method: "erro", exists: null, author: null, caption: null, views: null, note: `Falha na leitura: ${(e as Error).message}`.slice(0, 200) };
+    // Depois do dia 7, a leitura vale como leitura final
+    const final = isDue(p) || (!!p.final_check_at && p.status === "PENDING");
+    const result = await analyze(p, final);
+    if (final && !p.final_check_at) {
+      await admin.rpc("set_post_final_check", { p_post_id: postId, p_result: result });
+    } else {
+      await admin.rpc("set_post_auto_check", { p_post_id: postId, p_result: result });
     }
-
-    const keyword: string = p.campaigns?.keyword ?? "";
-    const caption = reading.caption ?? "";
-    const handle: string = p.affiliate_social_accounts?.handle ?? "";
-    const result = {
-      ...reading,
-      caption: caption ? caption.slice(0, 600) : null,
-      checked_at: new Date().toISOString(),
-      has_keyword: caption ? norm(caption).includes(norm(keyword.replace(/^#/, ""))) : null,
-      has_publi: caption ? /#publi\b|#publicidade\b|parceria paga|paid partnership/i.test(caption) : null,
-      author_matches: reading.author && handle ? norm(reading.author).replace(/^@/, "") === norm(handle) : null,
-    };
-
-    await admin.rpc("set_post_auto_check", { p_post_id: postId, p_result: result });
     return json({ ok: true, auto_check: result });
   } catch (e) {
     console.error("check-post error", e);

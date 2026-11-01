@@ -9,15 +9,16 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { homeFaqs } from "@/components/home/HomeFAQ";
 
 const rules = [
-  "Poste no feed ou nos Reels, nunca só nos Stories",
-  "Use a palavra-chave da campanha e o #publi na legenda",
-  "Poste dentro da janela de tempo da missão",
-  "Envie o link do post e, quando a rede não mostrar, o print das visualizações",
+  "Poste um vídeo ou post no seu perfil, nunca só nos Stories",
+  "Fale o nome da marca no vídeo e escreva na legenda, com o #publi",
+  "Poste dentro da janela da onda (nas primeiras 12 horas, ganhe 20% a mais)",
+  "Envie o link do post e, no 7º dia, atualize o print das visualizações",
 ];
 const avoid = [
   "Comprar visualização ou usar robô: a conta é bloqueada",
   "Postar em perfil fechado ou de outra pessoa",
   "Apagar o post antes da conferência",
+  "Pedir curtida ou comentário em troca, ou postar tudo igual a outra pessoa",
 ];
 
 const affiliateFaqs = homeFaqs.filter((f) =>
@@ -46,7 +47,7 @@ const ParaDivulgadoresPage = () => (
             Sua rede social <span className="text-affiliate">vale prêmio</span>
           </h1>
           <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
-            Pegue missões de marcas, poste com a palavra-chave e dispute prêmios em dinheiro todo mês com gente do seu tamanho.
+            Pegue missões de marcas, poste um vídeo seu na hora da onda e dispute prêmios em dinheiro todo mês com gente do seu tamanho.
           </p>
           <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 mt-6 text-sm text-muted-foreground">
             <span className="flex items-center gap-2"><Smartphone className="h-4 w-4 text-affiliate" /> Cadastro grátis</span>

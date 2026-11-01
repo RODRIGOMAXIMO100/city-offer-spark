@@ -3,19 +3,21 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { Loader2, Target, Hash, Download, CalendarClock, ExternalLink, Send, ClipboardList, RefreshCw } from 'lucide-react';
+import { Loader2, Target, Hash, Download, CalendarClock, ExternalLink, Send, ClipboardList, RefreshCw, Zap, Hourglass } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
+import { useReachConfig } from '@/hooks/useReachConfig';
 import AffiliateSocialAccounts from './AffiliateSocialAccounts';
 import SubmitPostModal from './SubmitPostModal';
 import {
-  reachDb, networkLabel, formatViews, formatDateTime, reachErrorMessage, uploadProof, POST_STATUS_LABEL,
-  type Mission, type SocialAccount, type CampaignPost,
+  reachDb, networkLabel, formatViews, formatDateTime, formatDay, reachErrorMessage, uploadProof,
+  postStatusLabel, isCounting, type Mission, type SocialAccount, type CampaignPost,
 } from '@/lib/reach';
 
 export default function AffiliateMissions() {
   const { profile, user } = useAuth();
   const { toast } = useToast();
+  const { config } = useReachConfig();
   const [accounts, setAccounts] = useState<SocialAccount[]>([]);
   const [missions, setMissions] = useState<Mission[]>([]);
   const [myPosts, setMyPosts] = useState<(CampaignPost & { campaign_title?: string })[]>([]);
@@ -82,6 +84,8 @@ export default function AffiliateMissions() {
         ) : missions.map((m) => {
           const started = new Date(m.starts_at).getTime() <= now;
           const postingOpen = new Date(m.ends_at).getTime() >= now;
+          const bonusUntil = new Date(m.starts_at).getTime() + config.early_hours * 3600_000;
+          const bonusOpen = now <= bonusUntil;
           return (
             <Card key={m.id}>
               <CardContent className="p-4 space-y-3">
@@ -100,18 +104,34 @@ export default function AffiliateMissions() {
                 </div>
 
                 <div className="rounded-md bg-affiliate-muted p-3 space-y-1">
-                  <p className="text-sm flex items-center gap-1"><Hash className="h-4 w-4 text-affiliate" /> Use no post: <strong>{m.keyword}</strong> e <strong>#publi</strong></p>
-                  {m.briefing && <p className="text-xs text-muted-foreground whitespace-pre-line">{m.briefing}</p>}
+                  <p className="text-sm flex items-start gap-1">
+                    <Hash className="h-4 w-4 text-affiliate shrink-0 mt-0.5" />
+                    <span>Fale <strong>{m.keyword}</strong> no vídeo e escreva na legenda, junto com <strong>#publi</strong>.</span>
+                  </p>
+                  {m.briefing && (
+                    <div className="pt-1">
+                      <p className="text-xs font-semibold text-foreground">Roteiro da empresa</p>
+                      <p className="text-xs text-muted-foreground whitespace-pre-line">{m.briefing}</p>
+                    </div>
+                  )}
                 </div>
 
                 <div className="text-xs text-muted-foreground space-y-1">
-                  <p className="flex items-center gap-1"><CalendarClock className="h-3 w-3" />Poste entre {formatDateTime(m.starts_at)} e {formatDateTime(m.ends_at)}</p>
+                  <p className="flex items-center gap-1"><CalendarClock className="h-3 w-3" />Onda: poste entre {formatDateTime(m.starts_at)} e {formatDateTime(m.ends_at)}</p>
+                  {started && bonusOpen && (
+                    <p className="flex items-center gap-1 font-medium text-foreground">
+                      <Zap className="h-3 w-3 text-highlight" /> Poste até {formatDateTime(new Date(bonusUntil).toISOString())} e ganhe {Math.round(config.early_bonus * 100)}% a mais de pontos
+                    </p>
+                  )}
+                  {!started && (
+                    <p className="flex items-center gap-1"><Zap className="h-3 w-3 text-highlight" /> Quem postar nas primeiras {config.early_hours} horas ganha {Math.round(config.early_bonus * 100)}% a mais de pontos</p>
+                  )}
                   <p>Redes: {m.networks.map(networkLabel).join(', ')}</p>
                 </div>
 
                 <div className="flex flex-wrap gap-1.5">
                   {m.my_posts.map((p) => (
-                    <Badge key={p.id} variant="outline">{networkLabel(p.network)}: {POST_STATUS_LABEL[p.status]}</Badge>
+                    <Badge key={p.id} variant="outline">{networkLabel(p.network)}: {postStatusLabel(p)}</Badge>
                   ))}
                 </div>
 
@@ -145,10 +165,18 @@ export default function AffiliateMissions() {
                 <div className="min-w-0">
                   <p className="text-sm font-medium truncate">{p.campaign_title || 'Missão encerrada'}</p>
                   <p className="text-xs text-muted-foreground">
-                    {networkLabel(p.network)} · {POST_STATUS_LABEL[p.status]}
+                    {networkLabel(p.network)} · {postStatusLabel(p)}
                     {p.status === 'APPROVED' && ` · ${formatViews(p.points)} pontos`}
                     {p.status === 'PENDING' && p.reported_views > 0 && ` · ${formatViews(p.reported_views)} visualizações informadas`}
                   </p>
+                  {isCounting(p) && (
+                    <p className="text-xs text-muted-foreground flex items-center gap-1">
+                      <Hourglass className="h-3 w-3" /> Visualizações contam até {formatDay(p.count_at)}. Nesse dia, atualize o número e o print.
+                    </p>
+                  )}
+                  {p.early_bonus && p.status !== 'REJECTED' && (
+                    <p className="text-xs text-foreground flex items-center gap-1"><Zap className="h-3 w-3 text-highlight" /> Bônus de quem postou cedo</p>
+                  )}
                   {p.status === 'REJECTED' && p.rejection_reason && (
                     <p className="text-xs text-destructive">{p.rejection_reason}</p>
                   )}

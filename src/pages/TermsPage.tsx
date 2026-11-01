@@ -21,7 +21,7 @@ const sections: DocSection[] = [
       "O Clilin é uma plataforma de **campanhas de alcance com gente de verdade**. Ela conecta dois tipos de usuário:",
       {
         list: [
-          ["Empresas", "criam campanhas com uma palavra-chave, um material de divulgação, as cidades atendidas e uma meta de visualizações. Pagam só pelo alcance verificado."],
+          ["Empresas", "criam campanhas com uma assinatura (o nome ou a frase da campanha), um roteiro, as cidades atendidas, uma janela de postagem e uma meta de visualizações. Pagam só pelo alcance verificado."],
           ["Divulgadores", "recebem missões das campanhas, postam no próprio perfil nas redes sociais e acumulam pontos pelas visualizações verificadas. Os melhores de cada liga ganham prêmios em dinheiro todo mês."],
         ],
       },
@@ -67,7 +67,7 @@ const sections: DocSection[] = [
     blocks: [
       {
         list: [
-          "O post é feito **no perfil do próprio divulgador**, com a palavra-chave da campanha e a identificação **#publi**.",
+          "O post é feito **no perfil do próprio divulgador**, com o nome da marca na legenda e a identificação **#publi**, dentro da janela da campanha.",
           "Valem posts no feed e Reels do Instagram, TikTok, Kwai, YouTube Shorts, Facebook e X. Stories e Status não valem, porque somem e não dá para conferir depois.",
           "O post precisa sair dentro da janela da missão e continuar no ar durante o período de verificação.",
           "O divulgador envia o link do post e, quando pedido, o print das visualizações. Print editado ou de outro post é fraude.",
@@ -127,7 +127,7 @@ const sections: DocSection[] = [
     id: "responsabilidades",
     title: "Responsabilidades",
     blocks: [
-      "**Empresas:** garantem que o material e a palavra-chave da campanha são verdadeiros, legais e que têm os direitos de uso. Respondem pelo que anunciam perante o consumidor.",
+      "**Empresas:** garantem que o material, o roteiro e a assinatura da campanha são verdadeiros, legais e que têm os direitos de uso. Respondem pelo que anunciam perante o consumidor.",
       "**Divulgadores:** postam de forma honesta e transparente, com #publi, seguem as regras das redes sociais e da publicidade e só usam perfis próprios.",
       "O Clilin organiza as campanhas, verifica os posts e apura o ranking. O Clilin não é parceiro nem representante e não tem vínculo com o Instagram, TikTok, Kwai, YouTube, Facebook ou X. Mudanças nessas redes, como bloqueios, quedas ou mudanças de alcance, podem afetar as campanhas.",
     ],

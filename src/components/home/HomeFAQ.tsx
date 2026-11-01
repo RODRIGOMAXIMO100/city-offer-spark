@@ -6,17 +6,22 @@ export const homeFaqs = [
   {
     question: "Quanto custa para a empresa?",
     answer:
-      "R$ 5 a cada mil visualizações verificadas. A meta mínima é de 20 mil visualizações (R$ 100). O valor da meta fica reservado no seu crédito, é cobrado conforme os posts são aprovados e o que sobrar volta para o seu saldo quando a campanha termina.",
+      "R$ 5 a cada mil visualizações verificadas. A meta mínima é de 20 mil visualizações (R$ 100). O valor da meta fica reservado no seu crédito, é cobrado conforme os posts são aprovados e o que sobrar volta para o seu saldo quando a campanha termina. Nenhum post passa de 20% da campanha, para a sua marca aparecer em muitos perfis e não em um só.",
   },
   {
     question: "Como vocês sabem que as visualizações são reais?",
     answer:
-      "Cada post é lido pelo sistema (se existe, quem postou, se tem a palavra-chave e o #publi) e conferido pela equipe, junto com o print das visualizações enviado pelo divulgador. Só entra na conta o que foi aprovado. Os perfis precisam estar abertos e são conferidos antes.",
+      "Cada post é lido pelo sistema (se existe, quem postou, se tem o nome da marca e o #publi) e conferido pela equipe, junto com o print das visualizações enviado pelo divulgador. Contam as visualizações dos 7 primeiros dias de cada post: no 7º dia o sistema lê de novo e só então o post é aprovado. Só entra na conta o que foi aprovado. Os perfis precisam estar abertos e são conferidos antes.",
   },
   {
     question: "Em quais redes os posts acontecem?",
     answer:
-      "Instagram (feed e Reels), TikTok, Kwai, YouTube Shorts, Facebook e X. Stories não entram, porque somem em 24 horas e não dá para conferir depois.",
+      "O foco é vídeo curto: TikTok, Reels do Instagram, YouTube Shorts e Kwai, onde a própria rede mostra quantas vezes o vídeo foi visto. Facebook e X também valem, conferidos pelo print. Stories não entram, porque somem em 24 horas e não dá para conferir depois.",
+  },
+  {
+    question: "É campanha de hashtag? Vocês colocam a marca nos assuntos do momento?",
+    answer:
+      "Não. O que você compra é gente real postando vídeos sobre a sua marca, no mesmo período, e o que conta é quantas vezes esses posts foram vistos. O nome da marca vai falado no vídeo e escrito na legenda, e a hashtag é opcional. Não vendemos subida em assuntos do momento nem curtidas e comentários: isso vai contra as regras das redes e põe em risco a sua marca e o perfil de quem divulga.",
   },
   {
     question: "Como o divulgador ganha?",

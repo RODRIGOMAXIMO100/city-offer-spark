@@ -7,14 +7,15 @@ import { Button } from "@/components/ui/button";
 
 const verification = [
   { icon: UserCheck, title: "Perfil conferido", text: "Antes de receber missões, o perfil do divulgador é conferido: precisa ser dele, estar aberto e ter seguidores reais. É isso que define a liga." },
-  { icon: ScanSearch, title: "Leitura automática", text: "Quando o link do post chega, o sistema lê os dados públicos: se o post existe, se está no perfil cadastrado, se saiu na janela da missão e se tem a palavra-chave e o #publi." },
-  { icon: Camera, title: "Print das visualizações", text: "O divulgador envia o print com o número de visualizações. A equipe compara com o que o sistema leu." },
+  { icon: ScanSearch, title: "Leitura automática", text: "Quando o link do post chega, o sistema lê os dados públicos: se o post existe, se está no perfil cadastrado, se saiu na janela da onda e se tem o nome da marca e o #publi. No 7º dia o post é lido de novo: contam as visualizações dos 7 primeiros dias." },
+  { icon: Camera, title: "Print das visualizações", text: "O divulgador envia o print com o número de visualizações do 7º dia. A equipe compara com o que o sistema leu." },
   { icon: Eye, title: "Conferência da equipe", text: "Uma pessoa revisa e aprova ou reprova. Pico fora do padrão, seguidor comprado ou robô reprovam o post." },
 ];
 
 const never = [
   "Cobrar do divulgador para entrar ou participar.",
   "Fazer sorteio. Prêmio é por mérito, dentro da liga.",
+  "Vender curtida, comentário ou subida em assuntos do momento. Isso vai contra as regras das redes.",
   "Cobrar da empresa um post que foi reprovado.",
   "Vender ou alugar dados de quem usa o Clilin.",
 ];

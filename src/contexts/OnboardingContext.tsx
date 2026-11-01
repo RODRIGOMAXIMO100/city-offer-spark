@@ -50,7 +50,7 @@ export const TOUR_STEPS: Record<string, TourStep[]> = {
     {
       target: '[data-tour="missions"]',
       title: 'Missões',
-      content: 'As campanhas da sua cidade e do Brasil aparecem aqui. Poste com a palavra-chave e o #publi e envie o link.',
+      content: 'As ondas da sua cidade e do Brasil aparecem aqui. Poste um vídeo seu falando da marca, com o nome na legenda e o #publi, e envie o link. Quem posta cedo ganha bônus.',
       position: 'top',
     },
   ],
@@ -64,7 +64,7 @@ export const TOUR_STEPS: Record<string, TourStep[]> = {
     {
       target: '[data-tour="campaigns"]',
       title: 'Suas campanhas',
-      content: 'Clique em "Nova campanha", escolha a palavra-chave, as redes e a meta. Você paga só o que for visto e o resto volta para o saldo.',
+      content: 'Clique em "Nova campanha", escreva o roteiro, marque a janela da onda e a meta. Você paga só o que for visto e o resto volta para o saldo.',
       position: 'bottom',
     },
   ],

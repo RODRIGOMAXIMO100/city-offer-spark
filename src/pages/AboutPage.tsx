@@ -44,7 +44,7 @@ const AboutPage = () => {
             <h2 className="text-2xl sm:text-4xl font-display font-bold text-foreground mb-4">O que é o Clilin</h2>
             <p className="text-lg text-muted-foreground leading-relaxed">
               Um anúncio fala com quem não pediu. Uma pessoa conhecida falando de uma marca é diferente: as pessoas confiam, comentam e lembram. O Clilin
-              transforma isso em campanha. A empresa escolhe a palavra-chave e as cidades, dezenas de divulgadores postam no mesmo período, e cada
+              transforma isso em campanha. A empresa marca a onda e as cidades, dezenas de divulgadores postam no mesmo período, e cada
               visualização é conferida antes de ser cobrada.
             </p>
           </div>

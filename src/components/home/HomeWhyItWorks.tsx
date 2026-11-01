@@ -4,7 +4,7 @@ const reasons = [
   {
     icon: Zap,
     title: "Todo mundo no mesmo dia",
-    text: "Quando muita gente fala da mesma coisa ao mesmo tempo, o assunto ganha força e chega mais longe.",
+    text: "Quando muita gente fala da mesma coisa ao mesmo tempo, a pessoa vê o seu nome de novo e de novo, e ele fica na cabeça.",
   },
   {
     icon: UserCheck,
@@ -13,13 +13,13 @@ const reasons = [
   },
   {
     icon: Search,
-    title: "Uma palavra-chave que fica",
-    text: "Sua palavra-chave aparece em dezenas de perfis e fica fácil de achar na busca das redes.",
+    title: "Seu nome na busca",
+    text: "O nome da sua marca aparece falado e escrito em dezenas de vídeos. Quem viu e ficou curioso procura e acha você.",
   },
   {
     icon: ShieldCheck,
     title: "Cada post conferido",
-    text: "O Clilin lê cada link antes de cobrar. Post sem a palavra-chave ou sem #publi não conta.",
+    text: "O Clilin lê cada link antes de cobrar. Post sem o nome da marca na legenda ou sem #publi não conta.",
   },
   {
     icon: Wallet,
@@ -41,7 +41,7 @@ export function HomeWhyItWorks() {
           <span className="text-primary font-semibold text-sm uppercase tracking-wider">Por que funciona</span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold mt-3 mb-4">Alcance que vem de pessoas</h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            O mesmo mecanismo que faz um assunto tomar conta das redes, agora a serviço do seu negócio.
+            A força de muita gente real falando ao mesmo tempo, com regra clara, dentro das regras das redes e a serviço do seu negócio.
           </p>
         </div>
 

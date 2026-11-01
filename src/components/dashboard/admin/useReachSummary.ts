@@ -3,6 +3,7 @@ import { reachDb } from "@/lib/reach";
 
 export interface ReachSummary {
   posts_pending: number;
+  posts_counting?: number;
   accounts_pending: number;
   campaigns_active: number;
   withdrawals_pending_count: number;

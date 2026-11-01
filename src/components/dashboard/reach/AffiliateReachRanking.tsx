@@ -82,7 +82,9 @@ export default function AffiliateReachRanking() {
             <div key={i} className="flex justify-between"><span>{i + 1}º lugar</span><strong>{formatCentsToBRL(p)}</strong></div>
           ))}
           <p className="text-xs text-muted-foreground pt-1">
-            Cada visualização verificada vale 1 ponto. No fim do mês, quem bateu a meta e ficou no topo da sua liga recebe o prêmio no saldo e saca por Pix.
+            Cada visualização verificada vale 1 ponto, contando os 7 primeiros dias do post (até o teto de cada post).
+            Quem posta nas primeiras {config.early_hours} horas da onda ganha {Math.round(config.early_bonus * 100)}% a mais.
+            No fim do mês, quem bateu a meta e ficou no topo da sua liga recebe o prêmio no saldo e saca por Pix.
             Sem sorteio. Se o fundo do mês não cobrir todos os prêmios, eles são ajustados na mesma proporção.
           </p>
         </CardContent>

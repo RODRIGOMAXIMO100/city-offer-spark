@@ -21,7 +21,7 @@ export function HomeHero() {
         <div className="text-center lg:text-left">
           <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 text-primary px-4 py-2 rounded-full text-sm font-semibold mb-6 animate-fade-in-up">
             <Megaphone className="h-4 w-4" />
-            Campanhas de alcance com gente de verdade
+            Ondas de divulgação com gente de verdade
           </div>
 
           <h1
@@ -36,7 +36,7 @@ export function HomeHero() {
             className="text-lg sm:text-xl text-muted-foreground mb-8 max-w-xl mx-auto lg:mx-0 leading-relaxed animate-fade-in-up"
             style={{ animationDelay: "0.2s" }}
           >
-            Você lança uma palavra-chave. Divulgadores reais postam ao mesmo tempo nas redes sociais.
+            Você marca o dia. Dezenas de pessoas reais postam vídeos sobre a sua marca ao mesmo tempo, cada uma no próprio perfil.
             Você paga só pelas visualizações verificadas: <strong className="text-foreground">R$ 5 a cada mil</strong>.
           </p>
 
@@ -72,15 +72,15 @@ export function HomeHero() {
           </ul>
         </div>
 
-        {/* Ilustração do mecanismo: uma palavra-chave, muitas vozes ao mesmo tempo */}
+        {/* Ilustração do mecanismo: uma marca, muitas vozes ao mesmo tempo */}
         <div className="relative animate-fade-in-up" style={{ animationDelay: "0.35s" }} aria-hidden>
           <div className="glass-card rounded-3xl p-6 sm:p-8">
-            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">Exemplo de campanha</p>
+            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">Exemplo de onda</p>
             <div className="flex items-center justify-between gap-3 mb-6">
               <span className="inline-flex items-center rounded-full bg-primary text-primary-foreground px-4 py-2 font-display font-bold text-lg">
-                #PizzaDoZé
+                Pizzaria do Zé
               </span>
-              <span className="text-xs font-semibold text-affiliate bg-affiliate/10 rounded-full px-3 py-1">no ar agora</span>
+              <span className="text-xs font-semibold text-affiliate bg-affiliate/10 rounded-full px-3 py-1">onda de 48h</span>
             </div>
 
             <div className="space-y-3">
@@ -91,7 +91,7 @@ export function HomeHero() {
                     <div className="h-2.5 rounded-full bg-muted w-3/4 mb-1.5" />
                     <div className="h-2 rounded-full bg-muted/70 w-1/2" />
                   </div>
-                  <span className="text-xs font-semibold text-primary">#PizzaDoZé</span>
+                  <span className="text-xs font-semibold text-primary">{["Reels", "TikTok", "Shorts", "Kwai", "Reels"][i]}</span>
                 </div>
               ))}
             </div>

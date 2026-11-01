@@ -53,7 +53,10 @@ export default function SubmitPostModal({ mission, accounts, onClose, onSubmitte
       // Leitura automatica dos dados publicos do post (nao bloqueia o envio)
       supabase.functions.invoke('check-post', { body: { post_id: postId } }).catch(() => undefined);
 
-      toast({ title: 'Post enviado! 🙌', description: 'Agora ele passa pela conferência. Os pontos entram assim que for aprovado.' });
+      toast({
+        title: 'Post enviado! 🙌',
+        description: 'As visualizações contam por 7 dias. Depois disso ele vai para a conferência e os pontos entram quando for aprovado.',
+      });
       onSubmitted();
     } catch (err) {
       toast({ title: 'Não deu para enviar', description: reachErrorMessage(err), variant: 'destructive' });
@@ -68,7 +71,7 @@ export default function SubmitPostModal({ mission, accounts, onClose, onSubmitte
         <DialogHeader>
           <DialogTitle>Enviar meu post</DialogTitle>
           <DialogDescription>
-            Poste no seu perfil com <strong>{mission?.keyword}</strong> e <strong>#publi</strong>, depois cole o link aqui.
+            Publique um vídeo ou post seu falando de <strong>{mission?.keyword}</strong>, com o nome na legenda e o <strong>#publi</strong>. Depois cole o link aqui. Stories não contam.
           </DialogDescription>
         </DialogHeader>
 
@@ -97,7 +100,9 @@ export default function SubmitPostModal({ mission, accounts, onClose, onSubmitte
             <div className="space-y-1.5">
               <Label htmlFor="sp-views">Visualizações até agora (opcional)</Label>
               <Input id="sp-views" type="number" min={0} value={views} onChange={(e) => setViews(e.target.value)} placeholder="Ex.: 350" />
-              <p className="text-xs text-muted-foreground">Você pode atualizar esse número depois de 72 horas, antes da conferência.</p>
+              <p className="text-xs text-muted-foreground">
+                Contam as visualizações dos 7 primeiros dias. No 7º dia o sistema lê o post de novo, e você pode atualizar o número e o print em "Meus posts".
+              </p>
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="sp-proof">Print das visualizações (opcional)</Label>

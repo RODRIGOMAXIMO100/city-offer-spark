@@ -89,7 +89,7 @@ export function AdminHome({ onNavigate, refreshKey }: { onNavigate: (s: AdminSec
               icon={ClipboardCheck}
               label="Posts para conferir"
               value={data?.posts_pending ?? 0}
-              hint="Aprovar ou recusar"
+              hint={data?.posts_counting ? `${data.posts_counting} ainda contando os 7 dias` : "Aprovar ou recusar"}
               tone="affiliate"
               onClick={() => onNavigate("review-posts")}
             />

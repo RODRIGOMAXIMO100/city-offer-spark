@@ -12,13 +12,15 @@ export type ReachLeague = 'BRONZE' | 'PRATA' | 'OURO';
 export type CampaignStatus = 'ACTIVE' | 'FINISHED' | 'CANCELLED';
 export type PostStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
 
-export const REACH_NETWORKS: { id: ReachNetwork; label: string; hint: string }[] = [
-  { id: 'INSTAGRAM', label: 'Instagram', hint: 'Reels ou post no feed' },
+// Vídeo curto primeiro: é onde a visualização é o número que a própria rede mostra.
+// Facebook e X entram como redes secundárias, conferidas pelo print.
+export const REACH_NETWORKS: { id: ReachNetwork; label: string; hint: string; secondary?: boolean }[] = [
   { id: 'TIKTOK', label: 'TikTok', hint: 'Vídeo' },
-  { id: 'KWAI', label: 'Kwai', hint: 'Vídeo' },
+  { id: 'INSTAGRAM', label: 'Instagram', hint: 'Reels ou post no feed' },
   { id: 'YOUTUBE', label: 'YouTube Shorts', hint: 'Short' },
-  { id: 'FACEBOOK', label: 'Facebook', hint: 'Post ou Reels' },
-  { id: 'X', label: 'X (Twitter)', hint: 'Post' },
+  { id: 'KWAI', label: 'Kwai', hint: 'Vídeo' },
+  { id: 'FACEBOOK', label: 'Facebook', hint: 'Reels ou post, conferido pelo print', secondary: true },
+  { id: 'X', label: 'X (Twitter)', hint: 'Post, conferido pelo print', secondary: true },
 ];
 
 export const networkLabel = (n: string) =>
@@ -39,6 +41,12 @@ export interface ReachConfig {
   min_goal_views: number;
   min_cycle_points: number;
   prizes_cents: number[];
+  // Regras da onda
+  count_days: number;        // dias de contagem das visualizações de cada post
+  post_cap_share: number;    // teto por post (parte do valor reservado)
+  early_hours: number;       // primeiras horas da janela que dão bônus
+  early_bonus: number;       // bônus nos pontos de quem posta cedo
+  max_window_days: number;   // janela máxima de postagem
 }
 
 export const DEFAULT_REACH_CONFIG: ReachConfig = {
@@ -47,7 +55,21 @@ export const DEFAULT_REACH_CONFIG: ReachConfig = {
   min_goal_views: 20000,
   min_cycle_points: 2000,
   prizes_cents: [15000, 8000, 5000],
+  count_days: 7,
+  post_cap_share: 0.2,
+  early_hours: 12,
+  early_bonus: 0.2,
+  max_window_days: 7,
 };
+
+// Duração da janela da onda (todo mundo posta nesse período)
+export const WINDOW_PRESETS: { hours: number; label: string }[] = [
+  { hours: 24, label: '24 horas' },
+  { hours: 48, label: '48 horas' },
+  { hours: 72, label: '3 dias' },
+  { hours: 168, label: '7 dias' },
+];
+export const DEFAULT_WINDOW_HOURS = 48;
 
 export interface Campaign {
   id: string;
@@ -82,6 +104,10 @@ export interface CampaignPost {
   proof_path: string | null;
   verified_views: number | null;
   billed_views: number;
+  count_at: string;
+  early_bonus: boolean;
+  capped: boolean;
+  final_check_at: string | null;
   billed_cents: number;
   pool_cents: number;
   points: number;
@@ -103,6 +129,7 @@ export interface AutoCheck {
   has_publi?: boolean | null;
   views?: number | null;
   note?: string | null;
+  final?: boolean;
 }
 
 export interface SocialAccount {
@@ -129,7 +156,7 @@ export interface Mission {
   verified_views: number;
   company_name: string;
   company_avatar: string | null;
-  my_posts: { id: string; network: ReachNetwork; status: PostStatus; post_url: string; points: number }[];
+  my_posts: { id: string; network: ReachNetwork; status: PostStatus; post_url: string; points: number; count_at?: string; early_bonus?: boolean }[];
 }
 
 export interface RankingRow {
@@ -181,6 +208,16 @@ export const POST_STATUS_LABEL: Record<PostStatus, string> = {
   APPROVED: 'Aprovado',
   REJECTED: 'Não aprovado',
 };
+
+// Post pendente ainda dentro dos dias de contagem das visualizações
+export const isCounting = (p: { status: PostStatus; count_at?: string | null }) =>
+  p.status === 'PENDING' && !!p.count_at && new Date(p.count_at).getTime() > Date.now();
+
+export const postStatusLabel = (p: { status: PostStatus; count_at?: string | null }) =>
+  isCounting(p) ? 'Contando visualizações' : POST_STATUS_LABEL[p.status];
+
+export const formatDay = (iso: string) =>
+  new Date(iso).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
 
 export const CAMPAIGN_STATUS_LABEL: Record<CampaignStatus, string> = {
   ACTIVE: 'Ativa',

@@ -10,33 +10,33 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { homeFaqs } from "@/components/home/HomeFAQ";
 
 const campaignFields = [
-  { icon: Hash, title: "Palavra-chave", text: "O nome, a hashtag ou a frase que você quer ver rodando. Ex.: #PizzaDoZé." },
-  { icon: Link2, title: "Redes", text: "Instagram, TikTok, Kwai, YouTube Shorts, Facebook e X. Você escolhe uma ou todas." },
+  { icon: Hash, title: "Assinatura e roteiro", text: "O nome ou a frase que todo mundo fala (ex.: Pizzaria do Zé) e 2 ou 3 ideias de vídeo para os divulgadores." },
+  { icon: Link2, title: "Redes", text: "TikTok, Reels, YouTube Shorts e Kwai. Facebook e X também, conferidos pelo print." },
   { icon: MapPin, title: "Onde", text: "Cidades específicas ou o Brasil inteiro." },
-  { icon: CalendarClock, title: "Quando", text: "A janela de postagem, de algumas horas até 31 dias." },
+  { icon: CalendarClock, title: "Janela da onda", text: "Quando todo mundo posta: de 24 horas a 7 dias. Dá para casar com uma inauguração ou um lançamento." },
   { icon: Eye, title: "Meta", text: "Quantas visualizações você quer, a partir de 20 mil." },
 ];
 
 const counts = [
-  "Post no feed ou Reels, com a palavra-chave e o #publi",
+  "Vídeo ou post no perfil, com o nome da marca na legenda e o #publi",
   "Perfil aberto e cadastrado pelo divulgador",
-  "Visualizações conferidas pelo print e pela leitura do post",
+  "Visualizações dos 7 primeiros dias, conferidas pela leitura do post e pelo print",
 ];
 const notCounts = [
   "Stories, que somem em 24 horas",
-  "Post sem a palavra-chave ou sem #publi",
+  "Post sem o nome da marca ou sem #publi",
   "Perfil fechado ou de outra pessoa",
 ];
 
 const companyFaqs = homeFaqs.filter((f) =>
-  ["Quanto custa para a empresa?", "Como vocês sabem que as visualizações são reais?", "Em quais redes os posts acontecem?", "Posso escolher onde a campanha acontece?", "Por que o post precisa ter #publi?"].includes(f.question),
+  ["Quanto custa para a empresa?", "Como vocês sabem que as visualizações são reais?", "É campanha de hashtag? Vocês colocam a marca nos assuntos do momento?", "Em quais redes os posts acontecem?", "Posso escolher onde a campanha acontece?", "Por que o post precisa ter #publi?"].includes(f.question),
 );
 
 const ParaEmpresasPage = () => (
   <div className="min-h-screen bg-background">
     <SEOHead
-      title="Para Empresas: campanhas de alcance com gente de verdade"
-      description="Lance uma palavra-chave e veja divulgadores reais postando ao mesmo tempo nas redes sociais. Pague só pelas visualizações verificadas, R$ 5 a cada mil. A partir de R$ 100."
+      title="Para Empresas: muita gente real postando sobre a sua marca"
+      description="Marque o dia e veja dezenas de divulgadores reais postando vídeos sobre a sua marca ao mesmo tempo. Pague só pelas visualizações verificadas, R$ 5 a cada mil. A partir de R$ 100."
       keywords={["campanha de alcance", "divulgação nas redes sociais", "marketing de influência local", "lançamento de marca"]}
       canonicalUrl="/empresas"
     />
@@ -51,10 +51,10 @@ const ParaEmpresasPage = () => (
             <Building2 className="h-4 w-4" /> Para empresas e marcas
           </span>
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-display font-bold tracking-tight mb-5">
-            O seu nome no assunto do dia, <span className="text-company">pagando só o que foi visto</span>
+            Sua marca no feed de todo mundo, <span className="text-company">pagando só o que foi visto</span>
           </h1>
           <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
-            Você monta a campanha em poucos minutos, a rede de divulgadores posta junto e o Clilin confere cada visualização antes de cobrar.
+            Você marca a onda em poucos minutos, a rede de divulgadores posta junto e o Clilin confere cada visualização antes de cobrar.
           </p>
         </div>
       </section>

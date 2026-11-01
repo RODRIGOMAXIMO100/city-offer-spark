@@ -4,22 +4,22 @@ const steps = [
   {
     n: "01",
     icon: Rocket,
-    title: "Você lança a campanha",
-    text: "Escolhe a palavra-chave, as redes, as cidades ou o Brasil todo e a meta de visualizações. O valor fica reservado no seu crédito.",
+    title: "Você marca a onda",
+    text: "Escolhe o dia (uma inauguração, um lançamento, um evento), escreve o roteiro e define as cidades e a meta de visualizações. O valor fica reservado no seu crédito.",
     tone: "company",
   },
   {
     n: "02",
     icon: Users,
     title: "Divulgadores postam juntos",
-    text: "Gente real recebe a missão e publica no feed ou nos Reels com a sua palavra-chave e o #publi, todo mundo na mesma janela de tempo.",
+    text: "Gente real recebe a missão e posta um vídeo sobre a sua marca no próprio perfil, com o nome na legenda e o #publi. Todo mundo na mesma janela, de 24 horas a 7 dias.",
     tone: "affiliate",
   },
   {
     n: "03",
     icon: BadgeCheck,
     title: "Você paga só o que foi visto",
-    text: "O Clilin confere cada post e cobra apenas as visualizações verificadas. O que sobrar da meta volta para o seu saldo.",
+    text: "Cada post conta as visualizações dos 7 primeiros dias. O Clilin confere e cobra só o que foi verificado. O que sobrar da meta volta para o seu saldo.",
     tone: "highlight",
   },
 ] as const;
@@ -36,9 +36,9 @@ export function HomeHowItWorks() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-14">
           <span className="text-primary font-semibold text-sm uppercase tracking-wider">Como funciona</span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold mt-3 mb-4">Três passos, um assunto só</h2>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold mt-3 mb-4">Três passos, uma onda só</h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Muita gente falando da sua marca no mesmo dia. É assim que um nome ganha força nas redes.
+            Muita gente falando da sua marca no mesmo dia. Quem rola o feed vê o seu nome várias vezes, em perfis diferentes, de gente que confia.
           </p>
         </div>
 
