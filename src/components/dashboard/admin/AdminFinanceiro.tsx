@@ -355,7 +355,7 @@ export default function AdminFinanceiro() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">Pagamentos Afiliados</p>
+                <p className="text-sm text-muted-foreground">Pagamentos a Divulgadores</p>
                 <p className="text-2xl font-bold text-red-600">{formatBalance(data.pagamentosAfiliados)}</p>
                 <p className="text-xs text-muted-foreground">Ganhos dos divulgadores</p>
               </div>
@@ -410,7 +410,7 @@ export default function AdminFinanceiro() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">Saldo Afiliados</p>
+                <p className="text-sm text-muted-foreground">Saldo dos Divulgadores</p>
                 <p className="text-xl font-bold">{formatBalance(data.saldoAfiliados)}</p>
                 <p className="text-xs text-muted-foreground">Total em carteira</p>
               </div>
@@ -518,7 +518,7 @@ export default function AdminFinanceiro() {
         {/* Top Affiliates */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Top 5 Afiliados por Ganhos</CardTitle>
+            <CardTitle className="text-base">Top 5 Divulgadores por Ganhos</CardTitle>
           </CardHeader>
           <CardContent>
             {data.topAfiliados.length > 0 ? (

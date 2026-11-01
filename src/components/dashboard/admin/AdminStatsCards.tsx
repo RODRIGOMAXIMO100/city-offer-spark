@@ -196,7 +196,7 @@ export function AdminStatsCards({ stats }: AdminStatsCardsProps) {
             <CardContent className="p-3">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-[10px] sm:text-xs text-muted-foreground mb-1">Saldo Afiliados</p>
+                  <p className="text-[10px] sm:text-xs text-muted-foreground mb-1">Saldo Divulgadores</p>
                   <p className="text-lg font-bold">{formatBalance(stats.saldoAfiliados)}</p>
                 </div>
                 <UserCheck className="h-6 w-6 text-muted-foreground/20" />

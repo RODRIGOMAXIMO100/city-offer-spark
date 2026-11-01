@@ -48,6 +48,7 @@ import RedeemCouponPanel from './RedeemCouponPanel';
 import MerchantWhatsAppPanel from './MerchantWhatsAppPanel';
 import CompanyCampaigns from './reach/CompanyCampaigns';
 import { SHOW_COUPON_OFFERS } from '@/lib/reach';
+import { ComingSoonLeadsCard } from '@/components/dashboard/ComingSoonLeadsCard';
 
 const MAX_ACTIVE_OFFERS = 3;
 
@@ -460,6 +461,7 @@ function CompanyDashboardContent() {
 
           <TabsContent value="campaigns" className="mt-0">
             <CompanyCampaigns onNeedCredits={handleBuyCredits} />
+            {!SHOW_COUPON_OFFERS && <div className="mt-6"><ComingSoonLeadsCard role="company" /></div>}
           </TabsContent>
 
           <TabsContent value="panel" className="space-y-4 sm:space-y-6 mt-0">
@@ -513,7 +515,7 @@ function CompanyDashboardContent() {
                   className="hidden"
                 />
                 <p className="text-[10px] sm:text-xs text-muted-foreground mt-1">
-                  JPG, PNG até 2MB. Aparecerá nas ofertas.
+                  JPG ou PNG até 2MB. Aparece para os divulgadores nas missões das suas campanhas.
                 </p>
               </div>
             </div>
@@ -550,7 +552,7 @@ function CompanyDashboardContent() {
               </Button>
             </div>
             <p className="text-[10px] sm:text-xs text-muted-foreground">
-              Os clientes poderão conhecer seu estabelecimento antes de acessar a oferta.
+              Ajuda a equipe e os divulgadores a conhecer sua marca.
             </p>
           </CardContent>
         </Card>

@@ -22,6 +22,7 @@ import AuthorPage from "./pages/AuthorPage";
 import HelpPage from "./pages/HelpPage";
 import NotFound from "./pages/NotFound";
 import AuthCallbackPage from "./pages/AuthCallbackPage";
+import { SHOW_COUPON_OFFERS } from "@/lib/reach";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
 import CompleteSignupPage from "./pages/CompleteSignupPage";
 import ParaEmpresasPage from "./pages/ParaEmpresasPage";
@@ -87,9 +88,10 @@ const AppRoutes = () => (
     <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
     <Route path="/admin/login" element={<AdminLoginPage />} />
     <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
-    <Route path="/oferta/:id" element={<OfferPage />} />
-    <Route path="/offer/:id" element={<OfferPage />} />
-    <Route path="/o/:code" element={<ShortLinkRedirect />} />
+    {/* Ofertas e cupons estão em breve: os links antigos levam para a página de clientes até o lançamento */}
+    <Route path="/oferta/:id" element={SHOW_COUPON_OFFERS ? <OfferPage /> : <Navigate to="/clientes" replace />} />
+    <Route path="/offer/:id" element={SHOW_COUPON_OFFERS ? <OfferPage /> : <Navigate to="/clientes" replace />} />
+    <Route path="/o/:code" element={SHOW_COUPON_OFFERS ? <ShortLinkRedirect /> : <Navigate to="/clientes" replace />} />
     <Route path="/termos" element={<TermsPage />} />
     <Route path="/privacidade" element={<PrivacyPage />} />
     <Route path="/sobre" element={<AboutPage />} />

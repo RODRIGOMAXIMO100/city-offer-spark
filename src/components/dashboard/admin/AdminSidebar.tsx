@@ -73,8 +73,6 @@ const menuGroups = [
     items: [
       { id: 'campaigns' as AdminSection, label: 'Campanhas', icon: Target },
       { id: 'users' as AdminSection, label: 'Usuários', icon: Users },
-      { id: 'offers' as AdminSection, label: 'Ofertas', icon: Megaphone },
-      { id: 'leads' as AdminSection, label: 'Leads', icon: Phone },
     ]
   },
   {
@@ -100,12 +98,20 @@ const menuGroups = [
     icon: Tags,
     items: [
       { id: 'cities' as AdminSection, label: 'Cidades', icon: MapPin },
-      { id: 'niches' as AdminSection, label: 'Nichos', icon: Tags },
       { id: 'blog' as AdminSection, label: 'Blog', icon: FileText },
       { id: 'seo' as AdminSection, label: 'SEO / Google', icon: Search },
+    ]
+  },
+  {
+    // Módulo de ofertas, cupons e leads: guardado para o lançamento (em breve no site)
+    label: 'Captação (em breve)',
+    icon: Megaphone,
+    items: [
+      { id: 'offers' as AdminSection, label: 'Ofertas', icon: Megaphone },
+      { id: 'leads' as AdminSection, label: 'Leads', icon: Phone },
+      { id: 'niches' as AdminSection, label: 'Nichos', icon: Tags },
       { id: 'wa-templates' as AdminSection, label: 'Templates WhatsApp', icon: MessageCircle },
     ]
-
   },
 ];
 

@@ -54,13 +54,9 @@ function generateOrganizationSchema() {
     '@type': 'Organization',
     name: 'Clilin',
     url: BASE_URL,
-    logo: `${BASE_URL}/logo.png`,
-    description: 'Plataforma de ofertas locais e programa de afiliados para comércio local',
-    foundingDate: '2024',
-    sameAs: [
-      'https://instagram.com/clilin',
-      'https://facebook.com/clilin',
-    ],
+    logo: `${BASE_URL}/android-chrome-512x512.png`,
+    description: 'Rede de divulgadores: campanhas de alcance com gente de verdade. A empresa paga só pelas visualizações verificadas e os melhores divulgadores ganham prêmios todo mês.',
+    sameAs: ['https://www.instagram.com/clilinapp'],
     contactPoint: {
       '@type': 'ContactPoint',
       contactType: 'customer service',
@@ -69,7 +65,7 @@ function generateOrganizationSchema() {
     },
     address: {
       '@type': 'PostalAddress',
-      addressLocality: 'Viçosa',
+      addressLocality: 'Belo Horizonte',
       addressRegion: 'MG',
       addressCountry: 'BR',
     },
@@ -82,15 +78,8 @@ function generateWebSiteSchema() {
     '@type': 'WebSite',
     name: 'Clilin',
     url: BASE_URL,
-    description: 'Ofertas locais e programa de afiliados',
-    potentialAction: {
-      '@type': 'SearchAction',
-      target: {
-        '@type': 'EntryPoint',
-        urlTemplate: `${BASE_URL}/ofertas?q={search_term_string}`,
-      },
-      'query-input': 'required name=search_term_string',
-    },
+    description: 'Sua marca na boca do Brasil: campanhas de alcance com divulgadores de verdade.',
+    inLanguage: 'pt-BR',
   };
 }
 

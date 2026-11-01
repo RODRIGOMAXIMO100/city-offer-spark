@@ -31,6 +31,7 @@ import { AffiliateOfferCard } from './AffiliateOfferCard';
 import AffiliateMissions from './reach/AffiliateMissions';
 import AffiliateReachRanking from './reach/AffiliateReachRanking';
 import { SHOW_COUPON_OFFERS } from '@/lib/reach';
+import { ComingSoonLeadsCard } from '@/components/dashboard/ComingSoonLeadsCard';
 import { BrandLogo } from '@/components/brand/BrandLogo';
 
 interface Withdrawal {
@@ -384,6 +385,7 @@ function AffiliateDashboardContent() {
 
           <TabsContent value="missoes" className="space-y-6">
             <AffiliateMissions />
+            {!SHOW_COUPON_OFFERS && <ComingSoonLeadsCard role="affiliate" />}
           </TabsContent>
 
           <TabsContent value="ranking" className="space-y-6">
@@ -495,14 +497,14 @@ function AffiliateDashboardContent() {
                   </p>
                 </div>
                 {earnings.length === 0 ? (
-                  <p className="text-sm text-muted-foreground text-center py-4">Nenhum ganho registrado ainda.</p>
+                  <p className="text-sm text-muted-foreground text-center py-4">Nenhum prêmio ainda. Faça as missões e suba no ranking da sua liga.</p>
                 ) : (
                   <div className="space-y-2 max-h-64 overflow-y-auto">
                     {earnings.map((e) => (
                       <div key={e.id} className="flex justify-between items-center text-sm bg-muted/50 rounded-lg p-3 gap-2">
                         <div className="min-w-0 flex-1">
                           <p className="font-medium text-affiliate">{formatCreditsToReal(e.amount)}</p>
-                          <p className="text-xs text-muted-foreground truncate">{e.offer_title || 'Oferta'}</p>
+                          <p className="text-xs text-muted-foreground truncate">{e.offer_title || 'Prêmio'}</p>
                         </div>
                         <p className="text-xs text-muted-foreground whitespace-nowrap">{formatDate(e.created_at)}</p>
                       </div>

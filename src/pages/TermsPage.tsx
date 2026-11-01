@@ -128,7 +128,7 @@ const sections: DocSection[] = [
     blocks: [
       "**Empresas:** garantem que o material e a palavra-chave da campanha são verdadeiros, legais e que têm os direitos de uso. Respondem pelo que anunciam perante o consumidor.",
       "**Divulgadores:** postam de forma honesta e transparente, com #publi, seguem as regras das redes sociais e da publicidade e só usam perfis próprios.",
-      "O Clilin organiza as campanhas, verifica os posts e apura o ranking. O Clilin não é parceiro, representante nem afiliado do Instagram, TikTok, Kwai, YouTube, Facebook ou X. Mudanças nessas redes, como bloqueios, quedas ou mudanças de alcance, podem afetar as campanhas.",
+      "O Clilin organiza as campanhas, verifica os posts e apura o ranking. O Clilin não é parceiro nem representante e não tem vínculo com o Instagram, TikTok, Kwai, YouTube, Facebook ou X. Mudanças nessas redes, como bloqueios, quedas ou mudanças de alcance, podem afetar as campanhas.",
     ],
   },
   {
