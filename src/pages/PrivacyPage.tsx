@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { SEOHead } from "@/components/seo/SEOHead";
 import { DocPage, type DocSection } from "@/components/docs/DocPage";
 
-const UPDATED = "31 de outubro de 2026";
+const UPDATED = "1 de novembro de 2026";
 
 const sections: DocSection[] = [
   {
@@ -23,15 +23,20 @@ const sections: DocSection[] = [
           "Nome, e-mail, telefone e cidade.",
           "CPF (divulgadores e empresas sem CNPJ), para identificação e prevenção de fraude.",
           "CNPJ e razão social (empresas).",
-          "@ dos perfis nas redes sociais e número de seguidores (divulgadores), para definir a liga e conferir os posts.",
-          "Chave Pix (divulgadores), para pagar prêmios.",
+          "Chave Pix (divulgadores), para pagar comissões.",
         ],
       },
-      "**Campanhas e posts**",
+      "**Cupons**",
       {
         list: [
-          "Link dos posts, prints das visualizações enviados pelo divulgador e métricas públicas dos posts (visualizações, curtidas, comentários), lidas das próprias redes sociais.",
-          "Campanhas criadas, metas, créditos, pontos, posição no ranking, prêmios e saques.",
+          "Nome e WhatsApp de quem pega um cupom, para enviar o código e para a loja conferir.",
+          "Oferta, código, validade, data de uso e o divulgador ligado ao cupom.",
+        ],
+      },
+      "**Ofertas e saldo**",
+      {
+        list: [
+          "Ofertas criadas, visitas, cupons pegos e usados, saldo, taxas, comissões e saques.",
         ],
       },
       "**Uso e segurança**",
@@ -49,9 +54,9 @@ const sections: DocSection[] = [
     blocks: [
       {
         list: [
-          ["Funcionar", "criar sua conta, enviar missões, verificar posts, calcular pontos, ranking e prêmios, cobrar créditos e pagar saques."],
-          ["Proteger", "detectar visualizações compradas, perfis falsos, contas duplicadas e outras fraudes."],
-          ["Avisar", "mandar notificações sobre sua conta, missões, campanhas, prêmios e mudanças nas regras."],
+          ["Funcionar", "criar sua conta, emitir e enviar cupons pelo WhatsApp, conferir cupons, calcular taxas e comissões, cobrar e pagar saques."],
+          ["Proteger", "detectar cupons com dados falsos, validações sem cliente, contas duplicadas e outras fraudes."],
+          ["Avisar", "mandar o cupom no WhatsApp e notificações sobre sua conta, ofertas, comissões e mudanças nas regras."],
           ["Melhorar", "entender como a plataforma é usada para corrigir problemas e criar recursos."],
           ["Cumprir a lei", "guardar registros fiscais e atender pedidos de autoridades."],
         ],
@@ -79,8 +84,8 @@ const sections: DocSection[] = [
       "Não vendemos nem alugamos seus dados. Compartilhamos só o necessário:",
       {
         list: [
-          ["Com a empresa da campanha", "o @, o link e as métricas dos posts feitos para ela. A empresa não recebe seu CPF, telefone nem chave Pix."],
-          ["No ranking", "nome de exibição, liga e posição podem aparecer para os outros divulgadores."],
+          ["Com a empresa da oferta", "nome e WhatsApp de quem pegou o cupom dela, para conferir e atender. A empresa não recebe CPF nem chave Pix de divulgadores."],
+          ["WhatsApp (Meta)", "o número de quem pega o cupom e o texto da mensagem, para enviar o código."],
           ["Prestadores de serviço", "Supabase (banco de dados e login), Hostinger (hospedagem do site), Asaas (pagamentos e Pix) e Google (quando você entra com a conta Google). Eles tratam os dados só para prestar o serviço ao Clilin."],
           ["Autoridades", "quando a lei ou uma ordem judicial exigir, ou para defender direitos em caso de fraude."],
         ],
@@ -123,7 +128,7 @@ const sections: DocSection[] = [
           "Pedir a portabilidade dos dados.",
           "Saber com quem compartilhamos seus dados.",
           "Revogar o consentimento e se opor a tratamentos por legítimo interesse.",
-          "Pedir revisão humana de decisões automáticas, como a reprovação de um post ou o bloqueio por suspeita de fraude.",
+          "Pedir revisão humana de decisões automáticas, como o cancelamento de um cupom ou o bloqueio por suspeita de fraude.",
         ],
       },
       "Para exercer qualquer direito, escreva para **contato@clilin.com** com o assunto \"Privacidade\". Respondemos em até 15 dias. Se não ficar satisfeito, você pode reclamar à ANPD em gov.br/anpd.",
@@ -157,7 +162,7 @@ export default function PrivacyPage() {
     <>
       <SEOHead
         title="Política de Privacidade | Clilin"
-        description="Como o Clilin trata os dados de empresas e divulgadores: o que coletamos, para quê, com quem compartilhamos e como exercer seus direitos pela LGPD."
+        description="Como o Clilin trata os dados de empresas, divulgadores e de quem pega cupom: o que coletamos, para quê, com quem compartilhamos e como exercer seus direitos pela LGPD."
         canonicalUrl="/privacidade"
       />
       <DocPage

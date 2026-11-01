@@ -55,7 +55,7 @@ function generateOrganizationSchema() {
     name: 'Clilin',
     url: BASE_URL,
     logo: `${BASE_URL}/android-chrome-512x512.png`,
-    description: 'Rede de divulgadores: muita gente real postando sobre a sua marca no mesmo dia. A empresa paga só pelas visualizações verificadas e os melhores divulgadores ganham prêmios todo mês.',
+    description: 'Ofertas dos negócios da sua cidade com cupom grátis no WhatsApp. A loja só paga quando o cupom é usado, e quem indica ganha por cliente.',
     sameAs: ['https://www.instagram.com/clilinapp'],
     contactPoint: {
       '@type': 'ContactPoint',
@@ -78,7 +78,7 @@ function generateWebSiteSchema() {
     '@type': 'WebSite',
     name: 'Clilin',
     url: BASE_URL,
-    description: 'Sua marca na boca do Brasil: ondas de divulgação com gente de verdade.',
+    description: 'Ofertas da cidade com cupom grátis no WhatsApp.',
     inLanguage: 'pt-BR',
   };
 }

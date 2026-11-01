@@ -6,42 +6,36 @@ export const homeFaqs = [
   {
     question: "Quanto custa para a empresa?",
     answer:
-      "R$ 5 a cada mil visualizações verificadas. A meta mínima é de 20 mil visualizações (R$ 100). O valor da meta fica reservado no seu crédito, é cobrado conforme os posts são aprovados e o que sobrar volta para o seu saldo quando a campanha termina. Nenhum post passa de 20% da campanha, para a sua marca aparecer em muitos perfis e não em um só.",
+      "Não tem mensalidade. Você paga só pelo cupom usado na loja: 15% do preço da oferta, com mínimo de R$ 3. Numa pizza de R$ 39, cada cliente custa R$ 5,85. Com saldo pré-pago, sai 10% mais barato. Cupom pego e não usado não custa nada.",
   },
   {
-    question: "Como vocês sabem que as visualizações são reais?",
+    question: "Como o cliente recebe e usa o cupom?",
     answer:
-      "Cada post é lido pelo sistema (se existe, quem postou, se tem o nome da marca e o #publi) e conferido pela equipe, junto com o print das visualizações enviado pelo divulgador. Contam as visualizações dos 7 primeiros dias de cada post: no 7º dia o sistema lê de novo e só então o post é aprovado. Só entra na conta o que foi aprovado. Os perfis precisam estar abertos e são conferidos antes.",
+      "Na página da oferta, ele informa nome e WhatsApp e recebe um código de 8 letras na hora, também no WhatsApp. Depois é só mostrar o código no balcão ou mandar para o WhatsApp da loja na hora de pedir.",
   },
   {
-    question: "Em quais redes os posts acontecem?",
+    question: "Como a loja confere se o cupom vale?",
     answer:
-      "O foco é vídeo curto: TikTok, Reels do Instagram, YouTube Shorts e Kwai, onde a própria rede mostra quantas vezes o vídeo foi visto. Facebook e X também valem, conferidos pelo print. Stories não entram, porque somem em 24 horas e não dá para conferir depois.",
+      "No painel, na aba Validar cupom, o empresário digita o código. O sistema diz na hora se é válido, se já foi usado, se venceu ou se é de outra loja. Quando é válido, o cupom fica marcado como usado e não serve mais.",
   },
   {
-    question: "É campanha de hashtag? Vocês colocam a marca nos assuntos do momento?",
+    question: "As ofertas valem para qualquer cidade?",
     answer:
-      "Não. O que você compra é gente real postando vídeos sobre a sua marca, no mesmo período, e o que conta é quantas vezes esses posts foram vistos. O nome da marca vai falado no vídeo e escrito na legenda, e a hashtag é opcional. Não vendemos subida em assuntos do momento nem curtidas e comentários: isso vai contra as regras das redes e põe em risco a sua marca e o perfil de quem divulga.",
+      "Não. Cada oferta é da cidade da loja e aparece para quem procura ofertas naquela cidade. É desconto de quem está perto de você.",
   },
   {
     question: "Como o divulgador ganha?",
     answer:
-      "Com prêmios em dinheiro todo mês. Cada visualização verificada vale 1 ponto, e 35% de tudo que as empresas investem vai para o fundo de prêmios. Os melhores de cada liga recebem no saldo e sacam via Pix a partir de R$ 100.",
+      "Ele divulga o link das ofertas da cidade. Quem pega o cupom por esse link fica marcado no nome dele, e quando o cupom é usado na loja ele recebe metade da taxa, chegando a 70% conforme o nível. O saque é por Pix a partir de R$ 100.",
+  },
+  {
+    question: "O cliente paga alguma coisa?",
+    answer: "Não. Pegar e usar o cupom é grátis e não precisa baixar app nem criar conta.",
   },
   {
     question: "Preciso ter muitos seguidores para divulgar?",
     answer:
-      "Não. O ranking é dividido em ligas: Bronze (até 1 mil seguidores), Prata (de 1 mil a 5 mil) e Ouro (acima de 5 mil). Você disputa com quem tem o seu tamanho. Para concorrer no mês, faça pelo menos 2 mil pontos.",
-  },
-  {
-    question: "Por que o post precisa ter #publi?",
-    answer:
-      "Porque é conteúdo de divulgação, e quem vê tem o direito de saber. Isso protege o divulgador, a empresa e as próprias redes sociais.",
-  },
-  {
-    question: "Posso escolher onde a campanha acontece?",
-    answer:
-      "Sim. Você escolhe as cidades ou deixa aberta para o Brasil inteiro. Só divulgadores dessas cidades recebem a missão.",
+      "Não. O que conta é conhecer gente da sua cidade: grupos de WhatsApp, status, vizinhança, trabalho. Quem leva cliente de verdade até a loja ganha.",
   },
 ];
 

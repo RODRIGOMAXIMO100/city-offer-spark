@@ -19,12 +19,12 @@ export function BlogCTA({ category }: { category?: string }) {
       </span>
       <h3 className="text-xl sm:text-2xl font-display font-bold text-foreground mb-2">Tem uma empresa?</h3>
       <p className="text-muted-foreground mb-6 flex-1">
-        Coloque sua marca na boca da cidade. Dezenas de pessoas reais postam sobre você na mesma hora, e você paga só pelo alcance verificado: R$ 5 por mil visualizações.
+        Publique uma oferta, a cidade fica sabendo e o cliente chega com o cupom no WhatsApp. Você só paga pelo cupom usado: 15% do preço, mínimo de R$ 3.
       </p>
       <div className="flex flex-col sm:flex-row gap-3">
         <Button asChild className="bg-company text-company-foreground hover:bg-company/90">
           <Link to="/auth?role=COMPANY">
-            Criar campanha <ArrowRight className="ml-2 h-4 w-4" />
+            Colocar minha oferta <ArrowRight className="ml-2 h-4 w-4" />
           </Link>
         </Button>
         <Button asChild variant="ghost">
@@ -41,7 +41,7 @@ export function BlogCTA({ category }: { category?: string }) {
       </span>
       <h3 className="text-xl sm:text-2xl font-display font-bold text-foreground mb-2">Quer ganhar divulgando?</h3>
       <p className="text-muted-foreground mb-6 flex-1">
-        Entre na rede de divulgadores, poste as missões das marcas no seu perfil e suba no ranking da sua liga. Os melhores do mês ganham prêmio em dinheiro no Pix. Entrar é grátis.
+        Indique as ofertas da sua cidade pelo seu link e ganhe metade da taxa de cada cupom usado, até 70% por nível. Saque no Pix. Entrar é grátis.
       </p>
       <div className="flex flex-col sm:flex-row gap-3">
         <Button asChild className="bg-affiliate text-affiliate-foreground hover:bg-affiliate/90">
@@ -72,17 +72,17 @@ export function BlogSideCTA({ category }: { category?: string }) {
   return (
     <div className={`mt-6 rounded-2xl border p-5 ${isAffiliate ? "border-affiliate/20 bg-affiliate/5" : "border-company/20 bg-company/5"}`}>
       <p className="font-display font-bold text-foreground mb-1">
-        {isAffiliate ? "Ganhe prêmios divulgando" : "Sua marca na boca da cidade"}
+        {isAffiliate ? "Ganhe indicando ofertas" : "Cliente novo na sua loja"}
       </p>
       <p className="text-sm text-muted-foreground mb-4">
-        {isAffiliate ? "Missões de marcas, ranking por liga e prêmio no Pix." : "Pague só pelo alcance verificado: R$ 5 por mil visualizações."}
+        {isAffiliate ? "Comissão por cada cliente que usar o cupom na loja." : "Pague só pelo cupom usado: 15% do preço, mínimo de R$ 3."}
       </p>
       <Button
         asChild
         size="sm"
         className={`w-full ${isAffiliate ? "bg-affiliate text-affiliate-foreground hover:bg-affiliate/90" : "bg-company text-company-foreground hover:bg-company/90"}`}
       >
-        <Link to={isAffiliate ? "/auth?role=AFFILIATE" : "/auth?role=COMPANY"}>{isAffiliate ? "Entrar na rede" : "Criar campanha"}</Link>
+        <Link to={isAffiliate ? "/auth?role=AFFILIATE" : "/auth?role=COMPANY"}>{isAffiliate ? "Quero indicar" : "Colocar oferta"}</Link>
       </Button>
     </div>
   );

@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, BadgeCheck, Hash, Megaphone, Scale, ShieldCheck, Sparkles, Trophy, Users } from "lucide-react";
+import { ArrowRight, BadgeCheck, MapPin, Megaphone, Scale, ShieldCheck, Ticket, Trophy, Users } from "lucide-react";
 import { SEOHead } from "@/components/seo/SEOHead";
 import { Navbar } from "@/components/landing/Navbar";
 import { Footer } from "@/components/landing/Footer";
@@ -7,19 +7,19 @@ import { Button } from "@/components/ui/button";
 import { LogoGraphic } from "@/components/brand/BrandLogo";
 
 const principles = [
-  { icon: BadgeCheck, title: "Gente de verdade", text: "Perfis abertos, conferidos antes de entrar, e cada post verificado. Visualização comprada não conta." },
-  { icon: Hash, title: "Transparência", text: "Todo post leva #publi. Quem vê sabe que é divulgação, e isso protege o divulgador, a marca e as redes." },
-  { icon: Scale, title: "Jogo justo", text: "Ligas por tamanho de perfil e prêmio por mérito, sem sorteio. Quem tem 800 seguidores disputa com quem tem 800." },
-  { icon: ShieldCheck, title: "Só paga o que aconteceu", text: "A empresa paga pelo alcance verificado. Post reprovado não é cobrado e o que sobra volta para o saldo." },
+  { icon: MapPin, title: "Perto de você", text: "Cada oferta é da cidade da loja. O Clilin existe para movimentar o comércio do lugar onde a gente vive." },
+  { icon: BadgeCheck, title: "Cliente de verdade", text: "Cada cupom tem código único, validade e vale uma vez. Só conta quem chegou na loja." },
+  { icon: Scale, title: "Regra clara", text: "15% do preço por cupom usado, mínimo de R$ 3, e metade para quem indicou. Todo mundo sabe para onde vai cada real." },
+  { icon: ShieldCheck, title: "Só paga o que aconteceu", text: "Visita e cupom não usado não custam nada para a loja. Para o cliente, é sempre de graça." },
 ];
 
 const AboutPage = () => {
   return (
     <div className="min-h-screen bg-background">
       <SEOHead
-        title="Sobre o Clilin: a rede de divulgadores que coloca sua marca na boca da cidade"
-        description="O Clilin junta empresas e gente de verdade para falar da mesma marca na mesma hora. A empresa paga só pelo alcance verificado e os melhores divulgadores ganham prêmios todo mês."
-        keywords={["clilin", "rede de divulgadores", "boca a boca", "marketing local", "campanha de alcance", "sobre"]}
+        title="Sobre o Clilin: ofertas da cidade com cupom no WhatsApp"
+        description="O Clilin junta negócios locais, divulgadores da cidade e clientes. A loja publica a oferta, o cliente pega o cupom no WhatsApp e a loja só paga pelo cupom usado."
+        keywords={["clilin", "ofertas locais", "cupom de desconto", "boca a boca", "comércio local", "sobre"]}
         canonicalUrl="/sobre"
       />
       <Navbar />
@@ -32,7 +32,7 @@ const AboutPage = () => {
             O boca a boca, <span className="text-brand-gradient">organizado</span>.
           </h1>
           <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
-            O Clilin junta empresas e gente comum da cidade para falar da mesma marca, no mesmo dia, nas redes de cada um. É assim que um nome vira assunto.
+            O Clilin junta os negócios da cidade, quem indica e quem compra. A loja publica a oferta, alguém de confiança espalha e o cliente chega com o cupom na mão.
           </p>
         </div>
       </section>
@@ -43,9 +43,9 @@ const AboutPage = () => {
           <div className="max-w-3xl mb-10">
             <h2 className="text-2xl sm:text-4xl font-display font-bold text-foreground mb-4">O que é o Clilin</h2>
             <p className="text-lg text-muted-foreground leading-relaxed">
-              Um anúncio fala com quem não pediu. Uma pessoa conhecida falando de uma marca é diferente: as pessoas confiam, comentam e lembram. O Clilin
-              transforma isso em campanha. A empresa marca a onda e as cidades, dezenas de divulgadores postam no mesmo período, e cada
-              visualização é conferida antes de ser cobrada.
+              Um anúncio fala com quem não pediu. Uma indicação de alguém conhecido é diferente: a pessoa confia e vai. O Clilin transforma isso em
+              cliente na porta. A loja cria a oferta, divulgadores da cidade indicam, o cliente pega o cupom no WhatsApp e a loja confere o código
+              no balcão. Só aí existe cobrança.
             </p>
           </div>
 
@@ -56,8 +56,8 @@ const AboutPage = () => {
               </span>
               <h3 className="text-xl font-display font-bold text-foreground mb-2">Para empresas</h3>
               <p className="text-muted-foreground mb-5">
-                Sua marca na boca da cidade, com gente de verdade. R$ 5 a cada mil visualizações verificadas, a partir de R$ 100 por campanha. Você
-                acompanha cada post no painel, conforme é aprovado.
+                Cliente novo na loja, pagando só pelo cupom usado: 15% do preço da oferta, mínimo de R$ 3. Sem mensalidade. Você confere cada código
+                no painel antes de dar o desconto.
               </p>
               <Link to="/empresas" className="inline-flex items-center gap-2 font-semibold text-company hover:underline">
                 Como funciona para empresas <ArrowRight className="h-4 w-4" />
@@ -69,8 +69,8 @@ const AboutPage = () => {
               </span>
               <h3 className="text-xl font-display font-bold text-foreground mb-2">Para divulgadores</h3>
               <p className="text-muted-foreground mb-5">
-                Poste as missões das marcas no seu perfil, some pontos pelas visualizações e suba no ranking da sua liga. Os melhores do mês ganham prêmio
-                em dinheiro no Pix. Entrar é grátis.
+                Indique as ofertas da sua cidade pelo seu link e ganhe metade da taxa de cada cupom usado, até 70% por nível. Saque no Pix. Entrar é
+                grátis.
               </p>
               <Link to="/divulgadores" className="inline-flex items-center gap-2 font-semibold text-affiliate hover:underline">
                 Como funciona para divulgadores <ArrowRight className="h-4 w-4" />
@@ -78,19 +78,18 @@ const AboutPage = () => {
             </div>
           </div>
 
-          <div className="mt-5 rounded-3xl border border-dashed border-client/40 bg-client/5 p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center gap-4">
-            <span className="h-12 w-12 rounded-2xl bg-client/15 text-client flex items-center justify-center shrink-0">
-              <Sparkles className="h-6 w-6" />
+          <div className="mt-5 rounded-3xl border border-border bg-card p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center gap-4">
+            <span className="h-12 w-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+              <Ticket className="h-6 w-6" />
             </span>
             <div className="flex-1">
-              <p className="text-xs font-semibold uppercase tracking-wider text-client mb-1">Em breve</p>
-              <h3 className="text-lg font-display font-bold text-foreground">Ofertas, cupons e captação de clientes</h3>
+              <h3 className="text-lg font-display font-bold text-foreground">Para quem compra</h3>
               <p className="text-muted-foreground">
-                A próxima etapa leva clientes até as empresas, com ofertas da cidade e cupons. Deixe seu contato para saber primeiro.
+                Ofertas dos negócios da sua cidade, com cupom grátis no WhatsApp. Sem app e sem cadastro.
               </p>
             </div>
             <Button asChild variant="outline" className="shrink-0">
-              <Link to="/clientes">Quero saber primeiro</Link>
+              <Link to="/ofertas">Ver ofertas</Link>
             </Button>
           </div>
         </div>

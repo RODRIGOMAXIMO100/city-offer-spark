@@ -18,10 +18,21 @@ const GROUPS: Group[] = [
     title: "Começando",
     tone: "text-primary",
     faqs: [
-      { q: "O que é o Clilin?", a: "Uma rede de divulgadores. Empresas marcam uma onda, e gente de verdade posta vídeos sobre a marca no mesmo período, cada um no seu perfil. A empresa paga só pelas visualizações verificadas e os melhores divulgadores de cada liga ganham prêmio em dinheiro todo mês." },
-      { q: "Quanto custa para usar?", a: "Para o divulgador, nada. Para a empresa, R$ 5 a cada mil visualizações verificadas, com campanhas a partir de 20 mil visualizações (R$ 100)." },
-      { q: "Em quais cidades funciona?", a: "No Brasil inteiro. A empresa escolhe as cidades da campanha e só os divulgadores dessas cidades recebem a missão." },
-      { q: "Preciso ter 18 anos?", a: "Sim. O Clilin é só para maiores de 18 anos." },
+      { q: "O que é o Clilin?", a: "Uma plataforma de ofertas locais. Negócios da cidade publicam promoções, divulgadores espalham e o cliente pega o cupom de graça, direto no WhatsApp. A loja confere o código no balcão e só paga pelo cupom usado." },
+      { q: "Quanto custa para usar?", a: "Para o cliente e para o divulgador, nada. Para a empresa, não tem mensalidade: ela paga 15% do preço da oferta por cupom usado, com mínimo de R$ 3. Com saldo pré-pago, sai 10% mais barato." },
+      { q: "Em quais cidades funciona?", a: "Em qualquer cidade do Brasil. Cada oferta é da cidade da loja e aparece para quem procura ofertas naquela cidade." },
+      { q: "Preciso ter 18 anos?", a: "Para ter conta de empresa ou de divulgador, sim. Para pegar cupom, não precisa de conta." },
+    ],
+  },
+  {
+    id: "clientes",
+    title: "Para quem pega cupom",
+    tone: "text-primary",
+    faqs: [
+      { q: "Como pego um cupom?", a: "Em Ofertas, escolha a sua cidade e a oferta. Toque em \"Quero meu cupom\", informe nome e WhatsApp e o código de 8 letras aparece na hora. Ele também é enviado para o seu WhatsApp." },
+      { q: "Como uso o cupom?", a: "Mostre o código na loja na hora de pagar ou mande o código no WhatsApp da loja quando for pedir. A loja confere no Clilin e aplica o desconto." },
+      { q: "O cupom tem validade?", a: "Tem. A validade aparece no cupom e é definida pela loja, nunca depois do fim da oferta. Cada cupom vale uma vez." },
+      { q: "Quantos cupons posso pegar?", a: "Até 3 por dia no mesmo WhatsApp. Se você pedir de novo o cupom da mesma oferta, recebe o mesmo código enquanto ele for válido." },
     ],
   },
   {
@@ -29,14 +40,12 @@ const GROUPS: Group[] = [
     title: "Para empresas",
     tone: "text-company",
     faqs: [
-      { q: "Como crio uma campanha?", a: "Entre no painel, vá em Campanhas e clique em criar. Você informa o nome, a assinatura (o nome ou a frase que todo mundo vai falar), o roteiro com ideias de vídeo, o link do material (opcional), as redes aceitas, as cidades, a meta de visualizações e a janela da onda, de 24 horas a 7 dias." },
-      { q: "Como funciona a cobrança?", a: "O valor da meta fica reservado nos seus créditos quando a campanha é criada. O débito acontece conforme cada post é aprovado, com as visualizações dos 7 primeiros dias dele. Nenhum post passa de 20% do valor da campanha. Post reprovado não é cobrado. Se a meta não for atingida, o que sobrou volta para o seu saldo quando a campanha termina." },
-      { q: "Quais são os pacotes?", a: "Largada: 20 mil visualizações por R$ 100. Cidade: 50 mil por R$ 250. Região: 100 mil por R$ 500. Brasil: 300 mil por R$ 1.500. Você também pode definir uma meta própria, a partir de 20 mil." },
-      { q: "Como sei que as visualizações são reais?", a: "Cada post passa por leitura automática dos dados públicos (se existe, se está no perfil cadastrado, se tem o nome da marca e o #publi), por uma nova leitura no 7º dia e por conferência da equipe, comparando com o print das visualizações. Perfil com seguidor comprado ou pico fora do padrão é reprovado." },
-      { q: "Onde acompanho os resultados?", a: "No painel da empresa, em Campanhas. Cada campanha mostra o total de visualizações verificadas em relação à meta e a lista de posts com a rede, a situação da conferência, as visualizações aprovadas e o link para abrir o post." },
-      { q: "Posso encerrar uma campanha antes?", a: "Pode, depois que os posts enviados forem conferidos (eles contam visualizações por 7 dias). Em Campanhas, clique em Encerrar. Os créditos que não foram usados voltam para o seu saldo." },
-      { q: "É campanha de hashtag?", a: "Não. O que conta é gente real postando sobre a sua marca e quantas vezes esses posts foram vistos. A hashtag é opcional. O Clilin não vende subida em assuntos do momento, curtidas ou comentários: isso vai contra as regras das redes." },
-      { q: "Quem cria o conteúdo do post?", a: "Cada divulgador posta do seu jeito, seguindo o roteiro que você escreveu e o material enviado. É isso que faz parecer conversa de verdade, e não anúncio." },
+      { q: "Como crio uma oferta?", a: "Entre no painel, na aba Ofertas, e clique em criar. Informe o que é a promoção, o preço de antes e o com desconto, fotos, validade e, se atender por WhatsApp, o seu número." },
+      { q: "Como confiro o cupom do cliente?", a: "Na aba Validar cupom, digite o código. O sistema diz na hora se é válido, se já foi usado, se venceu ou se é de outra loja. Quando é válido, ele fica marcado como usado." },
+      { q: "Como funciona a cobrança?", a: "Você coloca saldo no painel (por Pix) e cada cupom conferido desconta a taxa: 15% do preço da oferta, mínimo de R$ 3, com 10% de desconto no pré-pago. Cupom pego e não usado não custa nada." },
+      { q: "E se o meu saldo acabar?", a: "As suas ofertas ficam pausadas para novos cupons até você colocar saldo de novo. Os cupons que já foram entregues continuam valendo." },
+      { q: "Onde acompanho os resultados?", a: "No painel da empresa: quantas pessoas viram cada oferta, quantas pegaram o cupom e quantos cupons foram usados." },
+      { q: "Quem divulga a minha oferta?", a: "Divulgadores da sua cidade e a própria busca de ofertas do Clilin. O divulgador só ganha quando o cliente dele usa o cupom na sua loja." },
     ],
   },
   {
@@ -44,25 +53,20 @@ const GROUPS: Group[] = [
     title: "Para divulgadores",
     tone: "text-affiliate",
     faqs: [
-      { q: "Como começo a divulgar?", a: "Crie sua conta como divulgador, cadastre seus perfis nas redes (o @, o número de seguidores e o link) e espere a conferência. Com o perfil aprovado, as missões das marcas da sua cidade aparecem em Missões." },
-      { q: "Como envio um post?", a: "Poste um vídeo ou post no seu perfil falando da marca, com o nome dela na legenda e o #publi. Depois, na missão, informe o perfil onde postou, cole o link do post e, se quiser, as visualizações e o print delas. As visualizações contam por 7 dias: no 7º dia o sistema lê o post de novo e você pode atualizar o número e o print. Quem posta nas primeiras 12 horas da onda ganha 20% a mais de pontos." },
-      { q: "Quanto eu ganho?", a: "Você não recebe por post. Cada visualização verificada vale 1 ponto, e os 3 primeiros de cada liga no mês ganham prêmio em dinheiro. Os valores de referência são R$ 150, R$ 80 e R$ 50, pagos por um fundo formado por 35% do que as empresas investem." },
-      { q: "O que são as ligas?", a: "São divisões por tamanho de perfil: Bronze (até 1 mil seguidores), Prata (de 1 mil a 5 mil) e Ouro (acima de 5 mil). Você disputa com quem tem o seu tamanho." },
-      { q: "Tem pontuação mínima?", a: "Sim. Para concorrer no mês, é preciso fazer pelo menos 2 mil pontos." },
-      { q: "Por que meu post foi reprovado?", a: "Os motivos mais comuns: faltou o nome da marca ou o #publi, o post saiu fora da janela da missão, foi feito em Stories, o perfil não é o cadastrado ou os números não batem com o print. Você vê o motivo na própria missão." },
-      { q: "Posso apagar o post depois?", a: "Só depois que ele for aprovado. Se o post sumir durante os 7 dias de contagem ou na conferência, ele é reprovado e os pontos são anulados." },
-      { q: "Quais redes valem?", a: "TikTok, Reels e feed do Instagram, YouTube Shorts e Kwai. Facebook e X também valem, conferidos pelo print. Stories e Status do WhatsApp não valem." },
+      { q: "Como começo a divulgar?", a: "Crie sua conta como divulgador. No painel aparecem as ofertas da sua cidade, cada uma com o seu link. Mande o link nos grupos, no status e nas redes." },
+      { q: "Quanto eu ganho?", a: "Metade da taxa de cada cupom usado por quem veio pelo seu link, chegando a 70% conforme o seu nível. Numa oferta de R$ 39, a taxa é R$ 5,85 e você recebe cerca de R$ 2,90." },
+      { q: "Quando o dinheiro entra?", a: "Quando a loja confere o cupom do cliente que veio pelo seu link. Você recebe uma notificação e o valor aparece no seu saldo." },
+      { q: "O que são os níveis?", a: "Quanto mais clientes você leva no mês, mais alto o seu nível: Bronze, Prata, Ouro, Platina e Diamante. Cada nível aumenta a sua comissão." },
+      { q: "Preciso ter muitos seguidores?", a: "Não. O que conta é levar cliente de verdade até a loja." },
     ],
   },
   {
     id: "pagamentos",
-    title: "Prêmios e saques",
+    title: "Saques",
     tone: "text-highlight-foreground",
     faqs: [
-      { q: "Quando recebo o prêmio?", a: "Quando o ciclo do mês é fechado, os prêmios caem no seu saldo e você recebe uma notificação." },
       { q: "Como saco meu saldo?", a: "No painel, peça o saque via Pix a partir de R$ 100. A chave Pix precisa ser do titular da conta." },
-      { q: "E se o fundo do mês for pequeno?", a: "Os prêmios são ajustados na mesma proporção para todos os premiados. O que sobrar do fundo passa para o mês seguinte." },
-      { q: "Tem sorteio?", a: "Não. Ganha quem fica no topo da sua liga e bate a pontuação mínima." },
+      { q: "Quanto tempo leva?", a: "O pedido é conferido pela equipe e pago por Pix. Você acompanha a situação do pedido no painel." },
     ],
   },
   {
@@ -72,16 +76,8 @@ const GROUPS: Group[] = [
     faqs: [
       { q: "Posso ter mais de uma conta?", a: "Não. É uma conta de divulgador por CPF. Contas duplicadas são encerradas." },
       { q: "Esqueci minha senha. E agora?", a: "Na tela de entrar, clique em \"Esqueci minha senha\" e siga o link enviado para o seu e-mail." },
-      { q: "O que acontece se houver fraude?", a: "Visualização comprada, robô, perfil falso ou print editado levam à reprovação do post, anulação dos pontos e, conforme a gravidade, ao bloqueio do saldo e da conta. Os detalhes estão nos Termos de Uso." },
+      { q: "O que acontece se houver fraude?", a: "Cupom pego com telefone falso, validação sem cliente ou combinação entre loja e divulgador levam ao cancelamento da comissão e ao bloqueio da conta." },
       { q: "Como apago meus dados?", a: "Escreva para contato@clilin.com com o assunto \"Privacidade\". Respondemos em até 15 dias." },
-    ],
-  },
-  {
-    id: "em-breve",
-    title: "Em breve",
-    tone: "text-client",
-    faqs: [
-      { q: "E as ofertas e cupons?", a: "A parte de ofertas, cupons e captação de clientes para as empresas está em breve. Na página de clientes você deixa seu contato e fica sabendo primeiro quando for lançada." },
     ],
   },
 ];
@@ -105,8 +101,8 @@ export default function HelpPage() {
     <div className="min-h-screen bg-background">
       <SEOHead
         title="Central de Ajuda do Clilin"
-        description="Respostas sobre campanhas, créditos, verificação de posts, ligas, prêmios, saques e segurança no Clilin."
-        keywords={["ajuda clilin", "como funciona", "divulgador", "campanha", "prêmios", "saque pix"]}
+        description="Respostas sobre ofertas, cupons no WhatsApp, conferência na loja, cobrança por cupom usado, comissão de divulgador, saques e segurança no Clilin."
+        keywords={["ajuda clilin", "como funciona", "cupom", "divulgador", "oferta", "saque pix"]}
         canonicalUrl="/ajuda"
       />
       <StructuredData type="FAQPage" faqs={GROUPS.flatMap((g) => g.faqs.map((f) => ({ question: f.q, answer: f.a })))} />
@@ -115,7 +111,7 @@ export default function HelpPage() {
       <section className="pt-28 sm:pt-36 pb-10 bg-gradient-to-b from-muted/60 to-background">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center">
           <h1 className="text-3xl sm:text-5xl font-display font-bold text-foreground mb-4">Central de Ajuda</h1>
-          <p className="text-lg text-muted-foreground mb-8">Tudo sobre campanhas, missões, ranking e prêmios.</p>
+          <p className="text-lg text-muted-foreground mb-8">Tudo sobre ofertas, cupons, comissões e saques.</p>
           <div className="relative max-w-xl mx-auto">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
             <Input

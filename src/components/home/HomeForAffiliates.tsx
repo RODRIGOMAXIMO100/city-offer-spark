@@ -1,18 +1,19 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Trophy, UserPlus, Target, Star, Medal } from "lucide-react";
+import { ArrowRight, Trophy, UserPlus, Link2, Store, Wallet, Medal } from "lucide-react";
 
 const steps = [
-  { icon: UserPlus, title: "Cadastre seus perfis", text: "Instagram, TikTok, Kwai, YouTube, Facebook ou X. O perfil precisa estar aberto." },
-  { icon: Target, title: "Pegue as missões", text: "Ondas de marcas da sua cidade ou do Brasil. Poste um vídeo seu falando da marca, com o nome na legenda e o #publi." },
-  { icon: Star, title: "Some pontos", text: "Cada visualização verificada vale 1 ponto. Quem posta nas primeiras 12 horas da onda ganha 20% a mais." },
-  { icon: Trophy, title: "Ganhe prêmios", text: "Os melhores de cada liga ganham prêmio em dinheiro todo mês, direto no Pix." },
+  { icon: UserPlus, title: "Cadastre-se grátis", text: "Não precisa ter muitos seguidores. Precisa conhecer gente da sua cidade." },
+  { icon: Link2, title: "Escolha as ofertas", text: "Pegue o seu link das ofertas da cidade e mande nos grupos, no status e nas redes." },
+  { icon: Store, title: "O cliente usa o cupom", text: "Quem pega o cupom pelo seu link fica marcado no seu nome até usar na loja." },
+  { icon: Wallet, title: "Você recebe", text: "A comissão cai no seu saldo quando a loja confere o cupom. Saque por Pix a partir de R$ 100." },
 ];
 
-export const LEAGUE_INFO = [
-  { name: "Bronze", range: "até 1 mil seguidores" },
-  { name: "Prata", range: "de 1 mil a 5 mil seguidores" },
-  { name: "Ouro", range: "acima de 5 mil seguidores" },
+// affiliate_levels: comissão de 50% da taxa, com bônus por nível até 70%
+export const LEVEL_INFO = [
+  { name: "Bronze", share: "50%" },
+  { name: "Ouro", share: "60%" },
+  { name: "Diamante", share: "70%" },
 ];
 
 export function HomeForAffiliates() {
@@ -39,25 +40,25 @@ export function HomeForAffiliates() {
               Para divulgadores
             </div>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold mb-5">
-              Poste, suba no ranking e <span className="text-affiliate">ganhe todo mês</span>
+              Indique ofertas da cidade e <span className="text-affiliate">ganhe por cliente</span>
             </h2>
             <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
-              Aqui não tem sorteio: quem posta mais e alcança mais, ganha. E você disputa com quem tem o seu tamanho,
-              porque o ranking é dividido em ligas.
+              Você fica com metade da taxa de cada cupom usado por quem veio pelo seu link. Exemplo: numa pizza de R$ 39,
+              a taxa é R$ 5,85 e você leva cerca de R$ 2,90 por cliente. Quanto mais clientes no mês, maior o seu nível.
             </p>
 
             <div className="grid grid-cols-3 gap-3 mb-6">
-              {LEAGUE_INFO.map((l) => (
+              {LEVEL_INFO.map((l) => (
                 <div key={l.name} className="rounded-2xl bg-card border border-border p-4 text-center">
                   <Medal className="h-6 w-6 mx-auto mb-1 text-highlight" />
                   <p className="font-display font-semibold">{l.name}</p>
-                  <p className="text-xs text-muted-foreground">{l.range}</p>
+                  <p className="text-xs text-muted-foreground">{l.share} da taxa</p>
                 </div>
               ))}
             </div>
 
             <p className="text-sm text-muted-foreground mb-8">
-              35% de tudo que as empresas investem vai para o fundo de prêmios do mês. Para concorrer, faça pelo menos 2 mil pontos no mês.
+              Sem mensalidade e sem custo para entrar. Comissão só de cliente real: cupom usado e conferido pela loja.
             </p>
 
             <Button size="lg" asChild className="h-12 sm:h-14 px-6 sm:px-8 bg-affiliate text-affiliate-foreground hover:bg-affiliate/90 shadow-xl shadow-affiliate/25">

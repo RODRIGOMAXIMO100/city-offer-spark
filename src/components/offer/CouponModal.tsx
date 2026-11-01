@@ -5,14 +5,28 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Copy, Ticket, Check } from 'lucide-react';
+import { Loader2, Copy, Ticket, Check, MessageCircle, Store } from 'lucide-react';
 
 interface CouponModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   offerId: string;
   offerTitle: string;
+  /** Divulgador que trouxe o cliente (?ref= do link) */
+  affiliateId?: string | null;
+  companyName?: string | null;
+  /** WhatsApp da loja (quando a oferta usa WhatsApp) */
+  storeWhatsapp?: string | null;
 }
+
+// "31999998888", "+55 (31) 99999-8888" ou link wa.me -> "5531999998888"
+const toWaNumber = (raw?: string | null): string | null => {
+  if (!raw) return null;
+  const fromLink = raw.match(/wa\.me\/(\d+)/)?.[1] ?? raw.match(/phone=(\d+)/)?.[1];
+  const digits = (fromLink ?? raw).replace(/\D/g, '');
+  if (digits.length < 10) return null;
+  return digits.startsWith('55') && digits.length >= 12 ? digits : `55${digits}`;
+};
 
 const formatPhoneInput = (value: string): string => {
   const digits = value.replace(/\D/g, '');
@@ -21,7 +35,7 @@ const formatPhoneInput = (value: string): string => {
   return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7, 11)}`;
 };
 
-export default function CouponModal({ open, onOpenChange, offerId, offerTitle }: CouponModalProps) {
+export default function CouponModal({ open, onOpenChange, offerId, offerTitle, affiliateId, companyName, storeWhatsapp }: CouponModalProps) {
   const { toast } = useToast();
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
@@ -29,10 +43,12 @@ export default function CouponModal({ open, onOpenChange, offerId, offerTitle }:
   const [code, setCode] = useState<string | null>(null);
   const [expiresAt, setExpiresAt] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [sentToWhatsapp, setSentToWhatsapp] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const storeWa = toWaNumber(storeWhatsapp);
 
   const reset = () => {
-    setName(''); setPhone(''); setCode(null); setExpiresAt(null); setError(null); setCopied(false);
+    setName(''); setPhone(''); setCode(null); setExpiresAt(null); setError(null); setCopied(false); setSentToWhatsapp(false);
   };
 
   const handleSubmit = async () => {
@@ -49,12 +65,24 @@ export default function CouponModal({ open, onOpenChange, offerId, offerTitle }:
           offer_id: offerId,
           customer_name: name.trim(),
           customer_phone: digits,
+          affiliate_id: affiliateId || null,
         },
       });
-      if (fnError) throw fnError;
+      if (fnError) {
+        // Erros da função (limite diário, oferta pausada...) chegam no corpo da resposta
+        let msg = 'Não deu para gerar o cupom. Tente de novo.';
+        try {
+          const ctx = (fnError as { context?: Response }).context;
+          const body = ctx ? await ctx.json() : null;
+          if (body?.error) msg = body.error;
+        } catch { /* mantém a mensagem padrão */ }
+        setError(msg);
+        return;
+      }
       if (data?.error) { setError(data.error); return; }
       setCode(data.code);
       setExpiresAt(data.expires_at);
+      setSentToWhatsapp(!!data.whatsapp_sent);
       // Persist for later retrieval
       try {
         const store = JSON.parse(localStorage.getItem('clilin_coupons') || '{}');
@@ -82,7 +110,7 @@ export default function CouponModal({ open, onOpenChange, offerId, offerTitle }:
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Ticket className="h-5 w-5 text-secondary" />
-            Pegar cupom
+            Pegar meu cupom
           </DialogTitle>
           <DialogDescription className="line-clamp-2">{offerTitle}</DialogDescription>
         </DialogHeader>
@@ -105,10 +133,10 @@ export default function CouponModal({ open, onOpenChange, offerId, offerTitle }:
             </div>
             {error && <p className="text-sm text-destructive">{error}</p>}
             <Button onClick={handleSubmit} disabled={loading} className="w-full">
-              {loading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Gerando…</> : 'Gerar cupom'}
+              {loading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Gerando…</> : 'Quero meu cupom'}
             </Button>
             <p className="text-xs text-center text-muted-foreground">
-              Mostre o código no estabelecimento na hora do atendimento.
+              O cupom chega no seu WhatsApp. Grátis, sem cadastro.
             </p>
           </div>
         ) : (
@@ -126,8 +154,33 @@ export default function CouponModal({ open, onOpenChange, offerId, offerTitle }:
               {copied ? <><Check className="mr-2 h-4 w-4" />Copiado!</> : <><Copy className="mr-2 h-4 w-4" />Copiar código</>}
             </Button>
             <p className="text-xs text-center text-muted-foreground">
-              Apresente este código no estabelecimento para resgatar o desconto.
+              {sentToWhatsapp ? 'Também mandamos o cupom no seu WhatsApp.' : 'Guarde este código: tire um print ou copie.'}
             </p>
+            <div className="rounded-xl bg-muted/50 p-3 space-y-2 text-sm">
+              <p className="font-semibold">Como usar</p>
+              <p className="flex items-start gap-2">
+                <Store className="h-4 w-4 mt-0.5 shrink-0 text-primary" />
+                <span>Vá até {companyName || 'a loja'} e mostre o código na hora de pagar.</span>
+              </p>
+              {storeWa && (
+                <p className="flex items-start gap-2">
+                  <MessageCircle className="h-4 w-4 mt-0.5 shrink-0 text-primary" />
+                  <span>Ou mande o código para a loja no WhatsApp para pedir.</span>
+                </p>
+              )}
+              <p className="text-xs text-muted-foreground">A loja confere o código no Clilin. Cada cupom vale uma vez.</p>
+            </div>
+            {storeWa && (
+              <Button asChild className="w-full">
+                <a
+                  href={`https://wa.me/${storeWa}?text=${encodeURIComponent(`Oi! Quero usar o cupom ${code} do Clilin: ${offerTitle}`)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <MessageCircle className="mr-2 h-4 w-4" /> Mandar o código para a loja
+                </a>
+              </Button>
+            )}
           </div>
         )}
       </DialogContent>

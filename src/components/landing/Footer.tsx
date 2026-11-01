@@ -13,8 +13,8 @@ export function Footer() {
               <BrandLogo className="h-10" />
             </Link>
             <p className="text-muted-foreground max-w-md leading-relaxed">
-              Campanhas de alcance com gente de verdade. Empresas colocam o nome na boca do povo
-              e divulgadores são premiados todo mês.
+              Ofertas da cidade com cupom no WhatsApp. A loja só paga pelo cupom usado
+              e quem indica ganha por cliente.
             </p>
             <div className="flex gap-3 mt-6">
               <a
@@ -41,7 +41,7 @@ export function Footer() {
               {[
                 { label: "Para Empresas", to: "/empresas" },
                 { label: "Para Divulgadores", to: "/divulgadores" },
-                { label: "Ofertas (em breve)", to: "/clientes" },
+                { label: "Ofertas da cidade", to: "/ofertas" },
               ].map((link) => (
                 <li key={link.label}>
                   <Link to={link.to} className="text-muted-foreground hover:text-foreground transition-colors">

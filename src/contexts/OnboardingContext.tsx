@@ -19,8 +19,7 @@ export type BonusItem = {
 export type BonusMap = Record<string, BonusItem>;
 
 export const ONBOARDING_BONUSES: Record<string, BonusMap> = {
-  // Só tarefas que existem no modelo de campanhas. Bônus de oferta, link e lead
-  // voltam quando os cupons voltarem (SHOW_COUPON_OFFERS).
+  // Bônus de boas-vindas (pequenos, em centavos)
   AFFILIATE: {
     tour_completed: { amount: 100, label: 'Completar o tour' }, // R$1,00
   },
@@ -38,33 +37,39 @@ export const TOUR_STEPS: Record<string, TourStep[]> = {
     {
       target: '[data-tour="balance"]',
       title: 'Seu saldo e saque',
-      content: 'Aqui aparecem os prêmios que você ganhar no ranking. O saque é via Pix a partir de R$ 100.',
+      content: 'Aqui entram as suas comissões. Você ganha quando o cliente que você indicou usa o cupom na loja. O saque é via Pix a partir de R$ 100.',
       position: 'bottom',
     },
     {
-      target: '[data-tour="social-accounts"]',
-      title: 'Seus perfis',
-      content: 'Cadastre seus perfis abertos nas redes. É por eles que você participa das missões e entra na liga certa.',
+      target: '[data-tour="level"]',
+      title: 'Seu nível',
+      content: 'Quanto mais clientes você leva até as lojas, mais alto o seu nível e maior a sua comissão.',
       position: 'bottom',
     },
     {
-      target: '[data-tour="missions"]',
-      title: 'Missões',
-      content: 'As ondas da sua cidade e do Brasil aparecem aqui. Poste um vídeo seu falando da marca, com o nome na legenda e o #publi, e envie o link. Quem posta cedo ganha bônus.',
+      target: '[data-tour="offers"]',
+      title: 'Ofertas da sua cidade',
+      content: 'Escolha uma oferta, copie o seu link e divulgue. Cada cupom pego pelo seu link fica marcado no seu nome.',
       position: 'top',
     },
   ],
   COMPANY: [
     {
       target: '[data-tour="balance"]',
-      title: 'Seus créditos',
-      content: 'Veja seu saldo e adicione crédito no "+". Cada R$ 1 vale 200 visualizações verificadas.',
+      title: 'Seu saldo',
+      content: 'O saldo só é usado quando um cliente usa o cupom na sua loja: 15% do preço da oferta, mínimo de R$ 3. Adicione no "+".',
       position: 'bottom',
     },
     {
-      target: '[data-tour="campaigns"]',
-      title: 'Suas campanhas',
-      content: 'Clique em "Nova campanha", escreva o roteiro, marque a janela da onda e a meta. Você paga só o que for visto e o resto volta para o saldo.',
+      target: '[data-tour="create-offer"]',
+      title: 'Crie sua oferta',
+      content: 'Monte a promoção, com preço, validade e fotos. Ela aparece para os clientes da sua cidade e para os divulgadores.',
+      position: 'top',
+    },
+    {
+      target: '[data-tour="performance"]',
+      title: 'Seus resultados',
+      content: 'Acompanhe quantas pessoas viram a oferta e pegaram o cupom. Na aba "Validar cupom" você confere o código de quem chegou na loja.',
       position: 'bottom',
     },
   ],

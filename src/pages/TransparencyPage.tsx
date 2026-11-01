@@ -1,29 +1,22 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, Ban, Camera, CheckCircle2, Eye, FileBarChart, ScanSearch, UserCheck } from "lucide-react";
+import { ArrowRight, Ban, CheckCircle2, FileBarChart, KeyRound, Clock, Store, ShieldCheck } from "lucide-react";
 import { SEOHead } from "@/components/seo/SEOHead";
 import { Navbar } from "@/components/landing/Navbar";
 import { Footer } from "@/components/landing/Footer";
 import { Button } from "@/components/ui/button";
 
 const verification = [
-  { icon: UserCheck, title: "Perfil conferido", text: "Antes de receber missões, o perfil do divulgador é conferido: precisa ser dele, estar aberto e ter seguidores reais. É isso que define a liga." },
-  { icon: ScanSearch, title: "Leitura automática", text: "Quando o link do post chega, o sistema lê os dados públicos: se o post existe, se está no perfil cadastrado, se saiu na janela da onda e se tem o nome da marca e o #publi. No 7º dia o post é lido de novo: contam as visualizações dos 7 primeiros dias." },
-  { icon: Camera, title: "Print das visualizações", text: "O divulgador envia o print com o número de visualizações do 7º dia. A equipe compara com o que o sistema leu." },
-  { icon: Eye, title: "Conferência da equipe", text: "Uma pessoa revisa e aprova ou reprova. Pico fora do padrão, seguidor comprado ou robô reprovam o post." },
+  { icon: KeyRound, title: "Código único", text: "Cada cupom tem um código de 8 letras que só existe uma vez. Ele fica ligado à oferta, à loja e ao WhatsApp de quem pegou." },
+  { icon: Clock, title: "Validade", text: "O cupom tem prazo para ser usado, definido pela loja e nunca depois do fim da oferta. Cupom vencido não passa." },
+  { icon: Store, title: "Conferência no balcão", text: "A loja digita o código no painel. Só aceita códigos da própria loja, e cada código vale uma vez: depois de conferido, fica marcado como usado." },
+  { icon: ShieldCheck, title: "Proteção contra abuso", text: "Até 3 cupons por dia no mesmo WhatsApp e limite por aparelho. Telefone falso, validação sem cliente ou combinação entre loja e divulgador bloqueiam a conta." },
 ];
 
 const never = [
+  "Cobrar do cliente para pegar ou usar cupom.",
   "Cobrar do divulgador para entrar ou participar.",
-  "Fazer sorteio. Prêmio é por mérito, dentro da liga.",
-  "Vender curtida, comentário ou subida em assuntos do momento. Isso vai contra as regras das redes.",
-  "Cobrar da empresa um post que foi reprovado.",
+  "Cobrar da loja por visita, clique ou cupom que não foi usado.",
   "Vender ou alugar dados de quem usa o Clilin.",
-];
-
-const prizes = [
-  { pos: "1º lugar", value: "R$ 150" },
-  { pos: "2º lugar", value: "R$ 80" },
-  { pos: "3º lugar", value: "R$ 50" },
 ];
 
 export default function TransparencyPage() {
@@ -31,8 +24,8 @@ export default function TransparencyPage() {
     <div className="min-h-screen bg-background">
       <SEOHead
         title="Transparência: para onde vai cada real no Clilin"
-        description="Veja como o Clilin divide o dinheiro das campanhas, como cada post é verificado e como os prêmios dos divulgadores são calculados."
-        keywords={["clilin transparência", "como funciona", "prêmios divulgadores", "verificação de posts", "custo por mil visualizações"]}
+        description="Quanto a loja paga por cupom usado, quanto fica com o divulgador e como cada cupom é conferido no Clilin."
+        keywords={["clilin transparência", "como funciona", "taxa por cupom", "comissão de divulgador", "cupom no WhatsApp"]}
         canonicalUrl="/transparencia"
       />
       <Navbar />
@@ -44,7 +37,7 @@ export default function TransparencyPage() {
             Cada real, <span className="text-brand-gradient">explicado</span>.
           </h1>
           <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
-            Quanto a empresa paga, para onde vai o dinheiro, como cada post é conferido e como os prêmios são calculados.
+            Quanto a loja paga, quanto fica com quem divulgou e como cada cupom é conferido.
           </p>
         </div>
       </section>
@@ -54,33 +47,34 @@ export default function TransparencyPage() {
         <div className="max-w-5xl mx-auto px-4 sm:px-6">
           <h2 className="text-2xl sm:text-4xl font-display font-bold text-foreground mb-3">Para onde vai o dinheiro</h2>
           <p className="text-lg text-muted-foreground mb-8 max-w-3xl">
-            A empresa paga <strong className="text-foreground">R$ 5 a cada mil visualizações verificadas</strong>. De cada R$ 5:
+            A loja paga só quando o cupom é usado: <strong className="text-foreground">15% do preço da oferta, com mínimo de R$ 3</strong>.
+            Quando o cliente veio pelo link de um divulgador, a taxa é dividida assim:
           </p>
 
           <div className="rounded-3xl border border-border bg-card p-5 sm:p-8">
             <div className="flex h-14 sm:h-16 rounded-2xl overflow-hidden text-sm sm:text-base font-semibold">
-              <div className="bg-affiliate text-affiliate-foreground flex items-center justify-center" style={{ width: "35%" }}>
-                35%
+              <div className="bg-affiliate text-affiliate-foreground flex items-center justify-center" style={{ width: "50%" }}>
+                50% a 70%
               </div>
-              <div className="bg-company text-company-foreground flex items-center justify-center flex-1">65%</div>
+              <div className="bg-company text-company-foreground flex items-center justify-center flex-1">o resto</div>
             </div>
             <div className="grid sm:grid-cols-2 gap-5 mt-6">
               <div>
-                <p className="font-display font-bold text-foreground text-lg">R$ 1,75 vão para o fundo de prêmios</p>
-                <p className="text-muted-foreground">É dos divulgadores. Todo mês, o fundo é dividido entre os melhores de cada liga.</p>
+                <p className="font-display font-bold text-foreground text-lg">Metade vai para o divulgador</p>
+                <p className="text-muted-foreground">Chega a 70% conforme o nível dele no mês. Cai no saldo quando a loja confere o cupom.</p>
               </div>
               <div>
-                <p className="font-display font-bold text-foreground text-lg">R$ 3,25 mantêm o Clilin</p>
-                <p className="text-muted-foreground">Verificação dos posts, equipe, sistema, servidores, suporte e impostos.</p>
+                <p className="font-display font-bold text-foreground text-lg">O resto mantém o Clilin</p>
+                <p className="text-muted-foreground">Sistema, envio dos cupons no WhatsApp, servidores, suporte e impostos. Sem divulgador, a taxa fica toda com o Clilin.</p>
               </div>
             </div>
           </div>
 
           <div className="mt-5 rounded-2xl bg-muted/50 p-5 sm:p-6">
-            <p className="font-semibold text-foreground mb-1">Exemplo: campanha de 20 mil visualizações</p>
+            <p className="font-semibold text-foreground mb-1">Exemplo: pizza de R$ 39</p>
             <p className="text-muted-foreground">
-              A empresa reserva R$ 100. Se todos os posts forem aprovados, R$ 35 entram no fundo de prêmios do mês e R$ 65 ficam com o Clilin. Se a campanha
-              fechar com 15 mil visualizações verificadas, a empresa paga R$ 75 e os R$ 25 que sobraram voltam para o saldo dela.
+              A taxa do cupom usado é R$ 5,85. O divulgador que trouxe o cliente recebe cerca de R$ 2,90 e o Clilin fica com o resto.
+              Se a loja paga com saldo pré-pago, ela tem 10% de desconto e o cupom sai por R$ 5,27. O desconto sai da parte do Clilin, não do divulgador.
             </p>
           </div>
         </div>
@@ -89,8 +83,8 @@ export default function TransparencyPage() {
       {/* Verificação */}
       <section className="py-14 sm:py-20 bg-muted/40">
         <div className="max-w-5xl mx-auto px-4 sm:px-6">
-          <h2 className="text-2xl sm:text-4xl font-display font-bold text-foreground mb-3">Como cada post é conferido</h2>
-          <p className="text-lg text-muted-foreground mb-10 max-w-3xl">Só entra na conta da empresa e no ranking o que passou por estas etapas.</p>
+          <h2 className="text-2xl sm:text-4xl font-display font-bold text-foreground mb-3">Como cada cupom é conferido</h2>
+          <p className="text-lg text-muted-foreground mb-10 max-w-3xl">A cobrança só acontece quando o cupom passa por tudo isso.</p>
           <div className="grid sm:grid-cols-2 gap-5">
             {verification.map((v, i) => (
               <div key={v.title} className="rounded-2xl border border-border bg-card p-6">
@@ -105,46 +99,27 @@ export default function TransparencyPage() {
               </div>
             ))}
           </div>
-          <p className="text-sm text-muted-foreground mt-6">
-            Valem posts no feed e Reels do Instagram, TikTok, Kwai, YouTube Shorts, Facebook e X. Stories e Status não valem, porque somem e não dá para
-            conferir depois.
-          </p>
         </div>
       </section>
 
-      {/* Prêmios */}
+      {/* Comissão */}
       <section className="py-14 sm:py-20">
         <div className="max-w-5xl mx-auto px-4 sm:px-6">
-          <h2 className="text-2xl sm:text-4xl font-display font-bold text-foreground mb-3">Como os prêmios são calculados</h2>
-          <div className="grid lg:grid-cols-[1fr_320px] gap-8 items-start">
-            <ul className="space-y-4 text-muted-foreground text-lg">
-              {[
-                "Cada visualização verificada vale 1 ponto.",
-                "O ranking é mensal e dividido em três ligas: Bronze (até 1 mil seguidores), Prata (de 1 mil a 5 mil) e Ouro (acima de 5 mil).",
-                "Para concorrer no mês, o divulgador precisa fazer pelo menos 2 mil pontos.",
-                "Os 3 primeiros de cada liga são premiados. Se o fundo do mês não cobrir os valores de referência, todos são ajustados na mesma proporção.",
-                "O que sobrar do fundo passa para o mês seguinte. Nada some.",
-                "O prêmio cai no saldo e pode ser sacado via Pix a partir de R$ 100.",
-              ].map((t) => (
-                <li key={t} className="flex gap-3">
-                  <CheckCircle2 className="h-6 w-6 text-affiliate shrink-0 mt-0.5" />
-                  <span>{t}</span>
-                </li>
-              ))}
-            </ul>
-            <div className="rounded-3xl border border-highlight/40 bg-highlight/10 p-6">
-              <p className="text-sm font-semibold uppercase tracking-wider text-foreground mb-4">Valores de referência por liga</p>
-              <div className="space-y-3">
-                {prizes.map((p) => (
-                  <div key={p.pos} className="flex items-center justify-between rounded-xl bg-card px-4 py-3">
-                    <span className="text-muted-foreground">{p.pos}</span>
-                    <span className="font-display font-bold text-foreground text-lg">{p.value}</span>
-                  </div>
-                ))}
-              </div>
-              <p className="text-xs text-muted-foreground mt-4">Valem para Bronze, Prata e Ouro. Os prêmios crescem conforme a rede cresce.</p>
-            </div>
-          </div>
+          <h2 className="text-2xl sm:text-4xl font-display font-bold text-foreground mb-6">Como o divulgador ganha</h2>
+          <ul className="space-y-4 text-muted-foreground text-lg">
+            {[
+              "Cada divulgador tem um link para cada oferta da cidade.",
+              "Quem pega o cupom por esse link fica marcado no nome do divulgador.",
+              "Quando a loja confere o cupom, o divulgador recebe metade da taxa, ou até 70% conforme o nível.",
+              "Os níveis sobem com a quantidade de clientes no mês: Bronze, Prata, Ouro, Platina e Diamante.",
+              "O saldo pode ser sacado por Pix a partir de R$ 100.",
+            ].map((t) => (
+              <li key={t} className="flex gap-3">
+                <CheckCircle2 className="h-6 w-6 text-affiliate shrink-0 mt-0.5" />
+                <span>{t}</span>
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
 
@@ -153,10 +128,10 @@ export default function TransparencyPage() {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 grid md:grid-cols-2 gap-6">
           <div className="rounded-3xl border border-border bg-card p-6 sm:p-8">
             <FileBarChart className="h-7 w-7 text-company mb-3" />
-            <h2 className="text-xl sm:text-2xl font-display font-bold text-foreground mb-3">O que a empresa recebe</h2>
+            <h2 className="text-xl sm:text-2xl font-display font-bold text-foreground mb-3">O que a loja vê</h2>
             <p className="text-muted-foreground">
-              Um painel com cada post da campanha: a rede, o link para abrir, a situação da conferência e as visualizações aprovadas. E o total verificado
-              crescendo em direção à meta conforme os posts são aprovados.
+              Um painel com cada oferta: quantas pessoas viram, quantas pegaram o cupom e quantos cupons foram usados. Cada cupom conferido aparece com
+              o nome do cliente, o horário e quanto foi cobrado.
             </p>
           </div>
           <div className="rounded-3xl border border-border bg-card p-6 sm:p-8">

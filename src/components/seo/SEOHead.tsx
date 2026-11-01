@@ -13,8 +13,8 @@ interface SEOHeadProps {
 }
 
 const BASE_URL = 'https://clilin.com';
-const DEFAULT_TITLE = 'Clilin - Sua marca na boca do Brasil';
-const DEFAULT_DESCRIPTION = 'Ondas de divulgação com gente real: você marca o dia, divulgadores postam vídeos sobre a sua marca ao mesmo tempo e você paga só pelas visualizações verificadas, R$ 5 a cada mil. Divulgadores ganham prêmios todo mês.';
+const DEFAULT_TITLE = 'Clilin - Ofertas da cidade com cupom no WhatsApp';
+const DEFAULT_DESCRIPTION = 'Ofertas dos negócios da sua cidade com cupom grátis no WhatsApp. A loja só paga quando o cupom é usado, e quem indica ganha por cliente.';
 const DEFAULT_OG_IMAGE = `${BASE_URL}/og-image.png`;
 
 export function SEOHead({
@@ -31,15 +31,14 @@ export function SEOHead({
   const fullTitle = title ? `${title} | Clilin` : DEFAULT_TITLE;
   const fullCanonicalUrl = canonicalUrl ? `${BASE_URL}${canonicalUrl}` : BASE_URL;
   const defaultKeywords = [
-    'campanha de alcance',
+    'cupom de desconto',
+    'ofertas da cidade',
+    'promoções perto de mim',
+    'cupom no WhatsApp',
     'divulgadores',
-    'marketing de influência',
-    'divulgação com vídeos',
-    'divulgação nas redes sociais',
-    'ganhar dinheiro divulgando',
-    'ranking de divulgadores',
-    'marketing local',
-    'publi',
+    'ganhar dinheiro indicando',
+    'comércio local',
+    'atrair clientes para loja',
   ];
   const allKeywords = [...new Set([...defaultKeywords, ...keywords])];
 

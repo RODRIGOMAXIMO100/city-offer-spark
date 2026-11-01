@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { SEOHead } from "@/components/seo/SEOHead";
 import { DocPage, type DocSection } from "@/components/docs/DocPage";
 
-const UPDATED = "31 de outubro de 2026";
+const UPDATED = "1 de novembro de 2026";
 
 const sections: DocSection[] = [
   {
@@ -11,22 +11,20 @@ const sections: DocSection[] = [
     blocks: [
       "O Clilin é operado pela **Maximo Aceleradora de Produtos Digitais Ltda - ME**, CNPJ 40.695.326/0001-03 (\"Clilin\" ou \"nós\").",
       "Ao criar uma conta ou usar o Clilin, você concorda com estes Termos de Uso e com a nossa Política de Privacidade. Se não concordar com alguma parte, não use a plataforma.",
-      "O Clilin é destinado a maiores de 18 anos. Ao se cadastrar, você declara ter 18 anos ou mais e capacidade para aceitar estes termos.",
+      "Contas de empresa e de divulgador são para maiores de 18 anos. Ao se cadastrar, você declara ter 18 anos ou mais e capacidade para aceitar estes termos.",
     ],
   },
   {
     id: "servico",
     title: "O que é o Clilin",
     blocks: [
-      "O Clilin é uma plataforma de **campanhas de alcance com gente de verdade**. Ela conecta dois tipos de usuário:",
+      "O Clilin é uma plataforma de **ofertas locais com cupom**. Ela conecta três tipos de usuário:",
       {
         list: [
-          ["Empresas", "criam campanhas com uma assinatura (o nome ou a frase da campanha), um roteiro, as cidades atendidas, uma janela de postagem e uma meta de visualizações. Pagam só pelo alcance verificado."],
-          ["Divulgadores", "recebem missões das campanhas, postam no próprio perfil nas redes sociais e acumulam pontos pelas visualizações verificadas. Os melhores de cada liga ganham prêmios em dinheiro todo mês."],
+          ["Empresas", "publicam ofertas da sua cidade e pagam só pelos cupons usados e conferidos na loja."],
+          ["Divulgadores", "indicam as ofertas da cidade pelo próprio link e ganham uma comissão por cupom usado por quem veio desse link."],
+          ["Clientes", "pegam cupons de graça, recebem o código no WhatsApp e usam na loja."],
         ],
-      },
-      {
-        note: "**Ofertas, cupons e captação de clientes:** este módulo está em breve. Quando for lançado, terá regras próprias, que serão publicadas nesta página antes de começar a valer.",
       },
     ],
   },
@@ -38,7 +36,7 @@ const sections: DocSection[] = [
         list: [
           "Os dados do cadastro precisam ser verdadeiros, completos e atualizados.",
           "Cada pessoa pode ter **uma conta de divulgador por CPF**. Empresas se cadastram com o CNPJ ou com o CPF do responsável.",
-          "Os perfis de redes sociais cadastrados pelo divulgador precisam ser **dele**, estar **abertos** (públicos) e ter atividade real.",
+          "Para pegar cupom não é preciso criar conta: basta informar nome e WhatsApp.",
           "Você é responsável por guardar sua senha e por tudo que acontecer na sua conta. Se perceber uso indevido, avise a gente na hora.",
         ],
       },
@@ -46,54 +44,49 @@ const sections: DocSection[] = [
   },
   {
     id: "empresas",
-    title: "Créditos e campanhas das empresas",
+    title: "Ofertas e cobrança das empresas",
     blocks: [
       {
         list: [
-          ["Preço", "R$ 5 a cada mil visualizações verificadas. 1 crédito vale R$ 1 e corresponde a 200 visualizações verificadas."],
-          ["Meta mínima", "cada campanha tem meta de pelo menos 20 mil visualizações (R$ 100)."],
-          ["Reserva", "ao criar a campanha, o valor da meta fica reservado no seu saldo de créditos."],
-          ["Cobrança", "o crédito é debitado conforme os posts são aprovados na verificação. Post reprovado não é cobrado."],
-          ["Sobra", "se a meta não for atingida até o fim da campanha, os créditos que sobraram voltam para o seu saldo. Se a meta for passada, o alcance extra não é cobrado."],
-          ["Créditos", "créditos são usados dentro da plataforma e não são convertidos em dinheiro, ressalvado o direito de arrependimento de 7 dias para compras online ainda não usadas (art. 49 do Código de Defesa do Consumidor)."],
+          ["Taxa", "por cupom usado, a empresa paga **15% do preço com desconto da oferta, com mínimo de R$ 3**. A taxa de cada cupom fica definida no momento em que ele é emitido."],
+          ["Quando cobra", "só quando a empresa confere o código no painel e o cupom é usado. Visita, clique e cupom pego e não usado não são cobrados."],
+          ["Pré-pago", "a empresa coloca saldo no painel e cada cupom usado é descontado com **10% de desconto**. Sem saldo para o próximo cupom, as ofertas ficam pausadas para novos cupons. Os cupons já entregues continuam valendo."],
+          ["Pós-pago", "quando combinado com o Clilin, os cupons usados no período entram numa fatura."],
+          ["Oferta", "a empresa define o que é a promoção, os preços, as fotos, a validade da oferta e do cupom e o canal de atendimento. A empresa é obrigada a cumprir o desconto anunciado para quem apresentar um cupom válido."],
+          ["Saldo", "o saldo é usado dentro da plataforma e não é convertido em dinheiro, ressalvado o direito de arrependimento de 7 dias para compras online ainda não usadas (art. 49 do Código de Defesa do Consumidor)."],
         ],
       },
-      "O Clilin pode recusar ou pausar campanhas com conteúdo ilegal, enganoso, ofensivo, que viole direitos de terceiros ou as regras das redes sociais.",
+      "O Clilin pode recusar ou pausar ofertas com conteúdo ilegal, enganoso, ofensivo ou que viole direitos de terceiros.",
     ],
   },
   {
-    id: "missoes",
-    title: "Missões e posts dos divulgadores",
+    id: "cupons",
+    title: "Cupons",
     blocks: [
       {
         list: [
-          "O post é feito **no perfil do próprio divulgador**, com o nome da marca na legenda e a identificação **#publi**, dentro da janela da campanha.",
-          "Valem posts no feed e Reels do Instagram, TikTok, Kwai, YouTube Shorts, Facebook e X. Stories e Status não valem, porque somem e não dá para conferir depois.",
-          "O post precisa sair dentro da janela da missão e continuar no ar durante o período de verificação.",
-          "O divulgador envia o link do post e, quando pedido, o print das visualizações. Print editado ou de outro post é fraude.",
-          "Cada post passa por leitura automática dos dados públicos e conferência da equipe. Só entram na conta os posts aprovados.",
-          "O divulgador **não recebe por post**. O que conta são os pontos que levam ao ranking e aos prêmios.",
+          "Cada cupom tem um código único, vale para uma oferta de uma loja e pode ser usado **uma única vez**, dentro da validade.",
+          "O código é mostrado na tela e enviado para o WhatsApp informado. Quem pega o cupom autoriza esse envio.",
+          "Há limite de cupons por WhatsApp e por aparelho para evitar abuso.",
+          "O cupom é pessoal. A loja pode pedir o nome de quem pegou para conferir.",
+          "Quem responde pelo produto ou serviço, pelo atendimento e pela entrega do desconto é a empresa que publicou a oferta.",
         ],
       },
     ],
   },
   {
-    id: "premios",
-    title: "Pontos, ligas e prêmios",
+    id: "divulgadores",
+    title: "Comissão dos divulgadores",
     blocks: [
       {
         list: [
-          ["Pontos", "cada visualização verificada vale 1 ponto."],
-          ["Ciclo", "o ranking é mensal. No começo de cada mês, os pontos começam do zero."],
-          ["Ligas", "Bronze (até 1 mil seguidores), Prata (de 1 mil a 5 mil) e Ouro (acima de 5 mil). Cada divulgador disputa com quem tem o seu tamanho."],
-          ["Mínimo", "para concorrer no mês, é preciso fazer pelo menos 2 mil pontos."],
-          ["Fundo", "35% de tudo que as empresas consomem no mês forma o fundo de prêmios."],
-          ["Prêmios", "os 3 primeiros de cada liga são premiados. Os valores de referência são R$ 150, R$ 80 e R$ 50. Se o fundo do mês não cobrir esses valores, todos são ajustados na mesma proporção. O que sobrar do fundo passa para o mês seguinte."],
-          ["Sem sorteio", "ganha quem fica no topo da sua liga. Não há sorteio nem pagamento para participar."],
+          ["Link", "cada divulgador tem um link para cada oferta. O cupom pego por esse link fica ligado ao divulgador."],
+          ["Comissão", "quando o cupom é usado e conferido pela loja, o divulgador recebe **50% da taxa** do cupom, podendo chegar a **70%** conforme o seu nível no mês."],
+          ["Pós-pago", "quando a empresa paga por fatura, a comissão fica retida até a fatura ser paga."],
+          ["Saque", "o saldo pode ser sacado via Pix a partir de R$ 100, para uma chave Pix do próprio titular da conta. Os tributos seguem a legislação brasileira."],
+          ["Divulgação honesta", "o divulgador fala a verdade sobre a oferta, não manda mensagens em massa para quem não conhece e segue as regras das redes sociais e de publicidade."],
         ],
       },
-      "O prêmio é creditado no saldo do divulgador e pode ser sacado via Pix a partir de R$ 100, para uma chave Pix do próprio titular da conta. Os tributos sobre prêmios seguem a legislação brasileira.",
-      "As regras de premiação podem ser ajustadas. Mudanças valem a partir do ciclo seguinte e são avisadas antes na plataforma.",
     ],
   },
   {
@@ -103,20 +96,20 @@ const sections: DocSection[] = [
       "São proibidos, entre outros:",
       {
         list: [
-          "Comprar visualizações, seguidores ou engajamento, ou usar robôs e automação.",
-          "Usar perfis falsos, de terceiros ou criar mais de uma conta.",
-          "Editar prints, enviar post de outra pessoa ou apagar o post antes do fim da verificação.",
-          "Divulgar sem #publi ou de forma enganosa.",
+          "Pegar cupons com nome ou telefone falso, ou em nome de outras pessoas sem autorização.",
+          "Conferir cupom sem que o cliente tenha usado a oferta, ou combinar isso entre empresa e divulgador.",
+          "Usar robôs, automação ou mais de uma conta.",
+          "Anunciar desconto falso ou enganoso.",
           "Tentar burlar ou testar os sistemas de segurança da plataforma.",
         ],
       },
       "Quando há suspeita, o Clilin pode, conforme a gravidade:",
       {
         list: [
-          "Reprovar o post e anular os pontos.",
+          "Cancelar cupons e anular comissões.",
           "Congelar o saldo de forma preventiva enquanto analisa.",
           "Reter saques por até 30 dias para análise.",
-          "Suspender ou encerrar a conta, com perda dos pontos e prêmios obtidos por fraude.",
+          "Suspender ou encerrar a conta, com perda das comissões obtidas por fraude.",
           "Bloquear CPF, e-mail, chave Pix e dispositivos ligados à fraude.",
         ],
       },
@@ -127,24 +120,16 @@ const sections: DocSection[] = [
     id: "responsabilidades",
     title: "Responsabilidades",
     blocks: [
-      "**Empresas:** garantem que o material, o roteiro e a assinatura da campanha são verdadeiros, legais e que têm os direitos de uso. Respondem pelo que anunciam perante o consumidor.",
-      "**Divulgadores:** postam de forma honesta e transparente, com #publi, seguem as regras das redes sociais e da publicidade e só usam perfis próprios.",
-      "O Clilin organiza as campanhas, verifica os posts e apura o ranking. O Clilin não é parceiro nem representante e não tem vínculo com o Instagram, TikTok, Kwai, YouTube, Facebook ou X. Mudanças nessas redes, como bloqueios, quedas ou mudanças de alcance, podem afetar as campanhas.",
-    ],
-  },
-  {
-    id: "conteudo",
-    title: "Conteúdo e métricas",
-    blocks: [
-      "O divulgador continua dono do seu post. Ao participar de uma missão, autoriza o Clilin e a empresa da campanha a ver e usar o link, o @ e as métricas públicas do post para a verificação e para mostrar o resultado da campanha no painel da empresa.",
-      "A empresa garante que tem os direitos sobre o material que envia e autoriza os divulgadores a usá-lo nos posts da campanha.",
+      "**Empresas:** garantem que as ofertas são verdadeiras e legais, que têm os direitos sobre fotos e textos e que vão honrar o desconto para quem apresentar cupom válido. Respondem pelo produto ou serviço perante o consumidor.",
+      "**Divulgadores:** divulgam de forma honesta e transparente e só usam contas próprias.",
+      "O Clilin organiza as ofertas, emite e confere os cupons e calcula taxas e comissões. O Clilin não vende os produtos ou serviços das empresas. O envio pelo WhatsApp depende do funcionamento do WhatsApp, que não é do Clilin.",
     ],
   },
   {
     id: "limitacao",
     title: "Limitação de responsabilidade",
     blocks: [
-      "O Clilin não garante vendas nem resultado comercial: o que é vendido é alcance verificado. O Clilin também não responde pelos produtos e serviços das empresas anunciantes nem pelo conteúdo que cada divulgador escolhe postar além da missão.",
+      "O Clilin não garante vendas nem resultado comercial. O Clilin também não responde pelos produtos, serviços e atendimento das empresas nem pelo conteúdo que cada divulgador escolhe publicar.",
     ],
   },
   {
@@ -173,12 +158,12 @@ export default function TermsPage() {
     <>
       <SEOHead
         title="Termos de Uso | Clilin"
-        description="Regras do Clilin para empresas e divulgadores: créditos, campanhas, missões, pontos, ligas, prêmios e prevenção de fraude."
+        description="Regras do Clilin para empresas, divulgadores e clientes: ofertas, cupons, taxa por cupom usado, comissões, saques e prevenção de fraude."
         canonicalUrl="/termos"
       />
       <DocPage
         title="Termos de Uso"
-        subtitle="As regras do jogo para empresas e divulgadores, escritas para serem entendidas."
+        subtitle="As regras para empresas, divulgadores e clientes, escritas para serem entendidas."
         updated={UPDATED}
         sections={sections}
         after={

@@ -27,7 +27,7 @@ import ResetPasswordPage from "./pages/ResetPasswordPage";
 import CompleteSignupPage from "./pages/CompleteSignupPage";
 import ParaEmpresasPage from "./pages/ParaEmpresasPage";
 import ParaDivulgadoresPage from "./pages/ParaDivulgadoresPage";
-import ParaClientesPage from "./pages/ParaClientesPage";
+import OfertasPage from "./pages/OfertasPage";
 import OAuthConsentPage from "./pages/OAuthConsentPage";
 import MarcaPage from "./pages/MarcaPage";
 import MarcaCorrentePage from "./pages/MarcaCorrentePage";
@@ -103,7 +103,8 @@ const AppRoutes = () => (
     
         <Route path="/empresas" element={<ParaEmpresasPage />} />
         <Route path="/divulgadores" element={<ParaDivulgadoresPage />} />
-        <Route path="/clientes" element={<ParaClientesPage />} />
+        <Route path="/ofertas" element={<OfertasPage />} />
+        <Route path="/clientes" element={<Navigate to="/ofertas" replace />} />
         <Route path="/marca" element={<MarcaPage />} />
         <Route path="/marca/corrente" element={<MarcaCorrentePage variant="corrente" />} />
         <Route path="/marca/3cs" element={<MarcaCorrentePage variant="3cs" />} />

@@ -7,11 +7,14 @@ import { Label } from "@/components/ui/label";
 import { whatsappLink } from "@/lib/contact";
 
 const PLANS = [
-  { name: "Largada", reais: 100 },
-  { name: "Cidade", reais: 250 },
-  { name: "Região", reais: 500 },
-  { name: "Brasil", reais: 1500 },
+  { name: "Começo", reais: 100 },
+  { name: "Movimento", reais: 200 },
+  { name: "Casa cheia", reais: 500 },
+  { name: "Rede", reais: 1000 },
 ];
+
+// Menor taxa por cupom usado na loja (R$ 3) com 10% de desconto do pré-pago
+const MIN_FEE_PREPAID = 2.7;
 
 const brl = (v: number) => v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 
@@ -27,7 +30,7 @@ export function ManualCreditsDialog({
   userName?: string;
   userEmail?: string;
 }) {
-  const [selected, setSelected] = useState<number>(250);
+  const [selected, setSelected] = useState<number>(200);
   const [custom, setCustom] = useState("");
 
   const customValue = Number(custom.replace(/\./g, "").replace(",", "."));
@@ -49,8 +52,8 @@ export function ManualCreditsDialog({
             <Coins className="h-5 w-5 text-company" /> Comprar créditos
           </DialogTitle>
           <DialogDescription>
-            1 crédito vale R$ 1 e compra 200 visualizações verificadas. Escolha o valor, fale com a gente no WhatsApp e pague por Pix. Os créditos entram na sua
-            conta assim que o pagamento for confirmado, com aviso aqui no painel.
+            Seu saldo só é usado quando um cliente usa o cupom na sua loja: 15% do preço da oferta (mínimo de R$ 3), com 10% de desconto por ser pré-pago.
+            Escolha o valor, fale com a gente no WhatsApp e pague por Pix. O saldo entra assim que o pagamento for confirmado, com aviso aqui no painel.
           </DialogDescription>
         </DialogHeader>
 
@@ -69,7 +72,7 @@ export function ManualCreditsDialog({
             >
               <p className="text-xs text-muted-foreground">{p.name}</p>
               <p className="font-display font-bold text-foreground">{brl(p.reais)}</p>
-              <p className="text-[11px] text-muted-foreground">{(p.reais * 200).toLocaleString("pt-BR")} visualizações</p>
+              <p className="text-[11px] text-muted-foreground">até {Math.floor(p.reais / MIN_FEE_PREPAID)} clientes na loja</p>
             </button>
           ))}
         </div>

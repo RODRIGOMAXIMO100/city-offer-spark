@@ -30,9 +30,9 @@ export function WelcomeModal() {
   const getRoleDescription = () => {
     switch (role) {
       case 'AFFILIATE':
-        return 'Pegue missões, poste sobre a marca na hora da onda e dispute prêmios todo mês.';
+        return 'Divulgue as ofertas da sua cidade e ganhe a cada cliente que usar o cupom na loja.';
       case 'COMPANY':
-        return 'Lance sua primeira campanha e coloque seu nome na boca do povo.';
+        return 'Crie sua primeira oferta e receba clientes novos na sua loja, pagando só por quem usar o cupom.';
       case 'CLIENT':
         return 'Descubra ofertas incríveis e apoie os negócios da sua comunidade! 💛';
       default:

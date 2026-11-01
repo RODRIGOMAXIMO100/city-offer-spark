@@ -26,14 +26,14 @@ const ROLES: { value: AppRole; label: string; icon: React.ReactNode; description
     value: 'COMPANY',
     label: 'Empresa',
     icon: <Building2 className="h-5 w-5" />,
-    description: 'Lance campanhas e coloque seu nome na boca do povo',
+    description: 'Publique ofertas e pague só pelo cupom usado na loja',
     color: 'bg-company text-company-foreground',
   },
   {
     value: 'AFFILIATE',
     label: 'Divulgador',
     icon: <Users className="h-5 w-5" />,
-    description: 'Poste, suba no ranking e ganhe prêmios todo mês',
+    description: 'Indique ofertas da cidade e ganhe por cliente',
     color: 'bg-affiliate text-affiliate-foreground',
   },
 ];

@@ -583,97 +583,34 @@ export default function OfferPage() {
             {offer.city}
           </div>
 
-          {/* Lead Capture Form */}
-          <div className="bg-muted/30 rounded-xl p-4 space-y-3">
-            <p className="text-sm font-medium text-center text-foreground">
-              Preencha para acessar a oferta
-            </p>
-            
-            <div className="space-y-2">
-              <Label htmlFor="leadName" className="text-xs text-muted-foreground">
-                Seu nome completo
-              </Label>
-              <div className="relative">
-                <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  id="leadName"
-                  placeholder="Ex: Maria Silva"
-                  value={leadName}
-                  onChange={(e) => { setLeadName(e.target.value); setFormError(null); }}
-                  className="pl-10"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="leadPhone" className="text-xs text-muted-foreground">
-                Seu WhatsApp
-              </Label>
-              <div className="relative">
-                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  id="leadPhone"
-                  placeholder="(00) 00000-0000"
-                  value={leadPhone}
-                  onChange={handlePhoneChange}
-                  className="pl-10"
-                  maxLength={16}
-                />
-              </div>
-            </div>
-
-            {formError && (
-              <p className="text-xs text-destructive text-center">{formError}</p>
-            )}
+          {/* Cupom: o cliente recebe no WhatsApp e usa na loja */}
+          <div className="rounded-xl bg-muted/30 p-4 space-y-2 text-sm">
+            <p className="font-semibold text-foreground text-center">Como funciona</p>
+            <ol className="space-y-1 text-muted-foreground list-decimal pl-5">
+              <li>Toque no botão e informe seu nome e WhatsApp.</li>
+              <li>O cupom chega no seu WhatsApp na hora.</li>
+              <li>Mostre o código na loja ou mande para a loja no WhatsApp.</li>
+            </ol>
           </div>
 
-          {/* CTA Button */}
-          <Button
-            onClick={handleSubmitLead}
-            disabled={!buttonReady || processing || !leadName.trim() || !leadPhone}
-            className={`w-full py-6 text-lg font-bold transition-all ${
-              buttonReady && !processing && leadName.trim() && leadPhone
-                ? 'bg-secondary hover:bg-secondary/90 shadow-lg hover:shadow-xl'
-                : 'bg-muted text-muted-foreground'
-            }`}
-          >
-            {processing ? (
-              <>
-                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                Processando...
-              </>
-            ) : buttonReady ? (
-              <>
-                {getLinkIcon()}
-                <span className="ml-2">{getLinkText()}</span>
-              </>
-            ) : (
-              <>
-                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                Carregando...
-              </>
-            )}
-          </Button>
-
-          {/* Coupon CTA */}
           <Button
             type="button"
-            variant="outline"
             onClick={() => setShowCouponModal(true)}
-            className="w-full border-secondary/40 text-secondary hover:bg-secondary/10"
+            disabled={timeLeft === 'Expirada'}
+            className="w-full py-6 text-lg font-bold bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg"
           >
             <Ticket className="mr-2 h-5 w-5" />
-            Pegar cupom para usar no local
+            {timeLeft === 'Expirada' ? 'Oferta encerrada' : 'Quero meu cupom'}
           </Button>
 
           {/* Nota de aceite */}
           <p className="text-xs text-center text-muted-foreground">
-            Ao enviar, você concorda com nossos{' '}
-            <a href="/terms" target="_blank" className="text-primary hover:underline">
+            Ao pegar o cupom, você concorda com nossos{' '}
+            <a href="/termos" target="_blank" className="text-primary hover:underline">
               Termos de Uso
             </a>{' '}
             e{' '}
-            <a href="/privacy" target="_blank" className="text-primary hover:underline">
+            <a href="/privacidade" target="_blank" className="text-primary hover:underline">
               Política de Privacidade
             </a>.
           </p>
@@ -701,6 +638,9 @@ export default function OfferPage() {
           onOpenChange={setShowCouponModal}
           offerId={offer.id}
           offerTitle={offer.title}
+          affiliateId={affiliateId}
+          companyName={offer.profiles?.name}
+          storeWhatsapp={offer.link_type === 'WHATSAPP' ? offer.link_destination : null}
         />
       )}
     </div>

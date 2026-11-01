@@ -47,7 +47,7 @@ import CompanyLeadsList from './CompanyLeadsList';
 import RedeemCouponPanel from './RedeemCouponPanel';
 import MerchantWhatsAppPanel from './MerchantWhatsAppPanel';
 import CompanyCampaigns from './reach/CompanyCampaigns';
-import { SHOW_COUPON_OFFERS } from '@/lib/reach';
+import { SHOW_COUPON_OFFERS, SHOW_REACH_CAMPAIGNS } from '@/lib/reach';
 import { ComingSoonLeadsCard } from '@/components/dashboard/ComingSoonLeadsCard';
 
 const MAX_ACTIVE_OFFERS = 3;
@@ -431,38 +431,31 @@ function CompanyDashboardContent() {
       <div className="max-w-2xl mx-auto px-3 sm:px-4 py-4 sm:py-6 space-y-4 sm:space-y-6">
         {/* Tab Navigation */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className={`grid w-full mb-4 ${SHOW_COUPON_OFFERS ? 'grid-cols-4' : 'grid-cols-2'}`}>
+          <TabsList className={`grid w-full mb-4 ${SHOW_REACH_CAMPAIGNS ? 'grid-cols-3' : 'grid-cols-2'}`}>
+            <TabsTrigger value="panel" className="flex items-center gap-1.5 text-xs sm:text-sm">
+              <LayoutDashboard className="h-4 w-4" />
+              {SHOW_COUPON_OFFERS ? 'Ofertas' : 'Perfil'}
+            </TabsTrigger>
+            {SHOW_COUPON_OFFERS && (
+            <TabsTrigger value="coupons" className="flex items-center gap-1.5 text-xs sm:text-sm">
+              <Ticket className="h-4 w-4" />
+              Validar cupom
+            </TabsTrigger>
+            )}
+            {SHOW_REACH_CAMPAIGNS && (
             <TabsTrigger value="campaigns" className="flex items-center gap-1.5 text-xs sm:text-sm">
               <Megaphone className="h-4 w-4" />
               Campanhas
             </TabsTrigger>
-            <TabsTrigger value="panel" className="flex items-center gap-1.5 text-xs sm:text-sm">
-              <LayoutDashboard className="h-4 w-4" />
-              {SHOW_COUPON_OFFERS ? 'Painel' : 'Perfil'}
-            </TabsTrigger>
-            {SHOW_COUPON_OFFERS && (
-            <>
-            <TabsTrigger value="leads" className="flex items-center gap-1.5 text-xs sm:text-sm">
-              <Users className="h-4 w-4" />
-              Leads
-              {totalLeads > 0 && (
-                <Badge variant="secondary" className="ml-1 h-5 px-1.5 text-xs">
-                  {totalLeads}
-                </Badge>
-              )}
-            </TabsTrigger>
-            <TabsTrigger value="coupons" className="flex items-center gap-1.5 text-xs sm:text-sm">
-              <Ticket className="h-4 w-4" />
-              Cupons
-            </TabsTrigger>
-            </>
             )}
           </TabsList>
 
+          {SHOW_REACH_CAMPAIGNS && (
           <TabsContent value="campaigns" className="mt-0">
             <CompanyCampaigns onNeedCredits={handleBuyCredits} />
             {!SHOW_COUPON_OFFERS && <div className="mt-6"><ComingSoonLeadsCard role="company" /></div>}
           </TabsContent>
+          )}
 
           <TabsContent value="panel" className="space-y-4 sm:space-y-6 mt-0">
         {/* Company Logo Section */}
@@ -515,7 +508,7 @@ function CompanyDashboardContent() {
                   className="hidden"
                 />
                 <p className="text-[10px] sm:text-xs text-muted-foreground mt-1">
-                  JPG ou PNG até 2MB. Aparece para os divulgadores nas missões das suas campanhas.
+                  JPG ou PNG até 2MB. Aparece nas suas ofertas e no cupom do cliente.
                 </p>
               </div>
             </div>
@@ -606,7 +599,7 @@ function CompanyDashboardContent() {
                 <ul className="text-xs sm:text-sm text-muted-foreground space-y-0.5 sm:space-y-1">
                   <li>• <strong className="text-foreground">Só paga quando o cliente vai à loja</strong><span className="hidden sm:inline"> e usa o cupom — cliente novo de verdade</span></li>
                   <li>• <strong className="text-foreground">Taxa de 15% por resgate</strong><span className="hidden sm:inline"> sobre o preço da oferta (mínimo R$ 3,00)</span></li>
-                  <li>• <strong className="text-foreground">Cliques e cadastros são grátis</strong><span className="hidden sm:inline">: servem só pra medir o alcance</span></li>
+                  <li>• <strong className="text-foreground">Visitas e cupons pegos são grátis</strong><span className="hidden sm:inline">: você paga só pelo cupom usado</span></li>
                   <li>• <strong className="text-foreground">Divulgador ganha 50%</strong><span className="hidden sm:inline"> da taxa por cada cliente que traz (até 70% por nível)</span></li>
                 </ul>
                 <Button variant="link" asChild className="h-auto p-0 text-company text-xs sm:text-sm">
@@ -837,10 +830,6 @@ function CompanyDashboardContent() {
         </div>
         </>
         )}
-          </TabsContent>
-
-          <TabsContent value="leads" className="mt-0">
-            <CompanyLeadsList />
           </TabsContent>
 
           <TabsContent value="coupons" className="mt-0 space-y-4 sm:space-y-6">

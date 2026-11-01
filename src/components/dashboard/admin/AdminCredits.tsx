@@ -134,7 +134,7 @@ export function AdminCredits() {
       <div>
         <h2 className="text-2xl font-display font-bold text-foreground">Créditos das empresas</h2>
         <p className="text-sm text-muted-foreground">
-          Quando a empresa pagar por Pix, lance aqui o valor. 1 crédito vale R$ 1 e compra 200 visualizações verificadas.
+          Quando a empresa pagar por Pix, lance aqui o valor. O saldo paga os cupons usados na loja: 15% do preço da oferta, mínimo de R$ 3, com 10% de desconto no pré-pago.
         </p>
       </div>
 
@@ -224,8 +224,8 @@ export function AdminCredits() {
               )}
               {preview && (
                 <p className="text-xs text-muted-foreground">
-                  {mode === "add" ? "Dá para " : "Equivale a "}
-                  {(preview * 2).toLocaleString("pt-BR")} visualizações verificadas.
+                  {mode === "add" ? "Dá para até " : "Equivale a até "}
+                  {Math.floor(preview / 270).toLocaleString("pt-BR")} cupons usados na loja (na taxa mínima).
                 </p>
               )}
             </div>

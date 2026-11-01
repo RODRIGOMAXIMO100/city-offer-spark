@@ -2,7 +2,6 @@ import {
   BarChart3, 
   Users, 
   Megaphone, 
-  Phone, 
   DollarSign, 
   CreditCard, 
   Banknote, 
@@ -23,6 +22,7 @@ import {
   Coins,
 
 } from 'lucide-react';
+import { SHOW_REACH_CAMPAIGNS } from '@/lib/reach';
 import {
   Sidebar,
   SidebarContent,
@@ -71,24 +71,27 @@ interface AdminSidebarProps {
   badges?: AdminBadges;
 }
 
-const menuGroups = [
+// Modelo principal: ofertas locais com cupom. As campanhas de alcance (Onda)
+// ficam guardadas e só aparecem quando SHOW_REACH_CAMPAIGNS for ligado.
+const couponGroups = [
   {
     label: 'Hoje',
     icon: LayoutDashboard,
     items: [
-      { id: 'home' as AdminSection, label: 'Início', icon: LayoutDashboard },
-      { id: 'review-posts' as AdminSection, label: 'Conferir posts', icon: ClipboardCheck },
-      { id: 'review-accounts' as AdminSection, label: 'Aprovar perfis', icon: UserCheck },
+      { id: 'overview' as AdminSection, label: 'Painel', icon: LayoutDashboard },
       { id: 'withdrawals' as AdminSection, label: 'Saques', icon: Banknote },
     ]
   },
   {
-    label: 'Operação',
-    icon: Target,
+    label: 'Ofertas e cupons',
+    icon: Megaphone,
     items: [
-      { id: 'campaigns' as AdminSection, label: 'Campanhas', icon: Target },
-      { id: 'prizes' as AdminSection, label: 'Prêmios do mês', icon: Trophy },
+      { id: 'offers' as AdminSection, label: 'Ofertas', icon: Megaphone },
+      { id: 'analytics' as AdminSection, label: 'Resultados das ofertas', icon: BarChart3 },
       { id: 'credits' as AdminSection, label: 'Créditos das empresas', icon: Coins },
+      { id: 'financeiro' as AdminSection, label: 'Financeiro', icon: Landmark },
+      { id: 'wa-templates' as AdminSection, label: 'WhatsApp', icon: MessageCircle },
+      { id: 'niches' as AdminSection, label: 'Nichos', icon: Tags },
     ]
   },
   {
@@ -96,7 +99,6 @@ const menuGroups = [
     icon: Users,
     items: [
       { id: 'users' as AdminSection, label: 'Usuários', icon: Users },
-      { id: 'reach-finance' as AdminSection, label: 'Financeiro', icon: Landmark },
       { id: 'transactions' as AdminSection, label: 'Transações', icon: DollarSign },
       { id: 'payments' as AdminSection, label: 'Pagamentos online', icon: CreditCard },
     ]
@@ -118,21 +120,22 @@ const menuGroups = [
       { id: 'cities' as AdminSection, label: 'Cidades', icon: MapPin },
     ]
   },
-  {
-    // Módulo de ofertas, cupons e leads: guardado para o lançamento (em breve no site)
-    label: 'Captação (em breve)',
-    icon: Megaphone,
-    items: [
-      { id: 'overview' as AdminSection, label: 'Painel de ofertas', icon: BarChart3 },
-      { id: 'analytics' as AdminSection, label: 'Analytics de ofertas', icon: BarChart3 },
-      { id: 'offers' as AdminSection, label: 'Ofertas', icon: Megaphone },
-      { id: 'leads' as AdminSection, label: 'Leads', icon: Phone },
-      { id: 'financeiro' as AdminSection, label: 'Financeiro de ofertas', icon: Landmark },
-      { id: 'niches' as AdminSection, label: 'Nichos', icon: Tags },
-      { id: 'wa-templates' as AdminSection, label: 'Templates WhatsApp', icon: MessageCircle },
-    ]
-  },
 ];
+
+const reachGroup = {
+  label: 'Campanhas de alcance (guardado)',
+  icon: Target,
+  items: [
+    { id: 'home' as AdminSection, label: 'Início das campanhas', icon: LayoutDashboard },
+    { id: 'review-posts' as AdminSection, label: 'Conferir posts', icon: ClipboardCheck },
+    { id: 'review-accounts' as AdminSection, label: 'Aprovar perfis', icon: UserCheck },
+    { id: 'campaigns' as AdminSection, label: 'Campanhas', icon: Target },
+    { id: 'prizes' as AdminSection, label: 'Prêmios do mês', icon: Trophy },
+    { id: 'reach-finance' as AdminSection, label: 'Financeiro das campanhas', icon: Landmark },
+  ]
+};
+
+const menuGroups = SHOW_REACH_CAMPAIGNS ? [...couponGroups, reachGroup] : couponGroups;
 
 export function AdminSidebar({ currentSection, onSectionChange, badges = {} }: AdminSidebarProps) {
   const { state } = useSidebar();

@@ -9,28 +9,28 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { homeFaqs } from "@/components/home/HomeFAQ";
 
 const rules = [
-  "Poste um vídeo ou post no seu perfil, nunca só nos Stories",
-  "Fale o nome da marca no vídeo e escreva na legenda, com o #publi",
-  "Poste dentro da janela da onda (nas primeiras 12 horas, ganhe 20% a mais)",
-  "Envie o link do post e, no 7º dia, atualize o print das visualizações",
+  "Divulgue o seu link das ofertas da sua cidade",
+  "Mande em grupos, no status e nas redes, falando a verdade sobre a oferta",
+  "O cliente pega o cupom pelo seu link e usa na loja",
+  "A comissão entra quando a loja confere o cupom",
 ];
 const avoid = [
-  "Comprar visualização ou usar robô: a conta é bloqueada",
-  "Postar em perfil fechado ou de outra pessoa",
-  "Apagar o post antes da conferência",
-  "Pedir curtida ou comentário em troca, ou postar tudo igual a outra pessoa",
+  "Pegar cupom no nome de outras pessoas ou inventar telefone",
+  "Prometer desconto que a loja não oferece",
+  "Mandar spam ou mensagem em massa para quem não conhece você",
+  "Combinar com a loja para validar cupom sem cliente: a conta é bloqueada",
 ];
 
 const affiliateFaqs = homeFaqs.filter((f) =>
-  ["Como o divulgador ganha?", "Preciso ter muitos seguidores para divulgar?", "Em quais redes os posts acontecem?", "Por que o post precisa ter #publi?"].includes(f.question),
+  ["Como o divulgador ganha?", "Preciso ter muitos seguidores para divulgar?", "Como o cliente recebe e usa o cupom?", "As ofertas valem para qualquer cidade?"].includes(f.question),
 );
 
 const ParaDivulgadoresPage = () => (
   <div className="min-h-screen bg-background">
     <SEOHead
-      title="Para Divulgadores: poste, suba no ranking e ganhe prêmios"
-      description="Divulgue marcas nas suas redes sociais, some pontos a cada visualização verificada e dispute prêmios em dinheiro todo mês, em ligas do seu tamanho. Cadastro grátis."
-      keywords={["ganhar dinheiro divulgando", "divulgador", "ranking", "prêmios em dinheiro", "publi"]}
+      title="Para divulgadores: indique ofertas da cidade e ganhe por cliente"
+      description="Divulgue as ofertas dos negócios da sua cidade e ganhe metade da taxa de cada cupom usado por quem veio pelo seu link, até 70% por nível. Cadastro grátis, saque no Pix."
+      keywords={["ganhar dinheiro indicando", "divulgador", "comissão por indicação", "renda extra", "cupom de desconto"]}
       canonicalUrl="/divulgadores"
     />
     <StructuredData type="FAQPage" faqs={affiliateFaqs} />
@@ -44,15 +44,15 @@ const ParaDivulgadoresPage = () => (
             <Trophy className="h-4 w-4" /> Para divulgadores
           </span>
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-display font-bold tracking-tight mb-5">
-            Sua rede social <span className="text-affiliate">vale prêmio</span>
+            Quem você conhece <span className="text-affiliate">vale dinheiro</span>
           </h1>
           <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
-            Pegue missões de marcas, poste um vídeo seu na hora da onda e dispute prêmios em dinheiro todo mês com gente do seu tamanho.
+            Indique as ofertas dos negócios da sua cidade para os seus grupos e contatos e ganhe a cada cliente que usar o cupom na loja.
           </p>
           <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 mt-6 text-sm text-muted-foreground">
             <span className="flex items-center gap-2"><Smartphone className="h-4 w-4 text-affiliate" /> Cadastro grátis</span>
-            <span className="flex items-center gap-2"><Trophy className="h-4 w-4 text-affiliate" /> Sem sorteio</span>
-            <span className="flex items-center gap-2"><Wallet className="h-4 w-4 text-affiliate" /> Prêmio no Pix</span>
+            <span className="flex items-center gap-2"><Trophy className="h-4 w-4 text-affiliate" /> Ganhe por cliente</span>
+            <span className="flex items-center gap-2"><Wallet className="h-4 w-4 text-affiliate" /> Saque no Pix</span>
           </div>
         </div>
       </section>
@@ -61,10 +61,10 @@ const ParaDivulgadoresPage = () => (
 
       <section className="section-padding">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl sm:text-4xl font-display font-bold text-center mb-10">As regras do jogo</h2>
+          <h2 className="text-3xl sm:text-4xl font-display font-bold text-center mb-10">Como funciona na prática</h2>
           <div className="grid md:grid-cols-2 gap-6">
             <div className="bg-card border border-border rounded-3xl p-6">
-              <p className="font-display font-semibold text-lg mb-4 text-affiliate">Para valer ponto</p>
+              <p className="font-display font-semibold text-lg mb-4 text-affiliate">Para ganhar</p>
               <ul className="space-y-3">
                 {rules.map((r) => (
                   <li key={r} className="flex gap-3"><CheckCircle2 className="h-5 w-5 text-affiliate shrink-0 mt-0.5" />{r}</li>
@@ -72,7 +72,7 @@ const ParaDivulgadoresPage = () => (
               </ul>
             </div>
             <div className="bg-card border border-border rounded-3xl p-6">
-              <p className="font-display font-semibold text-lg mb-4 text-destructive">Tira você do jogo</p>
+              <p className="font-display font-semibold text-lg mb-4 text-destructive">Bloqueia a conta</p>
               <ul className="space-y-3">
                 {avoid.map((r) => (
                   <li key={r} className="flex gap-3"><XCircle className="h-5 w-5 text-destructive shrink-0 mt-0.5" />{r}</li>
@@ -100,7 +100,7 @@ const ParaDivulgadoresPage = () => (
             <SignupForm
               role="AFFILIATE"
               title="Quero ser divulgador"
-              description="Crie sua conta grátis, cadastre seus perfis e pegue a primeira missão."
+              description="Crie sua conta grátis, escolha as ofertas da sua cidade e comece a indicar."
               buttonText="Criar minha conta"
             />
           </div>

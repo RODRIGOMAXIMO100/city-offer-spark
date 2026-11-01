@@ -54,6 +54,12 @@ export function Navbar() {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-1">
             <Link 
+              to="/ofertas" 
+              className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground rounded-lg hover:bg-muted/50 transition-all whitespace-nowrap"
+            >
+              Ofertas
+            </Link>
+            <Link 
               to="/empresas" 
               className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground rounded-lg hover:bg-muted/50 transition-all"
             >
@@ -71,12 +77,6 @@ export function Navbar() {
             >
               Como Funciona
             </button>
-            <Link 
-              to="/clientes" 
-              className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground rounded-lg hover:bg-muted/50 transition-all whitespace-nowrap"
-            >
-              Ofertas <span className="ml-1 text-[10px] font-bold uppercase rounded-full bg-client/10 text-client px-1.5 py-0.5">em breve</span>
-            </Link>
             <Link 
               to="/blog" 
               className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground rounded-lg hover:bg-muted/50 transition-all"
@@ -131,6 +131,13 @@ export function Navbar() {
           <div className="md:hidden py-4 border-t border-border animate-fade-in bg-background">
             <div className="flex flex-col gap-2">
               <Link 
+                to="/ofertas" 
+                onClick={() => setIsOpen(false)}
+                className="text-left px-4 py-3 text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-lg transition-colors"
+              >
+                Ofertas
+              </Link>
+              <Link 
                 to="/empresas" 
                 onClick={() => setIsOpen(false)}
                 className="text-left px-4 py-3 text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-lg transition-colors"
@@ -150,13 +157,6 @@ export function Navbar() {
               >
                 Como Funciona
               </button>
-              <Link 
-                to="/clientes" 
-                onClick={() => setIsOpen(false)}
-                className="text-left px-4 py-3 text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-lg transition-colors"
-              >
-                Ofertas <span className="ml-1 text-[10px] font-bold uppercase rounded-full bg-client/10 text-client px-1.5 py-0.5">em breve</span>
-              </Link>
               <Link 
                 to="/blog" 
                 onClick={() => setIsOpen(false)}

@@ -98,7 +98,7 @@ interface TransactionData {
 export default function AdminDashboard() {
   const { signOut, profile } = useAuth();
   const navigate = useNavigate();
-  const [currentSection, setCurrentSection] = useState<AdminSection>('home');
+  const [currentSection, setCurrentSection] = useState<AdminSection>('overview');
   // Contadores do menu e da tela inicial; recarregam a cada troca de seção
   const [refreshKey, setRefreshKey] = useState(0);
   const { data: reach } = useReachSummary('month', refreshKey);

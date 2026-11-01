@@ -30,7 +30,7 @@ import { WelcomeModal, OnboardingTour, OnboardingChecklist } from '@/components/
 import { AffiliateOfferCard } from './AffiliateOfferCard';
 import AffiliateMissions from './reach/AffiliateMissions';
 import AffiliateReachRanking from './reach/AffiliateReachRanking';
-import { SHOW_COUPON_OFFERS } from '@/lib/reach';
+import { SHOW_COUPON_OFFERS, SHOW_REACH_CAMPAIGNS } from '@/lib/reach';
 import { ComingSoonLeadsCard } from '@/components/dashboard/ComingSoonLeadsCard';
 import { BrandLogo } from '@/components/brand/BrandLogo';
 
@@ -356,7 +356,9 @@ function AffiliateDashboardContent() {
 
       <div className="max-w-4xl mx-auto px-4 py-6">
         <Tabs defaultValue={SHOW_COUPON_OFFERS ? 'inicio' : 'missoes'} className="w-full">
-          <TabsList className={`grid w-full mb-6 ${SHOW_COUPON_OFFERS ? 'grid-cols-5' : 'grid-cols-3'}`}>
+          <TabsList className={`grid w-full mb-6 ${SHOW_REACH_CAMPAIGNS ? 'grid-cols-5' : 'grid-cols-3'}`}>
+            {SHOW_REACH_CAMPAIGNS && (
+            <>
             <TabsTrigger value="missoes" className="flex items-center gap-2">
               <Target className="h-4 w-4" />
               <span className="text-xs sm:text-sm">Missões</span>
@@ -365,6 +367,8 @@ function AffiliateDashboardContent() {
               <Trophy className="h-4 w-4" />
               <span className="text-xs sm:text-sm">Ranking</span>
             </TabsTrigger>
+            </>
+            )}
             {SHOW_COUPON_OFFERS && (
             <>
             <TabsTrigger value="inicio" className="flex items-center gap-2">
@@ -383,6 +387,8 @@ function AffiliateDashboardContent() {
             </TabsTrigger>
           </TabsList>
 
+          {SHOW_REACH_CAMPAIGNS && (
+          <>
           <TabsContent value="missoes" className="space-y-6">
             <AffiliateMissions />
             {!SHOW_COUPON_OFFERS && <ComingSoonLeadsCard role="affiliate" />}
@@ -391,6 +397,8 @@ function AffiliateDashboardContent() {
           <TabsContent value="ranking" className="space-y-6">
             <AffiliateReachRanking />
           </TabsContent>
+          </>
+          )}
 
           {/* Tab Início - Stats, Nível e Ranking */}
           <TabsContent value="inicio" className="space-y-6">
@@ -497,7 +505,7 @@ function AffiliateDashboardContent() {
                   </p>
                 </div>
                 {earnings.length === 0 ? (
-                  <p className="text-sm text-muted-foreground text-center py-4">Nenhum prêmio ainda. Faça as missões e suba no ranking da sua liga.</p>
+                  <p className="text-sm text-muted-foreground text-center py-4">Nenhum ganho ainda. Divulgue uma oferta e ganhe quando o cliente usar o cupom na loja.</p>
                 ) : (
                   <div className="space-y-2 max-h-64 overflow-y-auto">
                     {earnings.map((e) => (

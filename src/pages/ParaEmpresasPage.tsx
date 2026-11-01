@@ -1,4 +1,4 @@
-import { Building2, CheckCircle2, XCircle, Eye, Hash, MapPin, CalendarClock, Link2 } from "lucide-react";
+import { Building2, CheckCircle2, XCircle, Tag, Image as ImageIcon, MapPin, CalendarClock, MessageCircle } from "lucide-react";
 import { SEOHead } from "@/components/seo/SEOHead";
 import { StructuredData } from "@/components/seo/StructuredData";
 import { Navbar } from "@/components/landing/Navbar";
@@ -9,35 +9,35 @@ import { HomeForCompanies } from "@/components/home/HomeForCompanies";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { homeFaqs } from "@/components/home/HomeFAQ";
 
-const campaignFields = [
-  { icon: Hash, title: "Assinatura e roteiro", text: "O nome ou a frase que todo mundo fala (ex.: Pizzaria do Zé) e 2 ou 3 ideias de vídeo para os divulgadores." },
-  { icon: Link2, title: "Redes", text: "TikTok, Reels, YouTube Shorts e Kwai. Facebook e X também, conferidos pelo print." },
-  { icon: MapPin, title: "Onde", text: "Cidades específicas ou o Brasil inteiro." },
-  { icon: CalendarClock, title: "Janela da onda", text: "Quando todo mundo posta: de 24 horas a 7 dias. Dá para casar com uma inauguração ou um lançamento." },
-  { icon: Eye, title: "Meta", text: "Quantas visualizações você quer, a partir de 20 mil." },
+const offerFields = [
+  { icon: Tag, title: "A promoção", text: "O que é, o preço de antes e o preço com desconto. Ex.: pizza grande + refri por R$ 39." },
+  { icon: ImageIcon, title: "Fotos", text: "Até algumas fotos do produto ou do lugar. Oferta com foto boa vende mais." },
+  { icon: MapPin, title: "Cidade", text: "A oferta aparece para quem procura na sua cidade." },
+  { icon: CalendarClock, title: "Validade", text: "Até quando a oferta fica no ar e quanto tempo o cliente tem para usar o cupom." },
+  { icon: MessageCircle, title: "Seu WhatsApp", text: "Para o cliente mandar o código e já pedir, se você atende por WhatsApp." },
 ];
 
 const counts = [
-  "Vídeo ou post no perfil, com o nome da marca na legenda e o #publi",
-  "Perfil aberto e cadastrado pelo divulgador",
-  "Visualizações dos 7 primeiros dias, conferidas pela leitura do post e pelo print",
+  "Cupom com código válido, dentro da validade",
+  "Conferido por você no painel, na hora do atendimento",
+  "Usado uma vez só: depois de conferido, o código não serve mais",
 ];
 const notCounts = [
-  "Stories, que somem em 24 horas",
-  "Post sem o nome da marca ou sem #publi",
-  "Perfil fechado ou de outra pessoa",
+  "Visita na página da oferta",
+  "Cupom pego e não usado",
+  "Código vencido, já usado ou de outra loja",
 ];
 
 const companyFaqs = homeFaqs.filter((f) =>
-  ["Quanto custa para a empresa?", "Como vocês sabem que as visualizações são reais?", "É campanha de hashtag? Vocês colocam a marca nos assuntos do momento?", "Em quais redes os posts acontecem?", "Posso escolher onde a campanha acontece?", "Por que o post precisa ter #publi?"].includes(f.question),
+  ["Quanto custa para a empresa?", "Como a loja confere se o cupom vale?", "Como o cliente recebe e usa o cupom?", "As ofertas valem para qualquer cidade?"].includes(f.question),
 );
 
 const ParaEmpresasPage = () => (
   <div className="min-h-screen bg-background">
     <SEOHead
-      title="Para Empresas: muita gente real postando sobre a sua marca"
-      description="Marque o dia e veja dezenas de divulgadores reais postando vídeos sobre a sua marca ao mesmo tempo. Pague só pelas visualizações verificadas, R$ 5 a cada mil. A partir de R$ 100."
-      keywords={["campanha de alcance", "divulgação nas redes sociais", "marketing de influência local", "lançamento de marca"]}
+      title="Para empresas: cliente novo na loja, pague só pelo cupom usado"
+      description="Crie uma oferta, divulgadores da cidade espalham e o cliente chega com o cupom no WhatsApp. Sem mensalidade: 15% do preço por cupom usado, mínimo de R$ 3."
+      keywords={["cupom de desconto para loja", "atrair clientes", "divulgação local", "promoção no WhatsApp"]}
       canonicalUrl="/empresas"
     />
     <StructuredData type="FAQPage" faqs={companyFaqs} />
@@ -48,13 +48,13 @@ const ParaEmpresasPage = () => (
         <div className="absolute -top-20 right-0 w-[28rem] h-[28rem] bg-company/10 rounded-full blur-3xl" aria-hidden />
         <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <span className="inline-flex items-center gap-2 bg-company/10 text-company px-4 py-2 rounded-full text-sm font-semibold mb-6">
-            <Building2 className="h-4 w-4" /> Para empresas e marcas
+            <Building2 className="h-4 w-4" /> Para negócios locais
           </span>
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-display font-bold tracking-tight mb-5">
-            Sua marca no feed de todo mundo, <span className="text-company">pagando só o que foi visto</span>
+            Cliente novo na loja, <span className="text-company">pagando só pelo cupom usado</span>
           </h1>
           <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
-            Você marca a onda em poucos minutos, a rede de divulgadores posta junto e o Clilin confere cada visualização antes de cobrar.
+            Você cria a oferta em poucos minutos, divulgadores da cidade espalham e o cliente chega com o cupom no WhatsApp. Você confere o código e só então paga.
           </p>
         </div>
       </section>
@@ -63,9 +63,9 @@ const ParaEmpresasPage = () => (
 
       <section className="section-padding">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl sm:text-4xl font-display font-bold text-center mb-10">O que você define na campanha</h2>
+          <h2 className="text-3xl sm:text-4xl font-display font-bold text-center mb-10">O que você coloca na oferta</h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4">
-            {campaignFields.map((f) => (
+            {offerFields.map((f) => (
               <div key={f.title} className="bg-card border border-border rounded-2xl p-5">
                 <f.icon className="h-6 w-6 text-company mb-3" />
                 <p className="font-display font-semibold mb-1">{f.title}</p>
@@ -80,10 +80,10 @@ const ParaEmpresasPage = () => (
 
       <section className="section-padding bg-muted/30">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl sm:text-4xl font-display font-bold text-center mb-10">O que conta e o que não conta</h2>
+          <h2 className="text-3xl sm:text-4xl font-display font-bold text-center mb-10">O que é cobrado e o que não é</h2>
           <div className="grid md:grid-cols-2 gap-6">
             <div className="bg-card border border-border rounded-3xl p-6">
-              <p className="font-display font-semibold text-lg mb-4 text-affiliate">Entra na conta</p>
+              <p className="font-display font-semibold text-lg mb-4 text-affiliate">É cobrado</p>
               <ul className="space-y-3">
                 {counts.map((c) => (
                   <li key={c} className="flex gap-3"><CheckCircle2 className="h-5 w-5 text-affiliate shrink-0 mt-0.5" />{c}</li>
@@ -91,7 +91,7 @@ const ParaEmpresasPage = () => (
               </ul>
             </div>
             <div className="bg-card border border-border rounded-3xl p-6">
-              <p className="font-display font-semibold text-lg mb-4 text-destructive">Não entra na conta</p>
+              <p className="font-display font-semibold text-lg mb-4 text-destructive">Não é cobrado</p>
               <ul className="space-y-3">
                 {notCounts.map((c) => (
                   <li key={c} className="flex gap-3"><XCircle className="h-5 w-5 text-destructive shrink-0 mt-0.5" />{c}</li>
@@ -119,7 +119,7 @@ const ParaEmpresasPage = () => (
             <SignupForm
               role="COMPANY"
               title="Cadastre sua empresa"
-              description="Crie a conta, coloque crédito e lance a primeira campanha."
+              description="Crie a conta, coloque saldo e publique a primeira oferta."
               buttonText="Criar minha conta"
             />
           </div>

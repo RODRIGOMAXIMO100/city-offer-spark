@@ -1,6 +1,7 @@
-// issue-coupon v2 — mesmo comportamento do deployado + 2 adicoes:
-//   (1) atribuicao do divulgador (via lead_id opcional ou lookup por telefone)
+// issue-coupon v3
+//   (1) atribuicao do divulgador: lead_id, lead pelo telefone ou affiliate_id do link (?ref=)
 //   (2) envio do cupom pelo WhatsApp Cloud API (template clilin_cupom)
+//   (3) oferta pausa sozinha quando a empresa pre-paga nao tem saldo para o proximo cupom
 // Secrets novos: WA_TOKEN, WA_PHONE_NUMBER_ID (sem eles, funciona como hoje: so tela)
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
@@ -41,6 +42,7 @@ Deno.serve(async (req) => {
     const customerName = String(body?.customer_name ?? "").trim();
     const customerPhone = normalizePhone(body?.customer_phone ?? "");
     const leadId = String(body?.lead_id ?? "").trim() || null;
+    const refAffiliate = String(body?.affiliate_id ?? "").trim() || null;
 
     if (!offerId || !/^[0-9a-f-]{36}$/i.test(offerId)) {
       return json({ error: "offer_id inválido" }, 400);
@@ -59,13 +61,25 @@ Deno.serve(async (req) => {
 
     const { data: offer, error: offerErr } = await admin
       .from("offers")
-      .select("id, company_id, active, deleted_at, expires_at, title, price_new, coupon_valid_hours, profiles!offers_company_id_fkey(name)")
+      .select("id, company_id, active, deleted_at, expires_at, title, price_new, coupon_valid_hours, profiles!offers_company_id_fkey(name, balance, billing_mode, banned)")
       .eq("id", offerId)
       .maybeSingle();
 
     if (offerErr || !offer) return json({ error: "Oferta não encontrada" }, 404);
     if (!offer.active || offer.deleted_at || new Date(offer.expires_at) < new Date()) {
       return json({ error: "Oferta indisponível" }, 400);
+    }
+
+    // Empresa pre-paga sem saldo para pagar o proximo cupom: oferta pausada
+    // deno-lint-ignore no-explicit-any
+    const company = (offer as any).profiles ?? {};
+    if (company.banned) return json({ error: "Oferta indisponível" }, 400);
+    if (String(company.billing_mode ?? "PRE").toUpperCase() === "PRE") {
+      const { data: feeNow } = await admin.rpc("calc_redemption_fee", { p_offer_id: offerId });
+      const need = typeof feeNow === "number" ? Math.ceil(feeNow * 0.9) : 300;
+      if (Number(company.balance ?? 0) < need) {
+        return json({ error: "Esta oferta está pausada no momento. Volte mais tarde." }, 409);
+      }
     }
 
     // Rate limit: phone (24h)
@@ -107,6 +121,16 @@ Deno.serve(async (req) => {
         .order("created_at", { ascending: false })
         .limit(1).maybeSingle();
       if (lead) { affiliateId = lead.affiliate_id ?? null; resolvedLeadId = lead.id; }
+    }
+
+    // 3) divulgador do link (?ref=): precisa ser divulgador ativo
+    if (!affiliateId && refAffiliate && /^[0-9a-f-]{36}$/i.test(refAffiliate) && refAffiliate !== offer.company_id) {
+      const { data: aff } = await admin
+        .from("profiles").select("id, user_id, banned").eq("id", refAffiliate).maybeSingle();
+      if (aff && !aff.banned) {
+        const { data: isAff } = await admin.rpc("has_role", { _user_id: aff.user_id, _role: "AFFILIATE" });
+        if (isAff) affiliateId = aff.id;
+      }
     }
 
     // Reuso de cupom ISSUED vigente (comportamento atual mantido)

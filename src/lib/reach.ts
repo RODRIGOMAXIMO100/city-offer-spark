@@ -236,6 +236,7 @@ export async function uploadProof(userId: string, file: File): Promise<string> {
   return path;
 }
 
-// Mostra cupons/ofertas do modelo anterior. Desligado enquanto o Clilin
-// lanca as campanhas de alcance; volta como tipo de campanha depois.
-export const SHOW_COUPON_OFFERS = false;
+// Modelo principal: ofertas locais com cupom (por cidade), validado na loja.
+export const SHOW_COUPON_OFFERS = true;
+// Campanhas de alcance (Onda): guardadas, fora do ar por enquanto.
+export const SHOW_REACH_CAMPAIGNS = false;

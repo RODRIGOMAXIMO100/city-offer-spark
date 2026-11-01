@@ -1,30 +1,37 @@
-import { Rocket, Users, BadgeCheck } from "lucide-react";
+import { Store, Megaphone, MessageCircle, BadgeCheck } from "lucide-react";
 
 const steps = [
   {
     n: "01",
-    icon: Rocket,
-    title: "Você marca a onda",
-    text: "Escolhe o dia (uma inauguração, um lançamento, um evento), escreve o roteiro e define as cidades e a meta de visualizações. O valor fica reservado no seu crédito.",
+    icon: Store,
+    title: "A loja cria a oferta",
+    text: "Monta a promoção no painel, com preço, validade e fotos. Ela aparece para quem é da mesma cidade.",
     tone: "company",
   },
   {
     n: "02",
-    icon: Users,
-    title: "Divulgadores postam juntos",
-    text: "Gente real recebe a missão e posta um vídeo sobre a sua marca no próprio perfil, com o nome na legenda e o #publi. Todo mundo na mesma janela, de 24 horas a 7 dias.",
+    icon: Megaphone,
+    title: "A cidade fica sabendo",
+    text: "Divulgadores da cidade espalham o link nas redes e nos grupos, e quem procura acha a oferta na busca do Clilin.",
     tone: "affiliate",
   },
   {
     n: "03",
-    icon: BadgeCheck,
-    title: "Você paga só o que foi visto",
-    text: "Cada post conta as visualizações dos 7 primeiros dias. O Clilin confere e cobra só o que foi verificado. O que sobrar da meta volta para o seu saldo.",
+    icon: MessageCircle,
+    title: "O cliente pega o cupom",
+    text: "Informa nome e WhatsApp e recebe o código na hora, no próprio WhatsApp. Sem app e sem cadastro.",
     tone: "highlight",
   },
-] as const;
+  {
+    n: "04",
+    icon: BadgeCheck,
+    title: "A loja confere e só então paga",
+    text: "O cliente mostra o código no balcão ou manda no WhatsApp da loja. O empresário digita no painel, vê se é válido e o cupom fica usado.",
+    tone: "company",
+  },
+];
 
-const toneClass = {
+const toneClass: Record<string, { badge: string; icon: string }> = {
   company: { badge: "bg-company text-company-foreground", icon: "bg-company/10 text-company" },
   affiliate: { badge: "bg-affiliate text-affiliate-foreground", icon: "bg-affiliate/10 text-affiliate" },
   highlight: { badge: "bg-highlight text-highlight-foreground", icon: "bg-highlight/15 text-foreground" },
@@ -36,15 +43,15 @@ export function HomeHowItWorks() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-14">
           <span className="text-primary font-semibold text-sm uppercase tracking-wider">Como funciona</span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold mt-3 mb-4">Três passos, uma onda só</h2>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold mt-3 mb-4">Da oferta ao balcão em quatro passos</h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Muita gente falando da sua marca no mesmo dia. Quem rola o feed vê o seu nome várias vezes, em perfis diferentes, de gente que confia.
+            Cada cupom tem um código único, vale uma vez e só vira cobrança quando o cliente está na loja.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-6 lg:gap-8">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {steps.map((s) => (
-            <div key={s.n} className="relative bg-card rounded-3xl p-6 sm:p-8 border border-border hover:shadow-xl transition-shadow">
+            <div key={s.n} className="relative bg-card rounded-3xl p-6 sm:p-7 border border-border hover:shadow-xl transition-shadow">
               <span className={`absolute -top-3 -right-3 w-11 h-11 rounded-2xl font-display font-bold flex items-center justify-center shadow-lg ${toneClass[s.tone].badge}`}>
                 {s.n}
               </span>
