@@ -4,8 +4,8 @@ import { useLocation } from 'react-router-dom';
 const WhatsAppButton = () => {
   const location = useLocation();
   
-  // Hide on chat page
-  if (location.pathname === '/chat') {
+  // Não aparece no chat nem no admin (ficava em cima do menu)
+  if (location.pathname === '/chat' || location.pathname.startsWith('/admin')) {
     return null;
   }
 
