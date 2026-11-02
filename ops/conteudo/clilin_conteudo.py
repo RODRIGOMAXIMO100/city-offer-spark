@@ -12,6 +12,7 @@ uso:
   clilin_conteudo.py escrever carrossel|reel
   clilin_conteudo.py render ID
   clilin_conteudo.py status
+  clilin_conteudo.py pagina                 arruma a página do Facebook (foto, capa, sobre, site)
 
 Chaves (nunca impressas): lidas de /opt/maximo-shorts/.env e, por cima,
 de /opt/clilin/conteudo/.env (CLILIN_IG_USER_ID, CLILIN_FB_PAGE, CONTEUDO_MODEL,
@@ -840,6 +841,40 @@ def rodar():
         render(item_id)
 
 
+SOBRE = ("Ofertas da sua cidade com cupom grátis no WhatsApp. Pegue o cupom no clilin.com e use na loja. "
+         "Um produto do Grupo MAXIMO.")
+
+
+def pagina():
+    """Arruma a página do Facebook: foto de perfil, capa, sobre e site."""
+    e = env()
+    req, _ = meta(e)
+    pid, ptok = pagina_fb(e, req)
+    if not pid:
+        log("página do Facebook não encontrada no token (falta atribuir ao usuário do sistema)")
+        raise SystemExit(1)
+    dst = f"{MEDIA}/pagina"
+    os.makedirs(dst, exist_ok=True)
+    st = str(int(time.time()))
+    u = {}
+    for n in ("perfil", "capa"):
+        shutil.copy(f"{ASSETS}/redes/{n}.png", f"{dst}/{n}_{st}.png")
+        u[n] = f"{URL}/pagina/{n}_{st}.png"
+    passos = [
+        ("foto de perfil", lambda: req("POST", f"{pid}/picture", {"picture": u["perfil"]}, token=ptok)),
+        ("capa", lambda: req("POST", pid, {"cover": req("POST", f"{pid}/photos", {"url": u["capa"], "published": "false"},
+                                                         token=ptok)["id"]}, token=ptok)),
+        ("sobre e site", lambda: req("POST", pid, {"about": SOBRE, "website": "https://clilin.com"}, token=ptok)),
+    ]
+    for nome, f in passos:
+        try:
+            log(nome, "OK", json.dumps(f())[:120])
+        except Exception as x:  # noqa: BLE001
+            log(nome, "FALHOU", limpa(x)[:300])
+    info = req("GET", pid, {"fields": "name,link,about,website,instagram_business_account"}, token=ptok)
+    print(json.dumps(info, ensure_ascii=False))
+
+
 def status():
     for i in itens():
         e = estado(i)
@@ -865,6 +900,8 @@ def main():
         render(a[1])
     elif cmd == "postar":
         postar(a[1])
+    elif cmd == "pagina":
+        pagina()
     elif cmd == "agora":
         for tipo in (a[1:] or ["carrossel", "reel"]):
             item_id = escrever(tipo)
