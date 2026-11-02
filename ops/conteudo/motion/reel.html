@@ -98,6 +98,10 @@ body { font-family: "Onest", sans-serif; color: #fff; -webkit-font-smoothing: an
 .bolha .hora { position: absolute; right: 10px; bottom: 6px; font-size: 11px; color: #8a8a8a; }
 .digitando { background: #fff; border-radius: 16px; padding: 12px 16px; display: inline-flex; gap: 5px; }
 .digitando i { width: 8px; height: 8px; border-radius: 50%; background: #9a9a9a; display: block; }
+.qr { width: 300px; margin-top: 4px; background: #fff; border-radius: 12px; text-align: center; padding: 11px 0; color: #0B7A6B;
+  font-weight: 800; font-size: 15px; box-shadow: 0 1px 2px rgba(0,0,0,.12); }
+.eu { margin: 12px 0 0 auto; width: max-content; background: #D9FDD3; border-radius: 16px 4px 16px 16px; padding: 10px 14px;
+  font-size: 15px; font-weight: 600; box-shadow: 0 1px 2px rgba(0,0,0,.12); transform-origin: 100% 0; }
 .ok { border-radius: 16px; background: #E9F9EF; border: 1.5px solid #9FE0B6; padding: 14px; }
 .ok .t { color: #15803D; font-weight: 800; font-size: 16px; display: flex; gap: 8px; align-items: center; }
 .tabs { display: flex; gap: 6px; background: #F3EEFB; padding: 5px; border-radius: 16px; }
@@ -335,6 +339,27 @@ const TELAS = {
       ok.style.opacity = seg(lt, tap + .25, tap + .35); ok.style.transform = `scale(${lerp(.85, 1, p)})`;
       return [{ alvo: "btn", t: tap }];
     }, sons(ini) { sfx(ini + .35, "tecla"); sfx(ini + 1.5, "toque"); sfx(ini + 1.75, "ding"); } };
+  },
+  confirmar(D) {
+    // a loja recebe o aviso do cupom no WhatsApp e confirma com um toque, sem digitar código
+    const o = oferta0(D);
+    const sc = $("div", "sc", `<div class="wa-top"><span style="font-size:22px">‹</span><div class="wa-av">${SIMB_CLARO()}</div>
+      <div><div style="font-weight:800;font-size:16px">Clilin</div><div style="font-size:12px;opacity:.8">conta comercial</div></div></div>
+      <div class="wa-fundo"><div class="bolha" data-b="1">Novo cupom da sua oferta <b>${esc(o.titulo)}</b>.<br><br>
+      Cliente: <b>Maria S.</b><br>Código: <b>${CODIGO}</b><br>Válido por 7 dias<br><br>Quando o cliente chegar, toque em <b>Confirmar uso</b>.
+      <span class="hora">12:30</span></div><div class="qr" data-r="qr">Confirmar uso</div>
+      <div class="eu" data-b="2">Confirmar uso</div>
+      <div class="bolha" data-b="3" style="margin-top:12px"><span style="display:inline-flex;gap:6px;align-items:center;color:#15803D;font-weight:800">
+      ${IC.ok()} Cupom confirmado!</span><br>${CODIGO} · ${esc(o.titulo)}<br>Pronto, é só atender.<span class="hora">12:41</span></div></div>`);
+    return { sc, render(lt) {
+      const b1 = sc.querySelector("[data-b='1']"), qr = sc.querySelector("[data-r=qr]"), b2 = sc.querySelector("[data-b='2']"), b3 = sc.querySelector("[data-b='3']");
+      const p1 = mola(seg(lt, .15, .65)); b1.style.opacity = seg(lt, .15, .25); b1.style.transform = `scale(${lerp(.4, 1, p1)})`;
+      qr.style.opacity = seg(lt, .35, .5); qr.style.transform = `scale(${lt > 1.4 && lt < 1.58 ? .95 : 1})`;
+      qr.style.background = lt > 1.4 && lt < 1.7 ? "#EAF7F3" : "#fff";
+      const p2 = mola(seg(lt, 1.65, 2)); b2.style.display = lt >= 1.65 ? "block" : "none"; b2.style.transform = `scale(${lerp(.4, 1, p2)})`;
+      const p3 = mola(seg(lt, 2.15, 2.6)); b3.style.display = lt >= 2.15 ? "block" : "none"; b3.style.transform = `scale(${lerp(.4, 1, p3)})`;
+      return [{ alvo: "qr", t: 1.4 }];
+    }, sons(ini) { sfx(ini + .15, "mensagem"); sfx(ini + 1.4, "toque"); sfx(ini + 2.15, "ding"); } };
   },
   divulgador(D) {
     const o = oferta0(D);

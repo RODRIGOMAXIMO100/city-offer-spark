@@ -133,7 +133,7 @@ REGRAS = """Você escreve o conteúdo do Instagram do Clilin (@clilin.oficial), 
 
 O QUE É O CLILIN
 - Plataforma de ofertas locais: negócios da cidade publicam promoções, divulgadores espalham e o cliente pega o cupom de graça, direto no WhatsApp.
-- O cliente mostra o código na loja ou manda no WhatsApp da loja. O empresário confere o código no painel do Clilin. Cada cupom vale uma vez.
+- O cliente mostra o código na loja ou manda no WhatsApp da loja. Quando alguém pega o cupom, a loja recebe um aviso no WhatsApp e, quando o cliente chega, confirma o uso com um toque no botão "Confirmar uso", sem digitar código nem entrar em outro sistema (o painel continua como opção). Cada cupom vale uma vez.
 - A loja só paga pelo cupom usado: 15% do preço da oferta, mínimo de R$ 3. Sem mensalidade. Visita e cupom não usado não custam nada. Com saldo pré-pago, 10% de desconto.
 - Divulgador: indica as ofertas da cidade pelo próprio link e ganha metade da taxa de cada cupom usado por quem veio do link dele, chegando a 70% conforme o nível. Saque por Pix a partir de R$ 100. Cadastro grátis, não precisa ter muitos seguidores.
 - Cliente: grátis, sem app e sem cadastro.
@@ -174,11 +174,11 @@ A última é a chamada: título de até 6 palavras e texto de até 20 palavras l
 Tipos de cena:
 - "gancho": abre o vídeo e prende nos 2 primeiros segundos. "texto": até 6 palavras grandes na tela. "destaque": 1 ou 2 palavras do texto para colorir. "rotulo": selo de até 4 palavras dizendo para quem é (ex.: "Para quem tem negócio").
 - "frase": a própria fala aparece grande na tela, palavra por palavra. "destaque": 1 ou 2 palavras da fala. "rotulo": opcional.
-- "celular": mostra o Clilin de verdade num celular. "tela" é uma destas: "ofertas" (cliente vendo as ofertas da cidade), "oferta" (cliente toca em Quero meu cupom e o código aparece), "whatsapp" (o cupom chegando no WhatsApp), "validar" (empresário digita o código no painel e o cupom é resgatado), "divulgador" (divulgador copia o link da oferta e manda nos grupos). "texto": título de até 6 palavras acima do celular. "destaque": 1 ou 2 palavras do texto.
+- "celular": mostra o Clilin de verdade num celular. "tela" é uma destas: "ofertas" (cliente vendo as ofertas da cidade), "oferta" (cliente toca em Quero meu cupom e o código aparece), "whatsapp" (o cupom chegando no WhatsApp), "confirmar" (a loja recebe o aviso do cupom no WhatsApp e confirma o uso com um toque), "divulgador" (divulgador copia o link da oferta e manda nos grupos). "texto": título de até 6 palavras acima do celular. "destaque": 1 ou 2 palavras do texto.
 - "numero": número grande animado. "valor": só o número; "prefixo" (ex.: "R$ ") e "sufixo" (ex.: "%"); "texto": até 10 palavras explicando; "rotulo": opcional. Só números verdadeiros do Clilin: 15% do preço por cupom usado, mínimo de R$ 3, 10% de desconto no pré-pago, 50% da taxa para o divulgador (até 70% conforme o nível), saque a partir de R$ 100.
 - "lista": "texto": título de até 4 palavras; "itens": 2 a 4 itens de até 4 palavras cada.
 - "cta": a última cena. "texto": até 6 palavras; "destaque"; "url": "clilin.com"; "rotulo": "link na bio".
-Regras: 7 a 10 cenas. A 1ª é "gancho" e a última é "cta". Use 3 ou 4 cenas "celular" com telas diferentes que façam sentido para a pauta (empresas: oferta, whatsapp, validar; divulgadores: divulgador, oferta, whatsapp; clientes: ofertas, oferta, whatsapp). Varie a ordem e use pelo menos uma "frase".
+Regras: 7 a 10 cenas. A 1ª é "gancho" e a última é "cta". Use 3 ou 4 cenas "celular" com telas diferentes que façam sentido para a pauta (empresas: oferta, whatsapp, confirmar; divulgadores: divulgador, oferta, whatsapp; clientes: ofertas, oferta, whatsapp). Varie a ordem e use pelo menos uma "frase".
 "fala": curta e natural de falar em voz alta (até 18 palavras por cena), somando 70 a 100 palavras no vídeo todo. Valores por extenso do jeito que se fala ("quinze por cento", "três reais"). O texto da tela combina com a fala, mas é mais curto.""",
 }
 
@@ -225,7 +225,7 @@ def valida(tipo, c):
             return "cena sem tipo válido ou sem fala"
         if cs[0]["tipo"] != "gancho" or cs[-1]["tipo"] != "cta":
             return "a 1ª cena tem que ser gancho e a última cta"
-        if any(s["tipo"] == "celular" and s.get("tela") not in ("ofertas", "oferta", "whatsapp", "validar", "divulgador") for s in cs):
+        if any(s["tipo"] == "celular" and s.get("tela") not in ("ofertas", "oferta", "whatsapp", "confirmar", "validar", "divulgador") for s in cs):
             return "cena celular com tela inválida"
         if any(s["tipo"] == "numero" and not isinstance(s.get("valor"), (int, float)) for s in cs):
             return "cena numero sem valor numérico"
