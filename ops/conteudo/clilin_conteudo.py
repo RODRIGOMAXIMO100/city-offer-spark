@@ -235,7 +235,8 @@ def escrever(tipo):
     e = env()
     hoje = agora()
     n = int(hoje.strftime("%j")) + (0 if tipo == "carrossel" else 1)
-    pauta = PAUTAS[n % len(PAUTAS)]
+    pautas = [p.strip() for p in (e.get("CONTEUDO_PAUTAS") or ",".join(PAUTAS)).split(",") if p.strip() in PAUTAS] or PAUTAS
+    pauta = pautas[n % len(pautas)]
     usados = []
     for d in itens(tipo)[-30:]:
         it = ler(d)
@@ -703,7 +704,7 @@ def render(item_id):
 
 # ---------------------------------------------------------------- publicação
 def legenda(c):
-    tags = " ".join(h if h.startswith("#") else "#" + h for h in (c.get("hashtags") or [])[:5])
+    tags = " ".join("#" + re.sub(r"[^\w]", "", h.lstrip("#")) for h in (c.get("hashtags") or [])[:5] if h.strip("# "))
     return (c["legenda"].strip() + ("\n\n" + tags if tags else "")).strip()
 
 
