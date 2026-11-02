@@ -403,7 +403,7 @@ export default function AdminAnalytics() {
             </div>
             <Icon className="h-8 w-8 text-muted-foreground/50" />
           </div>
-          <div className={`flex items-center gap-1 mt-2 text-sm ${isPositive ? 'text-green-600' : 'text-red-600'}`}>
+          <div className={`flex items-center gap-1 mt-2 text-sm ${isPositive ? 'text-success' : 'text-destructive'}`}>
             {isPositive ? <TrendingUp className="h-4 w-4" /> : <TrendingDown className="h-4 w-4" />}
             <span>{isPositive ? '+' : ''}{change}% vs período anterior</span>
           </div>

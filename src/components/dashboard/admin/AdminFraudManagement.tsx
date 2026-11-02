@@ -320,13 +320,13 @@ export default function AdminFraudManagement() {
 
   const getSeverityBadge = (severity: string) => {
     const config: Record<string, { class: string; label: string }> = {
-      'LOW': { class: 'bg-blue-500', label: 'Baixa' },
-      'MEDIUM': { class: 'bg-yellow-500', label: 'Média' },
-      'HIGH': { class: 'bg-orange-500', label: 'Alta' },
-      'CRITICAL': { class: 'bg-red-500', label: 'Crítica' }
+      'LOW': { class: 'bg-primary', label: 'Baixa' },
+      'MEDIUM': { class: 'bg-warning', label: 'Média' },
+      'HIGH': { class: 'bg-warning', label: 'Alta' },
+      'CRITICAL': { class: 'bg-destructive', label: 'Crítica' }
     };
     const c = config[severity] || config['LOW'];
-    return <Badge className={`${c.class} text-white`}>{c.label}</Badge>;
+    return <Badge className={`${c.class} text-primary-foreground`}>{c.label}</Badge>;
   };
 
   const getTypeBadge = (type: string) => {
@@ -350,7 +350,7 @@ export default function AdminFraudManagement() {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h2 className="text-2xl font-bold flex items-center gap-2">
-            <ShieldAlert className="h-6 w-6 text-red-500" />
+            <ShieldAlert className="h-6 w-6 text-destructive" />
             Gestão Anti-Fraude
           </h2>
           <p className="text-muted-foreground text-sm">
@@ -527,7 +527,7 @@ export default function AdminFraudManagement() {
                             <Button
                               size="sm"
                               variant="ghost"
-                              className="text-red-500 hover:text-red-600"
+                              className="text-destructive hover:text-destructive"
                               onClick={() => {
                                 setSelectedBlacklistId(entry.id);
                                 setDeleteBlacklistConfirmOpen(true);
@@ -570,7 +570,7 @@ export default function AdminFraudManagement() {
                       className={`p-4 rounded-lg border ${
                         alert.resolved 
                           ? 'bg-muted/30 border-muted' 
-                          : 'bg-red-50 dark:bg-red-950/20 border-red-200 dark:border-red-900'
+                          : 'bg-destructive/10 dark:bg-destructive/20 border-destructive/30 dark:border-destructive'
                       }`}
                     >
                       <div className="flex justify-between items-start gap-4">
@@ -581,7 +581,7 @@ export default function AdminFraudManagement() {
                               {new Date(alert.created_at).toLocaleString('pt-BR')}
                             </span>
                             {alert.resolved && (
-                              <Badge variant="outline" className="text-green-600">
+                              <Badge variant="outline" className="text-success">
                                 Resolvido
                               </Badge>
                             )}
@@ -623,7 +623,7 @@ export default function AdminFraudManagement() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Ban className="h-5 w-5 text-red-500" />
+              <Ban className="h-5 w-5 text-destructive" />
               Banir Usuário
             </DialogTitle>
             <DialogDescription>
@@ -657,7 +657,7 @@ export default function AdminFraudManagement() {
 
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label className="text-red-500">Confiscar Saldo</Label>
+                <Label className="text-destructive">Confiscar Saldo</Label>
                 <p className="text-xs text-muted-foreground">
                   Zera o saldo do usuário (irreversível)
                 </p>
@@ -786,7 +786,7 @@ export default function AdminFraudManagement() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction onClick={handleRemoveFromBlacklist} className="bg-red-500 hover:bg-red-600">
+            <AlertDialogAction onClick={handleRemoveFromBlacklist} className="bg-destructive hover:bg-destructive/90">
               Remover
             </AlertDialogAction>
           </AlertDialogFooter>

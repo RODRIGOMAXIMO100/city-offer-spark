@@ -154,9 +154,9 @@ export default function AdminAlerts() {
       case 'high':
         return 'text-destructive';
       case 'medium':
-        return 'text-orange-500';
+        return 'text-warning';
       case 'low':
-        return 'text-yellow-500';
+        return 'text-warning';
     }
   };
 
@@ -164,7 +164,7 @@ export default function AdminAlerts() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="sm" className="relative">
-          <Bell className={`h-5 w-5 ${alerts.length > 0 ? 'text-orange-500' : ''}`} />
+          <Bell className={`h-5 w-5 ${alerts.length > 0 ? 'text-warning' : ''}`} />
           {alerts.length > 0 && (
             <Badge 
               className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs bg-destructive"

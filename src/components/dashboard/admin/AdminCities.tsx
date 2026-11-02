@@ -219,43 +219,43 @@ export default function AdminCities() {
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-green-500/10 to-green-500/5">
+        <Card className="bg-gradient-to-br from-success/10 to-success/5">
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-green-500/20 rounded-lg">
-                <CheckCircle className="h-5 w-5 text-green-500" />
+              <div className="p-2 bg-success/20 rounded-lg">
+                <CheckCircle className="h-5 w-5 text-success" />
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Cidades Ativas</p>
-                <p className="text-2xl font-bold text-green-500">{stats.activeCities}</p>
+                <p className="text-2xl font-bold text-success">{stats.activeCities}</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-blue-500/10 to-blue-500/5">
+        <Card className="bg-gradient-to-br from-primary/10 to-primary/5">
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-blue-500/20 rounded-lg">
-                <Clock className="h-5 w-5 text-blue-500" />
+              <div className="p-2 bg-primary/20 rounded-lg">
+                <Clock className="h-5 w-5 text-primary" />
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Agendadas</p>
-                <p className="text-2xl font-bold text-blue-500">{stats.scheduledCities}</p>
+                <p className="text-2xl font-bold text-primary">{stats.scheduledCities}</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-amber-500/10 to-amber-500/5">
+        <Card className="bg-gradient-to-br from-warning/10 to-warning/5">
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-amber-500/20 rounded-lg">
-                <Users className="h-5 w-5 text-amber-500" />
+              <div className="p-2 bg-warning/20 rounded-lg">
+                <Users className="h-5 w-5 text-warning" />
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Lista de Espera</p>
-                <p className="text-2xl font-bold text-amber-500">{stats.totalWaitlist}</p>
+                <p className="text-2xl font-bold text-warning">{stats.totalWaitlist}</p>
               </div>
             </div>
           </CardContent>
@@ -407,7 +407,7 @@ export default function AdminCities() {
                           <PopoverTrigger asChild>
                             <Button variant="ghost" size="sm">
                               {city.scheduled_activation ? (
-                                <span className="text-blue-500">
+                                <span className="text-primary">
                                   {format(new Date(city.scheduled_activation), "dd/MM/yy")}
                                 </span>
                               ) : (

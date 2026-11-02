@@ -54,14 +54,14 @@ export default function AffiliateTutorial() {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="outline" size="sm" className="gap-2">
-          <Lightbulb className="h-4 w-4 text-yellow-500" />
+          <Lightbulb className="h-4 w-4 text-warning" />
           Dicas
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-md max-h-[85vh] overflow-hidden flex flex-col">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-lg">
-            <Lightbulb className="h-5 w-5 text-yellow-500" />
+            <Lightbulb className="h-5 w-5 text-warning" />
             Como Ganhar Mais com Leads
           </DialogTitle>
         </DialogHeader>
@@ -74,7 +74,7 @@ export default function AffiliateTutorial() {
               onClick={() => setActiveTab(tab.id)}
               className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium transition-all whitespace-nowrap ${
                 activeTab === tab.id
-                  ? 'bg-affiliate text-white'
+                  ? 'bg-affiliate text-primary-foreground'
                   : 'bg-muted hover:bg-muted/80 text-muted-foreground'
               }`}
             >
@@ -135,7 +135,7 @@ function OndeCompartilhar() {
     {
       icon: MessageCircle,
       name: 'WhatsApp',
-      color: 'text-green-500',
+      color: 'text-success',
       tips: [
         'Compartilhe no Status (fica visível por 24h)',
         'Grupos da sua cidade são os melhores',
@@ -145,7 +145,7 @@ function OndeCompartilhar() {
     {
       icon: Instagram,
       name: 'Instagram',
-      color: 'text-pink-500',
+      color: 'text-affiliate',
       tips: [
         'Stories com link são muito eficazes',
         'Use stickers de "Link" e "Enquete"',
@@ -155,7 +155,7 @@ function OndeCompartilhar() {
     {
       icon: Users,
       name: 'Facebook',
-      color: 'text-blue-500',
+      color: 'text-primary',
       tips: [
         'Grupos locais da sua cidade',
         'Grupos de promoções e cupons',
@@ -165,7 +165,7 @@ function OndeCompartilhar() {
     {
       icon: Zap,
       name: 'Telegram',
-      color: 'text-sky-500',
+      color: 'text-primary',
       tips: [
         'Crie seu próprio canal de ofertas',
         'Grupos de promoções são ótimos',
@@ -176,9 +176,9 @@ function OndeCompartilhar() {
 
   return (
     <div className="space-y-3">
-      <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-3">
+      <div className="bg-warning/10 border border-warning/20 rounded-lg p-3">
         <p className="text-sm flex items-start gap-2">
-          <Star className="h-4 w-4 text-yellow-500 mt-0.5 shrink-0" />
+          <Star className="h-4 w-4 text-warning mt-0.5 shrink-0" />
           <span><strong>Dica de Ouro:</strong> Grupos da sua cidade costumam ter o maior engajamento!</span>
         </p>
       </div>
@@ -237,9 +237,9 @@ function MelhoresHorarios() {
 
   const getQualidadeColor = (q: string) => {
     switch (q) {
-      case 'Excelente': return 'bg-green-500/20 text-green-600';
-      case 'Ótimo': return 'bg-blue-500/20 text-blue-600';
-      default: return 'bg-yellow-500/20 text-yellow-600';
+      case 'Excelente': return 'bg-success/20 text-success';
+      case 'Ótimo': return 'bg-primary/20 text-primary';
+      default: return 'bg-warning/20 text-warning';
     }
   };
 
@@ -311,9 +311,9 @@ function LegendasAtrativas() {
         <p className="text-sm font-medium mb-3">✨ Fórmula de Legenda Perfeita:</p>
         <div className="bg-background rounded p-2 text-sm">
           <span className="text-affiliate">[Emoji]</span> + 
-          <span className="text-blue-500"> [Benefício]</span> + 
-          <span className="text-yellow-600"> [Urgência]</span> + 
-          <span className="text-green-500"> [Call to Action]</span>
+          <span className="text-primary"> [Benefício]</span> + 
+          <span className="text-warning"> [Urgência]</span> + 
+          <span className="text-success"> [Call to Action]</span>
         </div>
       </div>
 
@@ -322,11 +322,11 @@ function LegendasAtrativas() {
         {exemplos.map((ex, i) => (
           <div key={i} className="bg-muted/50 rounded-lg p-3 space-y-2">
             <div className="flex items-start gap-2">
-              <span className="text-red-500 text-xs">❌</span>
+              <span className="text-destructive text-xs">❌</span>
               <p className="text-sm text-muted-foreground line-through">{ex.ruim}</p>
             </div>
             <div className="flex items-start gap-2">
-              <span className="text-green-500 text-xs">✅</span>
+              <span className="text-success text-xs">✅</span>
               <p className="text-sm">{ex.bom}</p>
             </div>
           </div>
@@ -372,9 +372,9 @@ function EscolhaOfertas() {
 
   return (
     <div className="space-y-3">
-      <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-3">
+      <div className="bg-success/10 border border-success/20 rounded-lg p-3">
         <p className="text-sm flex items-start gap-2">
-          <Target className="h-4 w-4 text-green-500 mt-0.5 shrink-0" />
+          <Target className="h-4 w-4 text-success mt-0.5 shrink-0" />
           <span><strong>Estratégia:</strong> Foque em ofertas que você mesmo usaria. Autenticidade vende!</span>
         </p>
       </div>

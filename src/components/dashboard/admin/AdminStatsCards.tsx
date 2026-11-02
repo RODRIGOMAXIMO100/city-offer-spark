@@ -48,9 +48,9 @@ export function AdminStatsCards({ stats }: AdminStatsCardsProps) {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-[10px] sm:text-xs text-muted-foreground mb-1">Receita</p>
-                  <p className="text-lg font-bold text-green-600">{formatBalance(stats.receita)}</p>
+                  <p className="text-lg font-bold text-success">{formatBalance(stats.receita)}</p>
                 </div>
-                <DollarSign className="h-6 w-6 text-green-500/20" />
+                <DollarSign className="h-6 w-6 text-success/20" />
               </div>
             </CardContent>
           </Card>
@@ -59,9 +59,9 @@ export function AdminStatsCards({ stats }: AdminStatsCardsProps) {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-[10px] sm:text-xs text-muted-foreground mb-1">Custos</p>
-                  <p className="text-lg font-bold text-red-600">{formatBalance(stats.custos)}</p>
+                  <p className="text-lg font-bold text-destructive">{formatBalance(stats.custos)}</p>
                 </div>
-                <TrendingUp className="h-6 w-6 text-red-500/20 rotate-180" />
+                <TrendingUp className="h-6 w-6 text-destructive/20 rotate-180" />
               </div>
             </CardContent>
           </Card>
@@ -70,11 +70,11 @@ export function AdminStatsCards({ stats }: AdminStatsCardsProps) {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-[10px] sm:text-xs text-muted-foreground mb-1">Margem</p>
-                  <p className={cn("text-lg font-bold", stats.margem >= 0 ? "text-blue-600" : "text-red-600")}>
+                  <p className={cn("text-lg font-bold", stats.margem >= 0 ? "text-primary" : "text-destructive")}>
                     {formatBalance(stats.margem)}
                   </p>
                 </div>
-                <BarChart3 className="h-6 w-6 text-blue-500/20" />
+                <BarChart3 className="h-6 w-6 text-primary/20" />
               </div>
             </CardContent>
           </Card>
@@ -83,11 +83,11 @@ export function AdminStatsCards({ stats }: AdminStatsCardsProps) {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-[10px] sm:text-xs text-muted-foreground mb-1">Margem %</p>
-                  <p className={cn("text-lg font-bold", stats.margemPercent >= 30 ? "text-green-600" : stats.margemPercent >= 0 ? "text-yellow-600" : "text-red-600")}>
+                  <p className={cn("text-lg font-bold", stats.margemPercent >= 30 ? "text-success" : stats.margemPercent >= 0 ? "text-warning" : "text-destructive")}>
                     {stats.margemPercent.toFixed(1)}%
                   </p>
                 </div>
-                <TrendingUp className="h-6 w-6 text-purple-500/20" />
+                <TrendingUp className="h-6 w-6 text-primary/20" />
               </div>
             </CardContent>
           </Card>
@@ -164,20 +164,20 @@ export function AdminStatsCards({ stats }: AdminStatsCardsProps) {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-[10px] sm:text-xs text-muted-foreground mb-1">Depósitos</p>
-                  <p className="text-lg font-bold text-green-600">{formatBalance(stats.depositos)}</p>
+                  <p className="text-lg font-bold text-success">{formatBalance(stats.depositos)}</p>
                 </div>
-                <CreditCard className="h-6 w-6 text-green-500/20" />
+                <CreditCard className="h-6 w-6 text-success/20" />
               </div>
             </CardContent>
           </Card>
-          <Card className="hover:shadow-lg transition-shadow border border-orange-200 dark:border-orange-900/50">
+          <Card className="hover:shadow-lg transition-shadow border border-warning/30 dark:border-warning/50">
             <CardContent className="p-3">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-[10px] sm:text-xs text-muted-foreground mb-1">⚠️ Saques Pend.</p>
-                  <p className="text-lg font-bold text-orange-600">{formatBalance(stats.saquesPendentes)}</p>
+                  <p className="text-lg font-bold text-warning">{formatBalance(stats.saquesPendentes)}</p>
                 </div>
-                <Banknote className="h-6 w-6 text-orange-500/20" />
+                <Banknote className="h-6 w-6 text-warning/20" />
               </div>
             </CardContent>
           </Card>

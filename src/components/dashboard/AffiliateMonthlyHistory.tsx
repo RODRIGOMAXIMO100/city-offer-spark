@@ -138,7 +138,7 @@ export default function AffiliateMonthlyHistory({ affiliateId }: AffiliateMonthl
               className="flex items-center gap-3 p-2 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors"
             >
               <div 
-                className="h-10 w-10 rounded-full flex items-center justify-center text-white shrink-0"
+                className="h-10 w-10 rounded-full flex items-center justify-center text-primary-foreground shrink-0"
                 style={{ backgroundColor: getLevelColor(month.level_achieved) }}
               >
                 {getLevelIcon(month.level_achieved)}

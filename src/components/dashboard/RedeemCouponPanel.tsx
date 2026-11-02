@@ -94,13 +94,13 @@ export default function RedeemCouponPanel() {
           </div>
 
           {result && (
-            <div className={`rounded-lg p-4 ${result.success ? 'bg-green-500/10 border border-green-500/30' : 'bg-destructive/10 border border-destructive/30'}`}>
+            <div className={`rounded-lg p-4 ${result.success ? 'bg-success/10 border border-success/30' : 'bg-destructive/10 border border-destructive/30'}`}>
               <div className="flex items-start gap-2">
                 {result.success
-                  ? <CheckCircle2 className="h-5 w-5 text-green-600 mt-0.5" />
+                  ? <CheckCircle2 className="h-5 w-5 text-success mt-0.5" />
                   : <XCircle className="h-5 w-5 text-destructive mt-0.5" />}
                 <div className="flex-1">
-                  <p className={`font-medium ${result.success ? 'text-green-700' : 'text-destructive'}`}>
+                  <p className={`font-medium ${result.success ? 'text-success' : 'text-destructive'}`}>
                     {result.message}
                   </p>
                   {result.success && result.data && (

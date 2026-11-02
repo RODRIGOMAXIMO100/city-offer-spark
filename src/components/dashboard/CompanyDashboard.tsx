@@ -278,15 +278,15 @@ function CompanyDashboardContent() {
     
     if (diff <= 0) return { text: 'Expirada', color: 'text-destructive' };
     if (days < 1) return { text: 'Últimas horas!', color: 'text-destructive' };
-    if (days <= 3) return { text: `${days}d restantes`, color: 'text-orange-500' };
-    if (days <= 7) return { text: `${days}d restantes`, color: 'text-yellow-500' };
+    if (days <= 3) return { text: `${days}d restantes`, color: 'text-warning' };
+    if (days <= 7) return { text: `${days}d restantes`, color: 'text-warning' };
     return { text: `${days}d restantes`, color: 'text-muted-foreground' };
   };
 
   const getScoreColor = (score: number) => {
-    if (score >= 7) return 'text-green-500';
-    if (score >= 5) return 'text-yellow-500';
-    return 'text-orange-500';
+    if (score >= 7) return 'text-success';
+    if (score >= 5) return 'text-warning';
+    return 'text-warning';
   };
 
   const getScoreTip = (score: number) => {
@@ -572,8 +572,8 @@ function CompanyDashboardContent() {
           </Card>
           <Card>
             <CardContent className="p-2 sm:p-4 text-center">
-              <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5 mx-auto mb-1 text-green-500" />
-              <p className="text-lg sm:text-2xl font-bold text-green-500">{conversionRate}%</p>
+              <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5 mx-auto mb-1 text-success" />
+              <p className="text-lg sm:text-2xl font-bold text-success">{conversionRate}%</p>
               <p className="text-[10px] sm:text-xs text-muted-foreground">Conversão</p>
             </CardContent>
           </Card>
@@ -615,12 +615,12 @@ function CompanyDashboardContent() {
         </Card>
 
         {/* Offer Limit Info */}
-        <Card className={activeOffersCount >= MAX_ACTIVE_OFFERS ? "bg-orange-500/10 border-orange-500/30" : "bg-muted/50"}>
+        <Card className={activeOffersCount >= MAX_ACTIVE_OFFERS ? "bg-warning/10 border-warning/30" : "bg-muted/50"}>
           <CardContent className="p-3 sm:p-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2 sm:gap-3">
                 {activeOffersCount >= MAX_ACTIVE_OFFERS ? (
-                  <AlertTriangle className="h-5 w-5 text-orange-500 shrink-0" />
+                  <AlertTriangle className="h-5 w-5 text-warning shrink-0" />
                 ) : (
                   <Info className="h-5 w-5 text-muted-foreground shrink-0" />
                 )}

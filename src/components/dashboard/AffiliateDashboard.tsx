@@ -259,8 +259,8 @@ function AffiliateDashboardContent() {
     
     if (diff <= 0) return { text: 'Expirada', color: 'bg-destructive', urgent: true };
     if (days < 1) return { text: `${hours}h restantes!`, color: 'bg-destructive', urgent: true };
-    if (days <= 3) return { text: `${days}d restantes`, color: 'bg-orange-500', urgent: true };
-    if (days <= 7) return { text: `${days}d restantes`, color: 'bg-yellow-500', urgent: false };
+    if (days <= 3) return { text: `${days}d restantes`, color: 'bg-warning', urgent: true };
+    if (days <= 7) return { text: `${days}d restantes`, color: 'bg-warning', urgent: false };
     return { text: `${days}d restantes`, color: 'bg-muted', urgent: false };
   };
 
@@ -271,7 +271,7 @@ function AffiliateDashboardContent() {
       case 'APPROVED':
         return <Badge variant="outline" className="text-company border-company/40 bg-company/5">Aprovado</Badge>;
       case 'COMPLETED':
-        return <Badge className="bg-affiliate text-affiliate-foreground hover:bg-affiliate">Pago</Badge>;
+        return <Badge className="bg-affiliate text-affiliate-foreground hover:bg-affiliate/90">Pago</Badge>;
       case 'REJECTED':
         return <Badge variant="destructive">Rejeitado</Badge>;
       default:
@@ -413,7 +413,7 @@ function AffiliateDashboardContent() {
             <Card className="bg-gradient-to-r from-affiliate to-affiliate/80 text-affiliate-foreground border-0">
               <CardContent className="p-3 sm:p-4">
                 <div className="flex items-start gap-2 sm:gap-3">
-                  <div className="bg-white/20 p-2 sm:p-3 rounded-full shrink-0">
+                  <div className="bg-card/20 p-2 sm:p-3 rounded-full shrink-0">
                     <Share2 className="h-5 w-5 sm:h-6 sm:w-6" />
                   </div>
                   <div className="space-y-1.5 sm:space-y-2 min-w-0">

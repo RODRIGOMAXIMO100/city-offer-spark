@@ -222,7 +222,7 @@ export function AdminNiches() {
         </Card>
         <Card>
           <CardContent className="pt-6">
-            <div className="text-2xl font-bold text-amber-600">{lowConfidenceCount}</div>
+            <div className="text-2xl font-bold text-warning">{lowConfidenceCount}</div>
             <p className="text-sm text-muted-foreground">Baixa confiança (&lt;70%)</p>
           </CardContent>
         </Card>
@@ -355,7 +355,7 @@ export function AdminNiches() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <AlertCircle className="h-5 w-5 text-amber-600" />
+              <AlertCircle className="h-5 w-5 text-warning" />
               Empresas com baixa confiança de classificação
             </CardTitle>
           </CardHeader>

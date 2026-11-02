@@ -113,11 +113,11 @@ export default function AffiliateRanking({ currentAffiliateId }: AffiliateRankin
   const getPositionIcon = (position: number) => {
     switch (position) {
       case 1:
-        return <Crown className="h-5 w-5 text-yellow-500" />;
+        return <Crown className="h-5 w-5 text-warning" />;
       case 2:
-        return <Medal className="h-5 w-5 text-gray-400" />;
+        return <Medal className="h-5 w-5 text-muted-foreground" />;
       case 3:
-        return <Award className="h-5 w-5 text-amber-600" />;
+        return <Award className="h-5 w-5 text-warning" />;
       default:
         return <span className="w-5 text-center font-bold text-muted-foreground">{position}</span>;
     }
@@ -129,11 +129,11 @@ export default function AffiliateRanking({ currentAffiliateId }: AffiliateRankin
     if (isCurrentUser) {
       baseClass += ' bg-affiliate/20 border border-affiliate';
     } else if (position === 1) {
-      baseClass += ' bg-yellow-500/10';
+      baseClass += ' bg-warning/10';
     } else if (position === 2) {
-      baseClass += ' bg-gray-500/10';
+      baseClass += ' bg-foreground/10';
     } else if (position === 3) {
-      baseClass += ' bg-amber-500/10';
+      baseClass += ' bg-warning/10';
     } else {
       baseClass += ' bg-muted/30';
     }
@@ -206,7 +206,7 @@ export default function AffiliateRanking({ currentAffiliateId }: AffiliateRankin
     <Card>
       <CardHeader className="pb-3">
         <div className="flex items-center gap-2">
-          <Trophy className="h-5 w-5 text-yellow-500" />
+          <Trophy className="h-5 w-5 text-warning" />
           <CardTitle className="text-lg">Ranking de Divulgadores</CardTitle>
         </div>
         {currentPosition.weekly && (

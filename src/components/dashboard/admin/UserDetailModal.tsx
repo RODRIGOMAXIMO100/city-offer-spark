@@ -169,17 +169,17 @@ export default function UserDetailModal({ user, open, onOpenChange, onUserUpdate
 
   const getTransactionBadge = (type: string) => {
     const config: Record<string, { color: string, label: string }> = {
-      'DEPOSIT': { color: 'bg-green-500', label: 'Depósito' },
-      'CLICK_COST': { color: 'bg-red-400', label: 'Custo Clique' },
-      'CLICK_EARNING': { color: 'bg-blue-400', label: 'Ganho Clique' },
-      'LEAD_COST': { color: 'bg-red-500', label: 'Custo Lead' },
-      'LEAD_EARNING': { color: 'bg-blue-500', label: 'Ganho Lead' },
-      'WITHDRAW': { color: 'bg-orange-500', label: 'Saque' },
-      'PLATFORM_FEE': { color: 'bg-purple-500', label: 'Taxa' },
-      'ADMIN_ADJUSTMENT': { color: 'bg-slate-600', label: 'Ajuste Manual' }
+      'DEPOSIT': { color: 'bg-success', label: 'Depósito' },
+      'CLICK_COST': { color: 'bg-destructive', label: 'Custo Clique' },
+      'CLICK_EARNING': { color: 'bg-primary', label: 'Ganho Clique' },
+      'LEAD_COST': { color: 'bg-destructive', label: 'Custo Lead' },
+      'LEAD_EARNING': { color: 'bg-primary', label: 'Ganho Lead' },
+      'WITHDRAW': { color: 'bg-warning', label: 'Saque' },
+      'PLATFORM_FEE': { color: 'bg-primary', label: 'Taxa' },
+      'ADMIN_ADJUSTMENT': { color: 'bg-foreground', label: 'Ajuste Manual' }
     };
     const c = config[type] || { color: 'bg-muted', label: type };
-    return <Badge className={`${c.color} text-white`}>{c.label}</Badge>;
+    return <Badge className={`${c.color} text-primary-foreground`}>{c.label}</Badge>;
   };
 
   const getRoleBadge = (role?: string) => {
@@ -287,11 +287,11 @@ export default function UserDetailModal({ user, open, onOpenChange, onUserUpdate
 
             {/* Ban Status */}
             {(user.banned || user.balance_frozen) && (
-              <Card className="border-red-200 dark:border-red-900 bg-red-50 dark:bg-red-950/20">
+              <Card className="border-destructive/30 dark:border-destructive bg-destructive/10 dark:bg-destructive/20">
                 <CardContent className="pt-4 sm:pt-6">
                   <div className="flex items-center gap-2 mb-3">
-                    <AlertTriangle className="h-5 w-5 text-red-500" />
-                    <h3 className="font-semibold text-red-600">Status de Restrição</h3>
+                    <AlertTriangle className="h-5 w-5 text-destructive" />
+                    <h3 className="font-semibold text-destructive">Status de Restrição</h3>
                   </div>
                   <div className="space-y-2">
                     {user.banned && (
@@ -347,7 +347,7 @@ export default function UserDetailModal({ user, open, onOpenChange, onUserUpdate
                           variant="outline" 
                           size="icon"
                           onClick={() => setBalanceAction('add')}
-                          className={balanceAction === 'add' ? 'bg-green-100 border-green-500' : ''}
+                          className={balanceAction === 'add' ? 'bg-success/15 border-success' : ''}
                         >
                           <Plus className="h-4 w-4" />
                         </Button>
@@ -355,7 +355,7 @@ export default function UserDetailModal({ user, open, onOpenChange, onUserUpdate
                           variant="outline" 
                           size="icon"
                           onClick={() => setBalanceAction('remove')}
-                          className={balanceAction === 'remove' ? 'bg-red-100 border-red-500' : ''}
+                          className={balanceAction === 'remove' ? 'bg-destructive/15 border-destructive' : ''}
                         >
                           <Minus className="h-4 w-4" />
                         </Button>

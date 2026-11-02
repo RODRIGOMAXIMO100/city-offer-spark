@@ -343,10 +343,10 @@ export default function AdminFinanceiro() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Receita Bruta</p>
-                <p className="text-2xl font-bold text-green-600">{formatBalance(data.receitaBruta)}</p>
+                <p className="text-2xl font-bold text-success">{formatBalance(data.receitaBruta)}</p>
                 <p className="text-xs text-muted-foreground">Custo dos leads (empresas)</p>
               </div>
-              <ArrowUpCircle className="h-8 w-8 text-green-500/50" />
+              <ArrowUpCircle className="h-8 w-8 text-success/50" />
             </div>
           </CardContent>
         </Card>
@@ -356,10 +356,10 @@ export default function AdminFinanceiro() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Pagamentos a Divulgadores</p>
-                <p className="text-2xl font-bold text-red-600">{formatBalance(data.pagamentosAfiliados)}</p>
+                <p className="text-2xl font-bold text-destructive">{formatBalance(data.pagamentosAfiliados)}</p>
                 <p className="text-xs text-muted-foreground">Ganhos dos divulgadores</p>
               </div>
-              <ArrowDownCircle className="h-8 w-8 text-red-500/50" />
+              <ArrowDownCircle className="h-8 w-8 text-destructive/50" />
             </div>
           </CardContent>
         </Card>
@@ -382,10 +382,10 @@ export default function AdminFinanceiro() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Depósitos Recebidos</p>
-                <p className="text-2xl font-bold text-blue-600">{formatBalance(data.depositosRecebidos)}</p>
+                <p className="text-2xl font-bold text-primary">{formatBalance(data.depositosRecebidos)}</p>
                 <p className="text-xs text-muted-foreground">Total no período</p>
               </div>
-              <Landmark className="h-8 w-8 text-blue-500/50" />
+              <Landmark className="h-8 w-8 text-primary/50" />
             </div>
           </CardContent>
         </Card>
@@ -424,23 +424,23 @@ export default function AdminFinanceiro() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Saques Processados</p>
-                <p className="text-xl font-bold text-orange-600">{formatBalance(data.saquesProcessados)}</p>
+                <p className="text-xl font-bold text-warning">{formatBalance(data.saquesProcessados)}</p>
                 <p className="text-xs text-muted-foreground">No período</p>
               </div>
-              <Wallet className="h-6 w-6 text-orange-500/50" />
+              <Wallet className="h-6 w-6 text-warning/50" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className={data.reservaSaques > 0 ? 'border-yellow-500 border' : ''}>
+        <Card className={data.reservaSaques > 0 ? 'border-warning border' : ''}>
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Reserva p/ Saques</p>
-                <p className="text-xl font-bold text-yellow-600">{formatBalance(data.reservaSaques)}</p>
+                <p className="text-xl font-bold text-warning">{formatBalance(data.reservaSaques)}</p>
                 <p className="text-xs text-muted-foreground">Pendentes + aprovados</p>
               </div>
-              <AlertTriangle className="h-6 w-6 text-yellow-500/50" />
+              <AlertTriangle className="h-6 w-6 text-warning/50" />
             </div>
           </CardContent>
         </Card>

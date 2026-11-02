@@ -495,7 +495,7 @@ Posso te ajudar com mais informações?`;
                   <Button
                     size="sm"
                     variant="default"
-                    className="bg-green-600 hover:bg-green-700 text-white shrink-0 ml-2"
+                    className="bg-success hover:bg-success/90 text-primary-foreground shrink-0 ml-2"
                     onClick={() => handleWhatsApp(lead)}
                   >
                     <MessageCircle className="h-4 w-4 mr-1" />

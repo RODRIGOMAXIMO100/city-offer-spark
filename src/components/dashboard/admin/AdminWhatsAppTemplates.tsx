@@ -112,9 +112,9 @@ export default function AdminWhatsAppTemplates() {
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
                       {r.ok ? (
-                        <CheckCircle2 className="h-4 w-4 text-green-600" />
+                        <CheckCircle2 className="h-4 w-4 text-success" />
                       ) : (
-                        <XCircle className="h-4 w-4 text-red-600" />
+                        <XCircle className="h-4 w-4 text-destructive" />
                       )}
                       <span className="font-medium">{r.name}</span>
                     </div>
@@ -200,9 +200,9 @@ export default function AdminWhatsAppTemplates() {
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
                   {testResult.ok ? (
-                    <CheckCircle2 className="h-4 w-4 text-green-600" />
+                    <CheckCircle2 className="h-4 w-4 text-success" />
                   ) : (
-                    <XCircle className="h-4 w-4 text-red-600" />
+                    <XCircle className="h-4 w-4 text-destructive" />
                   )}
                   <span className="font-medium">Resultado</span>
                 </div>

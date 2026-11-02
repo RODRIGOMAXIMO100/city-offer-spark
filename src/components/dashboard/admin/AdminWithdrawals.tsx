@@ -272,22 +272,22 @@ export default function AdminWithdrawals() {
 
   const getFraudScoreColor = (score: number) => {
     if (score >= 50) return 'text-destructive bg-destructive/10';
-    if (score >= 25) return 'text-orange-500 bg-orange-500/10';
-    return 'text-green-500 bg-green-500/10';
+    if (score >= 25) return 'text-warning bg-warning/10';
+    return 'text-success bg-success/10';
   };
 
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'PENDING':
-        return <Badge variant="outline" className="text-yellow-500 border-yellow-500"><Clock className="h-3 w-3 mr-1" />Pendente</Badge>;
+        return <Badge variant="outline" className="text-warning border-warning"><Clock className="h-3 w-3 mr-1" />Pendente</Badge>;
       case 'APPROVED':
-        return <Badge variant="outline" className="text-blue-500 border-blue-500"><CheckCircle className="h-3 w-3 mr-1" />Aprovado</Badge>;
+        return <Badge variant="outline" className="text-primary border-primary"><CheckCircle className="h-3 w-3 mr-1" />Aprovado</Badge>;
       case 'PROCESSING':
-        return <Badge variant="outline" className="text-purple-500 border-purple-500"><Loader2 className="h-3 w-3 mr-1 animate-spin" />Processando</Badge>;
+        return <Badge variant="outline" className="text-primary border-primary"><Loader2 className="h-3 w-3 mr-1 animate-spin" />Processando</Badge>;
       case 'REJECTED':
         return <Badge variant="destructive"><XCircle className="h-3 w-3 mr-1" />Rejeitado</Badge>;
       case 'COMPLETED':
-        return <Badge className="bg-green-500"><CheckCircle className="h-3 w-3 mr-1" />Concluído</Badge>;
+        return <Badge className="bg-success"><CheckCircle className="h-3 w-3 mr-1" />Concluído</Badge>;
       default:
         return <Badge variant="secondary">{status}</Badge>;
     }
@@ -404,7 +404,7 @@ export default function AdminWithdrawals() {
                                 size="sm"
                                 onClick={() => handleApprove(w)}
                                 disabled={processing === w.id}
-                                className="bg-green-500 hover:bg-green-600"
+                                className="bg-success hover:bg-success/90"
                               >
                                 {processing === w.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle className="h-4 w-4" />}
                               </Button>
@@ -428,7 +428,7 @@ export default function AdminWithdrawals() {
                                 size="sm"
                                 onClick={() => handleProcessPix(w)}
                                 disabled={processing === w.id}
-                                className="bg-purple-500 hover:bg-purple-600"
+                                className="bg-primary hover:bg-primary/90"
                               >
                                 {processing === w.id ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Pagar PIX'}
                               </Button>
@@ -448,7 +448,7 @@ export default function AdminWithdrawals() {
                               size="sm"
                               onClick={() => handleMarkCompleted(w)}
                               disabled={processing === w.id}
-                              className="bg-green-500 hover:bg-green-600"
+                              className="bg-success hover:bg-success/90"
                             >
                               {processing === w.id ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Concluir'}
                             </Button>
@@ -478,9 +478,9 @@ export default function AdminWithdrawals() {
             <div className="space-y-4">
               {/* Fraud Score Alert */}
               {selectedWithdrawal.fraud_score >= 25 && (
-                <div className={`p-4 rounded-lg ${selectedWithdrawal.fraud_score >= 50 ? 'bg-destructive/10 border border-destructive' : 'bg-orange-500/10 border border-orange-500'}`}>
+                <div className={`p-4 rounded-lg ${selectedWithdrawal.fraud_score >= 50 ? 'bg-destructive/10 border border-destructive' : 'bg-warning/10 border border-warning'}`}>
                   <div className="flex items-center gap-2 mb-2">
-                    <AlertTriangle className={selectedWithdrawal.fraud_score >= 50 ? 'text-destructive' : 'text-orange-500'} />
+                    <AlertTriangle className={selectedWithdrawal.fraud_score >= 50 ? 'text-destructive' : 'text-warning'} />
                     <span className="font-bold">Alerta de Fraude - Score: {selectedWithdrawal.fraud_score}</span>
                   </div>
                   <ul className="text-sm space-y-1">
@@ -554,7 +554,7 @@ export default function AdminWithdrawals() {
                     Rejeitar
                   </Button>
                   <Button
-                    className="bg-green-500 hover:bg-green-600"
+                    className="bg-success hover:bg-success/90"
                     onClick={() => handleApprove(selectedWithdrawal)}
                     disabled={processing === selectedWithdrawal.id}
                   >

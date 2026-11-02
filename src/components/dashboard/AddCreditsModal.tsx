@@ -412,9 +412,9 @@ function OnlineCreditsModal({
                   </div>
                 </div>
 
-                <Card className="bg-amber-500/10 border-amber-500/20">
+                <Card className="bg-warning/10 border-warning/20">
                   <CardContent className="p-3 flex items-center gap-2">
-                    <Loader2 className="h-4 w-4 animate-spin text-amber-600" />
+                    <Loader2 className="h-4 w-4 animate-spin text-warning" />
                     <span className="text-sm">Aguardando pagamento...</span>
                   </CardContent>
                 </Card>
@@ -540,8 +540,8 @@ function OnlineCreditsModal({
         {/* Step: Success */}
         {step === 'success' && (
           <div className="text-center space-y-4 py-4">
-            <div className="w-16 h-16 rounded-full bg-green-500/10 flex items-center justify-center mx-auto">
-              <Check className="h-8 w-8 text-green-500" />
+            <div className="w-16 h-16 rounded-full bg-success/10 flex items-center justify-center mx-auto">
+              <Check className="h-8 w-8 text-success" />
             </div>
             <h3 className="text-xl font-semibold">Pagamento Confirmado!</h3>
             <p className="text-muted-foreground">

@@ -5,7 +5,7 @@ import { useNoIndex } from "@/components/seo/NoIndex";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2, ShieldCheck } from "lucide-react";
-import logoImg from "@/assets/logo.png";
+import { BrandLogo } from "@/components/brand/BrandLogo";
 
 // Wrapper tipado para os métodos beta do Supabase auth.oauth
 type OAuthAPI = {
@@ -91,7 +91,7 @@ export default function OAuthConsentPage() {
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-6">
-          <img src={logoImg} alt="Clilin" className="h-12 mx-auto" />
+          <BrandLogo className="h-12 mx-auto" />
         </div>
         <Card className="shadow-lg">
           <CardHeader>

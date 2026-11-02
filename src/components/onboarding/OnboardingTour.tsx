@@ -149,7 +149,7 @@ export function OnboardingTour() {
   return (
     <div className="fixed inset-0 z-[100]">
       {/* Overlay */}
-      <div className="absolute inset-0 bg-black/60" onClick={skipTour} />
+      <div className="absolute inset-0 bg-foreground/60" onClick={skipTour} />
 
       {/* Highlight */}
       {highlightPos && (

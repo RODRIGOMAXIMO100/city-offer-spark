@@ -349,21 +349,21 @@ export default function AdminLeads() {
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
-            <CheckCircle className="h-6 w-6 mx-auto mb-2 text-green-500" />
+            <CheckCircle className="h-6 w-6 mx-auto mb-2 text-success" />
             <p className="text-2xl font-bold">{stats.validLeads}</p>
             <p className="text-xs text-muted-foreground">Leads Válidos</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
-            <Calendar className="h-6 w-6 mx-auto mb-2 text-blue-500" />
+            <Calendar className="h-6 w-6 mx-auto mb-2 text-primary" />
             <p className="text-2xl font-bold">{stats.weeklyLeads}</p>
             <p className="text-xs text-muted-foreground">Última Semana</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
-            <Calendar className="h-6 w-6 mx-auto mb-2 text-purple-500" />
+            <Calendar className="h-6 w-6 mx-auto mb-2 text-primary" />
             <p className="text-2xl font-bold">{stats.monthlyLeads}</p>
             <p className="text-xs text-muted-foreground">Último Mês</p>
           </CardContent>
@@ -590,7 +590,7 @@ export default function AdminLeads() {
                           href={`https://wa.me/${lead.phone_whatsapp.replace(/\D/g, '')}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-green-600 hover:underline flex items-center gap-1"
+                          className="text-success hover:underline flex items-center gap-1"
                         >
                           <Phone className="h-3 w-3" />
                           {lead.phone_whatsapp}

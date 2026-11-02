@@ -218,16 +218,16 @@ export function AffiliateOfferCard({ offer, profileId, index, commissionMultipli
           {index < 3 && (
             <Badge 
               className={`text-xs font-bold shadow-lg ${
-                index === 0 ? 'bg-yellow-500 text-yellow-950' : 
-                index === 1 ? 'bg-gray-300 text-gray-800' : 
-                'bg-amber-600 text-white'
+                index === 0 ? 'bg-warning text-warning' : 
+                index === 1 ? 'bg-muted text-foreground' : 
+                'bg-warning text-primary-foreground'
               }`}
             >
               #{index + 1} Top
             </Badge>
           )}
           {isHot && (
-            <Badge className="bg-orange-500 text-white text-xs font-bold shadow-lg">
+            <Badge className="bg-warning text-primary-foreground text-xs font-bold shadow-lg">
               <Flame className="h-3 w-3 mr-1" />
               Hot
             </Badge>
@@ -243,10 +243,10 @@ export function AffiliateOfferCard({ offer, profileId, index, commissionMultipli
 
         {/* Bottom - Title & Company */}
         <div className="absolute bottom-0 left-0 right-0 p-3">
-          <h3 className="font-bold text-white text-base sm:text-lg line-clamp-2 drop-shadow-lg min-h-[2.5rem]">
+          <h3 className="font-bold text-primary-foreground text-base sm:text-lg line-clamp-2 drop-shadow-lg min-h-[2.5rem]">
             {offer.title}
           </h3>
-          <p className="text-white/80 text-sm truncate mt-0.5">
+          <p className="text-primary-foreground/80 text-sm truncate mt-0.5">
             {offer.profiles?.name}
           </p>
         </div>
@@ -344,7 +344,7 @@ export function AffiliateOfferCard({ offer, profileId, index, commissionMultipli
                   <Button
                     variant="outline"
                     size="icon"
-                    className="h-11 w-11 border-pink-500/50 text-pink-500 hover:bg-pink-500 hover:text-white shrink-0"
+                    className="h-11 w-11 border-affiliate/50 text-affiliate hover:bg-affiliate hover:text-primary-foreground shrink-0"
                     onClick={openInstagram}
                   >
                     <Instagram className="h-5 w-5" />

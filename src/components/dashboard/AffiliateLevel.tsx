@@ -157,14 +157,14 @@ export default function AffiliateLevel({ affiliateId }: AffiliateLevelProps) {
       <CardContent className="p-0">
         {/* Current Level Banner */}
         <div 
-          className="p-3 sm:p-4 text-white"
+          className="p-3 sm:p-4 text-primary-foreground"
           style={{ 
             background: `linear-gradient(135deg, ${currentLevel?.badge_color || '#CD7F32'}, ${currentLevel?.badge_color || '#CD7F32'}99)` 
           }}
         >
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
             <div className="flex items-center gap-3">
-              <div className="bg-white/20 p-2 rounded-full shrink-0">
+              <div className="bg-card/20 p-2 rounded-full shrink-0">
                 {getLevelIcon(currentLevel?.name || 'Bronze')}
               </div>
               <div>
@@ -173,7 +173,7 @@ export default function AffiliateLevel({ affiliateId }: AffiliateLevelProps) {
               </div>
             </div>
             <div className="flex flex-col sm:items-end gap-1 ml-11 sm:ml-0">
-              <Badge className="bg-white/20 text-white border-white/30 w-fit">
+              <Badge className="bg-card/20 text-primary-foreground border-card/30 w-fit">
                 {commission.percent} do CPL
               </Badge>
               <span className="text-xs sm:text-sm font-semibold">{commission.perLead}/lead</span>
@@ -268,7 +268,7 @@ export default function AffiliateLevel({ affiliateId }: AffiliateLevelProps) {
                     }`}
                   >
                     <div 
-                      className="h-7 w-7 sm:h-8 sm:w-8 rounded-full mx-auto flex items-center justify-center text-white mb-1"
+                      className="h-7 w-7 sm:h-8 sm:w-8 rounded-full mx-auto flex items-center justify-center text-primary-foreground mb-1"
                       style={{ backgroundColor: level.badge_color }}
                     >
                       {getLevelIcon(level.name)}

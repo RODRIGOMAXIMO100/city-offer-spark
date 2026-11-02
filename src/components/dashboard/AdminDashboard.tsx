@@ -376,16 +376,16 @@ export default function AdminDashboard() {
 
   const getTransactionBadge = (type: string) => {
     const config: Record<string, { color: string, label: string }> = {
-      'DEPOSIT': { color: 'bg-green-500', label: 'Depósito' },
-      'LEAD_COST': { color: 'bg-red-600', label: '💰 Custo Lead' },
-      'LEAD_EARNING': { color: 'bg-emerald-600', label: '💰 Ganho Lead' },
-      'CLICK_COST': { color: 'bg-red-300', label: '(Legado) Custo Clique' },
-      'CLICK_EARNING': { color: 'bg-blue-300', label: '(Legado) Ganho Clique' },
-      'WITHDRAW': { color: 'bg-orange-500', label: 'Saque' },
-      'PLATFORM_FEE': { color: 'bg-purple-500', label: 'Taxa Plataforma' }
+      'DEPOSIT': { color: 'bg-success', label: 'Depósito' },
+      'LEAD_COST': { color: 'bg-destructive', label: '💰 Custo Lead' },
+      'LEAD_EARNING': { color: 'bg-success', label: '💰 Ganho Lead' },
+      'CLICK_COST': { color: 'bg-destructive/40', label: '(Legado) Custo Clique' },
+      'CLICK_EARNING': { color: 'bg-primary/40', label: '(Legado) Ganho Clique' },
+      'WITHDRAW': { color: 'bg-warning', label: 'Saque' },
+      'PLATFORM_FEE': { color: 'bg-primary', label: 'Taxa Plataforma' }
     };
     const c = config[type] || { color: 'bg-muted', label: type };
-    return <Badge className={`${c.color} text-white`}>{c.label}</Badge>;
+    return <Badge className={`${c.color} text-primary-foreground`}>{c.label}</Badge>;
   };
 
   const resetFilters = () => {
@@ -610,7 +610,7 @@ export default function AdminDashboard() {
                       <TableRow key={tx.id}>
                         <TableCell className="font-medium">{tx.user_name}</TableCell>
                         <TableCell>{getTransactionBadge(tx.type)}</TableCell>
-                        <TableCell className={tx.amount >= 0 ? 'text-green-600' : 'text-red-600'}>
+                        <TableCell className={tx.amount >= 0 ? 'text-success' : 'text-destructive'}>
                           {formatBalance(tx.amount)}
                         </TableCell>
                         <TableCell className="text-muted-foreground hidden md:table-cell max-w-[200px] truncate">

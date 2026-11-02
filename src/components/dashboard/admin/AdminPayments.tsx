@@ -92,9 +92,9 @@ export default function AdminPayments() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'PENDING':
-        return <Badge variant="outline" className="text-yellow-500 border-yellow-500"><Clock className="h-3 w-3 mr-1" />Pendente</Badge>;
+        return <Badge variant="outline" className="text-warning border-warning"><Clock className="h-3 w-3 mr-1" />Pendente</Badge>;
       case 'CONFIRMED':
-        return <Badge className="bg-green-500"><CheckCircle className="h-3 w-3 mr-1" />Confirmado</Badge>;
+        return <Badge className="bg-success"><CheckCircle className="h-3 w-3 mr-1" />Confirmado</Badge>;
       case 'FAILED':
         return <Badge variant="destructive"><XCircle className="h-3 w-3 mr-1" />Falhou</Badge>;
       case 'REFUNDED':
@@ -107,9 +107,9 @@ export default function AdminPayments() {
   const getMethodBadge = (method: string) => {
     switch (method) {
       case 'PIX':
-        return <Badge variant="outline" className="text-green-500 border-green-500">PIX</Badge>;
+        return <Badge variant="outline" className="text-success border-success">PIX</Badge>;
       case 'CREDIT_CARD':
-        return <Badge variant="outline" className="text-blue-500 border-blue-500">Cartão</Badge>;
+        return <Badge variant="outline" className="text-primary border-primary">Cartão</Badge>;
       default:
         return <Badge variant="secondary">{method}</Badge>;
     }
@@ -146,7 +146,7 @@ export default function AdminPayments() {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-2">
-              <CheckCircle className="h-5 w-5 text-green-500" />
+              <CheckCircle className="h-5 w-5 text-success" />
               <div>
                 <p className="text-2xl font-bold">{totals.confirmedCount}</p>
                 <p className="text-xs text-muted-foreground">Confirmados</p>
@@ -157,7 +157,7 @@ export default function AdminPayments() {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-green-500" />
+              <TrendingUp className="h-5 w-5 text-success" />
               <div>
                 <p className="text-2xl font-bold">R$ {totals.confirmedAmount.toFixed(2)}</p>
                 <p className="text-xs text-muted-foreground">Total Confirmado</p>
@@ -168,7 +168,7 @@ export default function AdminPayments() {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-2">
-              <Clock className="h-5 w-5 text-yellow-500" />
+              <Clock className="h-5 w-5 text-warning" />
               <div>
                 <p className="text-2xl font-bold">{totals.pendingCount}</p>
                 <p className="text-xs text-muted-foreground">Pendentes</p>
@@ -179,7 +179,7 @@ export default function AdminPayments() {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-2">
-              <DollarSign className="h-5 w-5 text-yellow-500" />
+              <DollarSign className="h-5 w-5 text-warning" />
               <div>
                 <p className="text-2xl font-bold">R$ {totals.pendingAmount.toFixed(2)}</p>
                 <p className="text-xs text-muted-foreground">Total Pendente</p>

@@ -248,8 +248,8 @@ export default function AdminSecurityAdvanced() {
         </Card>
         <Card>
           <CardContent className="p-4 flex items-center gap-4">
-            <div className="p-3 rounded-full bg-orange-500/10">
-              <Smartphone className="h-6 w-6 text-orange-500" />
+            <div className="p-3 rounded-full bg-warning/10">
+              <Smartphone className="h-6 w-6 text-warning" />
             </div>
             <div>
               <p className="text-2xl font-bold">{stats.suspiciousDevices}</p>
@@ -259,8 +259,8 @@ export default function AdminSecurityAdvanced() {
         </Card>
         <Card>
           <CardContent className="p-4 flex items-center gap-4">
-            <div className="p-3 rounded-full bg-yellow-500/10">
-              <UserX className="h-6 w-6 text-yellow-500" />
+            <div className="p-3 rounded-full bg-warning/10">
+              <UserX className="h-6 w-6 text-warning" />
             </div>
             <div>
               <p className="text-2xl font-bold">{stats.suspiciousAffiliates}</p>
@@ -405,7 +405,7 @@ export default function AdminSecurityAdvanced() {
                               {fp.blocked ? (
                                 <Badge variant="destructive">Bloqueado</Badge>
                               ) : fp.is_suspicious ? (
-                                <Badge className="bg-orange-500">Suspeito</Badge>
+                                <Badge className="bg-warning">Suspeito</Badge>
                               ) : (
                                 <Badge variant="secondary">Normal</Badge>
                               )}
@@ -485,7 +485,7 @@ export default function AdminSecurityAdvanced() {
                           </TableCell>
                           <TableCell>
                             {aff.unique_ips < 3 ? (
-                              <span className="text-orange-500 font-medium">{aff.unique_ips}</span>
+                              <span className="text-warning font-medium">{aff.unique_ips}</span>
                             ) : (
                               aff.unique_ips
                             )}
@@ -494,7 +494,7 @@ export default function AdminSecurityAdvanced() {
                             {aff.duplicate_rate > 30 ? (
                               <Badge variant="destructive">Alta duplicação</Badge>
                             ) : aff.unique_ips < 3 ? (
-                              <Badge className="bg-orange-500">Poucos IPs</Badge>
+                              <Badge className="bg-warning">Poucos IPs</Badge>
                             ) : (
                               <Badge variant="secondary">Monitorar</Badge>
                             )}

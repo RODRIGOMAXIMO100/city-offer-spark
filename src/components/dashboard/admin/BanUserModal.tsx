@@ -104,7 +104,7 @@ export default function BanUserModal({ user, open, onOpenChange, onUserBanned }:
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-red-600">
+          <DialogTitle className="flex items-center gap-2 text-destructive">
             <Ban className="h-5 w-5" />
             Banir Usuário
           </DialogTitle>
@@ -127,7 +127,7 @@ export default function BanUserModal({ user, open, onOpenChange, onUserBanned }:
           <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
             <div className="space-y-0.5">
               <Label className="flex items-center gap-2">
-                <Snowflake className="h-4 w-4 text-blue-500" />
+                <Snowflake className="h-4 w-4 text-primary" />
                 Congelar Saldo
               </Label>
               <p className="text-xs text-muted-foreground">
@@ -140,9 +140,9 @@ export default function BanUserModal({ user, open, onOpenChange, onUserBanned }:
             />
           </div>
 
-          <div className="flex items-center justify-between p-3 bg-red-50 dark:bg-red-950/20 rounded-lg border border-red-200 dark:border-red-900">
+          <div className="flex items-center justify-between p-3 bg-destructive/10 dark:bg-destructive/20 rounded-lg border border-destructive/30 dark:border-destructive">
             <div className="space-y-0.5">
-              <Label className="flex items-center gap-2 text-red-600">
+              <Label className="flex items-center gap-2 text-destructive">
                 <DollarSign className="h-4 w-4" />
                 Confiscar Saldo
               </Label>
@@ -161,7 +161,7 @@ export default function BanUserModal({ user, open, onOpenChange, onUserBanned }:
               <strong>Saldo atual do usuário:</strong> {formatCentsToBRL(user.balance)}
             </p>
             {confiscateBalance && (
-              <p className="text-sm text-red-600 mt-1">
+              <p className="text-sm text-destructive mt-1">
                 ⚠️ O saldo será zerado após o banimento
               </p>
             )}

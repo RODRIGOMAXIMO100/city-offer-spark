@@ -66,14 +66,14 @@ export function OnboardingChecklist() {
           className={cn(
             'flex items-center justify-between p-3 cursor-pointer transition-colors',
             allCompleted
-              ? 'bg-gradient-to-r from-green-500/10 to-emerald-500/10'
+              ? 'bg-gradient-to-r from-success/10 to-success/10'
               : 'bg-gradient-to-r from-primary/10 to-affiliate/10'
           )}
           onClick={() => setIsExpanded(!isExpanded)}
         >
           <div className="flex items-center gap-2">
             {allCompleted ? (
-              <CheckCircle2 className="h-5 w-5 text-green-500" />
+              <CheckCircle2 className="h-5 w-5 text-success" />
             ) : (
               <Sparkles className="h-5 w-5 text-primary animate-pulse" />
             )}
@@ -133,7 +133,7 @@ export function OnboardingChecklist() {
                   >
                     <div className="flex items-center gap-2">
                       {isCompleted ? (
-                        <CheckCircle2 className="h-4 w-4 text-green-500 shrink-0" />
+                        <CheckCircle2 className="h-4 w-4 text-success shrink-0" />
                       ) : (
                         <Circle className="h-4 w-4 text-muted-foreground shrink-0" />
                       )}

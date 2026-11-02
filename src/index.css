@@ -18,132 +18,119 @@
 
 @layer base {
   :root {
-    --background: 240 20% 99%;
-    --foreground: 240 10% 4%;
-
+    /* Identidade Clilin (out/2026): violeta da marca sempre junto do rosa e do laranja */
+    --background: 270 100% 99%;
+    --foreground: 266 52% 13%;
     --card: 0 0% 100%;
-    --card-foreground: 240 10% 4%;
-
+    --card-foreground: 266 52% 13%;
     --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 4%;
-
-    /* Primary - Azul vibrante */
-    --primary: 221 83% 53%;
+    --popover-foreground: 266 52% 13%;
+    /* Primária: violeta da marca (#6B2CD8) */
+    --primary: 262 69% 51%;
     --primary-foreground: 0 0% 100%;
-
-    /* Secondary - Verde moderno */
-    --secondary: 152 69% 40%;
+    /* Secundária: rosa dos divulgadores (#F42578) */
+    --secondary: 336 100% 62%;
     --secondary-foreground: 0 0% 100%;
-
-    /* Muted */
-    --muted: 240 5% 96%;
-    --muted-foreground: 240 4% 46%;
-
-    /* Accent - Roxo/Indigo */
-    --accent: 258 90% 66%;
+    --muted: 270 40% 96%;
+    --muted-foreground: 266 14% 42%;
+    --accent: 336 100% 62%;
     --accent-foreground: 0 0% 100%;
-
-    /* Destructive */
-    --destructive: 0 84% 60%;
+    --destructive: 354 78% 52%;
     --destructive-foreground: 0 0% 100%;
-
-    --border: 240 6% 90%;
-    --input: 240 6% 90%;
-    --ring: 221 83% 53%;
-
-    --radius: 0.75rem;
-
-    /* Cores específicas do Clilin */
-    --company: 221 83% 53%;
+    --border: 270 30% 90%;
+    --input: 270 30% 90%;
+    --ring: 262 69% 51%;
+    --radius: 1.25rem;
+    /* Papéis */
+    --company: 262 69% 51%;
     --company-foreground: 0 0% 100%;
-    --company-muted: 221 83% 96%;
-    
-    --affiliate: 152 69% 40%;
+    --company-muted: 262 69% 96%;
+    --affiliate: 336 90% 55%;
     --affiliate-foreground: 0 0% 100%;
-    --affiliate-muted: 152 69% 96%;
-    
-    --client: 258 90% 66%;
+    --affiliate-muted: 336 100% 96%;
+    --client: 175 100% 33%;
     --client-foreground: 0 0% 100%;
-    --client-muted: 258 90% 96%;
-
-    /* Destaque (prêmios, ranking, metas) */
-    --highlight: 43 96% 56%;
-    --highlight-foreground: 240 10% 4%;
-
-    /* Tipografia da marca (trocada pelos temas) */
-    --font-display: "Outfit";
-    --font-body: "Plus Jakarta Sans";
-
-    /* Preços e Ofertas */
-    --price-old: 0 0% 50%;
-    --price-new: 152 69% 40%;
-    --discount-badge: 0 84% 60%;
-
+    --client-muted: 175 60% 94%;
+    /* Destaque: laranja (prêmios, ranking, desconto) */
+    --highlight: 35 100% 55%;
+    --highlight-foreground: 266 52% 13%;
+    /* Estados (confirmado, atenção) e o verde do WhatsApp */
+    --success: 158 72% 34%;
+    --success-foreground: 0 0% 100%;
+    --warning: 28 95% 44%;
+    --warning-foreground: 0 0% 100%;
+    --whatsapp: 142 70% 41%;
+    --whatsapp-foreground: 0 0% 100%;
+    /* Tipografia da marca */
+    --font-display: "Unbounded";
+    --font-body: "Onest";
+    /* Preços e ofertas */
+    --price-old: 266 14% 42%;
+    --price-new: 262 69% 51%;
+    --discount-badge: 35 100% 55%;
     /* Gradientes */
-    --gradient-company: linear-gradient(135deg, hsl(221 83% 53%), hsl(221 83% 40%));
-    --gradient-affiliate: linear-gradient(135deg, hsl(152 69% 40%), hsl(152 69% 30%));
-    --gradient-client: linear-gradient(135deg, hsl(258 90% 66%), hsl(258 90% 50%));
-    --gradient-hero: linear-gradient(135deg, hsl(221 83% 53% / 0.1), hsl(258 90% 66% / 0.1), hsl(152 69% 40% / 0.1));
-
+    --gradient-company: linear-gradient(135deg, hsl(262 69% 51%), hsl(262 69% 42%));
+    --gradient-affiliate: linear-gradient(135deg, hsl(336 90% 55%), hsl(336 90% 46%));
+    --gradient-client: linear-gradient(135deg, hsl(175 100% 33%), hsl(175 100% 26%));
+    --gradient-hero: linear-gradient(135deg, hsl(262 69% 51% / 0.08), hsl(336 100% 62% / 0.08), hsl(35 100% 55% / 0.08));
     /* Sombras */
-    --shadow-sm: 0 1px 2px 0 hsl(0 0% 0% / 0.05);
-    --shadow-md: 0 4px 6px -1px hsl(0 0% 0% / 0.1);
-    --shadow-lg: 0 10px 15px -3px hsl(0 0% 0% / 0.1);
-    --shadow-xl: 0 20px 25px -5px hsl(0 0% 0% / 0.1), 0 8px 10px -6px hsl(0 0% 0% / 0.1);
-    --shadow-glow-company: 0 0 40px hsl(221 83% 53% / 0.25);
-    --shadow-glow-affiliate: 0 0 40px hsl(152 69% 40% / 0.25);
-    --shadow-glow-client: 0 0 40px hsl(258 90% 66% / 0.25);
-
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 221 83% 53%;
+    --shadow-sm: 0 1px 2px 0 hsl(266 52% 13% / 0.05);
+    --shadow-md: 0 4px 6px -1px hsl(266 52% 13% / 0.08);
+    --shadow-lg: 0 10px 15px -3px hsl(266 52% 13% / 0.08);
+    --shadow-xl: 0 20px 25px -5px hsl(266 52% 13% / 0.08), 0 8px 10px -6px hsl(266 52% 13% / 0.08);
+    --shadow-glow-company: 0 0 40px hsl(262 69% 51% / 0.25);
+    --shadow-glow-affiliate: 0 0 40px hsl(336 90% 55% / 0.25);
+    --shadow-glow-client: 0 0 40px hsl(175 100% 33% / 0.25);
+    --sidebar-background: 270 60% 98%;
+    --sidebar-foreground: 266 30% 25%;
+    --sidebar-primary: 262 69% 51%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 262 69% 95%;
+    --sidebar-accent-foreground: 262 69% 35%;
+    --sidebar-border: 270 30% 90%;
+    --sidebar-ring: 262 69% 51%;
   }
 
   .dark {
-    --background: 240 10% 4%;
+    --background: 266 40% 6%;
     --foreground: 0 0% 98%;
 
-    --card: 240 10% 8%;
+    --card: 266 35% 9%;
     --card-foreground: 0 0% 98%;
 
-    --popover: 240 10% 8%;
+    --popover: 266 35% 9%;
     --popover-foreground: 0 0% 98%;
 
-    --primary: 221 83% 60%;
+    --primary: 262 69% 60%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 152 69% 45%;
+    --secondary: 336 90% 45%;
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 240 4% 16%;
-    --muted-foreground: 240 5% 65%;
+    --muted: 266 20% 18%;
+    --muted-foreground: 266 15% 70%;
 
-    --accent: 258 90% 70%;
+    --accent: 175 100% 70%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 62% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 240 4% 16%;
-    --input: 240 4% 16%;
-    --ring: 221 83% 60%;
+    --border: 266 20% 18%;
+    --input: 266 20% 18%;
+    --ring: 262 69% 60%;
 
-    --company: 221 83% 60%;
+    --company: 262 69% 60%;
     --company-foreground: 0 0% 100%;
-    --company-muted: 221 83% 12%;
+    --company-muted: 262 69% 12%;
     
-    --affiliate: 152 69% 45%;
+    --affiliate: 336 90% 45%;
     --affiliate-foreground: 0 0% 100%;
-    --affiliate-muted: 152 69% 12%;
+    --affiliate-muted: 336 90% 12%;
     
-    --client: 258 90% 70%;
+    --client: 175 100% 70%;
     --client-foreground: 0 0% 100%;
-    --client-muted: 258 90% 12%;
+    --client-muted: 175 100% 12%;
 
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
@@ -152,7 +139,7 @@
     --sidebar-accent: 240 3.7% 15.9%;
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 221 83% 60%;
+    --sidebar-ring: 262 69% 60%;
   }
 }
 

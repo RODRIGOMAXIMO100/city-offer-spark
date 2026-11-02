@@ -7,12 +7,13 @@ import { Offer, CONFIG } from '@/types/database';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, Clock, MessageCircle, Globe, FileText, MapPin, Sparkles, Instagram, ChevronLeft, ChevronRight, ArrowLeft, User, Phone, Ticket } from 'lucide-react';
+import { Loader2, Clock, MessageCircle, Globe, FileText, MapPin, Store, Instagram, ChevronLeft, ChevronRight, ArrowLeft, Ticket } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import CouponModal from '@/components/offer/CouponModal';
-import logo from '@/assets/logo.png';
+import { Link } from 'react-router-dom';
+import { BrandLogo } from '@/components/brand/BrandLogo';
 
 // Generate persistent device ID
 const getDeviceId = (): string => {
@@ -362,9 +363,9 @@ export default function OfferPage() {
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
     
     if (days < 1) return { color: 'text-destructive animate-pulse', urgent: true };
-    if (days <= 3) return { color: 'text-orange-500', urgent: true };
-    if (days <= 7) return { color: 'text-yellow-500', urgent: false };
-    return { color: 'text-secondary-foreground/80', urgent: false };
+    if (days <= 3) return { color: 'text-warning', urgent: true };
+    if (days <= 7) return { color: 'text-warning', urgent: false };
+    return { color: 'text-muted-foreground', urgent: false };
   };
 
   if (loading) {
@@ -392,8 +393,15 @@ export default function OfferPage() {
     setCurrentImageIndex((prev) => (prev - 1 + offerImages.length) % offerImages.length);
   };
 
+  const brl = (v: number) => Number(v || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  const aproveitaram = Number((offer as any).leads_count || offer.clicks_count || 0);
+  const voltar = () => {
+    if (window.history.length > 1) navigate(-1);
+    else navigate('/ofertas');
+  };
+
   return (
-    <div className="min-h-screen bg-muted/30 flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col">
       <Helmet>
         <title>{`${offer.title} | Clilin`}</title>
         <meta
@@ -417,220 +425,174 @@ export default function OfferPage() {
         {hasImages && <meta property="og:image" content={offerImages[0]} />}
         {hasImages && <meta name="twitter:image" content={offerImages[0]} />}
       </Helmet>
-      {/* Navigation Header */}
-
-      <div className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b">
-        <div className="max-w-md mx-auto px-4 py-3 flex items-center justify-between">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => {
-              const from = searchParams.get('from');
-              const cityParts = offer.city.split(' - ');
-              const cityName = cityParts[0];
-              const stateName = cityParts[1] || '';
-              
-              if (from === 'public-chat') {
-                // Redirecionar para /chat quando veio do PublicAIChat
-                navigate(`/chat?city=${encodeURIComponent(cityName)}&state=${encodeURIComponent(stateName)}`);
-              } else if (window.history.length > 1) {
-                navigate(-1);
-              } else {
-                // Fallback to chat page with city params
-                navigate(`/chat?city=${encodeURIComponent(cityName)}&state=${encodeURIComponent(stateName)}`);
-              }
-            }}
-            className="text-muted-foreground hover:text-foreground"
-          >
+      {/* Topo */}
+      <div className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
+        <div className="max-w-md mx-auto px-4 h-14 flex items-center justify-between">
+          <Button variant="ghost" size="sm" onClick={voltar} className="text-muted-foreground hover:text-foreground -ml-2">
             <ArrowLeft className="mr-1 h-4 w-4" />
             Voltar
           </Button>
-          <img src={logo} alt="Clilin" className="h-6" />
+          <Link to="/" aria-label="Clilin">
+            <BrandLogo className="h-7" />
+          </Link>
         </div>
       </div>
 
-      <div className="flex-1 flex items-center justify-center p-4">
-      <Card className="w-full max-w-md shadow-xl border-0 overflow-hidden animate-fade-in">
-        {/* Image Gallery */}
-        {hasImages && (
-          <div className="relative aspect-video bg-muted">
-            <img
-              src={offerImages[currentImageIndex]}
-              alt={`${offer.title} - Imagem ${currentImageIndex + 1}`}
-              className="w-full h-full object-cover"
-            />
-            {offerImages.length > 1 && (
+      <main className="flex-1 px-4 py-6">
+        <div className="max-w-md mx-auto rounded-3xl border border-border bg-card overflow-hidden shadow-lg animate-fade-in">
+          {/* Foto (ou capa da marca quando a oferta não tem foto) */}
+          <div className="relative aspect-[16/10] bg-muted">
+            {hasImages ? (
               <>
-                <button
-                  onClick={prevImage}
-                  aria-label="Imagem anterior"
-                  className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-2 transition-colors"
-                >
-                  <ChevronLeft className="h-5 w-5" />
-                </button>
-                <button
-                  onClick={nextImage}
-                  aria-label="Próxima imagem"
-                  className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-2 transition-colors"
-                >
-                  <ChevronRight className="h-5 w-5" />
-                </button>
-                <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5">
-                  {offerImages.map((_: string, index: number) => (
+                <img
+                  src={offerImages[currentImageIndex]}
+                  alt={`${offer.title} - Imagem ${currentImageIndex + 1}`}
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
+                {offerImages.length > 1 && (
+                  <>
                     <button
-                      key={index}
-                      onClick={() => setCurrentImageIndex(index)}
-                      aria-label={`Ir para imagem ${index + 1}`}
-                      className={`w-2 h-2 rounded-full transition-colors ${
-                        index === currentImageIndex ? 'bg-white' : 'bg-white/50'
-                      }`}
-                    />
-                  ))}
-                </div>
+                      onClick={prevImage}
+                      aria-label="Imagem anterior"
+                      className="absolute left-2 top-1/2 -translate-y-1/2 bg-foreground/50 hover:bg-foreground/70 text-primary-foreground rounded-full p-2 transition-colors"
+                    >
+                      <ChevronLeft className="h-5 w-5" />
+                    </button>
+                    <button
+                      onClick={nextImage}
+                      aria-label="Próxima imagem"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 bg-foreground/50 hover:bg-foreground/70 text-primary-foreground rounded-full p-2 transition-colors"
+                    >
+                      <ChevronRight className="h-5 w-5" />
+                    </button>
+                    <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
+                      {offerImages.map((_: string, index: number) => (
+                        <button
+                          key={index}
+                          onClick={() => setCurrentImageIndex(index)}
+                          aria-label={`Ir para imagem ${index + 1}`}
+                          className={`w-2 h-2 rounded-full transition-colors ${index === currentImageIndex ? 'bg-card' : 'bg-card/50'}`}
+                        />
+                      ))}
+                    </div>
+                  </>
+                )}
               </>
+            ) : (
+              <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-primary/10 via-affiliate/10 to-highlight/15">
+                <BrandLogo variant="mark" className="h-20 opacity-90" />
+              </div>
             )}
-            {/* Discount Badge on Image */}
-            <Badge variant="destructive" className="absolute top-3 left-3 text-sm font-bold px-3 py-1">
-              -{discount}% OFF
-            </Badge>
-            {/* Timer on Image */}
-            <div className={`absolute top-3 right-3 bg-black/60 backdrop-blur-sm rounded-full px-3 py-1 flex items-center gap-1 text-sm text-white ${urgency.urgent ? 'animate-pulse' : ''}`}>
+            {discount > 0 && (
+              <span className="absolute top-3 left-3 rounded-full bg-highlight text-highlight-foreground px-3 py-1 text-sm font-bold shadow-sm">
+                -{discount}%
+              </span>
+            )}
+            <span
+              className={`absolute top-3 right-3 rounded-full bg-card/90 backdrop-blur-sm px-3 py-1 flex items-center gap-1 text-sm font-medium ${urgency.urgent ? 'text-destructive' : 'text-foreground'}`}
+            >
               <Clock className="h-4 w-4" />
               {timeLeft}
-            </div>
+            </span>
           </div>
-        )}
 
-        {/* Header without image */}
-        {!hasImages && (
-          <div className="bg-gradient-to-r from-secondary to-secondary/80 p-4 text-secondary-foreground">
-            <div className="flex justify-between items-start">
-              <Badge variant="destructive" className="text-sm font-bold px-3 py-1">
-                -{discount}% OFF
-              </Badge>
-              <div className={`flex items-center gap-1 text-sm ${urgency.color}`}>
-                <Clock className="h-4 w-4" />
-                {timeLeft}
+          <div className="p-5 sm:p-6 space-y-5">
+            {/* Loja */}
+            <div className="flex items-center gap-2.5">
+              {offer.profiles?.avatar_url ? (
+                <img
+                  src={offer.profiles.avatar_url}
+                  alt={offer.profiles?.name || 'Loja'}
+                  className="h-9 w-9 rounded-full object-cover border border-border"
+                />
+              ) : (
+                <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center">
+                  <Store className="h-4 w-4 text-primary" />
+                </div>
+              )}
+              <div className="min-w-0">
+                <p className="font-semibold text-foreground leading-tight truncate">{offer.profiles?.name || 'Negócio local'}</p>
+                <p className="text-xs text-muted-foreground flex items-center gap-1">
+                  <MapPin className="h-3 w-3" /> {offer.city}
+                </p>
               </div>
             </div>
-          </div>
-        )}
 
-        <CardContent className="p-6 space-y-6">
-          {/* Company */}
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            {offer.profiles?.avatar_url ? (
-              <img 
-                src={offer.profiles.avatar_url} 
-                alt={offer.profiles?.name || 'Empresa'} 
-                className="h-10 w-10 rounded-full object-cover border border-border"
-              />
-            ) : (
-              <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-                <Sparkles className="h-5 w-5 text-primary" />
-              </div>
-            )}
-            <span className="font-medium text-foreground">{offer.profiles?.name || 'Empresa'}</span>
-          </div>
+            <div className="space-y-2">
+              <h1 className="font-display text-2xl font-bold text-foreground leading-tight">{offer.title}</h1>
+              {offer.description && <p className="text-muted-foreground">{offer.description}</p>}
+            </div>
 
-          {/* Title */}
-          <h1 className="text-2xl font-bold text-foreground leading-tight">
-            {offer.title}
-          </h1>
-
-          {/* Description */}
-          {offer.description && (
-            <p className="text-muted-foreground">
-              {offer.description}
-            </p>
-          )}
-
-          {/* Instagram Button */}
-          {offer.profiles?.instagram_url && (
-            <Button
-              variant="outline"
-              className="w-full text-pink-500 border-pink-500/30 hover:bg-pink-500/10"
-              onClick={handleInstagramClick}
-            >
-              <Instagram className="mr-2 h-5 w-5" />
-              Conheça no Instagram
-            </Button>
-          )}
-
-          {/* Prices */}
-          <div className="bg-muted/50 rounded-xl p-4">
-            <div className="flex items-center justify-between">
+            {/* Preço */}
+            <div className="rounded-2xl bg-muted/60 p-4 flex items-end justify-between gap-3">
               <div>
-                <p className="text-sm text-muted-foreground line-through">
-                  De R$ {offer.price_old.toFixed(2)}
-                </p>
-                <p className="text-3xl font-extrabold text-secondary">
-                  R$ {offer.price_new.toFixed(2)}
-                </p>
+                {offer.price_old > offer.price_new && (
+                  <p className="text-sm text-muted-foreground line-through">De {brl(offer.price_old)}</p>
+                )}
+                <p className="font-display text-3xl font-bold text-primary">{brl(offer.price_new)}</p>
               </div>
-              <div className="text-right">
-                <p className="text-sm text-muted-foreground">Economia de</p>
-                <p className="text-lg font-bold text-destructive">
-                  R$ {(offer.price_old - offer.price_new).toFixed(2)}
-                </p>
-              </div>
+              {offer.price_old > offer.price_new && (
+                <div className="text-right">
+                  <p className="text-xs text-muted-foreground">Você economiza</p>
+                  <p className="font-bold text-affiliate">{brl(offer.price_old - offer.price_new)}</p>
+                </div>
+              )}
             </div>
+
+            {offer.profiles?.instagram_url && (
+              <Button variant="outline" className="w-full rounded-full" onClick={handleInstagramClick}>
+                <Instagram className="mr-2 h-4 w-4" />
+                Conheça no Instagram
+              </Button>
+            )}
+
+            {/* Como funciona */}
+            <div className="rounded-2xl border border-border p-4 text-sm">
+              <p className="font-semibold text-foreground mb-2">Como funciona</p>
+              <ol className="space-y-1.5 text-muted-foreground">
+                {[
+                  'Toque em "Quero meu cupom" e informe seu nome e WhatsApp.',
+                  'O cupom chega no seu WhatsApp na hora. É grátis.',
+                  'Na hora de usar, toque em "Estou na loja" ou "Pedir online". A loja confirma na hora.',
+                ].map((t, i) => (
+                  <li key={i} className="flex gap-2.5">
+                    <span className="h-5 w-5 shrink-0 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center">{i + 1}</span>
+                    <span>{t}</span>
+                  </li>
+                ))}
+              </ol>
+            </div>
+
+            <Button
+              type="button"
+              onClick={() => setShowCouponModal(true)}
+              disabled={timeLeft === 'Expirada'}
+              className="w-full h-14 rounded-full text-base font-bold shadow-lg shadow-primary/25"
+            >
+              <Ticket className="mr-2 h-5 w-5" />
+              {timeLeft === 'Expirada' ? 'Oferta encerrada' : 'Quero meu cupom'}
+            </Button>
+
+            <p className="text-xs text-center text-muted-foreground">
+              Ao pegar o cupom, você concorda com os{' '}
+              <Link to="/termos" className="text-primary hover:underline">Termos de Uso</Link> e a{' '}
+              <Link to="/privacidade" className="text-primary hover:underline">Política de Privacidade</Link>.
+            </p>
+
+            {aproveitaram > 0 && (
+              <p className="text-xs text-center text-muted-foreground">
+                {aproveitaram} {aproveitaram === 1 ? 'pessoa já se interessou' : 'pessoas já se interessaram'} por esta oferta
+              </p>
+            )}
           </div>
-
-          {/* Location */}
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <MapPin className="h-4 w-4" />
-            {offer.city}
-          </div>
-
-          {/* Cupom: o cliente recebe no WhatsApp e usa na loja */}
-          <div className="rounded-xl bg-muted/30 p-4 space-y-2 text-sm">
-            <p className="font-semibold text-foreground text-center">Como funciona</p>
-            <ol className="space-y-1 text-muted-foreground list-decimal pl-5">
-              <li>Toque no botão e informe seu nome e WhatsApp.</li>
-              <li>O cupom chega no seu WhatsApp na hora.</li>
-              <li>Mostre o código na loja ou mande para a loja no WhatsApp.</li>
-            </ol>
-          </div>
-
-          <Button
-            type="button"
-            onClick={() => setShowCouponModal(true)}
-            disabled={timeLeft === 'Expirada'}
-            className="w-full py-6 text-lg font-bold bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg"
-          >
-            <Ticket className="mr-2 h-5 w-5" />
-            {timeLeft === 'Expirada' ? 'Oferta encerrada' : 'Quero meu cupom'}
-          </Button>
-
-          {/* Nota de aceite */}
-          <p className="text-xs text-center text-muted-foreground">
-            Ao pegar o cupom, você concorda com nossos{' '}
-            <a href="/termos" target="_blank" className="text-primary hover:underline">
-              Termos de Uso
-            </a>{' '}
-            e{' '}
-            <a href="/privacidade" target="_blank" className="text-primary hover:underline">
-              Política de Privacidade
-            </a>.
-          </p>
-
-          {/* Trust indicators */}
-          <div className="flex items-center justify-center gap-4 text-xs text-muted-foreground">
-            <span>✓ Oferta verificada</span>
-            <span>•</span>
-            <span>{(offer as any).leads_count || offer.clicks_count} pessoas aproveitaram</span>
-          </div>
-        </CardContent>
-      </Card>
-      </div>
-
-      {/* Footer com logo */}
-      <div className="py-6">
-        <div className="flex justify-center">
-          <img src={logo} alt="clilin" className="h-8 opacity-60" />
         </div>
-      </div>
+      </main>
+
+      <footer className="py-6 flex justify-center">
+        <Link to="/" aria-label="Clilin">
+          <BrandLogo className="h-7 opacity-70" />
+        </Link>
+      </footer>
 
       {offer && (
         <CouponModal

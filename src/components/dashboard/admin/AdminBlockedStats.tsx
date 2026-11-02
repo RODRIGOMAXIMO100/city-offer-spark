@@ -97,8 +97,8 @@ export default function AdminBlockedStats() {
   const getClickBadges = (click: any) => {
     const badges = [];
     if (click.is_vpn) badges.push(<Badge key="vpn" variant="destructive" className="text-xs">VPN</Badge>);
-    if (click.is_proxy) badges.push(<Badge key="proxy" className="bg-purple-500 text-xs">Proxy</Badge>);
-    if (click.geo_mismatch) badges.push(<Badge key="geo" className="bg-orange-500 text-xs">Geo</Badge>);
+    if (click.is_proxy) badges.push(<Badge key="proxy" className="bg-primary text-xs">Proxy</Badge>);
+    if (click.geo_mismatch) badges.push(<Badge key="geo" className="bg-warning text-xs">Geo</Badge>);
     if (click.click_type === 'DUPLICATE') badges.push(<Badge key="dup" variant="secondary" className="text-xs">Duplicado</Badge>);
     return badges.length > 0 ? badges : <Badge variant="outline" className="text-xs">-</Badge>;
   };
@@ -137,21 +137,21 @@ export default function AdminBlockedStats() {
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
-            <Eye className="h-6 w-6 mx-auto mb-2 text-purple-500" />
+            <Eye className="h-6 w-6 mx-auto mb-2 text-primary" />
             <p className="text-2xl font-bold">{stats?.totalProxy || 0}</p>
             <p className="text-xs text-muted-foreground">Proxy Detectado</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
-            <Globe className="h-6 w-6 mx-auto mb-2 text-orange-500" />
+            <Globe className="h-6 w-6 mx-auto mb-2 text-warning" />
             <p className="text-2xl font-bold">{stats?.totalGeoMismatch || 0}</p>
             <p className="text-xs text-muted-foreground">Geo Mismatch</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
-            <AlertTriangle className="h-6 w-6 mx-auto mb-2 text-yellow-500" />
+            <AlertTriangle className="h-6 w-6 mx-auto mb-2 text-warning" />
             <p className="text-2xl font-bold">{stats?.totalDuplicate || 0}</p>
             <p className="text-xs text-muted-foreground">Duplicados</p>
           </CardContent>

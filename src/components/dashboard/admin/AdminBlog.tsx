@@ -275,11 +275,11 @@ export function AdminBlog() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'published':
-        return <Badge className="bg-green-500/20 text-green-400">Publicado</Badge>;
+        return <Badge className="bg-success/20 text-success">Publicado</Badge>;
       case 'scheduled':
-        return <Badge className="bg-blue-500/20 text-blue-400">Agendado</Badge>;
+        return <Badge className="bg-primary/20 text-primary">Agendado</Badge>;
       default:
-        return <Badge className="bg-yellow-500/20 text-yellow-400">Rascunho</Badge>;
+        return <Badge className="bg-warning/20 text-warning">Rascunho</Badge>;
     }
   };
 

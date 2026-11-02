@@ -49,8 +49,8 @@ const COUPON_VALIDITIES = [
 ];
 
 const LINK_TYPES: { value: LinkType; label: string; icon: React.ReactNode; color: string }[] = [
-  { value: 'WHATSAPP', label: 'WhatsApp', icon: <MessageCircle className="h-4 w-4" />, color: 'bg-green-500' },
-  { value: 'SITE', label: 'Site/Cardápio', icon: <Globe className="h-4 w-4" />, color: 'bg-blue-500' },
+  { value: 'WHATSAPP', label: 'WhatsApp', icon: <MessageCircle className="h-4 w-4" />, color: 'bg-success' },
+  { value: 'SITE', label: 'Site/Cardápio', icon: <Globe className="h-4 w-4" />, color: 'bg-primary' },
 ];
 
 // Phone number formatting helpers
@@ -296,7 +296,7 @@ export default function CreateOfferModal({
   if (!canCreate && !isEditing) {
     const limitContent = (
       <div className="py-6 text-center space-y-4">
-        <div className="bg-orange-500/10 border border-orange-500/30 rounded-lg p-4">
+        <div className="bg-warning/10 border border-warning/30 rounded-lg p-4">
           <p className="text-sm text-foreground font-medium mb-2">
             Você já possui {activeOffersCount} ofertas ativas!
           </p>
@@ -316,7 +316,7 @@ export default function CreateOfferModal({
         <Drawer open={open} onOpenChange={onClose}>
           <DrawerContent className="px-4 pb-6">
             <DrawerHeader className="text-left">
-              <DrawerTitle className="flex items-center gap-2 text-orange-500">
+              <DrawerTitle className="flex items-center gap-2 text-warning">
                 <AlertTriangle className="h-5 w-5" />
                 Limite Atingido
               </DrawerTitle>
@@ -331,7 +331,7 @@ export default function CreateOfferModal({
       <Dialog open={open} onOpenChange={onClose}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-orange-500">
+            <DialogTitle className="flex items-center gap-2 text-warning">
               <AlertTriangle className="h-5 w-5" />
               Limite Atingido
             </DialogTitle>
@@ -429,7 +429,7 @@ export default function CreateOfferModal({
         <div className="flex justify-end">
           <span className={cn(
             "text-[10px]",
-            formData.title.length > MAX_TITLE_LENGTH * 0.9 ? "text-orange-500" : "text-muted-foreground"
+            formData.title.length > MAX_TITLE_LENGTH * 0.9 ? "text-warning" : "text-muted-foreground"
           )}>
             {formData.title.length}/{MAX_TITLE_LENGTH}
           </span>
@@ -452,7 +452,7 @@ export default function CreateOfferModal({
         <div className="flex justify-end">
           <span className={cn(
             "text-[10px]",
-            formData.description.length > MAX_DESCRIPTION_LENGTH * 0.9 ? "text-orange-500" : "text-muted-foreground"
+            formData.description.length > MAX_DESCRIPTION_LENGTH * 0.9 ? "text-warning" : "text-muted-foreground"
           )}>
             {formData.description.length}/{MAX_DESCRIPTION_LENGTH}
           </span>
@@ -540,9 +540,9 @@ export default function CreateOfferModal({
       {discount > 0 && (
         <div className={cn(
           "p-2 rounded-lg text-xs text-center font-medium",
-          discount >= 30 ? "bg-green-500/10 text-green-600" :
-          discount >= 20 ? "bg-yellow-500/10 text-yellow-600" :
-          "bg-orange-500/10 text-orange-600"
+          discount >= 30 ? "bg-success/10 text-success" :
+          discount >= 20 ? "bg-warning/10 text-warning" :
+          "bg-warning/10 text-warning"
         )}>
           {discount >= 30 ? '🔥 Desconto excelente! Sua oferta terá mais destaque.' :
            discount >= 20 ? '👍 Bom desconto! Continue assim.' :
@@ -581,7 +581,7 @@ export default function CreateOfferModal({
               className={cn(
                 "p-2 rounded-lg border-2 transition-all text-xs font-medium",
                 formData.coupon_valid_hours === String(v.hours)
-                  ? 'border-primary bg-primary text-white'
+                  ? 'border-primary bg-primary text-primary-foreground'
                   : 'border-border hover:border-primary/50'
               )}
             >
@@ -606,7 +606,7 @@ export default function CreateOfferModal({
               className={cn(
                 "p-2.5 rounded-lg border-2 transition-all flex flex-col items-center gap-1",
                 formData.link_type === type.value
-                  ? `border-primary ${type.color} text-white`
+                  ? `border-primary ${type.color} text-primary-foreground`
                   : 'border-border hover:border-primary/50'
               )}
             >
@@ -632,7 +632,7 @@ export default function CreateOfferModal({
             className="text-base"
           />
           {isValidBrazilianPhone(phoneNumber) && (
-            <p className="text-xs text-green-600 flex items-center gap-1">
+            <p className="text-xs text-success flex items-center gap-1">
               <MessageCircle className="h-3 w-3" />
               Link: wa.me/55{phoneNumber.replace(/\D/g, '')}
             </p>
@@ -715,7 +715,7 @@ export default function CreateOfferModal({
         <p className="text-[10px] text-muted-foreground">
           Divulgadores locais espalham sua oferta e você <strong>só paga quando um cliente novo vai até a loja e usa o cupom</strong>. Cliques e cadastros são de graça — servem só pra você medir o alcance.
         </p>
-        <p className="text-[9px] text-amber-600 dark:text-amber-400 mt-1 italic">
+        <p className="text-[9px] text-warning dark:text-warning mt-1 italic">
           Valores atuais, sujeitos a alteração conforme política da plataforma.
         </p>
         <Link 
