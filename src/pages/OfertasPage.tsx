@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { MapPin, Search, Ticket, Bell, Store, ArrowRight, Loader2, MessageCircle } from "lucide-react";
+import { MapPin, Search, Ticket, Bell, Store, ArrowRight, Loader2, MessageCircle, Sparkles, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -49,6 +49,8 @@ const OfertasPage = () => {
   const [city, setCity] = useState(readCity);
   const [term, setTerm] = useState("");
   const [waitlist, setWaitlist] = useState(false);
+  const [ai, setAi] = useState<{ resposta: string; ids: string[] } | null>(null);
+  const [aiLoading, setAiLoading] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -85,17 +87,41 @@ const OfertasPage = () => {
   const activeCity = cities.some(([c]) => c === city) ? city : "";
 
   const visible = useMemo(() => {
+    if (ai) return ai.ids.map((id) => offers.find((o) => o.id === id)).filter(Boolean) as PublicOffer[];
     const t = norm(term.trim());
     return offers.filter(
       (o) =>
         (!activeCity || o.city === activeCity) &&
         (!t || norm(`${o.title} ${o.description ?? ""} ${o.company?.name ?? ""}`).includes(t)),
     );
-  }, [offers, activeCity, term]);
+  }, [offers, activeCity, term, ai]);
+
+  // Busca com IA: o Claude escolhe entre as ofertas ativas da cidade
+  const askAi = async () => {
+    const q = term.trim();
+    if (q.length < 2 || aiLoading) return;
+    setAiLoading(true);
+    const { data, error } = await supabase.functions.invoke("busca-ofertas", { body: { q, cidade: activeCity || null } });
+    setAiLoading(false);
+    if (error || data?.error) {
+      let msg = data?.error ?? "Não deu para buscar agora. Tente de novo.";
+      try {
+        const ctx = (error as { context?: Response } | null)?.context;
+        const b = ctx ? await ctx.json() : null;
+        if (b?.error) msg = b.error;
+      } catch {
+        /* mantém a mensagem */
+      }
+      setAi({ resposta: msg, ids: [] });
+      return;
+    }
+    setAi({ resposta: data?.resposta ?? "", ids: Array.isArray(data?.ids) ? data.ids : [] });
+  };
 
   const pickCity = (c: string) => {
     setCity(c);
     saveCity(c);
+    setAi(null);
   };
 
   return (
@@ -120,16 +146,46 @@ const OfertasPage = () => {
             </p>
           </div>
 
-          <div className="relative max-w-xl mx-auto mb-5">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              value={term}
-              onChange={(e) => setTerm(e.target.value)}
-              placeholder="O que você procura? Pizza, academia, salão..."
-              className="pl-9 h-12 rounded-2xl"
-              aria-label="Buscar ofertas"
-            />
-          </div>
+          <form
+            className="max-w-xl mx-auto mb-5 flex gap-2"
+            onSubmit={(e) => {
+              e.preventDefault();
+              askAi();
+            }}
+          >
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                value={term}
+                onChange={(e) => {
+                  setTerm(e.target.value);
+                  setAi(null);
+                }}
+                placeholder="O que você procura? Pizza, academia, salão..."
+                className="pl-9 h-12 rounded-2xl"
+                aria-label="Buscar ofertas"
+              />
+            </div>
+            <Button type="submit" className="h-12 rounded-2xl px-4" disabled={term.trim().length < 2 || aiLoading}>
+              {aiLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+              <span className="ml-2 hidden sm:inline">Buscar</span>
+            </Button>
+          </form>
+
+          {ai && (
+            <div className="max-w-xl mx-auto mb-6 rounded-2xl border border-primary/20 bg-primary/5 p-4 flex items-start gap-3">
+              <Sparkles className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+              <p className="flex-1 text-sm text-foreground">{ai.resposta}</p>
+              <button
+                type="button"
+                onClick={() => setAi(null)}
+                className="text-muted-foreground hover:text-foreground"
+                aria-label="Limpar busca"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+          )}
 
           {cities.length > 0 && (
             <div className="flex flex-wrap justify-center gap-2 mb-8">
