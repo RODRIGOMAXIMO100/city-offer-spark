@@ -29,7 +29,7 @@ export function HomeHero() {
             style={{ animationDelay: "0.2s" }}
           >
             Negócios da cidade publicam promoções, divulgadores espalham e o cliente pega o cupom de graça, direto no WhatsApp.
-            A loja confirma no WhatsApp com um toque e <strong className="text-foreground">só paga pelo cupom usado</strong>.
+            Na hora de usar, o cliente toca em "Estou na loja" ou "Pedir online", a loja confirma com um toque e <strong className="text-foreground">só paga pelo cupom usado</strong>.
           </p>
 
           <div

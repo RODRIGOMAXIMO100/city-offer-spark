@@ -25,8 +25,8 @@ const steps = [
   {
     n: "04",
     icon: BadgeCheck,
-    title: "A loja confirma no WhatsApp e só então paga",
-    text: "A loja recebe o aviso do cupom no WhatsApp. Quando o cliente chega, é só tocar em Confirmar uso. Sem digitar código nem abrir outro sistema.",
+    title: "O cliente avisa, a loja confirma e só então paga",
+    text: "Na hora de usar, o cliente toca em Estou na loja ou Pedir online. A loja recebe o aviso na hora e confirma com um toque, no WhatsApp ou no painel.",
     tone: "company",
   },
 ];

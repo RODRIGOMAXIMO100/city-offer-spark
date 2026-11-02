@@ -1,9 +1,11 @@
-// wa-webhook v4 — a loja confirma o cupom pelo WhatsApp, sem entrar no painel.
+// wa-webhook v5 — uso do cupom pelo WhatsApp, em tempo real.
 //
-// Jeitos de confirmar (todos terminam no mesmo botão "Confirmar"):
-//   1) aviso do cupom: quando alguém pega um cupom, a loja recebe um aviso com o botão
-//      "Confirmar uso" (issue-coupon). Um toque quando o cliente chega e pronto.
-//   2) texto: a loja manda ou encaminha qualquer mensagem que tenha o código.
+// Cliente: a mensagem do cupom (clilin_cupom) tem o botão "Estou na loja" (payload loja_<id>).
+//   Tocou, a loja recebe 1 mensagem "Maria está na loja com o cupom..." com o botão Confirmar uso.
+//   O cliente não recebe resposta (economia: o próprio toque fica no chat dele).
+// Loja (todos terminam no mesmo botão "Confirmar uso"):
+//   1) o aviso de uso (acima) ou o aviso do site (função cupom);
+//   2) texto: a loja manda ou encaminha qualquer mensagem que tenha o código;
 //   3) foto: a loja manda a foto da tela do cliente; a IA lê o código.
 // O número do WhatsApp do cadastro da empresa (profiles.telefone) vira autorizado sozinho
 // na primeira mensagem: quem manda é o dono do número, então o próprio WhatsApp prova a posse.
@@ -63,6 +65,68 @@ const nomeCurto = (n?: string | null) => {
   if (!p.length) return "Cliente";
   return p.length > 1 ? `${p[0]} ${p[p.length - 1][0].toUpperCase()}.` : p[0];
 };
+
+// ---------- uso do cupom (mesmo código da função cupom) ----------
+const waDe = (raw?: string | null) => {
+  if (!raw) return null;
+  const doLink = raw.match(/wa\.me\/(\d+)/)?.[1] ?? raw.match(/phone=(\d+)/)?.[1];
+  const d = digits(doLink ?? raw);
+  if (d.length < 10) return null;
+  return d.startsWith("55") && d.length >= 12 ? d : "55" + d;
+};
+
+// Avisa a loja que o cliente vai usar o cupom agora. 1 mensagem por pedido de uso (com trava de 10 min).
+// Dentro da janela de 24h da conversa com a loja manda mensagem com botão; fora dela, o modelo aprovado.
+async function avisaLoja(admin: any, c: any, canal: string) {
+  const WA_TOKEN = Deno.env.get("WA_TOKEN"), WA_PHONE_NUMBER_ID = Deno.env.get("WA_PHONE_NUMBER_ID");
+  if (!WA_TOKEN || !WA_PHONE_NUMBER_ID) return false;
+  if (c.loja_avisada_em && Date.now() - new Date(c.loja_avisada_em).getTime() < 10 * 60e3) return false;
+  const { data: loja } = await admin.from("profiles").select("telefone, preferences").eq("id", c.company_id).maybeSingle();
+  if ((loja?.preferences as any)?.aviso_cupom_whatsapp === false) return false;
+  const { data: nums } = await admin.from("merchant_whatsapp").select("phone").eq("profile_id", c.company_id).eq("verified", true).limit(3);
+  let fones: string[] = (nums ?? []).map((n: any) => digits(n.phone));
+  if (!fones.length) { const w = waDe(loja?.telefone); if (w) fones = [w]; }
+  if (!fones.length) return false;
+  const titulo = c.offers?.title || "sua oferta";
+  const acao = canal === "online" ? "vai pedir online" : "está na loja";
+  const cliente = nomeCurto(c.customer_name);
+  const desde = new Date(Date.now() - 23 * 36e5).toISOString();
+  for (const to of fones) {
+    const { data: janela } = await admin.from("wa_messages").select("id")
+      .eq("phone", to).eq("direction", "IN").gte("created_at", desde).limit(1).maybeSingle();
+    const corpo = janela
+      ? { type: "interactive", interactive: { type: "button",
+          body: { text: `*${cliente}* ${acao} com o cupom *${titulo}*.\n\nCódigo: *${c.code}*\n\nQuando atender, toque em *Confirmar uso*.` },
+          action: { buttons: [{ type: "reply", reply: { id: `confirm_${c.id}`, title: "Confirmar uso" } }] } } }
+      : { type: "template", template: { name: "clilin_cliente_usando", language: { code: "pt_BR" }, components: [
+          { type: "body", parameters: [cliente, acao, titulo, c.code].map((t) => ({ type: "text", text: t })) },
+          { type: "button", sub_type: "quick_reply", index: "0", parameters: [{ type: "payload", payload: `confirm_${c.id}` }] },
+        ] } };
+    const r = await fetch(`https://graph.facebook.com/v21.0/${WA_PHONE_NUMBER_ID}/messages`, {
+      method: "POST", headers: { Authorization: `Bearer ${WA_TOKEN}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ messaging_product: "whatsapp", to, ...corpo }),
+    });
+    await admin.from("wa_messages").insert({ direction: "OUT", phone: to, kind: janela ? "uso_loja:botao" : "template:clilin_cliente_usando",
+      payload: { ok: r.ok, resp: await r.json().catch(() => ({})) } });
+  }
+  await admin.from("coupons").update({ loja_avisada_em: new Date().toISOString() }).eq("id", c.id);
+  return true;
+}
+
+// Marca que o cliente vai usar o cupom agora e avisa a loja. Usado pelo site e pelo wa-webhook.
+async function registraUso(admin: any, id: string, canal: "loja" | "online", origem: "site" | "whatsapp") {
+  const { data: c } = await admin.from("coupons")
+    .select("id, code, status, expires_at, company_id, customer_name, customer_phone, loja_avisada_em, offers(title, link_type, link_destination)")
+    .eq("id", id).maybeSingle();
+  if (!c) return { erro: "Cupom não encontrado" };
+  if (c.status === "REDEEMED") return { erro: "Este cupom já foi usado", cupom: c };
+  if (c.status !== "ISSUED" || new Date(c.expires_at) <= new Date()) return { erro: "Este cupom venceu", cupom: c };
+  await admin.from("coupons").update({ uso_solicitado_em: new Date().toISOString(), uso_canal: canal, uso_origem: origem }).eq("id", c.id);
+  let avisou = false;
+  try { avisou = await avisaLoja(admin, c, canal); } catch (e) { console.error("aviso loja:", e); }
+  return { ok: true, cupom: c, avisou };
+}
+
 
 // ---------- quem está falando: número autorizado ou WhatsApp do cadastro ----------
 async function lojaDoNumero(admin: SupabaseClient, from: string) {
@@ -151,18 +215,11 @@ async function confirma(admin: SupabaseClient, from: string, lojaId: string, cou
     : b.billing_mode === "POS" ? `\n${brl(b.charged_cents)} lançado na sua fatura.` : "";
   const title = (redeemed as any).offers?.title || "sua oferta";
   await waText(from, `Cupom confirmado!\n\nCódigo: *${redeemed.code}*\nOferta: ${title}\nCliente: ${nomeCurto(redeemed.customer_name)}${linha}\n\nBom atendimento!`);
-  try {
-    await waSend("55" + digits(redeemed.customer_phone), {
-      type: "template",
-      template: { name: "clilin_resgate_confirmado", language: { code: "pt_BR" },
-        components: [{ type: "body", parameters: [{ type: "text", text: title }] }] },
-    });
-  } catch (_e) { /* não bloqueia */ }
 }
 
 const AJUDA =
   "Para confirmar um cupom do Clilin, faça um destes:\n\n" +
-  "1. Toque em *Confirmar uso* no aviso do cupom.\n" +
+  "1. Toque em *Confirmar uso* no aviso de cliente usando cupom.\n" +
   "2. Mande ou encaminhe a mensagem com o código (8 letras e números).\n" +
   "3. Mande uma foto da tela do cliente com o código.";
 
@@ -191,6 +248,19 @@ Deno.serve(async (req) => {
     if (!msg) return ok();
     const from = digits(msg.from);
     await admin.from("wa_messages").insert({ direction: "IN", phone: from, kind: msg.type, payload: msg });
+
+    // ---- cliente tocou em "Estou na loja" na mensagem do cupom ----
+    const payloadCliente: string = msg.type === "button" ? (msg.button?.payload || "") : "";
+    if (payloadCliente.startsWith("loja_")) {
+      const id = payloadCliente.slice(5);
+      const { data: cp } = await admin.from("coupons").select("customer_phone").eq("id", id).maybeSingle();
+      // só vale se quem tocou é o WhatsApp de quem pegou o cupom (DDD + 8 últimos dígitos)
+      const a = digits(cp?.customer_phone || ""), b = from.replace(/^55/, "");
+      if (cp && a.slice(0, 2) === b.slice(0, 2) && a.slice(-8) === b.slice(-8)) {
+        await registraUso(admin, id, "loja", "whatsapp");
+      }
+      return ok();
+    }
 
     const loja = await lojaDoNumero(admin, from);
     if (!loja) return ok(); // só loja opera; o resto é ignorado em silêncio

@@ -16,7 +16,7 @@ export const homeFaqs = [
   {
     question: "Como a loja confirma o cupom?",
     answer:
-      "Pelo WhatsApp, com um toque. Quando alguém pega um cupom, a loja recebe um aviso com o nome do cliente, o código e o botão Confirmar uso. O cliente chegou? É só tocar. Também dá para encaminhar o código ou mandar a foto da tela do cliente para o WhatsApp do Clilin. O sistema avisa se o cupom já foi usado, venceu ou é de outra loja. Quem preferir pode digitar o código no painel.",
+      "Com um toque. Na hora de usar, o cliente toca em Estou na loja ou Pedir online, no WhatsApp ou na página do cupom. A loja recebe o aviso na hora, no WhatsApp e no painel, com o nome do cliente, o código e o botão Confirmar uso. O sistema avisa se o cupom já foi usado, venceu ou é de outra loja. Quem preferir também pode digitar o código no painel.",
   },
   {
     question: "As ofertas valem para qualquer cidade?",

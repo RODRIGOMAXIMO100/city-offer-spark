@@ -2,8 +2,9 @@
 //   (1) atribuicao do divulgador: lead_id, lead pelo telefone ou affiliate_id do link (?ref=)
 //   (2) envio do cupom pelo WhatsApp Cloud API (template clilin_cupom)
 //   (3) oferta pausa sozinha quando a empresa pre-paga nao tem saldo para o proximo cupom
-//   (4) aviso para a loja no WhatsApp com o botao "Confirmar uso" (desliga em
-//       profiles.preferences.aviso_cupom_whatsapp = false)
+//   (4) a mensagem do cupom tem os botoes "Estou na loja" (resposta rapida, payload loja_<id>)
+//       e "Pedir online" (link clilin.com/pedir/<id>). A loja so e avisada quando o cliente
+//       for usar (wa-webhook / funcao cupom), nunca quando ele pega o cupom.
 // Secrets novos: WA_TOKEN, WA_PHONE_NUMBER_ID (sem eles, funciona como hoje: so tela)
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
@@ -144,7 +145,6 @@ Deno.serve(async (req) => {
       .maybeSingle();
 
     let coupon: { id: string; code: string; expires_at: string } | null = existing as any;
-    let novo = false;
 
     if (coupon && !((existing as any).affiliate_id) && affiliateId) {
       // completa atribuicao de cupom antigo sem afiliado
@@ -198,7 +198,6 @@ Deno.serve(async (req) => {
         return json({ error: "Erro ao emitir cupom" }, 500);
       }
       coupon = inserted;
-      novo = true;
     }
 
     // ---- NOVO: envio do cupom pelo WhatsApp (best-effort, nao bloqueia) ----
@@ -224,15 +223,19 @@ Deno.serve(async (req) => {
               template: {
                 name: "clilin_cupom",
                 language: { code: "pt_BR" },
-                components: [{
-                  type: "body",
-                  parameters: [
-                    { type: "text", text: offer.title },
-                    { type: "text", text: (offer as any).profiles?.name || "Parceiro Clilin" },
-                    { type: "text", text: coupon.code },
-                    { type: "text", text: validade },
-                  ],
-                }],
+                components: [
+                  {
+                    type: "body",
+                    parameters: [
+                      { type: "text", text: offer.title },
+                      { type: "text", text: (offer as any).profiles?.name || "Parceiro Clilin" },
+                      { type: "text", text: coupon.code },
+                      { type: "text", text: validade },
+                    ],
+                  },
+                  { type: "button", sub_type: "quick_reply", index: "0", parameters: [{ type: "payload", payload: `loja_${coupon.id}` }] },
+                  { type: "button", sub_type: "url", index: "1", parameters: [{ type: "text", text: coupon.id }] },
+                ],
               },
             }),
           }
@@ -248,16 +251,8 @@ Deno.serve(async (req) => {
       }
     }
 
-    // ---- aviso para a loja com o botao "Confirmar uso" (best-effort) ----
-    if (WA_TOKEN && WA_PHONE_NUMBER_ID && novo) {
-      try {
-        await avisaLoja(admin, offer.company_id, offer.title, coupon, customerName);
-      } catch (e) {
-        console.error("aviso loja:", e);
-      }
-    }
-
     return json({
+      id: coupon.id,
       code: coupon.code,
       expires_at: coupon.expires_at,
       offer_title: offer.title,
@@ -274,58 +269,3 @@ function json(obj: unknown, status = 200) {
     { status, headers: { ...corsHeaders, "Content-Type": "application/json" } });
 }
 
-// Avisa a loja que alguém pegou um cupom. Dentro da janela de 24h da conversa manda
-// mensagem com botão; fora dela, o modelo aprovado clilin_novo_cupom (botão de resposta rápida).
-async function avisaLoja(
-  admin: any, companyId: string, titulo: string,
-  coupon: { id: string; code: string; expires_at: string }, customerName: string,
-) {
-  const { data: loja } = await admin.from("profiles").select("telefone, preferences").eq("id", companyId).maybeSingle();
-  if ((loja?.preferences as any)?.aviso_cupom_whatsapp === false) return;
-  const { data: nums } = await admin.from("merchant_whatsapp").select("phone").eq("profile_id", companyId).eq("verified", true).limit(3);
-  let fones: string[] = (nums ?? []).map((n: any) => normalizePhone(n.phone));
-  if (!fones.length && loja?.telefone) {
-    const d = normalizePhone(loja.telefone);
-    if (d.length >= 10) fones = [d.startsWith("55") && d.length >= 12 ? d : "55" + d];
-  }
-  if (!fones.length) return;
-  const partes = String(customerName || "").trim().split(/\s+/).filter(Boolean);
-  const cliente = partes.length > 1 ? `${partes[0]} ${partes[partes.length - 1][0].toUpperCase()}.` : (partes[0] || "Cliente");
-  const validade = new Date(coupon.expires_at).toLocaleDateString("pt-BR", { timeZone: "America/Sao_Paulo" });
-  const WA_TOKEN = Deno.env.get("WA_TOKEN");
-  const WA_PHONE_NUMBER_ID = Deno.env.get("WA_PHONE_NUMBER_ID");
-  const desde = new Date(Date.now() - 23 * 36e5).toISOString();
-  for (const to of fones) {
-    const { data: recente } = await admin.from("wa_messages").select("id")
-      .eq("phone", to).eq("direction", "IN").gte("created_at", desde).limit(1).maybeSingle();
-    const corpo = recente
-      ? {
-        type: "interactive",
-        interactive: {
-          type: "button",
-          body: { text: `Novo cupom da sua oferta *${titulo}*.\n\nCliente: *${cliente}*\nCódigo: *${coupon.code}*\nVálido até: ${validade}\n\nQuando o cliente chegar, toque em *Confirmar uso*.` },
-          action: { buttons: [{ type: "reply", reply: { id: `confirm_${coupon.id}`, title: "Confirmar uso" } }] },
-        },
-      }
-      : {
-        type: "template",
-        template: {
-          name: "clilin_novo_cupom",
-          language: { code: "pt_BR" },
-          components: [
-            { type: "body", parameters: [titulo, cliente, coupon.code, validade].map((t) => ({ type: "text", text: t })) },
-            { type: "button", sub_type: "quick_reply", index: "0", parameters: [{ type: "payload", payload: `confirm_${coupon.id}` }] },
-          ],
-        },
-      };
-    const resp = await fetch(`https://graph.facebook.com/v21.0/${WA_PHONE_NUMBER_ID}/messages`, {
-      method: "POST",
-      headers: { Authorization: `Bearer ${WA_TOKEN}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ messaging_product: "whatsapp", to, ...corpo }),
-    });
-    const r = await resp.json().catch(() => ({}));
-    await admin.from("wa_messages").insert({
-      direction: "OUT", phone: to, kind: recente ? "aviso_loja:botao" : "template:clilin_novo_cupom", payload: { ok: resp.ok, resp: r },
-    });
-  }
-}

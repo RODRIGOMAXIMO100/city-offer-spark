@@ -5,7 +5,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Copy, Ticket, Check, MessageCircle, Store } from 'lucide-react';
+import { Loader2, Copy, Ticket, Check } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import CupomAcoes from './CupomAcoes';
 
 interface CouponModalProps {
   open: boolean;
@@ -41,6 +43,7 @@ export default function CouponModal({ open, onOpenChange, offerId, offerTitle, a
   const [phone, setPhone] = useState('');
   const [loading, setLoading] = useState(false);
   const [code, setCode] = useState<string | null>(null);
+  const [couponId, setCouponId] = useState<string | null>(null);
   const [expiresAt, setExpiresAt] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [sentToWhatsapp, setSentToWhatsapp] = useState(false);
@@ -48,7 +51,7 @@ export default function CouponModal({ open, onOpenChange, offerId, offerTitle, a
   const storeWa = toWaNumber(storeWhatsapp);
 
   const reset = () => {
-    setName(''); setPhone(''); setCode(null); setExpiresAt(null); setError(null); setCopied(false); setSentToWhatsapp(false);
+    setName(''); setPhone(''); setCode(null); setCouponId(null); setExpiresAt(null); setError(null); setCopied(false); setSentToWhatsapp(false);
   };
 
   const handleSubmit = async () => {
@@ -81,12 +84,13 @@ export default function CouponModal({ open, onOpenChange, offerId, offerTitle, a
       }
       if (data?.error) { setError(data.error); return; }
       setCode(data.code);
+      setCouponId(data.id ?? null);
       setExpiresAt(data.expires_at);
       setSentToWhatsapp(!!data.whatsapp_sent);
       // Persist for later retrieval
       try {
         const store = JSON.parse(localStorage.getItem('clilin_coupons') || '{}');
-        store[offerId] = { code: data.code, expires_at: data.expires_at };
+        store[offerId] = { id: data.id, code: data.code, expires_at: data.expires_at };
         localStorage.setItem('clilin_coupons', JSON.stringify(store));
       } catch {}
     } catch (e: any) {
@@ -154,31 +158,12 @@ export default function CouponModal({ open, onOpenChange, offerId, offerTitle, a
               {copied ? <><Check className="mr-2 h-4 w-4" />Copiado!</> : <><Copy className="mr-2 h-4 w-4" />Copiar código</>}
             </Button>
             <p className="text-xs text-center text-muted-foreground">
-              {sentToWhatsapp ? 'Também mandamos o cupom no seu WhatsApp.' : 'Guarde este código: tire um print ou copie.'}
+              {sentToWhatsapp ? 'Também mandamos o cupom no seu WhatsApp, com estes botões.' : 'Guarde o link do seu cupom: tire um print ou abra a página do cupom.'}
             </p>
-            <div className="rounded-xl bg-muted/50 p-3 space-y-2 text-sm">
-              <p className="font-semibold">Como usar</p>
-              <p className="flex items-start gap-2">
-                <Store className="h-4 w-4 mt-0.5 shrink-0 text-primary" />
-                <span>Vá até {companyName || 'a loja'} e mostre o código na hora de pagar.</span>
-              </p>
-              {storeWa && (
-                <p className="flex items-start gap-2">
-                  <MessageCircle className="h-4 w-4 mt-0.5 shrink-0 text-primary" />
-                  <span>Ou mande o código para a loja no WhatsApp para pedir.</span>
-                </p>
-              )}
-              <p className="text-xs text-muted-foreground">A loja confirma o cupom no Clilin. Cada cupom vale uma vez.</p>
-            </div>
-            {storeWa && (
-              <Button asChild className="w-full">
-                <a
-                  href={`https://wa.me/${storeWa}?text=${encodeURIComponent(`Oi! Quero usar o cupom ${code} do Clilin: ${offerTitle}`)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <MessageCircle className="mr-2 h-4 w-4" /> Mandar o código para a loja
-                </a>
+            {couponId && <CupomAcoes id={couponId} lojaNome={companyName} />}
+            {couponId && (
+              <Button asChild variant="ghost" className="w-full">
+                <Link to={`/cupom/${couponId}`}>Abrir a página do meu cupom</Link>
               </Button>
             )}
           </div>

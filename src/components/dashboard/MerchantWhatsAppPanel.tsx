@@ -146,8 +146,8 @@ export default function MerchantWhatsAppPanel() {
           <Info className="h-4 w-4 mt-0.5 flex-shrink-0 text-primary" />
           <div className="space-y-1.5">
             <p>
-              Quando alguém pega um cupom, avisamos no WhatsApp com o botão <strong>Confirmar uso</strong>. O cliente
-              chegou? Um toque e pronto, sem digitar código.
+              Quando o cliente toca em <strong>Estou na loja</strong> ou <strong>Pedir online</strong>, avisamos você no
+              WhatsApp com o botão <strong>Confirmar uso</strong>. Um toque e pronto, sem digitar código.
             </p>
             <p>
               Também dá para mandar o código ou uma foto da tela do cliente para o WhatsApp do Clilin
@@ -170,11 +170,11 @@ export default function MerchantWhatsAppPanel() {
           <div className="flex items-start gap-3">
             <BellRing className="h-5 w-5 mt-0.5 text-primary flex-shrink-0" />
             <div>
-              <p className="font-medium text-foreground">Avisar no WhatsApp a cada cupom pego</p>
-              <p className="text-sm text-muted-foreground">Com o botão Confirmar uso para quando o cliente chegar.</p>
+              <p className="font-medium text-foreground">Avisar no WhatsApp quando um cliente for usar o cupom</p>
+              <p className="text-sm text-muted-foreground">Desligado, você vê e confirma só aqui no painel, em "Clientes usando cupom agora".</p>
             </div>
           </div>
-          <Switch checked={aviso} disabled={salvandoAviso} onCheckedChange={trocaAviso} aria-label="Avisar no WhatsApp a cada cupom pego" />
+          <Switch checked={aviso} disabled={salvandoAviso} onCheckedChange={trocaAviso} aria-label="Avisar no WhatsApp quando um cliente for usar o cupom" />
         </div>
 
         <form onSubmit={handleAdd} className="grid gap-3 sm:grid-cols-[1fr_1fr_auto] sm:items-end">

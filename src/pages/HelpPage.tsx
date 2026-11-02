@@ -18,7 +18,7 @@ const GROUPS: Group[] = [
     title: "Começando",
     tone: "text-primary",
     faqs: [
-      { q: "O que é o Clilin?", a: "Uma plataforma de ofertas locais. Negócios da cidade publicam promoções, divulgadores espalham e o cliente pega o cupom de graça, direto no WhatsApp. A loja confirma no WhatsApp com um toque e só paga pelo cupom usado." },
+      { q: "O que é o Clilin?", a: "Uma plataforma de ofertas locais. Negócios da cidade publicam promoções, divulgadores espalham e o cliente pega o cupom de graça, direto no WhatsApp. Na hora de usar, o cliente avisa a loja com um toque, a loja confirma e só paga pelo cupom usado." },
       { q: "Quanto custa para usar?", a: "Para o cliente e para o divulgador, nada. Para a empresa, não tem mensalidade: ela paga 15% do preço da oferta por cupom usado, com mínimo de R$ 3. Com saldo pré-pago, sai 10% mais barato." },
       { q: "Em quais cidades funciona?", a: "O Clilin está começando por Belo Horizonte. Em outras cidades, faça o pré-cadastro na hora de criar a conta: a gente chama quando abrir aí. Cada oferta é da cidade da loja e aparece para quem procura ofertas ali." },
       { q: "Preciso ter 18 anos?", a: "Para ter conta de empresa ou de divulgador, sim. Para pegar cupom, não precisa de conta." },
@@ -30,7 +30,7 @@ const GROUPS: Group[] = [
     tone: "text-primary",
     faqs: [
       { q: "Como pego um cupom?", a: "Em Ofertas, escolha a sua cidade e a oferta. Toque em \"Quero meu cupom\", informe nome e WhatsApp e o código de 8 letras aparece na hora. Ele também é enviado para o seu WhatsApp." },
-      { q: "Como uso o cupom?", a: "Mostre o código na loja na hora de pagar ou mande o código no WhatsApp da loja quando for pedir. A loja confirma o cupom no WhatsApp com um toque e aplica o desconto." },
+      { q: "Como uso o cupom?", a: "Na hora de usar, toque em Estou na loja (no balcão) ou em Pedir online (para pedir pelo WhatsApp da loja). Os botões estão na mensagem do cupom no WhatsApp e na página do cupom. A loja recebe o aviso na hora, confirma e aplica o desconto." },
       { q: "O cupom tem validade?", a: "Tem. A validade aparece no cupom e é definida pela loja, nunca depois do fim da oferta. Cada cupom vale uma vez." },
       { q: "Quantos cupons posso pegar?", a: "Até 3 por dia no mesmo WhatsApp. Se você pedir de novo o cupom da mesma oferta, recebe o mesmo código enquanto ele for válido." },
     ],
@@ -41,7 +41,7 @@ const GROUPS: Group[] = [
     tone: "text-company",
     faqs: [
       { q: "Como crio uma oferta?", a: "Entre no painel, na aba Ofertas, e clique em criar. Informe o que é a promoção, o preço de antes e o com desconto, fotos, validade e, se atender por WhatsApp, o seu número." },
-      { q: "Como confirmo o cupom do cliente?", a: "Pelo WhatsApp, com um toque. Cada cupom pego chega no WhatsApp do seu cadastro com o nome do cliente, o código e o botão Confirmar uso. O cliente chegou, você toca e pronto. Também dá para encaminhar o código ou mandar a foto da tela do cliente para o WhatsApp do Clilin. Se preferir, digite o código na aba Confirmar cupons do painel. O sistema avisa se o cupom já foi usado, venceu ou é de outra loja." },
+      { q: "Como confirmo o cupom do cliente?", a: "Com um toque. Quando o cliente toca em Estou na loja ou Pedir online, ele aparece na hora no painel, na aba Confirmar cupons, e no WhatsApp do seu cadastro, com o nome, o código e o botão Confirmar uso. Também dá para digitar o código no painel, encaminhar a mensagem do cliente ou mandar a foto da tela dele para o WhatsApp do Clilin. O sistema avisa se o cupom já foi usado, venceu ou é de outra loja." },
       { q: "Como funciona a cobrança?", a: "Você coloca saldo no painel (por Pix) e cada cupom confirmado desconta a taxa: 15% do preço da oferta, mínimo de R$ 3, com 10% de desconto no pré-pago. Cupom pego e não usado não custa nada." },
       { q: "E se o meu saldo acabar?", a: "As suas ofertas ficam pausadas para novos cupons até você colocar saldo de novo. Os cupons que já foram entregues continuam valendo." },
       { q: "Onde acompanho os resultados?", a: "No painel da empresa: quantas pessoas viram cada oferta, quantas pegaram o cupom e quantos cupons foram usados." },

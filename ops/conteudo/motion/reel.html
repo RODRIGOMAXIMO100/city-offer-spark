@@ -307,18 +307,25 @@ const TELAS = {
     const sc = $("div", "sc", `<div class="wa-top"><span style="font-size:22px">‹</span><div class="wa-av">${SIMB_CLARO()}</div>
       <div><div style="font-weight:800;font-size:16px">Clilin</div><div style="font-size:12px;opacity:.8">conta comercial</div></div></div>
       <div class="wa-fundo"><div class="digitando"><i></i><i></i><i></i></div>
-      <div class="bolha">Olá! Aqui está seu cupom da oferta <b>${esc(o.titulo)}</b> na <b>${esc(o.loja)}</b>.<br><br>
-      Código: <b class="cd">${CODIGO}</b><br>Válido até: 7 dias<br><br>Apresente esse código no local para resgatar.<span class="hora">12:30</span></div></div>`);
-    return { sc, render(lt) {
+      <div class="bolha">Seu cupom da oferta <b>${esc(o.titulo)}</b> na <b>${esc(o.loja)}</b>.<br><br>
+      Código: <b class="cd">${CODIGO}</b><br>Válido por 7 dias<br><br>Na hora de usar, toque em <b>Estou na loja</b> ou em <b>Pedir online</b>.<span class="hora">12:30</span></div>
+      <div class="qr" data-r="qr1">Estou na loja</div><div class="qr" data-r="qr2">Pedir online</div>
+      <div class="eu" data-b="2">Estou na loja</div></div>`);
+    return { sc, render(lt, d) {
       const dg = sc.querySelector(".digitando"), b = sc.querySelector(".bolha");
       dg.style.display = lt > .2 && lt < 1 ? "inline-flex" : "none";
       dg.querySelectorAll("i").forEach((e, k) => e.style.transform = `translateY(${-4 * Math.max(0, Math.sin(lt * 12 - k))}px)`);
       const p = mola(seg(lt, 1, 1.5));
       b.style.display = lt >= 1 ? "block" : "none"; b.style.transform = `scale(${lerp(.4, 1, p)})`; b.style.opacity = seg(lt, 1, 1.1);
+      sc.querySelectorAll(".qr").forEach((q) => { q.style.opacity = seg(lt, 1.25, 1.45); });
       const g = seg(lt, 1.7, 2.1);
       const cd = sc.querySelector(".cd"); cd.style.background = `rgba(255,159,26,${.45 * g})`; cd.style.borderRadius = "6px"; cd.style.padding = "1px 4px";
-      return [];
-    }, sons(ini) { sfx(ini + 1, "mensagem"); } };
+      // no fim da cena o cliente toca em "Estou na loja"
+      const tap = Math.max(2.4, d - 1.1), q1 = sc.querySelector("[data-r=qr1]"), eu = sc.querySelector("[data-b='2']");
+      q1.style.transform = `scale(${lt > tap && lt < tap + .18 ? .95 : 1})`;
+      const pe = mola(seg(lt, tap + .25, tap + .6)); eu.style.display = lt >= tap + .25 ? "block" : "none"; eu.style.transform = `scale(${lerp(.4, 1, pe)})`;
+      return d > 3.2 ? [{ alvo: "qr1", t: tap }] : [];
+    }, sons(ini, d) { sfx(ini + 1, "mensagem"); if (d > 3.2) sfx(ini + Math.max(2.4, d - 1.1), "toque"); } };
   },
   validar(D) {
     const o = oferta0(D);
@@ -341,12 +348,12 @@ const TELAS = {
     }, sons(ini) { sfx(ini + .35, "tecla"); sfx(ini + 1.5, "toque"); sfx(ini + 1.75, "ding"); } };
   },
   confirmar(D) {
-    // a loja recebe o aviso do cupom no WhatsApp e confirma com um toque, sem digitar código
+    // o cliente tocou em "Estou na loja": a loja recebe o aviso na hora e confirma com um toque
     const o = oferta0(D);
     const sc = $("div", "sc", `<div class="wa-top"><span style="font-size:22px">‹</span><div class="wa-av">${SIMB_CLARO()}</div>
       <div><div style="font-weight:800;font-size:16px">Clilin</div><div style="font-size:12px;opacity:.8">conta comercial</div></div></div>
-      <div class="wa-fundo"><div class="bolha" data-b="1">Novo cupom da sua oferta <b>${esc(o.titulo)}</b>.<br><br>
-      Cliente: <b>Maria S.</b><br>Código: <b>${CODIGO}</b><br>Válido por 7 dias<br><br>Quando o cliente chegar, toque em <b>Confirmar uso</b>.
+      <div class="wa-fundo"><div class="bolha" data-b="1"><b>Maria S.</b> está na loja com o cupom <b>${esc(o.titulo)}</b>.<br><br>
+      Código: <b>${CODIGO}</b><br><br>Quando atender, toque em <b>Confirmar uso</b>.
       <span class="hora">12:30</span></div><div class="qr" data-r="qr">Confirmar uso</div>
       <div class="eu" data-b="2">Confirmar uso</div>
       <div class="bolha" data-b="3" style="margin-top:12px"><span style="display:inline-flex;gap:6px;align-items:center;color:#15803D;font-weight:800">

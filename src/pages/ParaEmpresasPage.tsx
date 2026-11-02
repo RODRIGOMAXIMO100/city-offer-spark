@@ -19,7 +19,7 @@ const offerFields = [
 
 const counts = [
   "Cupom com código válido, dentro da validade",
-  "Confirmado por você no WhatsApp, com um toque, na hora do atendimento",
+  "O cliente avisa na hora de usar e você confirma com um toque, no WhatsApp ou no painel",
   "Usado uma vez só: depois de confirmado, o código não serve mais",
 ];
 const notCounts = [
@@ -54,7 +54,7 @@ const ParaEmpresasPage = () => (
             Cliente novo na loja, <span className="text-company">pagando só pelo cupom usado</span>
           </h1>
           <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
-            Você cria a oferta em poucos minutos, divulgadores da cidade espalham e o cliente chega com o cupom no WhatsApp. Você confirma no WhatsApp com um toque e só então paga.
+            Você cria a oferta em poucos minutos, divulgadores da cidade espalham e o cliente chega com o cupom no WhatsApp. Na hora de usar, ele avisa com um toque, você confirma e só então paga.
           </p>
         </div>
       </section>

@@ -19,7 +19,7 @@ const reasons = [
   {
     icon: ShieldCheck,
     title: "Confirmado com um toque",
-    text: "Cada código é único, tem validade e vale uma vez. A loja confirma no WhatsApp quando o cliente chega, sem digitar nada.",
+    text: "Cada código é único, tem validade e vale uma vez. O cliente avisa quando vai usar e a loja confirma na hora, sem digitar nada.",
   },
   {
     icon: Users,

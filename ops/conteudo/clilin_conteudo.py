@@ -133,7 +133,7 @@ REGRAS = """Você escreve o conteúdo do Instagram do Clilin (@clilin.oficial), 
 
 O QUE É O CLILIN
 - Plataforma de ofertas locais: negócios da cidade publicam promoções, divulgadores espalham e o cliente pega o cupom de graça, direto no WhatsApp.
-- O cliente mostra o código na loja ou manda no WhatsApp da loja. Quando alguém pega o cupom, a loja recebe um aviso no WhatsApp e, quando o cliente chega, confirma o uso com um toque no botão "Confirmar uso", sem digitar código nem entrar em outro sistema (o painel continua como opção). Cada cupom vale uma vez.
+- Na hora de usar, o cliente toca em "Estou na loja" (no balcão) ou "Pedir online" (pedido pelo WhatsApp da loja), na mensagem do cupom no WhatsApp ou na página do cupom. A loja recebe o aviso na hora, no WhatsApp e no painel, e confirma o uso com um toque no botão "Confirmar uso", sem digitar código. A loja não recebe nada quando alguém só pega o cupom. Cada cupom vale uma vez.
 - A loja só paga pelo cupom usado: 15% do preço da oferta, mínimo de R$ 3. Sem mensalidade. Visita e cupom não usado não custam nada. Com saldo pré-pago, 10% de desconto.
 - Divulgador: indica as ofertas da cidade pelo próprio link e ganha metade da taxa de cada cupom usado por quem veio do link dele, chegando a 70% conforme o nível. Saque por Pix a partir de R$ 100. Cadastro grátis, não precisa ter muitos seguidores.
 - Cliente: grátis, sem app e sem cadastro.
@@ -174,7 +174,7 @@ A última é a chamada: título de até 6 palavras e texto de até 20 palavras l
 Tipos de cena:
 - "gancho": abre o vídeo e prende nos 2 primeiros segundos. "texto": até 6 palavras grandes na tela. "destaque": 1 ou 2 palavras do texto para colorir. "rotulo": selo de até 4 palavras dizendo para quem é (ex.: "Para quem tem negócio").
 - "frase": a própria fala aparece grande na tela, palavra por palavra. "destaque": 1 ou 2 palavras da fala. "rotulo": opcional.
-- "celular": mostra o Clilin de verdade num celular. "tela" é uma destas: "ofertas" (cliente vendo as ofertas da cidade), "oferta" (cliente toca em Quero meu cupom e o código aparece), "whatsapp" (o cupom chegando no WhatsApp), "confirmar" (a loja recebe o aviso do cupom no WhatsApp e confirma o uso com um toque), "divulgador" (divulgador copia o link da oferta e manda nos grupos). "texto": título de até 6 palavras acima do celular. "destaque": 1 ou 2 palavras do texto.
+- "celular": mostra o Clilin de verdade num celular. "tela" é uma destas: "ofertas" (cliente vendo as ofertas da cidade), "oferta" (cliente toca em Quero meu cupom e o código aparece), "whatsapp" (o cupom chegando no WhatsApp do cliente, com os botões Estou na loja e Pedir online), "confirmar" (o cliente toca em Estou na loja e a loja recebe o aviso no WhatsApp e confirma o uso com um toque), "divulgador" (divulgador copia o link da oferta e manda nos grupos). "texto": título de até 6 palavras acima do celular. "destaque": 1 ou 2 palavras do texto.
 - "numero": número grande animado. "valor": só o número; "prefixo" (ex.: "R$ ") e "sufixo" (ex.: "%"); "texto": até 10 palavras explicando; "rotulo": opcional. Só números verdadeiros do Clilin: 15% do preço por cupom usado, mínimo de R$ 3, 10% de desconto no pré-pago, 50% da taxa para o divulgador (até 70% conforme o nível), saque a partir de R$ 100.
 - "lista": "texto": título de até 4 palavras; "itens": 2 a 4 itens de até 4 palavras cada.
 - "cta": a última cena. "texto": até 6 palavras; "destaque"; "url": "clilin.com"; "rotulo": "link na bio".

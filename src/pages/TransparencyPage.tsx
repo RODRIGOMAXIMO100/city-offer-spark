@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 const verification = [
   { icon: KeyRound, title: "Código único", text: "Cada cupom tem um código de 8 letras que só existe uma vez. Ele fica ligado à oferta, à loja e ao WhatsApp de quem pegou." },
   { icon: Clock, title: "Validade", text: "O cupom tem prazo para ser usado, definido pela loja e nunca depois do fim da oferta. Cupom vencido não passa." },
-  { icon: Store, title: "Confirmação pela loja", text: "A loja recebe o aviso de cada cupom no WhatsApp e confirma com um toque quando o cliente chega (ou digita o código no painel). Só vale cupom da própria loja, e cada código vale uma vez: depois de confirmado, fica marcado como usado." },
+  { icon: Store, title: "Confirmação pela loja", text: "Na hora de usar, o cliente toca em Estou na loja ou Pedir online. A loja recebe o aviso na hora, no WhatsApp e no painel, e confirma com um toque (ou digita o código). Só vale cupom da própria loja, e cada código vale uma vez: depois de confirmado, fica marcado como usado." },
   { icon: ShieldCheck, title: "Proteção contra abuso", text: "Até 3 cupons por dia no mesmo WhatsApp e limite por aparelho. Telefone falso, validação sem cliente ou combinação entre loja e divulgador bloqueiam a conta." },
 ];
 

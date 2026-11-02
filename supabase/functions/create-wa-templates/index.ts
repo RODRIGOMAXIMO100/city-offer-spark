@@ -8,39 +8,35 @@ const SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 
 const templates = [
   {
+    // cupom para o cliente: os botões dizem como ele vai usar (a loja só é avisada nessa hora)
     name: 'clilin_cupom',
     language: 'pt_BR',
     category: 'UTILITY',
     components: [
       {
         type: 'BODY',
-        text: 'Olá! Aqui está seu cupom da oferta *{{1}}* na *{{2}}*.\n\nCódigo: *{{3}}*\nVálido até: {{4}}\n\nApresente esse código no local para resgatar. 💛',
-        example: { body_text: [['Pizza em dobro', 'Pizzaria do João', 'AB12CD34', '27/12/2026']] },
+        text: 'Seu cupom da oferta *{{1}}* na *{{2}}*.\n\nCódigo: *{{3}}*\nVálido até: {{4}}\n\nNa hora de usar, toque em *Estou na loja* ou em *Pedir online*.',
+        example: { body_text: [['Pizza grande + refri', 'Pizzaria do Bairro', 'CL8K4P2Q', '09/11 23:59']] },
+      },
+      {
+        type: 'BUTTONS',
+        buttons: [
+          { type: 'QUICK_REPLY', text: 'Estou na loja' },
+          { type: 'URL', text: 'Pedir online', url: 'https://clilin.com/pedir/{{1}}', example: ['https://clilin.com/pedir/7b0c3a52-0000-4000-8000-000000000000'] },
+        ],
       },
     ],
   },
   {
-    name: 'clilin_resgate_confirmado',
+    // para a loja: o cliente vai usar agora; o botão confirma o uso
+    name: 'clilin_cliente_usando',
     language: 'pt_BR',
     category: 'UTILITY',
     components: [
       {
         type: 'BODY',
-        text: 'Cupom resgatado com sucesso! ✅\n\nOferta: *{{1}}*\n\nObrigado por usar a Clilin. 💛',
-        example: { body_text: [['Pizza em dobro']] },
-      },
-    ],
-  },
-  {
-    // aviso para a loja: alguém pegou um cupom; o botão confirma o uso quando o cliente chega
-    name: 'clilin_novo_cupom',
-    language: 'pt_BR',
-    category: 'UTILITY',
-    components: [
-      {
-        type: 'BODY',
-        text: 'Novo cupom da sua oferta *{{1}}*.\n\nCliente: *{{2}}*\nCódigo: *{{3}}*\nVálido até: {{4}}\n\nQuando o cliente chegar, toque em *Confirmar uso*.',
-        example: { body_text: [['Pizza grande + refri', 'Maria S.', 'CL8K4P2Q', '09/11/2026']] },
+        text: '*{{1}}* {{2}} com o cupom *{{3}}*.\n\nCódigo: *{{4}}*\n\nQuando atender, toque em *Confirmar uso*.',
+        example: { body_text: [['Maria S.', 'está na loja', 'Pizza grande + refri', 'CL8K4P2Q']] },
       },
       { type: 'BUTTONS', buttons: [{ type: 'QUICK_REPLY', text: 'Confirmar uso' }] },
     ],

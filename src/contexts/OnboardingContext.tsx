@@ -69,7 +69,7 @@ export const TOUR_STEPS: Record<string, TourStep[]> = {
     {
       target: '[data-tour="performance"]',
       title: 'Seus resultados',
-      content: 'Acompanhe quantas pessoas viram a oferta e pegaram o cupom. Cada cupom pego chega no seu WhatsApp com o botão Confirmar uso: o cliente chegou, você toca e pronto. A aba "Confirmar cupons" também aceita o código digitado.',
+      content: 'Acompanhe quantas pessoas viram a oferta e pegaram o cupom. Quando o cliente toca em \"Estou na loja\" ou \"Pedir online\", ele aparece na aba \"Confirmar cupons\" e no seu WhatsApp com o botão Confirmar uso. Um toque e pronto.',
       position: 'bottom',
     },
   ],

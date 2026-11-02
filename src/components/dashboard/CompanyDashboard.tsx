@@ -47,6 +47,7 @@ import CompanyLeadsList from './CompanyLeadsList';
 import RedeemCouponPanel from './RedeemCouponPanel';
 import { MaximoEmpresasCard } from './MaximoEmpresasCard';
 import MerchantWhatsAppPanel from './MerchantWhatsAppPanel';
+import ClientesUsandoAgora from './ClientesUsandoAgora';
 import CompanyCampaigns from './reach/CompanyCampaigns';
 import { SHOW_COUPON_OFFERS, SHOW_REACH_CAMPAIGNS } from '@/lib/reach';
 import { ComingSoonLeadsCard } from '@/components/dashboard/ComingSoonLeadsCard';
@@ -835,6 +836,7 @@ function CompanyDashboardContent() {
           </TabsContent>
 
           <TabsContent value="coupons" className="mt-0 space-y-4 sm:space-y-6">
+            <ClientesUsandoAgora />
             <MerchantWhatsAppPanel />
             <RedeemCouponPanel />
           </TabsContent>
