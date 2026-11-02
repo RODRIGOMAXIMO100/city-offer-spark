@@ -1,0 +1,598 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Clilin reel</title>
+<style>
+@font-face { font-family: "Unbounded"; src: url("../assets/Unbounded.ttf"); font-weight: 200 900; }
+@font-face { font-family: "Onest"; src: url("../assets/Onest.ttf"); font-weight: 100 900; }
+:root {
+  --violeta: #6B2CD8; --rosa: #F42578; --laranja: #FF9F1A; --escuro: #170A2E; --claro: #FBF8FF;
+  --grad: linear-gradient(95deg, #8B5CF6 0%, #F42578 55%, #FF9F1A 100%);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 1080px; height: 1920px; overflow: hidden; background: var(--escuro); }
+body { font-family: "Onest", sans-serif; color: #fff; -webkit-font-smoothing: antialiased; }
+#palco { position: absolute; inset: 0; overflow: hidden; }
+#fundo { position: absolute; inset: -40px; }
+#pontos { position: absolute; inset: 0; opacity: .10;
+  background-image: radial-gradient(rgba(255,255,255,.9) 1.4px, transparent 1.6px); background-size: 46px 46px; }
+.cena { position: absolute; inset: 0; transform-origin: 50% 50%; will-change: transform, opacity; }
+#topo { position: absolute; left: 0; right: 0; top: 96px; display: flex; justify-content: center; z-index: 30; }
+#topo svg { height: 64px; }
+#barra { position: absolute; left: 0; top: 0; height: 10px; background: var(--grad); z-index: 40; }
+#legenda { position: absolute; left: 60px; right: 60px; top: 1555px; z-index: 30; display: flex; justify-content: center; }
+#legenda .chunk { display: none; text-align: center; font: 800 52px/1.15 "Onest"; padding: 14px 28px; border-radius: 26px;
+  background: rgba(23,10,46,.78); box-shadow: 0 10px 40px rgba(0,0,0,.35); }
+#legenda .chunk span { display: inline-block; margin: 0 .12em; }
+#legenda .chunk span.on { color: var(--laranja); }
+.faixa { position: absolute; top: -200px; height: 2320px; width: 1700px; left: -310px; z-index: 50; transform: skewX(-12deg);
+  background: linear-gradient(90deg, #6B2CD8 0%, #F42578 50%, #FF9F1A 100%); display: none; }
+#flash { position: absolute; inset: 0; background: #fff; opacity: 0; z-index: 49; pointer-events: none; }
+
+/* textos cinéticos */
+.kin { position: absolute; left: 70px; right: 70px; text-align: center; font-family: "Unbounded"; font-weight: 800;
+  letter-spacing: -0.03em; line-height: 1.08; }
+.kin .w { display: inline-block; white-space: pre; transform-origin: 50% 80%; }
+.kin .hl { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent;
+  padding: 0 .04em; }
+.marcad { position: absolute; left: 50%; top: 50%; width: 1500px; height: 1500px; margin: -750px 0 0 -750px; opacity: .07; }
+.marcad svg { width: 100%; height: 100%; }
+.chip { position: absolute; left: 50%; transform: translateX(-50%); font: 700 38px "Onest"; padding: 14px 34px;
+  border-radius: 999px; background: rgba(255,255,255,.12); border: 2px solid rgba(255,255,255,.22); white-space: nowrap; }
+
+/* celular */
+.fone { position: absolute; left: 50%; top: 530px; width: 600px; height: 1166px; margin-left: -300px; border-radius: 84px;
+  background: #0d0618; padding: 18px; box-shadow: 0 50px 120px rgba(0,0,0,.55), 0 0 0 3px rgba(255,255,255,.12),
+  0 0 140px rgba(244,37,120,.28); }
+.fone .tela { position: relative; width: 100%; height: 100%; border-radius: 68px; overflow: hidden; background: #FBF8FF; }
+.fone .ilha { position: absolute; left: 50%; top: 34px; width: 130px; height: 36px; margin-left: -65px; border-radius: 20px;
+  background: #0d0618; z-index: 9; }
+.sc { position: absolute; left: 0; top: 0; width: 340px; height: 840px; transform-origin: 0 0; color: #1D1033;
+  font-family: "Onest"; font-size: 15px; }
+.dedo { position: absolute; width: 64px; height: 64px; margin: -32px 0 0 -32px; border-radius: 50%; z-index: 20;
+  background: rgba(255,255,255,.55); border: 4px solid #fff; box-shadow: 0 6px 24px rgba(0,0,0,.35); opacity: 0; }
+.onda { position: absolute; width: 64px; height: 64px; margin: -32px 0 0 -32px; border-radius: 50%; z-index: 19;
+  border: 4px solid var(--rosa); opacity: 0; }
+
+/* telas do sistema (cópia fiel do clilin.com: Onest, raio 20px, violeta/rosa/laranja) */
+.nav { height: 96px; padding: 48px 18px 0; display: flex; align-items: center; justify-content: space-between; background: #fff;
+  border-bottom: 1px solid #ECE4F7; }
+.nav svg { height: 26px; }
+.nav .menu { width: 22px; height: 14px; border-top: 2.5px solid #1D1033; border-bottom: 2.5px solid #1D1033; position: relative; }
+.nav .menu:after { content: ""; position: absolute; left: 0; right: 0; top: 3.5px; border-top: 2.5px solid #1D1033; }
+.pad { padding: 16px 18px; }
+.pill { display: inline-flex; align-items: center; gap: 6px; border-radius: 999px; background: #F0E9FC; color: #6B2CD8;
+  font-weight: 700; font-size: 12px; padding: 7px 12px; }
+.h1 { font-family: "Unbounded"; font-weight: 700; font-size: 25px; letter-spacing: -0.03em; line-height: 1.12; margin: 10px 0 6px; }
+.mut { color: #6A5D80; font-size: 13.5px; line-height: 1.4; }
+.input { height: 46px; border-radius: 16px; border: 1.5px solid #E4DAF3; background: #fff; display: flex; align-items: center;
+  padding: 0 14px; color: #8C80A2; font-size: 14px; gap: 8px; }
+.input.ativo { border-color: #6B2CD8; box-shadow: 0 0 0 3px rgba(107,44,216,.15); color: #1D1033; }
+.btn { height: 50px; border-radius: 16px; background: #6B2CD8; color: #fff; font-weight: 700; font-size: 16px; display: flex;
+  align-items: center; justify-content: center; gap: 8px; }
+.btn.rosa { background: #F42578; }
+.btn.out { background: #fff; color: #1D1033; border: 1.5px solid #E4DAF3; }
+.card { background: #fff; border: 1px solid #ECE4F7; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 16px rgba(60,20,120,.06); }
+.img { height: 112px; position: relative; display: flex; align-items: flex-end; padding: 10px; }
+.tag { position: absolute; top: 10px; right: 10px; background: #FF9F1A; color: #1D1033; font-weight: 800; font-size: 12px;
+  border-radius: 999px; padding: 4px 9px; }
+.loja { font-size: 12px; color: #6A5D80; font-weight: 600; }
+.tit { font-weight: 800; font-size: 15.5px; margin: 2px 0 4px; }
+.de { color: #8C80A2; text-decoration: line-through; font-size: 12.5px; margin-right: 6px; }
+.por { color: #6B2CD8; font-weight: 800; font-size: 17px; }
+.cid { display: inline-flex; gap: 6px; align-items: center; font-weight: 700; font-size: 13px; border-radius: 999px;
+  border: 1.5px solid #E4DAF3; padding: 7px 12px; background: #fff; }
+.sheet { position: absolute; left: 0; right: 0; bottom: 0; background: #fff; border-radius: 26px 26px 0 0; padding: 22px 18px 28px;
+  box-shadow: 0 -10px 40px rgba(29,16,51,.25); }
+.veu { position: absolute; inset: 0; background: rgba(23,10,46,.45); }
+.cupom { border: 2.5px dashed #F42578; background: #FFF0F6; border-radius: 18px; padding: 18px; text-align: center; }
+.cupom .cod { font-family: "Onest"; font-weight: 900; font-size: 36px; letter-spacing: .14em; color: #F42578; }
+.wa-top { height: 104px; padding: 52px 14px 0; background: #0B6E5F; color: #fff; display: flex; align-items: center; gap: 10px; }
+.wa-av { width: 38px; height: 38px; border-radius: 50%; background: #fff; display: flex; align-items: center; justify-content: center; }
+.wa-av svg { height: 24px; }
+.wa-fundo { position: absolute; top: 104px; left: 0; right: 0; bottom: 0; background: #ECE5DD; padding: 18px 12px; }
+.bolha { background: #fff; border-radius: 4px 16px 16px 16px; padding: 12px 14px 22px; font-size: 16px; line-height: 1.45;
+  width: 300px; position: relative; box-shadow: 0 1px 2px rgba(0,0,0,.12); transform-origin: 0 0; }
+.bolha b { font-weight: 800; }
+.bolha .hora { position: absolute; right: 10px; bottom: 6px; font-size: 11px; color: #8a8a8a; }
+.digitando { background: #fff; border-radius: 16px; padding: 12px 16px; display: inline-flex; gap: 5px; }
+.digitando i { width: 8px; height: 8px; border-radius: 50%; background: #9a9a9a; display: block; }
+.ok { border-radius: 16px; background: #E9F9EF; border: 1.5px solid #9FE0B6; padding: 14px; }
+.ok .t { color: #15803D; font-weight: 800; font-size: 16px; display: flex; gap: 8px; align-items: center; }
+.tabs { display: flex; gap: 6px; background: #F3EEFB; padding: 5px; border-radius: 16px; }
+.tabs div { flex: 1; text-align: center; padding: 9px 0; border-radius: 12px; font-weight: 700; font-size: 13px; color: #6A5D80; }
+.tabs div.on { background: #fff; color: #1D1033; box-shadow: 0 2px 8px rgba(60,20,120,.1); }
+.toast { position: absolute; left: 18px; right: 18px; top: 110px; background: #1D1033; color: #fff; border-radius: 16px; padding: 14px 16px;
+  font-weight: 700; display: flex; gap: 10px; align-items: center; box-shadow: 0 12px 30px rgba(0,0,0,.25); }
+.grupo { position: absolute; left: 50%; background: #fff; color: #1D1033; border-radius: 999px; padding: 10px 16px; font-weight: 800;
+  font-size: 14px; white-space: nowrap; box-shadow: 0 8px 24px rgba(60,20,120,.18); display: flex; gap: 8px; align-items: center; }
+.grupo i { width: 10px; height: 10px; border-radius: 50%; display: block; }
+
+/* número, lista, chamada */
+.numero { position: absolute; left: 0; right: 0; top: 640px; text-align: center; font: 900 330px/1 "Unbounded"; letter-spacing: -0.06em; }
+.numero span { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.anel { position: absolute; left: 50%; top: 520px; width: 640px; height: 640px; margin-left: -320px; }
+.item { position: absolute; left: 90px; right: 90px; height: 150px; border-radius: 40px; background: rgba(255,255,255,.09);
+  border: 2px solid rgba(255,255,255,.16); display: flex; align-items: center; gap: 30px; padding: 0 36px; font: 800 50px/1.1 "Onest"; }
+.item .ck { width: 78px; height: 78px; border-radius: 50%; flex: none; display: flex; align-items: center; justify-content: center;
+  background: var(--grad); }
+.botao { position: absolute; left: 50%; top: 1290px; transform: translateX(-50%); padding: 34px 70px; border-radius: 999px;
+  background: #fff; color: var(--escuro); font: 800 64px "Unbounded"; letter-spacing: -0.03em; white-space: nowrap;
+  box-shadow: 0 20px 70px rgba(244,37,120,.45); }
+</style>
+</head>
+<body>
+<div id="palco">
+  <div id="fundo"></div>
+  <div id="pontos"></div>
+  <div id="cenas"></div>
+  <div id="topo"></div>
+  <div id="legenda"></div>
+  <div id="flash"></div>
+  <div id="barra"></div>
+</div>
+<script>
+"use strict";
+// ------------------------------------------------------------------ utilidades
+const W = 1080, H = 1920;
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const seg = (t, a, b) => clamp((t - a) / (b - a));
+const lerp = (a, b, p) => a + (b - a) * p;
+const eo = p => 1 - Math.pow(1 - p, 3);
+const eo5 = p => 1 - Math.pow(1 - p, 5);
+const eio = p => p < .5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2;
+const back = p => { const c1 = 1.9, c3 = c1 + 1; return 1 + c3 * Math.pow(p - 1, 3) + c1 * Math.pow(p - 1, 2); };
+const mola = p => p <= 0 ? 0 : p >= 1 ? 1 : 1 - Math.exp(-5.5 * p) * Math.cos(11 * p);
+const $ = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const norm = s => String(s).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9%$]/g, "");
+const EV = [];                         // efeitos sonoros: {t, s}
+const sfx = (t, s) => EV.push({ t: Math.max(0, +t.toFixed(3)), s });
+
+// ------------------------------------------------------------------ marca (geometria do TresCsMark.tsx / BrandLogo.tsx)
+const CS = [{ cx: 18, r: 16.5, open: 42 }, { cx: 19.8, r: 10.2, open: 50 }, { cx: 21.6, r: 4.2, open: 72 }];
+function marcaSVG(cores, comTexto, tinta, pontos) {
+  const cs = CS.map((c, i) => {
+    const len = 2 * Math.PI * c.r, vis = len * (360 - 2 * c.open) / 360;
+    return `<circle class="c" data-vis="${vis}" data-len="${len}" cx="${c.cx}" cy="20" r="${c.r}" stroke="${cores[i]}"
+      stroke-dasharray="${vis} ${len}" stroke-dashoffset="${-(c.open / 360) * len}"/>`;
+  }).join("");
+  const txt = !comTexto ? "" : `<g transform="translate(42 0)"><g fill="none" stroke="${tinta}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round">
+    <path class="p" pathLength="1" d="M17.5 19.5 A8.5 8.5 0 1 0 17.5 30.5"/><path class="p" pathLength="1" d="M27 5.5 V33.5"/>
+    <path class="p" pathLength="1" d="M36 17 V33.5"/><path class="p" pathLength="1" d="M45 5.5 V33.5"/>
+    <path class="p" pathLength="1" d="M54 17 V33.5"/><path class="p" pathLength="1" d="M63 17 V33.5 M63 24.5 A7.5 7.5 0 0 1 78 24.5 V33.5"/></g>
+    <circle class="d" cx="36" cy="8" r="3.8" fill="${pontos[0]}"/><circle class="d" cx="54" cy="8" r="3.8" fill="${pontos[1]}"/></g>`;
+  return `<svg viewBox="${comTexto ? "-1 0.5 124 39" : "-1 0.5 35 39"}"><g fill="none" stroke-linecap="round" stroke-width="3.8">${cs}</g>${txt}</svg>`;
+}
+const LOGO_ESCURO = () => marcaSVG(["#ffffff", "#F42578", "#FF9F1A"], true, "#ffffff", ["#FF9F1A", "#ffffff"]);
+const LOGO_CLARO = () => marcaSVG(["#6B2CD8", "#F42578", "#FF9F1A"], true, "#1D1033", ["#6B2CD8", "#F42578"]);
+const SIMB_CLARO = () => marcaSVG(["#6B2CD8", "#F42578", "#FF9F1A"], false);
+// desenha a marca de 0 a 1
+function desenha(svg, p) {
+  const cs = svg.querySelectorAll(".c");
+  cs.forEach((c, i) => {
+    const q = eo(seg(p, i * .12, .45 + i * .12));
+    c.setAttribute("stroke-dasharray", `${(+c.dataset.vis) * q} ${c.dataset.len}`);
+  });
+  svg.querySelectorAll(".p").forEach((e, i) => {
+    const q = eo(seg(p, .35 + i * .06, .6 + i * .06));
+    e.setAttribute("stroke-dasharray", "1 1"); e.setAttribute("stroke-dashoffset", String(1 - q));
+  });
+  svg.querySelectorAll(".d").forEach((e, i) => {
+    const q = mola(seg(p, .78 + i * .07, 1));
+    e.setAttribute("transform", `translate(${[36, 54][i]} 8) scale(${q}) translate(${-[36, 54][i]} -8)`);
+  });
+}
+
+// ------------------------------------------------------------------ ícones
+const IC = {
+  check: (c = "#fff", s = 44) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="${c}" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>`,
+  busca: () => `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8C80A2" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>`,
+  pino: () => `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#6B2CD8" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.5C5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.4"/></svg>`,
+  ticket: (c = "#6B2CD8") => `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="${c}" stroke-width="2.4" stroke-linejoin="round"><path d="M3 8a2 2 0 0 0 2-2h14a2 2 0 0 0 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 0-2 2H5a2 2 0 0 0-2-2v-2a2 2 0 0 0 0-4z"/></svg>`,
+  ok: () => `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#15803D" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="M7.8 12.4l2.9 2.9 5.5-5.6"/></svg>`,
+  link: () => `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg>`,
+};
+
+// ------------------------------------------------------------------ texto cinético
+function palavras(texto, destaque, cls) {
+  const box = $("div", "kin " + (cls || ""));
+  const hl = new Set(String(destaque || "").split(/\s+/).map(norm).filter(Boolean));
+  String(texto).trim().split(/\s+/).forEach((w, i, arr) => {
+    const s = $("span", "w" + (hl.has(norm(w)) ? " hl" : ""));
+    s.textContent = w + (i < arr.length - 1 ? " " : "");
+    box.appendChild(s);
+  });
+  return box;
+}
+function ajusta(el, maxW, maxH, ini, min) {
+  let f = ini;
+  el.style.fontSize = f + "px";
+  const larg = () => Math.min(maxW, el.clientWidth || maxW);
+  while (f > min && (el.scrollWidth > larg() + 2 || el.offsetHeight > maxH)) { f -= 4; el.style.fontSize = f + "px"; }
+  return f;
+}
+function animaPalavras(box, lt, t0, passo, estilo) {
+  box.querySelectorAll(".w").forEach((s, i) => {
+    const a = t0 + i * passo, p = seg(lt, a, a + .42);
+    if (estilo === "slam") {
+      s.style.opacity = seg(lt, a, a + .06);
+      s.style.transform = `translateY(${(1 - eo(p)) * 40}px) scale(${lerp(1.7, 1, eo5(p))})`;
+    } else {
+      s.style.opacity = seg(lt, a, a + .12);
+      s.style.transform = `translateY(${(1 - mola(p)) * 70}px) rotate(${(1 - eo(p)) * 6}deg)`;
+    }
+  });
+}
+
+// ------------------------------------------------------------------ fundo
+const PALETAS = [
+  [[107, 44, 216, .75], [244, 37, 120, .55], [255, 159, 26, .40]],
+  [[244, 37, 120, .70], [107, 44, 216, .60], [255, 159, 26, .45]],
+  [[255, 159, 26, .55], [244, 37, 120, .60], [107, 44, 216, .70]],
+];
+function fundo(t, k) {
+  const P = PALETAS[k % PALETAS.length];
+  const b = (c, x, y, r) => `radial-gradient(circle at ${x}% ${y}%, rgba(${c[0]},${c[1]},${c[2]},${c[3]}) 0%, rgba(${c[0]},${c[1]},${c[2]},0) ${r}%)`;
+  document.getElementById("fundo").style.background = [
+    b(P[0], 18 + 10 * Math.sin(t * .35), 14 + 6 * Math.cos(t * .3), 52),
+    b(P[1], 86 + 8 * Math.cos(t * .28), 52 + 10 * Math.sin(t * .22), 48),
+    b(P[2], 30 + 12 * Math.sin(t * .2 + 1), 92 + 5 * Math.cos(t * .33), 46),
+    "#170A2E"].join(",");
+}
+
+// ------------------------------------------------------------------ telas do celular
+function oferta0(D) { return D.oferta || { loja: "Pizzaria do Bairro", titulo: "Pizza grande + refri", de: 59, por: 39, cidade: "Sua cidade" }; }
+const brl = v => "R$ " + Number(v).toFixed(Number(v) % 1 ? 2 : 0).replace(".", ",");
+const pct = o => Math.round((1 - o.por / o.de) * 100);
+const IMG = [["#6B2CD8", "#F42578"], ["#F42578", "#FF9F1A"], ["#FF9F1A", "#6B2CD8"]];
+function cardOferta(o, k) {
+  return `<div class="card"><div class="img" style="background:linear-gradient(135deg,${IMG[k % 3][0]},${IMG[k % 3][1]})">
+    <span class="tag">-${pct(o)}%</span></div><div style="padding:12px 14px 14px"><div class="loja">${esc(o.loja)}</div>
+    <div class="tit">${esc(o.titulo)}</div><span class="de">${brl(o.de)}</span><span class="por">${brl(o.por)}</span></div></div>`;
+}
+const navHTML = () => `<div class="nav">${LOGO_CLARO()}<div class="menu"></div></div>`;
+const CODIGO = "CL8K4P2Q";
+
+const TELAS = {
+  ofertas(D) {
+    const o = oferta0(D);
+    const extra = [{ loja: "Studio Beleza", titulo: "Escova + hidratação", de: 90, por: 55 },
+                   { loja: "Açaí da Praça", titulo: "Açaí 500 ml", de: 22, por: 15 }];
+    const sc = $("div", "sc", `${navHTML()}<div class="pad"><span class="pill">${IC.ticket()} Grátis para quem usa</span>
+      <div class="h1">Ofertas da sua cidade</div><div class="cid" style="margin:8px 0 12px">${IC.pino()} ${esc(o.cidade)}</div>
+      <div class="input" data-r="busca">${IC.busca()}<span class="tx">O que você procura?</span></div>
+      <div style="display:grid;gap:12px;margin-top:14px">${[o, ...extra].map((x, k) => `<div data-r="c${k}">${cardOferta(x, k)}</div>`).join("")}</div></div>`);
+    return { sc, render(lt, d, ini) {
+      const q = sc.querySelectorAll("[data-r^=c]");
+      q.forEach((c, k) => { const p = seg(lt, .25 + k * .14, .75 + k * .14); c.style.opacity = p; c.style.transform = `translateY(${(1 - eo(p)) * 60}px)`; });
+      const busca = sc.querySelector("[data-r=busca]"), tx = busca.querySelector(".tx"), alvo = "pizza";
+      const tp = seg(lt, .9, 1.5), n = Math.round(tp * alvo.length);
+      busca.classList.toggle("ativo", lt > .85); tx.textContent = n ? alvo.slice(0, n) : "O que você procura?";
+      const ta = Math.min(d * .55, 2.4);
+      q[0].firstChild.style.boxShadow = lt > ta ? "0 0 0 3px #F42578, 0 10px 30px rgba(244,37,120,.3)" : "";
+      return [{ alvo: "c0", t: ta }];
+    }, sons(ini, d) { sfx(ini + .9, "tecla"); sfx(ini + Math.min(d * .55, 2.4), "toque"); } };
+  },
+  oferta(D) {
+    const o = oferta0(D);
+    const sc = $("div", "sc", `${navHTML()}<div class="img" style="height:190px;background:linear-gradient(135deg,#6B2CD8,#F42578)">
+      <span class="tag" style="font-size:15px">-${pct(o)}%</span></div><div class="pad"><div class="loja">${esc(o.loja)} · ${esc(o.cidade)}</div>
+      <div class="h1" style="font-size:23px">${esc(o.titulo)}</div><div style="margin:6px 0 14px"><span class="de" style="font-size:15px">${brl(o.de)}</span>
+      <span class="por" style="font-size:26px">${brl(o.por)}</span></div><div class="card" style="padding:14px;margin-bottom:14px">
+      <div style="font-weight:800;text-align:center;margin-bottom:6px">Como funciona</div><div class="mut" style="text-align:center">
+      Pegue o cupom grátis, receba no WhatsApp e mostre o código na loja.</div></div>
+      <div class="btn rosa" data-r="btn">${IC.ticket("#fff")} Quero meu cupom</div></div>
+      <div class="veu"></div><div class="sheet"><div style="font-weight:800;font-size:18px;margin-bottom:12px">Seu cupom está pronto</div>
+      <div class="cupom"><div style="font-size:11px;text-transform:uppercase;color:#6A5D80;margin-bottom:6px">Seu código</div>
+      <div class="cod"></div><div class="mut" style="font-size:12px;margin-top:8px">Também mandamos o cupom no seu WhatsApp.</div></div>
+      <div class="btn out" style="margin-top:12px">Copiar código</div></div>`);
+    return { sc, render(lt, d) {
+      const tap = Math.min(d * .38, 1.7), btn = sc.querySelector("[data-r=btn]");
+      btn.style.transform = `scale(${lt > tap && lt < tap + .18 ? .94 : 1 + .03 * Math.sin(lt * 7) * (lt < tap ? 1 : 0)})`;
+      const ps = eo5(seg(lt, tap + .2, tap + .6));
+      sc.querySelector(".veu").style.opacity = ps; sc.querySelector(".sheet").style.transform = `translateY(${(1 - ps) * 420}px)`;
+      const n = Math.round(seg(lt, tap + .55, tap + 1.05) * CODIGO.length);
+      sc.querySelector(".cod").textContent = CODIGO.slice(0, n) + "·".repeat(CODIGO.length - n);
+      return [{ alvo: "btn", t: tap }];
+    }, sons(ini, d) { const tap = Math.min(d * .38, 1.7); sfx(ini + tap, "toque"); sfx(ini + tap + .2, "sobe"); sfx(ini + tap + 1.05, "ding"); } };
+  },
+  whatsapp(D) {
+    const o = oferta0(D);
+    const sc = $("div", "sc", `<div class="wa-top"><span style="font-size:22px">‹</span><div class="wa-av">${SIMB_CLARO()}</div>
+      <div><div style="font-weight:800;font-size:16px">Clilin</div><div style="font-size:12px;opacity:.8">conta comercial</div></div></div>
+      <div class="wa-fundo"><div class="digitando"><i></i><i></i><i></i></div>
+      <div class="bolha">Olá! Aqui está seu cupom da oferta <b>${esc(o.titulo)}</b> na <b>${esc(o.loja)}</b>.<br><br>
+      Código: <b class="cd">${CODIGO}</b><br>Válido até: 7 dias<br><br>Apresente esse código no local para resgatar.<span class="hora">12:30</span></div></div>`);
+    return { sc, render(lt) {
+      const dg = sc.querySelector(".digitando"), b = sc.querySelector(".bolha");
+      dg.style.display = lt > .2 && lt < 1 ? "inline-flex" : "none";
+      dg.querySelectorAll("i").forEach((e, k) => e.style.transform = `translateY(${-4 * Math.max(0, Math.sin(lt * 12 - k))}px)`);
+      const p = mola(seg(lt, 1, 1.5));
+      b.style.display = lt >= 1 ? "block" : "none"; b.style.transform = `scale(${lerp(.4, 1, p)})`; b.style.opacity = seg(lt, 1, 1.1);
+      const g = seg(lt, 1.7, 2.1);
+      const cd = sc.querySelector(".cd"); cd.style.background = `rgba(255,159,26,${.45 * g})`; cd.style.borderRadius = "6px"; cd.style.padding = "1px 4px";
+      return [];
+    }, sons(ini) { sfx(ini + 1, "mensagem"); } };
+  },
+  validar(D) {
+    const o = oferta0(D);
+    const sc = $("div", "sc", `${navHTML()}<div class="pad"><div style="font-weight:800;font-size:18px;margin-bottom:12px">Painel da empresa</div>
+      <div class="tabs"><div>Ofertas</div><div class="on">Validar cupom</div></div>
+      <div class="card" style="padding:16px;margin-top:14px"><div style="font-weight:800;font-size:16px;display:flex;gap:8px;align-items:center;margin-bottom:12px">
+      ${IC.ticket("#F42578")} Resgatar cupom</div><div class="input" data-r="in" style="font-family:monospace;font-size:20px;letter-spacing:.2em;color:#1D1033">
+      <span class="tx"></span></div><div class="btn" data-r="btn" style="margin-top:10px">Resgatar</div>
+      <div class="ok" style="margin-top:14px"><div class="t">${IC.ok()} Cupom resgatado!</div><div style="font-size:13.5px;margin-top:8px;line-height:1.6">
+      <b>Cliente:</b> Maria S.<br><b>Oferta:</b> ${esc(o.titulo)}</div></div></div></div>`);
+    return { sc, render(lt, d) {
+      const n = Math.round(seg(lt, .35, 1.25) * CODIGO.length), inp = sc.querySelector("[data-r=in]");
+      inp.querySelector(".tx").textContent = CODIGO.slice(0, n) || "ABC12XYZ"; inp.querySelector(".tx").style.color = n ? "#1D1033" : "#B9AECB";
+      inp.classList.toggle("ativo", lt > .3 && lt < 1.6);
+      const tap = 1.5, btn = sc.querySelector("[data-r=btn]");
+      btn.style.transform = `scale(${lt > tap && lt < tap + .18 ? .94 : 1})`;
+      const ok = sc.querySelector(".ok"), p = mola(seg(lt, tap + .25, tap + .7));
+      ok.style.opacity = seg(lt, tap + .25, tap + .35); ok.style.transform = `scale(${lerp(.85, 1, p)})`;
+      return [{ alvo: "btn", t: tap }];
+    }, sons(ini) { sfx(ini + .35, "tecla"); sfx(ini + 1.5, "toque"); sfx(ini + 1.75, "ding"); } };
+  },
+  divulgador(D) {
+    const o = oferta0(D);
+    const sc = $("div", "sc", `${navHTML()}<div class="pad"><div style="font-weight:800;font-size:18px">Ofertas para divulgar</div>
+      <div class="mut" style="margin:4px 0 12px">Cada oferta tem o seu link.</div>${cardOferta(o, 1)}
+      <div class="btn rosa" data-r="btn" style="margin-top:12px">${IC.link()} Copiar Link</div></div>
+      <div class="toast">${IC.check("#22C55E", 22)} Link copiado!</div>
+      <div class="grupo" data-g="0" style="top:520px"><i style="background:#6B2CD8"></i>Grupo do bairro</div>
+      <div class="grupo" data-g="1" style="top:590px"><i style="background:#F42578"></i>Status</div>
+      <div class="grupo" data-g="2" style="top:660px"><i style="background:#FF9F1A"></i>Grupo da família</div>`);
+    return { sc, render(lt, d) {
+      const tap = Math.min(d * .3, 1.3), btn = sc.querySelector("[data-r=btn]");
+      btn.style.transform = `scale(${lt > tap && lt < tap + .18 ? .94 : 1})`;
+      const tt = sc.querySelector(".toast"), p = eo5(seg(lt, tap + .15, tap + .45));
+      tt.style.opacity = seg(lt, tap + .15, tap + .3) * (1 - seg(lt, tap + 1.6, tap + 1.9)); tt.style.transform = `translateY(${(1 - p) * -40}px)`;
+      sc.querySelectorAll(".grupo").forEach((g, k) => {
+        const a = tap + .7 + k * .28, q = mola(seg(lt, a, a + .5));
+        g.style.opacity = seg(lt, a, a + .1); g.style.transform = `translateX(-50%) scale(${q}) translateY(${(1 - q) * 40}px)`;
+      });
+      return [{ alvo: "btn", t: tap }];
+    }, sons(ini, d) { const tap = Math.min(d * .3, 1.3); sfx(ini + tap, "toque"); [0, 1, 2].forEach(k => sfx(ini + tap + .7 + k * .28, "pop")); } };
+  },
+};
+
+// ------------------------------------------------------------------ cenas
+const TIPOS = {
+  gancho(c, el) {
+    const md = $("div", "marcad", marcaSVG(["#fff", "#fff", "#fff"], false)); el.appendChild(md);
+    const box = palavras(c.texto, c.destaque, "big"); box.style.top = "0px"; el.appendChild(box);
+    let chip = null;
+    if (c.rotulo) { chip = $("div", "chip"); chip.textContent = c.rotulo; chip.style.top = "560px"; el.appendChild(chip); }
+    return {
+      medir() { ajusta(box, 940, 720, 150, 70); box.style.top = (980 - box.offsetHeight / 2) + "px"; },
+      render(lt) {
+        animaPalavras(box, lt, .05, .13, "slam");
+        let sh = 0; box.querySelectorAll(".w").forEach((s, i) => { const a = .05 + i * .13; if (lt > a) sh += 16 * Math.exp(-(lt - a) * 14) * Math.sin((lt - a) * 70); });
+        box.style.transform = `translate(${sh}px, ${sh * .6}px)`;
+        md.style.transform = `rotate(${-20 + lt * 8}deg) scale(${lerp(1.3, 1, eo(seg(lt, 0, .8)))})`;
+        if (chip) { const p = mola(seg(lt, 0, .5)); chip.style.opacity = seg(lt, 0, .1); chip.style.transform = `translateX(-50%) scale(${p})`; }
+      },
+      sons(ini) { box.querySelectorAll(".w").forEach((s, i) => sfx(ini + .05 + i * .13, "batida")); },
+    };
+  },
+  frase(c, el, S) {
+    // legenda gigante, palavra por palavra, no tempo exato da fala
+    const ws = S.palavras, blocos = []; let cur = [];
+    ws.forEach((w, i) => { cur.push(w); const fim = /[.,!?:;]$/.test(w.w) || cur.length >= 3 || i === ws.length - 1; if (fim) { blocos.push(cur); cur = []; } });
+    const hl = new Set(String(c.destaque || "").split(/\s+/).map(norm).filter(Boolean));
+    const els = blocos.map(b => {
+      const box = $("div", "kin"); box.style.display = "none";
+      b.forEach(w => { const s = $("span", "w" + (hl.has(norm(w.w)) ? " hl" : "")); s.textContent = w.w.replace(/[,;]$/, "") + " "; s._w = w; box.appendChild(s); });
+      el.appendChild(box); return { box, ini: b[0].ini, fim: b[b.length - 1].fim };
+    });
+    let chip = null;
+    if (c.rotulo) { chip = $("div", "chip"); chip.textContent = c.rotulo; chip.style.top = "520px"; el.appendChild(chip); }
+    const md = $("div", "marcad", marcaSVG(["#fff", "#fff", "#fff"], false)); el.insertBefore(md, el.firstChild);
+    return {
+      medir() { els.forEach(e => { e.box.style.display = "block"; ajusta(e.box, 940, 600, 128, 70); e.box.style.top = (1000 - e.box.offsetHeight / 2) + "px"; e.box.style.display = "none"; }); },
+      render(lt, d, t) {
+        let k = 0; els.forEach((e, i) => { if (t >= e.ini - .08) k = i; });
+        els.forEach((e, i) => {
+          e.box.style.display = i === k ? "block" : "none";
+          if (i !== k) return;
+          e.box.querySelectorAll(".w").forEach(s => {
+            const p = seg(t, s._w.ini - .06, s._w.ini + .3), q = mola(p);
+            s.style.opacity = lerp(.2, 1, seg(t, s._w.ini - .06, s._w.ini + .04));
+            s.style.transform = `translateY(${(1 - q) * -26 * (p > 0 ? 1 : 0)}px) scale(${p > 0 ? lerp(1.18, 1, q) : 1})`;
+            if (!s.classList.contains("hl")) s.style.color = t >= s._w.ini && t <= s._w.fim + .05 ? "#FF9F1A" : "#fff";
+          });
+        });
+        if (chip) { const p = mola(seg(lt, 0, .5)); chip.style.opacity = seg(lt, 0, .1); chip.style.transform = `translateX(-50%) scale(${p})`; }
+        md.style.transform = `rotate(${20 - lt * 6}deg)`;
+      },
+      sons() {},
+    };
+  },
+  celular(c, el, S, D) {
+    const fone = $("div", "fone", `<div class="tela"><div class="ilha"></div></div>`); el.appendChild(fone);
+    const tit = palavras(c.texto || "", c.destaque, ""); tit.style.top = "230px"; tit.style.zIndex = 5;
+    tit.style.textShadow = "0 6px 30px rgba(23,10,46,.6)"; el.appendChild(tit);
+    const tela = (TELAS[c.tela] || TELAS.oferta)(D);
+    const scr = fone.querySelector(".tela"); scr.appendChild(tela.sc);
+    const dedo = $("div", "dedo"), onda = $("div", "onda"); tela.sc.appendChild(onda); tela.sc.appendChild(dedo);
+    let alvos = {};
+    return {
+      medir() {
+        ajusta(tit, 940, 250, 84, 50); tit.style.top = (345 - tit.offsetHeight / 2) + "px";
+        const k = scr.clientWidth / 340; tela.sc.style.transform = `scale(${k})`; tela.sc.style.height = (scr.clientHeight / k) + "px";
+        const r0 = tela.sc.getBoundingClientRect();
+        tela.sc.querySelectorAll("[data-r]").forEach(e => { const r = e.getBoundingClientRect(); alvos[e.dataset.r] = [(r.left + r.width / 2 - r0.left) / k, (r.top + r.height / 2 - r0.top) / k]; });
+      },
+      render(lt, d) {
+        animaPalavras(tit, lt, .05, .07, "mola");
+        const pe = mola(seg(lt, 0, .8));
+        fone.style.transform = `translateY(${(1 - pe) * 900 + 10 * Math.sin(lt * 1.6)}px) rotate(${(1 - eo(seg(lt, 0, .8))) * 9 - .8 * Math.sin(lt * 1.1)}deg)`;
+        const K = clamp((d - .4) / 2.8, .55, 1), L = lt / K;
+        const taps = tela.render(L, d / K) || [];
+        dedo.style.opacity = 0; onda.style.opacity = 0;
+        let zm = 1;
+        taps.forEach(tp => {
+          const z = eio(seg(L, tp.t - .7, tp.t - .2)) * (1 - eio(seg(L, tp.t + .9, tp.t + 1.4)));
+          if (z > 0) { const [x, y] = alvos[tp.alvo] || [170, 600]; const k = scr.clientWidth / 340;
+            fone.style.transformOrigin = `${18 + x * k}px ${18 + y * k}px`; zm = 1 + .16 * z; }
+        });
+        fone.style.transform += ` scale(${zm})`;
+        taps.forEach(tp => {
+          const [x, y] = alvos[tp.alvo] || [170, 600];
+          const vem = seg(L, tp.t - .55, tp.t - .05);
+          if (L < tp.t - .55 || L > tp.t + .5) return;
+          const sx = x + 120, sy = y + 220;
+          dedo.style.left = lerp(sx, x, eio(vem)) + "px"; dedo.style.top = lerp(sy, y, eio(vem)) + "px";
+          dedo.style.opacity = Math.min(seg(L, tp.t - .55, tp.t - .4), 1 - seg(L, tp.t + .3, tp.t + .5));
+          dedo.style.transform = `scale(${L >= tp.t && L < tp.t + .16 ? .78 : 1})`;
+          const o = seg(L, tp.t, tp.t + .45);
+          onda.style.left = x + "px"; onda.style.top = y + "px"; onda.style.opacity = L >= tp.t ? 1 - o : 0; onda.style.transform = `scale(${1 + o * 2.2})`;
+        });
+      },
+      sons(ini, d) { sfx(ini + .05, "sobe"); const K = clamp((d - .4) / 2.8, .55, 1), n0 = EV.length;
+        tela.sons && tela.sons(0, d / K); for (let q = n0; q < EV.length; q++) EV[q].t = +(ini + EV[q].t * K).toFixed(3); },
+    };
+  },
+  numero(c, el) {
+    const NS = "http://www.w3.org/2000/svg";
+    el.insertAdjacentHTML("beforeend", `<svg class="anel" viewBox="0 0 100 100"><defs><linearGradient id="ga" x1="0" x2="1">
+      <stop offset="0" stop-color="#8B5CF6"/><stop offset=".55" stop-color="#F42578"/><stop offset="1" stop-color="#FF9F1A"/></linearGradient></defs>
+      <circle cx="50" cy="50" r="44" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="3"/>
+      <circle class="arco" cx="50" cy="50" r="44" fill="none" stroke="url(#ga)" stroke-width="3.4" stroke-linecap="round" pathLength="1"
+       stroke-dasharray="1 1" stroke-dashoffset="1" transform="rotate(-90 50 50)"/></svg>`);
+    const num = $("div", "numero", "<span></span>"); el.appendChild(num);
+    let chip = null;
+    if (c.rotulo) { chip = $("div", "chip"); chip.textContent = c.rotulo; chip.style.top = "330px"; el.appendChild(chip); }
+    const leg = palavras(c.texto || "", c.destaque, ""); el.appendChild(leg);
+    const v = Number(c.valor) || 0, dec = String(c.valor).includes(".") || String(c.valor).includes(",");
+    return {
+      medir() { num.firstChild.textContent = (c.prefixo || "") + v + (c.sufixo || ""); ajusta(num, 1000, 400, 330, 140);
+        num.style.top = (840 - num.offsetHeight / 2) + "px"; ajusta(leg, 900, 300, 66, 40); leg.style.top = "1250px"; },
+      render(lt) {
+        const p = eo(seg(lt, .1, 1.1)), x = v * p;
+        num.firstChild.textContent = (c.prefixo || "") + (dec ? x.toFixed(2).replace(".", ",") : Math.round(x)) + (c.sufixo || "");
+        num.style.transform = `scale(${lerp(.6, 1, mola(seg(lt, 0, .7)))})`; num.style.opacity = seg(lt, 0, .15);
+        el.querySelector(".arco").setAttribute("stroke-dashoffset", String(1 - eo(seg(lt, .1, 1.2))));
+        el.querySelector(".anel").style.transform = `rotate(${lt * 12}deg)`;
+        animaPalavras(leg, lt, .9, .08, "mola");
+        if (chip) { const q = mola(seg(lt, 0, .5)); chip.style.opacity = seg(lt, 0, .1); chip.style.transform = `translateX(-50%) scale(${q})`; }
+      },
+      sons(ini) { sfx(ini + .1, "sobe"); sfx(ini + 1.1, "ding"); },
+    };
+  },
+  lista(c, el, S) {
+    const tit = palavras(c.texto || "", c.destaque, ""); el.appendChild(tit);
+    const its = (c.itens || []).slice(0, 4).map(x => { const e = $("div", "item", `<div class="ck">${IC.check()}</div><div>${esc(x)}</div>`); el.appendChild(e); return e; });
+    const tempos = its.map((e, i) => .45 + i * Math.min(.7, Math.max(.35, (S.fim - S.ini - 1.2) / Math.max(1, its.length))));
+    return {
+      medir() { ajusta(tit, 940, 260, 84, 50); tit.style.top = (420 - tit.offsetHeight / 2) + "px";
+        const tot = its.length * 150 + (its.length - 1) * 34, y0 = 1010 - tot / 2;
+        its.forEach((e, i) => { e.style.top = (y0 + i * 184) + "px"; ajusta(e, 900, 150, 50, 34); }); },
+      render(lt) {
+        animaPalavras(tit, lt, .05, .07, "mola");
+        its.forEach((e, i) => { const a = tempos[i], p = eo5(seg(lt, a, a + .45));
+          e.style.opacity = seg(lt, a, a + .12); e.style.transform = `translateX(${(1 - p) * 420}px)`;
+          const ck = e.querySelector(".ck"), q = mola(seg(lt, a + .2, a + .65)); ck.style.transform = `scale(${q}) rotate(${(1 - q) * -90}deg)`; });
+      },
+      sons(ini) { tempos.forEach(a => sfx(ini + a + .2, "pop")); },
+    };
+  },
+  cta(c, el) {
+    const logo = $("div", "", LOGO_ESCURO()); logo.style.cssText = "position:absolute;left:140px;right:140px;top:560px;"; el.appendChild(logo);
+    const tx = palavras(c.texto || "", c.destaque, ""); el.appendChild(tx);
+    const bt = $("div", "botao"); bt.textContent = c.url || "clilin.com"; el.appendChild(bt);
+    const sub = $("div", "chip"); sub.textContent = c.rotulo || "link na bio"; sub.style.top = "1490px"; el.appendChild(sub);
+    return {
+      medir() { ajusta(tx, 940, 300, 80, 46); tx.style.top = (1060 - tx.offsetHeight / 2) + "px"; },
+      render(lt) {
+        desenha(logo.firstChild, seg(lt, 0, 1.4));
+        logo.style.transform = `scale(${lerp(.92, 1, eo(seg(lt, 0, 1.4)))})`;
+        animaPalavras(tx, lt, 1.0, .07, "mola");
+        const p = mola(seg(lt, 1.4, 2)); bt.style.opacity = seg(lt, 1.4, 1.5);
+        bt.style.transform = `translateX(-50%) scale(${p * (1 + .035 * Math.sin(Math.max(0, lt - 2) * 6))})`;
+        const q = mola(seg(lt, 1.8, 2.3)); sub.style.opacity = seg(lt, 1.8, 1.9); sub.style.transform = `translateX(-50%) scale(${q})`;
+      },
+      sons(ini) { sfx(ini + .05, "sobe"); sfx(ini + 1.4, "batida"); },
+    };
+  },
+};
+
+// ------------------------------------------------------------------ montagem
+let D, CENAS = [], CHUNKS = [], TR = [];
+const TRANS = ["faixa", "zoom", "desliza"];
+async function init(data) {
+  D = data;
+  const top = document.getElementById("topo"); top.innerHTML = LOGO_ESCURO();
+  const raiz = document.getElementById("cenas");
+  D.cenas.forEach((c, i) => {
+    const el = $("div", "cena"); raiz.appendChild(el);
+    const S = { ini: c.ini, fim: c.fim, palavras: c.palavras || [] };
+    const fn = TIPOS[c.tipo] || TIPOS.frase;
+    const obj = fn(c, el, S, D);
+    CENAS.push(Object.assign(obj, { el, c, ini: c.ini, fim: c.fim, i, entra: i ? TRANS[(i - 1) % 3] : null }));
+    if (i) { const f = $("div", "faixa"); document.getElementById("palco").appendChild(f); TR.push({ b: c.ini, tipo: TRANS[(i - 1) % 3], f }); }
+  });
+  // legendas pequenas (fala), grupos de até 4 palavras
+  const leg = document.getElementById("legenda");
+  D.cenas.forEach((c, i) => {
+    if (["frase", "gancho", "cta"].includes(c.tipo)) return;
+    let cur = [];
+    const flush = () => { if (!cur.length) return; const e = $("div", "chunk"); cur.forEach(w => { const s = $("span"); s.textContent = w.w; s._w = w; e.appendChild(s); });
+      leg.appendChild(e); CHUNKS.push({ e, ini: cur[0].ini, fim: cur[cur.length - 1].fim, cena: i }); cur = []; };
+    (c.palavras || []).forEach((w, k, a) => { cur.push(w); if (/[.,!?:;]$/.test(w.w) || cur.length >= 4 || k === a.length - 1) flush(); });
+  });
+  await document.fonts.ready;
+  await Promise.all([...document.fonts].map(f => f.load().catch(() => null)));
+  CENAS.forEach(s => { s.el.style.display = "block"; s.el.style.opacity = 1; s.medir && s.medir(); });
+  CENAS.forEach(s => s.sons && s.sons(s.ini, s.fim - s.ini));
+  TR.forEach(r => sfx(r.b - .22, "passa"));
+  window.SONS = EV;
+  render(0);
+  window.pronto = true;
+}
+
+function render(t) {
+  fundo(t, Math.max(0, CENAS.findIndex(s => t >= s.ini && t < s.fim)));
+  document.getElementById("barra").style.width = (W * clamp(t / D.dur)) + "px";
+  // topo: logo pequeno some na chamada final
+  const ult = CENAS[CENAS.length - 1];
+  const top = document.getElementById("topo"); top.style.opacity = seg(t, .1, .5) * (1 - seg(t, ult.ini - .2, ult.ini + .1));
+  desenha(top.firstChild, seg(t, 0, 1.1));
+  CENAS.forEach((s, i) => {
+    const prox = CENAS[i + 1];
+    const iniV = s.entra === "desliza" ? s.ini - .25 : s.ini;
+    const fimV = prox ? (prox.entra === "desliza" ? s.fim + .15 : s.fim) : D.dur + 1;
+    const vis = t >= iniV && t < fimV;
+    s.el.style.display = vis ? "block" : "none";
+    if (!vis) return;
+    const lt = t - s.ini, d = s.fim - s.ini;
+    let ty = 0, sc = 1 + .035 * seg(t, s.ini, s.fim), op = 1;
+    if (s.entra === "zoom") { const p = eo(seg(lt, 0, .38)); sc *= lerp(1.22, 1, p); op = seg(lt, 0, .12); }
+    if (s.entra === "desliza") { ty += lerp(H, 0, eio(seg(lt, -.25, .15))); }
+    if (prox && prox.entra === "zoom") { const p = seg(t, s.fim - .16, s.fim); sc *= lerp(1, .86, p); op *= 1 - p; }
+    if (prox && prox.entra === "desliza") { ty += lerp(0, -H, eio(seg(t, s.fim - .25, s.fim + .15))); }
+    s.el.style.transform = `translateY(${ty}px) scale(${sc})`; s.el.style.opacity = op;
+    s.render(lt, d, t);
+  });
+  TR.forEach(r => {
+    if (r.tipo === "faixa") { const p = seg(t, r.b - .24, r.b + .24); r.f.style.display = p > 0 && p < 1 ? "block" : "none";
+      r.f.style.transform = `translateX(${lerp(-1900, 1900, eio(p))}px) skewX(-12deg)`; }
+  });
+  const z = TR.filter(r => r.tipo === "zoom" && t >= r.b && t < r.b + .3)[0];
+  document.getElementById("flash").style.opacity = z ? .45 * (1 - seg(t, z.b, z.b + .3)) : 0;
+  // legenda
+  let atual = null; CHUNKS.forEach(c => { if (t >= c.ini - .05 && t < c.fim + .5) atual = c; });
+  CHUNKS.forEach(c => {
+    const on = c === atual && t >= CENAS[c.cena].ini && t < CENAS[c.cena].fim;
+    c.e.style.display = on ? "block" : "none";
+    if (on) { c.e.style.transform = `scale(${lerp(.9, 1, mola(seg(t, c.ini - .05, c.ini + .25)))})`;
+      c.e.querySelectorAll("span").forEach(s => s.classList.toggle("on", t >= s._w.ini && t <= s._w.fim + .05)); }
+  });
+}
+window.init = init; window.render = render;
+</script>
+</body>
+</html>

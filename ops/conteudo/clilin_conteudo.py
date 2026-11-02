@@ -164,14 +164,22 @@ FORMATO = {
 Regras das lâminas: 6 a 8 lâminas. A 1ª é a capa: título forte de até 8 palavras que prende a atenção, texto de até 12 palavras.
 As do meio: título de até 7 palavras e texto de até 32 palavras, uma ideia por lâmina, prática.
 A última é a chamada: título de até 6 palavras e texto de até 20 palavras levando para clilin.com.""",
-    "reel": """Escreva UM reels de 35 a 45 segundos, narrado por uma voz só. JSON:
+    "reel": """Escreva UM reels de 30 a 40 segundos com motion, narrado por uma voz feminina. JSON:
 {"titulo_interno": "resumo de 5 a 8 palavras",
  "legenda": "legenda do post, 2 a 4 frases curtas, termina com chamada para clilin.com ou link da bio",
  "hashtags": ["até 5 hashtags sem espaço, começando com #"],
- "cenas": [{"fala": "o que a voz fala", "tela": "texto grande na tela", "apoio": "linha pequena opcional ou vazio"}]}
-Regras: 6 a 8 cenas. A 1ª é o gancho (prende nos 2 primeiros segundos). A última é a chamada para clilin.com.
-"fala": 1 ou 2 frases naturais de falar em voz alta, somando 90 a 115 palavras no vídeo todo. Escreva valores por extenso do jeito que se fala ("quinze por cento", "três reais").
-"tela": até 6 palavras, o recado principal da cena. "apoio": até 10 palavras ou "".""",
+ "oferta": {"loja": "nome genérico e inventado de negócio local, ex.: Pizzaria do Bairro", "titulo": "oferta de até 4 palavras",
+            "de": 59, "por": 39, "cidade": "Sua cidade"},
+ "cenas": [{"tipo": "...", "fala": "...", "...": "campos do tipo"}]}
+Tipos de cena:
+- "gancho": abre o vídeo e prende nos 2 primeiros segundos. "texto": até 6 palavras grandes na tela. "destaque": 1 ou 2 palavras do texto para colorir. "rotulo": selo de até 4 palavras dizendo para quem é (ex.: "Para quem tem negócio").
+- "frase": a própria fala aparece grande na tela, palavra por palavra. "destaque": 1 ou 2 palavras da fala. "rotulo": opcional.
+- "celular": mostra o Clilin de verdade num celular. "tela" é uma destas: "ofertas" (cliente vendo as ofertas da cidade), "oferta" (cliente toca em Quero meu cupom e o código aparece), "whatsapp" (o cupom chegando no WhatsApp), "validar" (empresário digita o código no painel e o cupom é resgatado), "divulgador" (divulgador copia o link da oferta e manda nos grupos). "texto": título de até 6 palavras acima do celular. "destaque": 1 ou 2 palavras do texto.
+- "numero": número grande animado. "valor": só o número; "prefixo" (ex.: "R$ ") e "sufixo" (ex.: "%"); "texto": até 10 palavras explicando; "rotulo": opcional. Só números verdadeiros do Clilin: 15% do preço por cupom usado, mínimo de R$ 3, 10% de desconto no pré-pago, 50% da taxa para o divulgador (até 70% conforme o nível), saque a partir de R$ 100.
+- "lista": "texto": título de até 4 palavras; "itens": 2 a 4 itens de até 4 palavras cada.
+- "cta": a última cena. "texto": até 6 palavras; "destaque"; "url": "clilin.com"; "rotulo": "link na bio".
+Regras: 7 a 10 cenas. A 1ª é "gancho" e a última é "cta". Use 3 ou 4 cenas "celular" com telas diferentes que façam sentido para a pauta (empresas: oferta, whatsapp, validar; divulgadores: divulgador, oferta, whatsapp; clientes: ofertas, oferta, whatsapp). Varie a ordem e use pelo menos uma "frase".
+"fala": curta e natural de falar em voz alta (até 18 palavras por cena), somando 70 a 100 palavras no vídeo todo. Valores por extenso do jeito que se fala ("quinze por cento", "três reais"). O texto da tela combina com a fala, mas é mais curto.""",
 }
 
 
@@ -210,12 +218,21 @@ def valida(tipo, c):
             return "lâmina sem título ou texto"
     else:
         cs = c.get("cenas") or []
-        if not 5 <= len(cs) <= 9:
+        if not 6 <= len(cs) <= 11:
             return f"{len(cs)} cenas"
-        if any(not (s.get("fala") and s.get("tela")) for s in cs):
-            return "cena sem fala ou tela"
+        tipos = {"gancho", "frase", "celular", "numero", "lista", "cta"}
+        if any(s.get("tipo") not in tipos or not s.get("fala") for s in cs):
+            return "cena sem tipo válido ou sem fala"
+        if cs[0]["tipo"] != "gancho" or cs[-1]["tipo"] != "cta":
+            return "a 1ª cena tem que ser gancho e a última cta"
+        if any(s["tipo"] == "celular" and s.get("tela") not in ("ofertas", "oferta", "whatsapp", "validar", "divulgador") for s in cs):
+            return "cena celular com tela inválida"
+        if any(s["tipo"] == "numero" and not isinstance(s.get("valor"), (int, float)) for s in cs):
+            return "cena numero sem valor numérico"
+        if any(s["tipo"] in ("gancho", "celular", "cta") and not s.get("texto") for s in cs):
+            return "cena sem texto de tela"
         n = sum(len(s["fala"].split()) for s in cs)
-        if not 70 <= n <= 140:
+        if not 60 <= n <= 115:
             return f"{n} palavras de narração"
     return None
 
@@ -497,205 +514,69 @@ def render_carrossel(item_id):
     log("carrossel desenhado", item_id, total, "lâminas")
 
 
-# ---------------------------------------------------------------- reels
-VW, VH, FPS = 1080, 1920, 30
-FUNDOS = [(VIOLETA, ROSA), (ROSA, LARANJA), (ESCURO, VIOLETA), (VIOLETA, LARANJA), (ESCURO, ROSA)]
+# ---------------------------------------------------------------- reels (motion em HTML: motion/reel.html)
+sys.path.insert(0, f"{AQUI}/motion")
+import render as motion  # noqa: E402
 
 
-def ffprobe_dur(arq):
-    r = subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", arq],
-                       capture_output=True, text=True)
-    return float(r.stdout.strip() or 0)
-
-
-def tts(e, texto, destino):
-    voz = e.get("TTS_VOZ") or "YMsc4g1hLpt43RnYIKOh"
-    modelo = e.get("TTS_MODEL") or "eleven_v4"
+def tts_ts(e, texto, pasta):
+    """Narração inteira numa chamada só, com o tempo de cada letra (para animar no ritmo da fala)."""
+    voz = e.get("CLILIN_VOZ") or e.get("TTS_VOZ") or "YMsc4g1hLpt43RnYIKOh"
+    modelo = e.get("CLILIN_TTS_MODEL") or e.get("TTS_MODEL") or "eleven_v4"
+    mp3, js = f"{pasta}/narracao.mp3", f"{pasta}/narracao.json"
+    if os.path.exists(mp3) and os.path.exists(js):
+        d = json.load(open(js))
+        if d.get("voz") == voz and d.get("texto") == texto:
+            return mp3, d["alinhamento"]
     key = e.get("ELEVENLABS_API_KEY")
     if not key:
         sys.exit("ERRO: falta ELEVENLABS_API_KEY")
     body = json.dumps({"text": texto, "model_id": modelo, "language_code": "pt"}).encode()
     for tent in range(3):
         try:
-            rq = urllib.request.Request(f"https://api.elevenlabs.io/v1/text-to-speech/{voz}?output_format=mp3_44100_128",
-                                        data=body, headers={"xi-api-key": key, "Content-Type": "application/json",
-                                                            "Accept": "audio/mpeg"})
-            open(destino, "wb").write(urllib.request.urlopen(rq, timeout=120).read())
-            return
+            rq = urllib.request.Request(
+                f"https://api.elevenlabs.io/v1/text-to-speech/{voz}/with-timestamps?output_format=mp3_44100_128",
+                data=body, headers={"xi-api-key": key, "Content-Type": "application/json"})
+            r = json.loads(urllib.request.urlopen(rq, timeout=180).read())
+            break
         except urllib.error.HTTPError as x:
-            msg = limpa(x.read()[:200].decode("utf-8", "replace"))
-            log("erro TTS", x.code, msg)
+            log("erro TTS", x.code, limpa(x.read()[:200].decode("utf-8", "replace")))
             if x.code in (400, 401, 403, 422):
                 sys.exit(2)
             time.sleep(5)
-    sys.exit("ERRO: TTS falhou")
+    else:
+        sys.exit("ERRO: TTS falhou")
+    import base64
+    open(mp3, "wb").write(base64.b64decode(r["audio_base64"]))
+    al = r.get("alignment") or r.get("normalized_alignment")
+    json.dump({"voz": voz, "texto": texto, "alinhamento": al}, open(js, "w"), ensure_ascii=False)
+    return mp3, al
 
 
-def ease(t):
-    t = max(0.0, min(1.0, t))
-    return 1 - (1 - t) ** 3
-
-
-class Cena:
-    """Desenha os quadros de uma cena do reels."""
-
-    def __init__(self, s, i, total, dur, t0, tt):
-        self.s, self.i, self.total, self.dur, self.t0, self.tt = s, i, total, dur, t0, tt
-        c1, c2 = FUNDOS[i % len(FUNDOS)]
-        self.fundo = gradiente(VW, VH, c1, c2).convert("RGBA")
-        self.acento = LARANJA if c2 != LARANJA else BRANCO
-        d = ImageDraw.Draw(self.fundo)
-        self.f_tela, self.l_tela = cabe(d, (s["tela"] or "").upper(), "Unbounded", 900, VW - 170, 5, 118, 64)
-        self.f_apoio, self.l_apoio = cabe(d, s.get("apoio") or "", "Onest", 600, VW - 200, 2, 50, 36)
-        self.f_leg, self.l_leg = cabe(d, s["fala"], "Onest", 600, VW - 200, 4, 44, 32)
-        self.ultima = i == total - 1
-
-    def quadro(self, t):
-        im = self.fundo.copy()
-        camada = Image.new("RGBA", (VW, VH), (0, 0, 0, 0))
-        dc = ImageDraw.Draw(camada)
-        giro = (self.t0 + t) * 12
-        arcos(dc, VW - 150, 520, 30, [(255, 255, 255, 34)] * 3, 64, giro)
-        im.alpha_composite(camada)
-        d = ImageDraw.Draw(im)
-        # barra de progresso do vídeo
-        p = (self.t0 + t) / self.tt
-        d.rounded_rectangle([60, 70, VW - 60, 80], radius=5, fill=(255, 255, 255, 70))
-        d.rounded_rectangle([60, 70, 60 + (VW - 120) * p, 80], radius=5, fill=BRANCO)
-        if not self.ultima:
-            lg = logo("logo_branco", 58)
-            im.alpha_composite(lg, (90, 130))
-        if self.ultima:
-            self._fim(im, d, t)
-        else:
-            self._texto(im, d, t)
-        return im.convert("RGB")
-
-    def _texto(self, im, d, t):
-        lh = int(self.f_tela.size * 1.1)
-        bloco = lh * len(self.l_tela)
-        y0 = 600 - bloco // 2
-        for k, ln in enumerate(self.l_tela):
-            a = ease((t - 0.08 * k) / 0.45)
-            off = int((1 - a) * 90)
-            camada = Image.new("RGBA", (VW, lh + 20), (0, 0, 0, 0))
-            ImageDraw.Draw(camada).text((90, 0), ln, font=self.f_tela, fill=BRANCO + (int(255 * a),))
-            im.alpha_composite(camada, (0, y0 + k * lh + off))
-        # traço de acento
-        a = ease((t - 0.3) / 0.4)
-        y = y0 + bloco + 30
-        d.rounded_rectangle([90, y, 90 + int(150 * a), y + 14], radius=7, fill=self.acento)
-        if self.l_apoio and self.l_apoio[0]:
-            a2 = ease((t - 0.45) / 0.4)
-            yy = y + 54
-            for ln in self.l_apoio:
-                d.text((90, yy), ln, font=self.f_apoio, fill=(255, 255, 255, int(235 * a2)))
-                yy += int(self.f_apoio.size * 1.3)
-        self._legenda(im, t)
-
-    def _legenda(self, im, t, y=None):
-        # legenda da fala (muita gente assiste sem som), acima da área que o Instagram cobre
-        lh = int(self.f_leg.size * 1.34)
-        h = lh * len(self.l_leg) + 56
-        y = VH - 470 - h if y is None else y
-        a = ease(t / 0.3)
-        caixa = Image.new("RGBA", (VW - 120, h), (0, 0, 0, 0))
-        dc = ImageDraw.Draw(caixa)
-        dc.rounded_rectangle([0, 0, VW - 121, h - 1], radius=34, fill=(255, 255, 255, int(240 * a)))
-        yy = 28
-        for ln in self.l_leg:
-            dc.text(((VW - 120 - dc.textlength(ln, font=self.f_leg)) / 2, yy), ln, font=self.f_leg,
-                    fill=ESCURO + (int(255 * a),))
-            yy += lh
-        im.alpha_composite(caixa, (60, y))
-
-    def _fim(self, im, d, t):
-        a = ease(t / 0.5)
-        lg = logo("logo_branco", 150)
-        im.alpha_composite(lg, ((VW - lg.width) // 2, 330 - int((1 - a) * 60)))
-        lh = int(self.f_tela.size * 1.1)
-        y = 620
-        for ln in self.l_tela:
-            d.text(((VW - d.textlength(ln, font=self.f_tela)) / 2, y), ln, font=self.f_tela, fill=BRANCO + (int(255 * a),))
-            y += lh
-        fb = titulo_f(56, 800)
-        tx = "clilin.com"
-        tw = d.textlength(tx, font=fb)
-        a2 = ease((t - 0.35) / 0.45)
-        bw, bh = int(tw + 130), 124
-        botao = gradiente(bw, bh, ROSA, LARANJA).convert("RGBA")
-        m = Image.new("L", botao.size, 0)
-        ImageDraw.Draw(m).rounded_rectangle([0, 0, bw - 1, bh - 1], radius=62, fill=int(255 * a2))
-        by = y + 70
-        im.paste(botao, ((VW - bw) // 2, by), m)
-        d.text(((VW - tw) / 2, by + 30), tx, font=fb, fill=BRANCO + (int(255 * a2),))
-        self._legenda(im, t, by + bh + 60)
-
-
-def render_reel(item_id, e=None, tts_fn=None):
+def render_reel(item_id, e=None):
     e = e or env()
     c = ler(item_id)
     pasta = f"{ITENS}/{item_id}"
-    cenas = c["cenas"]
-    pad = 0.35
-    durs, audios = [], []
-    for i, s in enumerate(cenas):
-        a = f"{pasta}/fala{i + 1:02d}.mp3"
-        if not os.path.exists(a) or os.path.getsize(a) == 0:
-            (tts_fn or tts)(e, s["fala"], a)
-        audios.append(a)
-        durs.append(ffprobe_dur(a) + pad)
-    durs[-1] += 1.2  # respiro no fim
-    total = sum(durs)
-    # narração com os respiros entre as cenas
-    lista = f"{pasta}/narracao.txt"
-    with open(lista, "w") as fl:
-        for a, dd in zip(audios, durs):
-            fl.write(f"file '{os.path.basename(a)}'\nduration {dd:.3f}\n")
-    narr = f"{pasta}/narracao.wav"
-    filtros = []
-    entradas = []
-    for k, (a, dd) in enumerate(zip(audios, durs)):
-        entradas += ["-i", a]
-        filtros.append(f"[{k}:a]aresample=44100,apad,atrim=0:{dd:.3f}[a{k}]")
-    filtros.append("".join(f"[a{k}]" for k in range(len(audios))) + f"concat=n={len(audios)}:v=0:a=1[out]")
-    subprocess.run(["ffmpeg", "-y", "-loglevel", "error", *entradas, "-filter_complex", ";".join(filtros), "-map", "[out]", narr],
-                   check=True)
-    # vídeo: quadros direto para o ffmpeg
+    cenas = [dict(s) for s in c["cenas"]]
+    texto = " ".join(s["fala"].strip() for s in cenas)
+    mp3, al = tts_ts(e, texto, pasta)
+    dur = motion.alinha(cenas, al)
+    dados = {"cenas": cenas, "dur": dur, "oferta": c.get("oferta")}
     mudo = f"{pasta}/mudo.mp4"
-    proc = subprocess.Popen(["ffmpeg", "-y", "-loglevel", "error", "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", f"{VW}x{VH}",
-                             "-r", str(FPS), "-i", "-", "-c:v", "libx264", "-preset", "veryfast", "-crf", "20",
-                             "-pix_fmt", "yuv420p", mudo], stdin=subprocess.PIPE)
-    t0 = 0.0
-    for i, (s, dd) in enumerate(zip(cenas, durs)):
-        cena = Cena(s, i, len(cenas), dd, t0, total)
-        for q in range(int(round(dd * FPS))):
-            proc.stdin.write(cena.quadro(q / FPS).tobytes())
-        t0 += dd
-    proc.stdin.close()
-    if proc.wait() != 0:
-        sys.exit("ERRO: ffmpeg do vídeo")
-    # trilha por baixo da voz
+    log("montando motion", item_id, f"{dur:.1f}s")
+    sons = motion.quadros(dados, mudo, log=log)
     trilhas = sorted(f for f in os.listdir(TRILHAS) if f.endswith(".mp3")) if os.path.isdir(TRILHAS) else []
+    trilha = f"{TRILHAS}/{trilhas[int(item_id[:8]) % len(trilhas)]}" if trilhas else None
     final = f"{pasta}/reel.mp4"
-    if trilhas:
-        tr = f"{TRILHAS}/{trilhas[hash(item_id) % len(trilhas)]}"
-        fc = (f"[2:a]volume=0.13,afade=t=in:d=0.5,afade=t=out:st={max(total - 2, 0):.2f}:d=2,atrim=0:{total:.3f}[m];"
-              f"[1:a]volume=1.0[v];[v][m]amix=inputs=2:duration=first:dropout_transition=0,loudnorm=I=-14:TP=-1.5[a]")
-        cmd = ["ffmpeg", "-y", "-loglevel", "error", "-i", mudo, "-i", narr, "-stream_loop", "-1", "-i", tr,
-               "-filter_complex", fc, "-map", "0:v", "-map", "[a]", "-c:v", "copy", "-c:a", "aac", "-b:a", "192k",
-               "-ar", "44100", "-shortest", "-movflags", "+faststart", final]
-    else:
-        cmd = ["ffmpeg", "-y", "-loglevel", "error", "-i", mudo, "-i", narr, "-map", "0:v", "-map", "1:a", "-c:v", "copy",
-               "-c:a", "aac", "-b:a", "192k", "-shortest", "-movflags", "+faststart", final]
-    subprocess.run(cmd, check=True)
-    # capa (primeira cena já com o texto)
-    Cena(cenas[0], 0, len(cenas), durs[0], 0, total).quadro(0.9).save(f"{pasta}/capa.jpg", quality=90)
-    for tmp in (mudo, narr, lista):
-        if os.path.exists(tmp):
-            os.remove(tmp)
-    marca(item_id, estado="pronto", duracao=round(total, 1))
-    log("reels montado", item_id, f"{total:.1f}s")
+    motion.mistura(mudo, mp3, sons, trilha, dur, final, vol_trilha=float(e.get("CLILIN_VOL_TRILHA") or 0.30))
+    # capa: primeira tela de celular com a ação acontecendo, ou o gancho
+    cel = next((s for s in cenas if s["tipo"] == "celular"), None)
+    t_capa = min(cel["ini"] + 1.6, cel["fim"] - 0.2) if cel else 1.2
+    subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-ss", f"{t_capa:.2f}", "-i", final, "-frames:v", "1", "-q:v", "3",
+                    f"{pasta}/capa.jpg"], check=True)
+    os.remove(mudo)
+    marca(item_id, estado="pronto", duracao=round(dur, 1), trilha=os.path.basename(trilha or ""))
+    log("reels montado", item_id, f"{dur:.1f}s")
 
 
 def render(item_id):
