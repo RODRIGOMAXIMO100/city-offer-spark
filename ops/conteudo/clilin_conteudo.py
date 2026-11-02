@@ -754,8 +754,18 @@ def publica_arquivos(item_id, nomes):
 
 def espera_container(req, cid, limite=600):
     t = time.time()
+    falhas = 0
+    time.sleep(3)
     while time.time() - t < limite:
-        st = req("GET", cid, {"fields": "status_code,status"}).get("status_code")
+        try:
+            st = req("GET", cid, {"fields": "status_code"}).get("status_code")
+        except RuntimeError as x:
+            # logo depois de criado, o container às vezes ainda não responde (subcode 33)
+            falhas += 1
+            if falhas > 8 or "Unsupported get" not in str(x):
+                raise
+            time.sleep(8)
+            continue
         if st == "FINISHED":
             return
         if st in ("ERROR", "EXPIRED"):
