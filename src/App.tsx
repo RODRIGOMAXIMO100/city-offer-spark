@@ -34,6 +34,8 @@ import MarcaPage from "./pages/MarcaPage";
 import MarcaCorrentePage from "./pages/MarcaCorrentePage";
 
 import WhatsAppButton from "./components/WhatsAppButton";
+import ScrollToTop from "./components/ScrollToTop";
+import ChatPage from "./pages/ChatPage";
 
 const queryClient = new QueryClient();
 
@@ -80,8 +82,7 @@ function AdminRoute({ children }: { children: React.ReactNode }) {
 const AppRoutes = () => (
   <Routes>
     <Route path="/" element={<LandingPage />} />
-    {/* Chat IA fora do ar até ter conteúdo do modelo de campanhas */}
-    <Route path="/chat" element={<Navigate to="/" replace />} />
+    <Route path="/chat" element={<ChatPage />} />
     <Route path="/auth" element={<PublicRoute><AuthPage /></PublicRoute>} />
     <Route path="/auth/callback" element={<AuthCallbackPage />} />
     <Route path="/redefinir-senha" element={<ResetPasswordPage />} />
@@ -124,6 +125,7 @@ const App = () => (
       <BrowserRouter>
         <AuthProvider>
           <OnboardingProvider>
+            <ScrollToTop />
             <AppRoutes />
             <WhatsAppButton />
           </OnboardingProvider>

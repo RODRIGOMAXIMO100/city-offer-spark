@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
-import { MapPin, Search, Ticket, Bell, Store, ArrowRight, Loader2, MessageCircle, Sparkles, X } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { MapPin, Search, Ticket, Bell, Store, ArrowRight, Loader2, MessageCircle, Sparkles } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -49,8 +49,7 @@ const OfertasPage = () => {
   const [city, setCity] = useState(readCity);
   const [term, setTerm] = useState("");
   const [waitlist, setWaitlist] = useState(false);
-  const [ai, setAi] = useState<{ resposta: string; ids: string[] } | null>(null);
-  const [aiLoading, setAiLoading] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     (async () => {
@@ -87,41 +86,24 @@ const OfertasPage = () => {
   const activeCity = cities.some(([c]) => c === city) ? city : "";
 
   const visible = useMemo(() => {
-    if (ai) return ai.ids.map((id) => offers.find((o) => o.id === id)).filter(Boolean) as PublicOffer[];
     const t = norm(term.trim());
     return offers.filter(
       (o) =>
         (!activeCity || o.city === activeCity) &&
         (!t || norm(`${o.title} ${o.description ?? ""} ${o.company?.name ?? ""}`).includes(t)),
     );
-  }, [offers, activeCity, term, ai]);
+  }, [offers, activeCity, term]);
 
-  // Busca com IA: o Claude escolhe entre as ofertas ativas da cidade
-  const askAi = async () => {
+  // Pergunta para a Clilin: abre o chat já com a pergunta
+  const askAi = () => {
     const q = term.trim();
-    if (q.length < 2 || aiLoading) return;
-    setAiLoading(true);
-    const { data, error } = await supabase.functions.invoke("busca-ofertas", { body: { q, cidade: activeCity || null } });
-    setAiLoading(false);
-    if (error || data?.error) {
-      let msg = data?.error ?? "Não deu para buscar agora. Tente de novo.";
-      try {
-        const ctx = (error as { context?: Response } | null)?.context;
-        const b = ctx ? await ctx.json() : null;
-        if (b?.error) msg = b.error;
-      } catch {
-        /* mantém a mensagem */
-      }
-      setAi({ resposta: msg, ids: [] });
-      return;
-    }
-    setAi({ resposta: data?.resposta ?? "", ids: Array.isArray(data?.ids) ? data.ids : [] });
+    if (q.length < 2) return;
+    navigate(`/chat?q=${encodeURIComponent(q)}`);
   };
 
   const pickCity = (c: string) => {
     setCity(c);
     saveCity(c);
-    setAi(null);
   };
 
   return (
@@ -157,35 +139,25 @@ const OfertasPage = () => {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 value={term}
-                onChange={(e) => {
-                  setTerm(e.target.value);
-                  setAi(null);
-                }}
+                onChange={(e) => setTerm(e.target.value)}
                 placeholder="O que você procura? Pizza, academia, salão..."
                 className="pl-9 h-12 rounded-2xl"
                 aria-label="Buscar ofertas"
               />
             </div>
-            <Button type="submit" className="h-12 rounded-2xl px-4" disabled={term.trim().length < 2 || aiLoading}>
-              {aiLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
-              <span className="ml-2 hidden sm:inline">Buscar</span>
+            <Button type="submit" className="h-12 rounded-2xl px-4" disabled={term.trim().length < 2}>
+              <Sparkles className="h-4 w-4" />
+              <span className="ml-2 hidden sm:inline">Perguntar à Clilin</span>
             </Button>
           </form>
 
-          {ai && (
-            <div className="max-w-xl mx-auto mb-6 rounded-2xl border border-primary/20 bg-primary/5 p-4 flex items-start gap-3">
-              <Sparkles className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-              <p className="flex-1 text-sm text-foreground">{ai.resposta}</p>
-              <button
-                type="button"
-                onClick={() => setAi(null)}
-                className="text-muted-foreground hover:text-foreground"
-                aria-label="Limpar busca"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            </div>
-          )}
+          <p className="text-center text-sm text-muted-foreground -mt-2 mb-6">
+            Prefere conversar?{" "}
+            <Link to="/chat" className="font-medium text-primary underline underline-offset-2">
+              Pergunte à Clilin
+            </Link>{" "}
+            e ela acha a oferta certa para você.
+          </p>
 
           {cities.length > 0 && (
             <div className="flex flex-wrap justify-center gap-2 mb-8">

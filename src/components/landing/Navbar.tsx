@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, LogOut } from "lucide-react";
+import { Menu, X, LogOut, Sparkles } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { BrandLogo } from "@/components/brand/BrandLogo";
 
@@ -58,6 +58,13 @@ export function Navbar() {
               className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground rounded-lg hover:bg-muted/50 transition-all whitespace-nowrap"
             >
               Ofertas
+            </Link>
+            <Link 
+              to="/chat" 
+              className="px-4 py-2 text-sm font-medium text-foreground rounded-lg hover:bg-muted/50 transition-all whitespace-nowrap inline-flex items-center gap-1.5"
+            >
+              <Sparkles className="h-4 w-4 text-primary" />
+              Pergunte à Clilin
             </Link>
             <Link 
               to="/empresas" 
@@ -136,6 +143,14 @@ export function Navbar() {
                 className="text-left px-4 py-3 text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-lg transition-colors"
               >
                 Ofertas
+              </Link>
+              <Link 
+                to="/chat" 
+                onClick={() => setIsOpen(false)}
+                className="text-left px-4 py-3 text-foreground hover:bg-muted/50 rounded-lg transition-colors inline-flex items-center gap-2 font-medium"
+              >
+                <Sparkles className="h-4 w-4 text-primary" />
+                Pergunte à Clilin
               </Link>
               <Link 
                 to="/empresas" 
