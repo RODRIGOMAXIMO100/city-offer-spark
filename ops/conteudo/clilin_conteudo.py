@@ -370,7 +370,10 @@ def arcos(d, cx, cy, escala, cores, larg, giro=0.0):
         rr = r * escala
         x0 = cx + ox * escala
         a0, a1 = abre + giro, 360 - abre + giro
-        d.arc([x0 - rr, cy - rr, x0 + rr, cy + rr], a0, a1, fill=cor, width=larg)
+        # o PIL desenha a espessura para DENTRO da caixa: a caixa cresce meia espessura para o meio
+        # do traço ficar no raio certo e as pontas redondas encaixarem (sem "bolinha" sobrando)
+        ro = rr + larg / 2
+        d.arc([x0 - ro, cy - ro, x0 + ro, cy + ro], a0, a1, fill=cor, width=larg)
         for a in (a0, a1):
             px, py = x0 + rr * math.cos(math.radians(a)), cy + rr * math.sin(math.radians(a))
             q = larg / 2 - 0.5
