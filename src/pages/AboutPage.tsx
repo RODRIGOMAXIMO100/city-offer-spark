@@ -44,7 +44,7 @@ const AboutPage = () => {
             <h2 className="text-2xl sm:text-4xl font-display font-bold text-foreground mb-4">O que é o Clilin</h2>
             <p className="text-lg text-muted-foreground leading-relaxed">
               Um anúncio fala com quem não pediu. Uma indicação de alguém conhecido é diferente: a pessoa confia e vai. O Clilin transforma isso em
-              cliente na porta. A loja cria a oferta, divulgadores da cidade indicam, o cliente pega o cupom no WhatsApp e a loja confere o código
+              cliente na porta. A loja cria a oferta, divulgadores da cidade indicam, o cliente pega o cupom no WhatsApp e a loja confirma no WhatsApp com um toque
               no balcão. Só aí existe cobrança.
             </p>
           </div>
@@ -56,8 +56,8 @@ const AboutPage = () => {
               </span>
               <h3 className="text-xl font-display font-bold text-foreground mb-2">Para empresas</h3>
               <p className="text-muted-foreground mb-5">
-                Cliente novo na loja, pagando só pelo cupom usado: 15% do preço da oferta, mínimo de R$ 3. Sem mensalidade. Você confere cada código
-                no painel antes de dar o desconto.
+                Cliente novo na loja, pagando só pelo cupom usado: 15% do preço da oferta, mínimo de R$ 3. Sem mensalidade. Você confirma cada cupom
+                no WhatsApp com um toque.
               </p>
               <Link to="/empresas" className="inline-flex items-center gap-2 font-semibold text-company hover:underline">
                 Como funciona para empresas <ArrowRight className="h-4 w-4" />

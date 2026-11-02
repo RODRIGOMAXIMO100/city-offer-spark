@@ -21,6 +21,7 @@ import {
   Trophy,
   Coins,
 
+  ClipboardList,
 } from 'lucide-react';
 import { SHOW_REACH_CAMPAIGNS } from '@/lib/reach';
 import {
@@ -58,6 +59,7 @@ export type AdminSection =
   | 'security'
   | 'niches'
   | 'cities'
+  | 'pre-cadastros'
   | 'blog'
   | 'seo'
   | 'wa-templates';
@@ -99,6 +101,7 @@ const couponGroups = [
     icon: Users,
     items: [
       { id: 'users' as AdminSection, label: 'Usuários', icon: Users },
+      { id: 'pre-cadastros' as AdminSection, label: 'Pré-cadastros', icon: ClipboardList },
       { id: 'transactions' as AdminSection, label: 'Transações', icon: DollarSign },
       { id: 'payments' as AdminSection, label: 'Pagamentos online', icon: CreditCard },
     ]

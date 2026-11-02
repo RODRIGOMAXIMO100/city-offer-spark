@@ -137,7 +137,7 @@ O QUE É O CLILIN
 - A loja só paga pelo cupom usado: 15% do preço da oferta, mínimo de R$ 3. Sem mensalidade. Visita e cupom não usado não custam nada. Com saldo pré-pago, 10% de desconto.
 - Divulgador: indica as ofertas da cidade pelo próprio link e ganha metade da taxa de cada cupom usado por quem veio do link dele, chegando a 70% conforme o nível. Saque por Pix a partir de R$ 100. Cadastro grátis, não precisa ter muitos seguidores.
 - Cliente: grátis, sem app e sem cadastro.
-- Ofertas separadas por cidade. Site: clilin.com (ofertas em clilin.com/ofertas). O Clilin é um produto do Grupo MAXIMO.
+- Ofertas separadas por cidade. O Clilin está começando por Belo Horizonte (MG): o cadastro de empresas e divulgadores está aberto em BH, e quem é de outra cidade faz o pré-cadastro. Pode falar de BH e dos bairros de BH. Site: clilin.com (ofertas em clilin.com/ofertas). O Clilin é um produto do Grupo MAXIMO.
 
 PÚBLICOS (a pauta do dia diz qual)
 - empresas: donos de restaurante, salão, academia, loja, pizzaria, açaí, pet shop etc. Dores: movimento fraco, gastar com anúncio sem saber se voltou cliente, promoção que não traz gente nova, cliente que não volta.

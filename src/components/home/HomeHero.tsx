@@ -13,7 +13,7 @@ export function HomeHero() {
         <div className="text-center lg:text-left">
           <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 text-primary px-4 py-2 rounded-full text-sm font-semibold mb-6 animate-fade-in-up">
             <MapPin className="h-4 w-4" />
-            Ofertas locais com cupom no WhatsApp
+            Começando por Belo Horizonte
           </div>
 
           <h1
@@ -29,7 +29,7 @@ export function HomeHero() {
             style={{ animationDelay: "0.2s" }}
           >
             Negócios da cidade publicam promoções, divulgadores espalham e o cliente pega o cupom de graça, direto no WhatsApp.
-            A loja confere o código no balcão e <strong className="text-foreground">só paga pelo cupom usado</strong>.
+            A loja confirma no WhatsApp com um toque e <strong className="text-foreground">só paga pelo cupom usado</strong>.
           </p>
 
           <div
@@ -99,7 +99,7 @@ export function HomeHero() {
               <CheckCircle2 className="h-8 w-8 text-company shrink-0" />
               <div>
                 <p className="font-semibold">Cupom válido</p>
-                <p className="text-xs text-muted-foreground">Conferido no balcão. Só agora a loja paga: R$ 5,85.</p>
+                <p className="text-xs text-muted-foreground">Confirmado no WhatsApp. Só agora a loja paga: R$ 5,85.</p>
               </div>
             </div>
           </div>

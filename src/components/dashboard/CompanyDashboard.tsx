@@ -440,7 +440,7 @@ function CompanyDashboardContent() {
             {SHOW_COUPON_OFFERS && (
             <TabsTrigger value="coupons" className="flex items-center gap-1.5 text-xs sm:text-sm">
               <Ticket className="h-4 w-4" />
-              Validar cupom
+              Confirmar cupons
             </TabsTrigger>
             )}
             {SHOW_REACH_CAMPAIGNS && (

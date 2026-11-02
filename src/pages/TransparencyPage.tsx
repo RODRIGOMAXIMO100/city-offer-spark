@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 const verification = [
   { icon: KeyRound, title: "Código único", text: "Cada cupom tem um código de 8 letras que só existe uma vez. Ele fica ligado à oferta, à loja e ao WhatsApp de quem pegou." },
   { icon: Clock, title: "Validade", text: "O cupom tem prazo para ser usado, definido pela loja e nunca depois do fim da oferta. Cupom vencido não passa." },
-  { icon: Store, title: "Conferência no balcão", text: "A loja digita o código no painel. Só aceita códigos da própria loja, e cada código vale uma vez: depois de conferido, fica marcado como usado." },
+  { icon: Store, title: "Confirmação pela loja", text: "A loja recebe o aviso de cada cupom no WhatsApp e confirma com um toque quando o cliente chega (ou digita o código no painel). Só vale cupom da própria loja, e cada código vale uma vez: depois de confirmado, fica marcado como usado." },
   { icon: ShieldCheck, title: "Proteção contra abuso", text: "Até 3 cupons por dia no mesmo WhatsApp e limite por aparelho. Telefone falso, validação sem cliente ou combinação entre loja e divulgador bloqueiam a conta." },
 ];
 
@@ -61,7 +61,7 @@ export default function TransparencyPage() {
             <div className="grid sm:grid-cols-2 gap-5 mt-6">
               <div>
                 <p className="font-display font-bold text-foreground text-lg">Metade vai para o divulgador</p>
-                <p className="text-muted-foreground">Chega a 70% conforme o nível dele no mês. Cai no saldo quando a loja confere o cupom.</p>
+                <p className="text-muted-foreground">Chega a 70% conforme o nível dele no mês. Cai no saldo quando a loja confirma o cupom.</p>
               </div>
               <div>
                 <p className="font-display font-bold text-foreground text-lg">O resto mantém o Clilin</p>
@@ -110,7 +110,7 @@ export default function TransparencyPage() {
             {[
               "Cada divulgador tem um link para cada oferta da cidade.",
               "Quem pega o cupom por esse link fica marcado no nome do divulgador.",
-              "Quando a loja confere o cupom, o divulgador recebe metade da taxa, ou até 70% conforme o nível.",
+              "Quando a loja confirma o cupom, o divulgador recebe metade da taxa, ou até 70% conforme o nível.",
               "Os níveis sobem com a quantidade de clientes no mês: Bronze, Prata, Ouro, Platina e Diamante.",
               "O saldo pode ser sacado por Pix a partir de R$ 100.",
             ].map((t) => (
@@ -130,7 +130,7 @@ export default function TransparencyPage() {
             <FileBarChart className="h-7 w-7 text-company mb-3" />
             <h2 className="text-xl sm:text-2xl font-display font-bold text-foreground mb-3">O que a loja vê</h2>
             <p className="text-muted-foreground">
-              Um painel com cada oferta: quantas pessoas viram, quantas pegaram o cupom e quantos cupons foram usados. Cada cupom conferido aparece com
+              Um painel com cada oferta: quantas pessoas viram, quantas pegaram o cupom e quantos cupons foram usados. Cada cupom confirmado aparece com
               o nome do cliente, o horário e quanto foi cobrado.
             </p>
           </div>

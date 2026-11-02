@@ -42,10 +42,10 @@ export default function CityWaitlistModal({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!name.trim() || !email.trim()) {
+    if (!name.trim() || !email.trim() || phone.replace(/\D/g, '').length < 10) {
       toast({
         title: "Preencha os campos obrigatórios",
-        description: "Nome e email são necessários.",
+        description: "Nome, email e WhatsApp com DDD.",
         variant: "destructive"
       });
       return;
@@ -67,8 +67,8 @@ export default function CityWaitlistModal({
       if (error) {
         if (error.code === '23505') {
           toast({
-            title: "Você já está na lista! 💛",
-            description: "Vamos te avisar assim que chegarmos aí."
+            title: "Seu pré-cadastro já estava feito",
+            description: "Vamos te chamar no WhatsApp assim que abrirmos aí."
           });
           setSuccess(true);
           return;
@@ -78,13 +78,13 @@ export default function CityWaitlistModal({
 
       setSuccess(true);
       toast({
-        title: "Você está na lista! 💛",
-        description: `Vamos te avisar quando a Clilin chegar em ${cityName}.`
+        title: "Pré-cadastro feito",
+        description: `Vamos te chamar no WhatsApp quando o Clilin abrir em ${cityName}.`
       });
     } catch (error) {
       console.error('Error joining waitlist:', error);
       toast({
-        title: "Erro ao entrar na lista",
+        title: "Não deu para fazer o pré-cadastro",
         description: "Tente novamente em alguns instantes.",
         variant: "destructive"
       });
@@ -109,10 +109,10 @@ export default function CityWaitlistModal({
             <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
               <Heart className="h-8 w-8 text-primary" />
             </div>
-            <h3 className="text-xl font-semibold mb-2">Obrigado pelo interesse! 💛</h3>
+            <h3 className="text-xl font-semibold mb-2">Pré-cadastro feito!</h3>
             <p className="text-muted-foreground mb-4">
-              Você está na lista de espera de <strong>{cityName} - {stateName}</strong>. 
-              Vamos te avisar assim que chegarmos aí!
+              Você está no pré-cadastro de <strong>{cityName} - {stateName}</strong>. Quando o Clilin abrir na sua
+              cidade, a gente te chama no WhatsApp para terminar o cadastro.
             </p>
             <Button onClick={handleClose}>Fechar</Button>
           </div>
@@ -124,20 +124,23 @@ export default function CityWaitlistModal({
                 <span className="font-medium">{cityName} - {stateName}</span>
               </div>
               <DialogTitle className="text-xl">
-                Ainda não chegamos aí... mas estamos a caminho! 💛
+                Estamos começando por Belo Horizonte
               </DialogTitle>
               <DialogDescription>
-                Entre na lista de espera e seja o primeiro a saber quando a Clilin 
-                estiver disponível na sua cidade.
+                {role === 'COMPANY'
+                  ? 'Faça o pré-cadastro do seu negócio. Quando o Clilin abrir na sua cidade, você é dos primeiros a publicar ofertas.'
+                  : role === 'AFFILIATE'
+                    ? 'Faça seu pré-cadastro de divulgador. Quando o Clilin abrir na sua cidade, você é dos primeiros a divulgar e ganhar.'
+                    : 'Faça seu pré-cadastro. Quando o Clilin abrir na sua cidade, você fica sabendo primeiro.'}
               </DialogDescription>
             </DialogHeader>
 
             <form onSubmit={handleSubmit} className="space-y-4 mt-4">
               <div className="space-y-2">
-                <Label htmlFor="name">Seu nome *</Label>
+                <Label htmlFor="name">{role === 'COMPANY' ? 'Seu nome e o nome do negócio *' : 'Seu nome *'}</Label>
                 <Input
                   id="name"
-                  placeholder="Como podemos te chamar?"
+                  placeholder={role === 'COMPANY' ? 'Ex.: Ana, Pizzaria do Bairro' : 'Como podemos te chamar?'}
                   value={name}
                   onChange={e => setName(e.target.value)}
                   required
@@ -157,7 +160,7 @@ export default function CityWaitlistModal({
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="phone">WhatsApp (opcional)</Label>
+                <Label htmlFor="phone">WhatsApp *</Label>
                 <Input
                   id="phone"
                   placeholder="(00) 00000-0000"
@@ -171,18 +174,18 @@ export default function CityWaitlistModal({
                 {loading ? (
                   <>
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    Entrando na lista...
+                    Enviando...
                   </>
                 ) : (
                   <>
                     <Bell className="h-4 w-4 mr-2" />
-                    Quero ser avisado!
+                    Fazer pré-cadastro
                   </>
                 )}
               </Button>
 
               <p className="text-xs text-center text-muted-foreground">
-                Prometemos não enviar spam. Apenas avisaremos quando chegarmos! 🤞
+                Sem spam: só te chamamos quando abrirmos na sua cidade.
               </p>
             </form>
           </>

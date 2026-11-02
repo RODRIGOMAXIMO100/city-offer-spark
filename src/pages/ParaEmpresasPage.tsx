@@ -19,8 +19,8 @@ const offerFields = [
 
 const counts = [
   "Cupom com código válido, dentro da validade",
-  "Conferido por você no painel, na hora do atendimento",
-  "Usado uma vez só: depois de conferido, o código não serve mais",
+  "Confirmado por você no WhatsApp, com um toque, na hora do atendimento",
+  "Usado uma vez só: depois de confirmado, o código não serve mais",
 ];
 const notCounts = [
   "Visita na página da oferta",
@@ -29,7 +29,7 @@ const notCounts = [
 ];
 
 const companyFaqs = homeFaqs.filter((f) =>
-  ["Quanto custa para a empresa?", "Como a loja confere se o cupom vale?", "Como o cliente recebe e usa o cupom?", "As ofertas valem para qualquer cidade?"].includes(f.question),
+  ["Quanto custa para a empresa?", "Como a loja confirma o cupom?", "Como o cliente recebe e usa o cupom?", "As ofertas valem para qualquer cidade?"].includes(f.question),
 );
 
 const ParaEmpresasPage = () => (
@@ -54,7 +54,7 @@ const ParaEmpresasPage = () => (
             Cliente novo na loja, <span className="text-company">pagando só pelo cupom usado</span>
           </h1>
           <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
-            Você cria a oferta em poucos minutos, divulgadores da cidade espalham e o cliente chega com o cupom no WhatsApp. Você confere o código e só então paga.
+            Você cria a oferta em poucos minutos, divulgadores da cidade espalham e o cliente chega com o cupom no WhatsApp. Você confirma no WhatsApp com um toque e só então paga.
           </p>
         </div>
       </section>

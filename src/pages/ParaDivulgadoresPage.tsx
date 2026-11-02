@@ -12,7 +12,7 @@ const rules = [
   "Divulgue o seu link das ofertas da sua cidade",
   "Mande em grupos, no status e nas redes, falando a verdade sobre a oferta",
   "O cliente pega o cupom pelo seu link e usa na loja",
-  "A comissão entra quando a loja confere o cupom",
+  "A comissão entra quando a loja confirma o cupom",
 ];
 const avoid = [
   "Pegar cupom no nome de outras pessoas ou inventar telefone",

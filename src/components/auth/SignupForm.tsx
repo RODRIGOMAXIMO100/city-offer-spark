@@ -392,6 +392,12 @@ export default function SignupForm({
 
         {/* State/City Fields - Only for Companies and Affiliates */}
         {role !== 'CLIENT' && (
+          <p className="text-xs text-muted-foreground rounded-xl bg-muted/60 px-3 py-2">
+            O Clilin está começando por <strong className="text-foreground">Belo Horizonte</strong>. Em outra cidade, escolha a
+            sua e faça o pré-cadastro: a gente te chama quando abrir aí.
+          </p>
+        )}
+        {role !== 'CLIENT' && (
           <div className={compact ? "grid grid-cols-2 gap-3" : "space-y-4"}>
             <div className="space-y-2">
               <Label htmlFor={`signup-state-${role}`}>Estado</Label>
@@ -452,7 +458,7 @@ export default function SignupForm({
                             <span className="flex-1">{c}</span>
                             {!isAvailable && (
                               <span className="ml-2 text-xs bg-highlight/15 text-foreground px-1.5 py-0.5 rounded">
-                                Em breve
+                                Pré-cadastro
                               </span>
                             )}
                           </CommandItem>

@@ -25,8 +25,8 @@ const steps = [
   {
     n: "04",
     icon: BadgeCheck,
-    title: "A loja confere e só então paga",
-    text: "O cliente mostra o código no balcão ou manda no WhatsApp da loja. O empresário digita no painel, vê se é válido e o cupom fica usado.",
+    title: "A loja confirma no WhatsApp e só então paga",
+    text: "A loja recebe o aviso do cupom no WhatsApp. Quando o cliente chega, é só tocar em Confirmar uso. Sem digitar código nem abrir outro sistema.",
     tone: "company",
   },
 ];

@@ -168,7 +168,7 @@ export default function CouponModal({ open, onOpenChange, offerId, offerTitle, a
                   <span>Ou mande o código para a loja no WhatsApp para pedir.</span>
                 </p>
               )}
-              <p className="text-xs text-muted-foreground">A loja confere o código no Clilin. Cada cupom vale uma vez.</p>
+              <p className="text-xs text-muted-foreground">A loja confirma o cupom no Clilin. Cada cupom vale uma vez.</p>
             </div>
             {storeWa && (
               <Button asChild className="w-full">

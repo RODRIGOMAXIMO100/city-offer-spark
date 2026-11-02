@@ -21,7 +21,7 @@ const sections: DocSection[] = [
       "O Clilin é uma plataforma de **ofertas locais com cupom**. Ela conecta três tipos de usuário:",
       {
         list: [
-          ["Empresas", "publicam ofertas da sua cidade e pagam só pelos cupons usados e conferidos na loja."],
+          ["Empresas", "publicam ofertas da sua cidade e pagam só pelos cupons usados e confirmados pela loja."],
           ["Divulgadores", "indicam as ofertas da cidade pelo próprio link e ganham uma comissão por cupom usado por quem veio desse link."],
           ["Clientes", "pegam cupons de graça, recebem o código no WhatsApp e usam na loja."],
         ],
@@ -49,7 +49,7 @@ const sections: DocSection[] = [
       {
         list: [
           ["Taxa", "por cupom usado, a empresa paga **15% do preço com desconto da oferta, com mínimo de R$ 3**. A taxa de cada cupom fica definida no momento em que ele é emitido."],
-          ["Quando cobra", "só quando a empresa confere o código no painel e o cupom é usado. Visita, clique e cupom pego e não usado não são cobrados."],
+          ["Quando cobra", "só quando a empresa confirma o cupom (pelo WhatsApp ou no painel) e o cupom é usado. Visita, clique e cupom pego e não usado não são cobrados."],
           ["Pré-pago", "a empresa coloca saldo no painel e cada cupom usado é descontado com **10% de desconto**. Sem saldo para o próximo cupom, as ofertas ficam pausadas para novos cupons. Os cupons já entregues continuam valendo."],
           ["Pós-pago", "quando combinado com o Clilin, os cupons usados no período entram numa fatura."],
           ["Oferta", "a empresa define o que é a promoção, os preços, as fotos, a validade da oferta e do cupom e o canal de atendimento. A empresa é obrigada a cumprir o desconto anunciado para quem apresentar um cupom válido."],
@@ -81,7 +81,7 @@ const sections: DocSection[] = [
       {
         list: [
           ["Link", "cada divulgador tem um link para cada oferta. O cupom pego por esse link fica ligado ao divulgador."],
-          ["Comissão", "quando o cupom é usado e conferido pela loja, o divulgador recebe **50% da taxa** do cupom, podendo chegar a **70%** conforme o seu nível no mês."],
+          ["Comissão", "quando o cupom é usado e confirmado pela loja, o divulgador recebe **50% da taxa** do cupom, podendo chegar a **70%** conforme o seu nível no mês."],
           ["Pós-pago", "quando a empresa paga por fatura, a comissão fica retida até a fatura ser paga."],
           ["Saque", "o saldo pode ser sacado via Pix a partir de R$ 100, para uma chave Pix do próprio titular da conta. Os tributos seguem a legislação brasileira."],
           ["Divulgação honesta", "o divulgador fala a verdade sobre a oferta, não manda mensagens em massa para quem não conhece e segue as regras das redes sociais e de publicidade."],
@@ -97,7 +97,7 @@ const sections: DocSection[] = [
       {
         list: [
           "Pegar cupons com nome ou telefone falso, ou em nome de outras pessoas sem autorização.",
-          "Conferir cupom sem que o cliente tenha usado a oferta, ou combinar isso entre empresa e divulgador.",
+          "Confirmar cupom sem que o cliente tenha usado a oferta, ou combinar isso entre empresa e divulgador.",
           "Usar robôs, automação ou mais de uma conta.",
           "Anunciar desconto falso ou enganoso.",
           "Tentar burlar ou testar os sistemas de segurança da plataforma.",
@@ -122,7 +122,7 @@ const sections: DocSection[] = [
     blocks: [
       "**Empresas:** garantem que as ofertas são verdadeiras e legais, que têm os direitos sobre fotos e textos e que vão honrar o desconto para quem apresentar cupom válido. Respondem pelo produto ou serviço perante o consumidor.",
       "**Divulgadores:** divulgam de forma honesta e transparente e só usam contas próprias.",
-      "O Clilin organiza as ofertas, emite e confere os cupons e calcula taxas e comissões. O Clilin não vende os produtos ou serviços das empresas. O envio pelo WhatsApp depende do funcionamento do WhatsApp, que não é do Clilin.",
+      "O Clilin organiza as ofertas, emite e confirma os cupons e calcula taxas e comissões. O Clilin não vende os produtos ou serviços das empresas. O envio pelo WhatsApp depende do funcionamento do WhatsApp, que não é do Clilin.",
     ],
   },
   {

@@ -6,7 +6,7 @@ const steps = [
   { icon: UserPlus, title: "Cadastre-se grátis", text: "Não precisa ter muitos seguidores. Precisa conhecer gente da sua cidade." },
   { icon: Link2, title: "Escolha as ofertas", text: "Pegue o seu link das ofertas da cidade e mande nos grupos, no status e nas redes." },
   { icon: Store, title: "O cliente usa o cupom", text: "Quem pega o cupom pelo seu link fica marcado no seu nome até usar na loja." },
-  { icon: Wallet, title: "Você recebe", text: "A comissão cai no seu saldo quando a loja confere o cupom. Saque por Pix a partir de R$ 100." },
+  { icon: Wallet, title: "Você recebe", text: "A comissão cai no seu saldo quando a loja confirma o cupom. Saque por Pix a partir de R$ 100." },
 ];
 
 // affiliate_levels: comissão de 50% da taxa, com bônus por nível até 70%
@@ -58,7 +58,7 @@ export function HomeForAffiliates() {
             </div>
 
             <p className="text-sm text-muted-foreground mb-8">
-              Sem mensalidade e sem custo para entrar. Comissão só de cliente real: cupom usado e conferido pela loja.
+              Sem mensalidade e sem custo para entrar. Comissão só de cliente real: cupom usado e confirmado pela loja.
             </p>
 
             <Button size="lg" asChild className="h-12 sm:h-14 px-6 sm:px-8 bg-affiliate text-affiliate-foreground hover:bg-affiliate/90 shadow-xl shadow-affiliate/25">

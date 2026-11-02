@@ -14,14 +14,14 @@ export const homeFaqs = [
       "Na página da oferta, ele informa nome e WhatsApp e recebe um código de 8 letras na hora, também no WhatsApp. Depois é só mostrar o código no balcão ou mandar para o WhatsApp da loja na hora de pedir.",
   },
   {
-    question: "Como a loja confere se o cupom vale?",
+    question: "Como a loja confirma o cupom?",
     answer:
-      "No painel, na aba Validar cupom, o empresário digita o código. O sistema diz na hora se é válido, se já foi usado, se venceu ou se é de outra loja. Quando é válido, o cupom fica marcado como usado e não serve mais.",
+      "Pelo WhatsApp, com um toque. Quando alguém pega um cupom, a loja recebe um aviso com o nome do cliente, o código e o botão Confirmar uso. O cliente chegou? É só tocar. Também dá para encaminhar o código ou mandar a foto da tela do cliente para o WhatsApp do Clilin. O sistema avisa se o cupom já foi usado, venceu ou é de outra loja. Quem preferir pode digitar o código no painel.",
   },
   {
     question: "As ofertas valem para qualquer cidade?",
     answer:
-      "Não. Cada oferta é da cidade da loja e aparece para quem procura ofertas naquela cidade. É desconto de quem está perto de você.",
+      "Cada oferta é da cidade da loja e aparece para quem procura ofertas ali. O Clilin está começando por Belo Horizonte. Em outras cidades, faça o pré-cadastro: a gente chama quando abrir aí.",
   },
   {
     question: "Como o divulgador ganha?",

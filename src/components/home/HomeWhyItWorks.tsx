@@ -18,8 +18,8 @@ const reasons = [
   },
   {
     icon: ShieldCheck,
-    title: "Conferido no balcão",
-    text: "Cada código é único, tem validade e vale uma vez. O empresário confere no painel em segundos.",
+    title: "Confirmado com um toque",
+    text: "Cada código é único, tem validade e vale uma vez. A loja confirma no WhatsApp quando o cliente chega, sem digitar nada.",
   },
   {
     icon: Users,

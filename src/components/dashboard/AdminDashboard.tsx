@@ -33,6 +33,7 @@ import AdminLeads from './admin/AdminLeads';
 import { AdminNiches } from './admin/AdminNiches';
 import AdminFinanceiro from './admin/AdminFinanceiro';
 import AdminCities from './admin/AdminCities';
+import AdminPreCadastros from './admin/AdminPreCadastros';
 import AdminSEO from './admin/AdminSEO';
 import AdminWhatsAppTemplates from './admin/AdminWhatsAppTemplates';
 import AdminCampaigns from './admin/AdminCampaigns';
@@ -652,6 +653,9 @@ export default function AdminDashboard() {
       
       case 'cities':
         return <AdminCities />;
+
+      case 'pre-cadastros':
+        return <AdminPreCadastros />;
       
       case 'blog':
         return <AdminBlog />;

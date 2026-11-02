@@ -13,7 +13,7 @@ export const COUPON_EXAMPLES = [
 
 const perks = [
   { icon: MapPin, text: "Sua oferta aparece para quem é da sua cidade" },
-  { icon: BadgeCheck, text: "Você confere cada código no painel antes de dar o desconto" },
+  { icon: BadgeCheck, text: "Você confirma cada cupom no WhatsApp com um toque, sem digitar código" },
   { icon: LineChart, text: "Veja quantos viram, quantos pegaram o cupom e quantos vieram" },
   { icon: Wallet, text: "Sem mensalidade: coloque saldo e pague só pelos cupons usados" },
 ];
@@ -34,7 +34,7 @@ export function HomeForCompanies() {
             </h2>
             <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
               Restaurante, salão, academia, loja: você cria a oferta, a cidade fica sabendo e o cliente chega com o cupom na mão.
-              Você só paga quando confere o código e o cupom é usado.
+              Você só paga quando confirma o cupom usado.
             </p>
             <ul className="space-y-4 mb-8">
               {perks.map((p) => (
