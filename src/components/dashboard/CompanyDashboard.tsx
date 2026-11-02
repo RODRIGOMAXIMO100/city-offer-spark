@@ -45,6 +45,7 @@ import { OnboardingProvider, useOnboarding } from '@/contexts/OnboardingContext'
 import { WelcomeModal, OnboardingTour, OnboardingChecklist } from '@/components/onboarding';
 import CompanyLeadsList from './CompanyLeadsList';
 import RedeemCouponPanel from './RedeemCouponPanel';
+import { MaximoEmpresasCard } from './MaximoEmpresasCard';
 import MerchantWhatsAppPanel from './MerchantWhatsAppPanel';
 import CompanyCampaigns from './reach/CompanyCampaigns';
 import { SHOW_COUPON_OFFERS, SHOW_REACH_CAMPAIGNS } from '@/lib/reach';
@@ -830,6 +831,7 @@ function CompanyDashboardContent() {
         </div>
         </>
         )}
+        <MaximoEmpresasCard />
           </TabsContent>
 
           <TabsContent value="coupons" className="mt-0 space-y-4 sm:space-y-6">
