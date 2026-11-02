@@ -56,7 +56,7 @@ function generateOrganizationSchema() {
     url: BASE_URL,
     logo: `${BASE_URL}/android-chrome-512x512.png`,
     description: 'Ofertas dos negócios da sua cidade com cupom grátis no WhatsApp. A loja só paga quando o cupom é usado, e quem indica ganha por cliente.',
-    sameAs: ['https://www.instagram.com/clilinapp'],
+    sameAs: ['https://www.instagram.com/clilin.oficial'],
     contactPoint: {
       '@type': 'ContactPoint',
       contactType: 'customer service',
