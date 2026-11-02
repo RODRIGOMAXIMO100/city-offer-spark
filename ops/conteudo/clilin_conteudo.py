@@ -669,7 +669,16 @@ def postar_item(item_id):
             filhos = [req("POST", f"{ig}/media", {"image_url": u, "is_carousel_item": "true"})["id"] for u in urls]
             for f in filhos:
                 espera_container(req, f, 120)
-            cid = req("POST", f"{ig}/media", {"media_type": "CAROUSEL", "children": ",".join(filhos), "caption": cap})["id"]
+            # logo depois das lâminas a Meta às vezes devolve id "0" para o carrossel: espera e tenta de novo
+            cid = "0"
+            for tent in range(6):
+                time.sleep(6 + tent * 6)
+                cid = str(req("POST", f"{ig}/media", {"media_type": "CAROUSEL", "children": ",".join(filhos), "caption": cap}).get("id") or "0")
+                if cid != "0":
+                    break
+                log("carrossel ainda não aceito pela Meta, tentando de novo")
+            if cid == "0":
+                raise RuntimeError("Meta não criou o carrossel (id 0)")
             espera_container(req, cid, 180)
             mid = req("POST", f"{ig}/media_publish", {"creation_id": cid})["id"]
             link = req("GET", mid, {"fields": "permalink"}).get("permalink")
