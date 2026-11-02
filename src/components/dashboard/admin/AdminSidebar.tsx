@@ -1,4 +1,5 @@
 import { 
+  AlertTriangle,
   BarChart3, 
   Users, 
   Megaphone, 
@@ -56,6 +57,7 @@ export type AdminSection =
   | 'withdrawals'
   | 'financeiro'
   | 'fraud'
+  | 'contestacoes'
   | 'security'
   | 'niches'
   | 'cities'
@@ -110,6 +112,7 @@ const couponGroups = [
     label: 'Segurança',
     icon: Shield,
     items: [
+      { id: 'contestacoes' as AdminSection, label: 'Contestações', icon: AlertTriangle },
       { id: 'fraud' as AdminSection, label: 'Anti-Fraude', icon: Ban },
       { id: 'security' as AdminSection, label: 'Configurações', icon: Shield },
     ]

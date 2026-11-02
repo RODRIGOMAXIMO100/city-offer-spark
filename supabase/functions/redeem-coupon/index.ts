@@ -74,6 +74,7 @@ Deno.serve(async (req) => {
         status: "REDEEMED",
         redeemed_at: new Date().toISOString(),
         redeemed_by_whatsapp: profile.telefone ?? null,
+        confirmado_por: "loja",
       })
       .eq("id", coupon.id)
       .eq("status", "ISSUED")

@@ -34,6 +34,7 @@ import { AdminNiches } from './admin/AdminNiches';
 import AdminFinanceiro from './admin/AdminFinanceiro';
 import AdminCities from './admin/AdminCities';
 import AdminPreCadastros from './admin/AdminPreCadastros';
+import AdminContestacoes from './admin/AdminContestacoes';
 import AdminSEO from './admin/AdminSEO';
 import AdminWhatsAppTemplates from './admin/AdminWhatsAppTemplates';
 import AdminCampaigns from './admin/AdminCampaigns';
@@ -100,6 +101,16 @@ export default function AdminDashboard() {
   const { signOut, profile } = useAuth();
   const navigate = useNavigate();
   const [currentSection, setCurrentSection] = useState<AdminSection>('overview');
+  const [contestacoesAbertas, setContestacoesAbertas] = useState(0);
+
+  // Contador de contestações abertas (aparece ao lado do item no menu)
+  useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (supabase.from('coupons') as any)
+      .select('id', { count: 'exact', head: true })
+      .eq('contestacao_status', 'aberta')
+      .then(({ count }: { count: number | null }) => setContestacoesAbertas(count ?? 0));
+  }, [currentSection]);
   // Contadores do menu e da tela inicial; recarregam a cada troca de seção
   const [refreshKey, setRefreshKey] = useState(0);
   const { data: reach } = useReachSummary('month', refreshKey);
@@ -656,6 +667,8 @@ export default function AdminDashboard() {
 
       case 'pre-cadastros':
         return <AdminPreCadastros />;
+      case 'contestacoes':
+        return <AdminContestacoes />;
       
       case 'blog':
         return <AdminBlog />;
@@ -686,6 +699,7 @@ export default function AdminDashboard() {
             'review-posts': reach?.posts_pending ?? 0,
             'review-accounts': reach?.accounts_pending ?? 0,
             withdrawals: reach?.withdrawals_pending_count ?? 0,
+            contestacoes: contestacoesAbertas,
           }}
         />
         

@@ -2,13 +2,13 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Building2, Check, MapPin, LineChart, BadgeCheck, Wallet } from "lucide-react";
 
-// Mesma regra do banco: 15% do preço da oferta por cupom usado, mínimo de R$ 3
+// Mesma regra do banco: 12% do preço da oferta por cupom usado, mínimo de R$ 3
 // (pricing_config.fee_percent / fee_min_cents); pré-pago com 10% de desconto.
 export const COUPON_EXAMPLES = [
   { offer: "R$ 15", what: "Açaí 500 ml", fee: "R$ 3,00", note: "Taxa mínima" },
-  { offer: "R$ 39", what: "Pizza grande", fee: "R$ 5,85", note: "15% do preço", featured: true },
-  { offer: "R$ 80", what: "Corte e escova", fee: "R$ 12,00", note: "15% do preço" },
-  { offer: "R$ 120", what: "Mês de academia", fee: "R$ 18,00", note: "15% do preço" },
+  { offer: "R$ 39", what: "Pizza grande", fee: "R$ 4,68", note: "12% do preço", featured: true },
+  { offer: "R$ 80", what: "Corte e escova", fee: "R$ 9,60", note: "12% do preço" },
+  { offer: "R$ 120", what: "Mês de academia", fee: "R$ 14,40", note: "12% do preço" },
 ];
 
 const perks = [
@@ -32,9 +32,13 @@ export function HomeForCompanies() {
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold mb-5">
               Promoção que <span className="text-company">enche a loja</span>, não só o feed
             </h2>
-            <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
+            <p className="text-lg text-muted-foreground mb-5 leading-relaxed">
               Restaurante, salão, academia, loja: você cria a oferta, a cidade fica sabendo e o cliente chega com o cupom na mão.
-              Você só paga quando confirma o cupom usado.
+              Você só paga quando o cupom é usado.
+            </p>
+            <p className="text-base text-foreground mb-8 leading-relaxed rounded-2xl border border-company/20 bg-company/5 p-4">
+              <strong>A primeira compra é a conquista de um cliente novo.</strong> Quanto mais atrativa a oferta, mais gente nova entra
+              na sua loja. Depois é atender bem para ele voltar sem cupom, e o Clilin te ajuda nisso.
             </p>
             <ul className="space-y-4 mb-8">
               {perks.map((p) => (

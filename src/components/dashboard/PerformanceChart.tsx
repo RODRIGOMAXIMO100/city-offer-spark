@@ -19,11 +19,11 @@ interface DailyData {
 
 const chartConfig = {
   views: {
-    label: 'Views',
+    label: 'Visitas',
     color: 'hsl(var(--muted-foreground))',
   },
   leads: {
-    label: 'Leads',
+    label: 'Cupons pegos',
     color: 'hsl(var(--secondary))',
   },
 };
@@ -64,11 +64,11 @@ export default function PerformanceChart() {
 
     // Get leads and views data in parallel
     const [leadsResult, viewsResult] = await Promise.all([
+      // "leads" aqui são os cupons pegos (modelo atual: cupom grátis no WhatsApp)
       supabase
-        .from('leads')
+        .from('coupons')
         .select('created_at, offer_id')
-        .in('offer_id', myOfferIds)
-        .eq('is_valid', true)
+        .eq('company_id', profile.id)
         .gte('created_at', startDate.toISOString()),
       supabase
         .from('offer_views')
@@ -78,7 +78,7 @@ export default function PerformanceChart() {
     ]);
 
     if (leadsResult.error) {
-      console.error('Error fetching leads:', leadsResult.error);
+      console.error('Erro ao buscar cupons:', leadsResult.error);
     }
     if (viewsResult.error) {
       console.error('Error fetching views:', viewsResult.error);

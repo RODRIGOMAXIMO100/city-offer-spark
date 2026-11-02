@@ -283,8 +283,8 @@ export default function CreateOfferModal({
   const maxDate = addDays(new Date(), 30);
 
   // Calculate discount percentage
-  // FASE 1: taxa = max(R$3 ; 15% do preco promocional)
-  const estimatedFeeCents = Math.max(300, Math.round(parsePrice(formData.price_new) * 100 * 0.15));
+  // FASE 1: taxa = max(R$3 ; 12% do preco promocional)
+  const estimatedFeeCents = Math.max(300, Math.round(parsePrice(formData.price_new) * 100 * 0.12));
 
   const discount = formData.price_old && formData.price_new
     ? Math.round((1 - parsePrice(formData.price_new) / parsePrice(formData.price_old)) * 100)
@@ -550,7 +550,7 @@ export default function CreateOfferModal({
         </div>
       )}
 
-      {/* FASE 1: taxa calculada automaticamente (15% do preco, minimo R$3) */}
+      {/* FASE 1: taxa calculada automaticamente (12% do preco, minimo R$3) */}
       <div className="space-y-1.5">
         <Label className="text-sm flex items-center gap-1.5">
           <Star className="h-4 w-4 text-secondary" />
@@ -558,13 +558,14 @@ export default function CreateOfferModal({
         </Label>
         <div className="p-3 rounded-lg bg-secondary/5 border border-secondary/20">
           <div className="flex items-baseline justify-between">
-            <span className="text-sm text-muted-foreground">Taxa por resgate</span>
+            <span className="text-sm text-muted-foreground">Taxa por cupom usado</span>
             <span className="text-2xl font-bold text-secondary">
               R$ {(estimatedFeeCents / 100).toFixed(2).replace('.', ',')}
             </span>
           </div>
           <p className="text-[11px] text-muted-foreground mt-1.5">
-            15% do preço promocional (mínimo R$ 3,00). Você paga <strong>só quando</strong> o cliente vai à loja e usa o cupom — ninguém apareceu, você não paga nada.
+            12% do preço promocional (mínimo R$ 3,00). Você paga <strong>só quando</strong> o cliente usa o cupom. Se ninguém aparecer, não paga nada.
+            Dica: quanto mais atrativa a oferta, mais clientes novos ela traz para a sua loja.
           </p>
         </div>
       </div>
@@ -713,7 +714,7 @@ export default function CreateOfferModal({
           <span className="font-medium text-xs">Você só paga por resultado</span>
         </div>
         <p className="text-[10px] text-muted-foreground">
-          Divulgadores locais espalham sua oferta e você <strong>só paga quando um cliente novo vai até a loja e usa o cupom</strong>. Cliques e cadastros são de graça — servem só pra você medir o alcance.
+          Divulgadores locais espalham sua oferta e você <strong>só paga quando um cliente novo vai até a loja e usa o cupom</strong>. Cliques e cupons pegos são de graça e servem para você medir o alcance.
         </p>
         <p className="text-[9px] text-warning dark:text-warning mt-1 italic">
           Valores atuais, sujeitos a alteração conforme política da plataforma.

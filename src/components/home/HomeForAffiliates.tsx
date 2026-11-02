@@ -44,7 +44,7 @@ export function HomeForAffiliates() {
             </h2>
             <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
               Você fica com metade da taxa de cada cupom usado por quem veio pelo seu link. Exemplo: numa pizza de R$ 39,
-              a taxa é R$ 5,85 e você leva cerca de R$ 2,90 por cliente. Quanto mais clientes no mês, maior o seu nível.
+              a taxa é R$ 4,68 e você leva R$ 2,34 por cliente. Quanto mais clientes no mês, maior o seu nível.
             </p>
 
             <div className="grid grid-cols-3 gap-3 mb-6">

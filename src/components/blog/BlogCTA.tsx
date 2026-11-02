@@ -19,7 +19,7 @@ export function BlogCTA({ category }: { category?: string }) {
       </span>
       <h3 className="text-xl sm:text-2xl font-display font-bold text-foreground mb-2">Tem uma empresa?</h3>
       <p className="text-muted-foreground mb-6 flex-1">
-        Publique uma oferta, a cidade fica sabendo e o cliente chega com o cupom no WhatsApp. Você só paga pelo cupom usado: 15% do preço, mínimo de R$ 3.
+        Publique uma oferta, a cidade fica sabendo e o cliente chega com o cupom no WhatsApp. Você só paga pelo cupom usado: 12% do preço, mínimo de R$ 3.
       </p>
       <div className="flex flex-col sm:flex-row gap-3">
         <Button asChild className="bg-company text-company-foreground hover:bg-company/90">
@@ -75,7 +75,7 @@ export function BlogSideCTA({ category }: { category?: string }) {
         {isAffiliate ? "Ganhe indicando ofertas" : "Cliente novo na sua loja"}
       </p>
       <p className="text-sm text-muted-foreground mb-4">
-        {isAffiliate ? "Comissão por cada cliente que usar o cupom na loja." : "Pague só pelo cupom usado: 15% do preço, mínimo de R$ 3."}
+        {isAffiliate ? "Comissão por cada cliente que usar o cupom na loja." : "Pague só pelo cupom usado: 12% do preço, mínimo de R$ 3."}
       </p>
       <Button
         asChild

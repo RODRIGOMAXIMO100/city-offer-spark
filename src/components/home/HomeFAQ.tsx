@@ -6,7 +6,7 @@ export const homeFaqs = [
   {
     question: "Quanto custa para a empresa?",
     answer:
-      "Não tem mensalidade. Você paga só pelo cupom usado na loja: 15% do preço da oferta, com mínimo de R$ 3. Numa pizza de R$ 39, cada cliente custa R$ 5,85. Com saldo pré-pago, sai 10% mais barato. Cupom pego e não usado não custa nada.",
+      "Não tem mensalidade. Você paga só pelo cupom usado na loja: 12% do preço da oferta, com mínimo de R$ 3. Numa pizza de R$ 39, cada cliente custa R$ 4,68. Com saldo pré-pago, sai 10% mais barato. Cupom pego e não usado não custa nada. Pense na primeira compra como a conquista de um cliente novo: quanto mais atrativa a oferta, mais gente nova entra na sua loja.",
   },
   {
     question: "Como o cliente recebe e usa o cupom?",
@@ -16,7 +16,7 @@ export const homeFaqs = [
   {
     question: "Como a loja confirma o cupom?",
     answer:
-      "Com um toque. Na hora de usar, o cliente toca em Estou na loja ou Pedir online, no WhatsApp ou na página do cupom. A loja recebe o aviso na hora, no WhatsApp e no painel, com o nome do cliente, o código e o botão Confirmar uso. O sistema avisa se o cupom já foi usado, venceu ou é de outra loja. Quem preferir também pode digitar o código no painel.",
+      "Com um toque. Na hora de usar, o cliente toca em Estou na loja ou Pedir online, no WhatsApp ou na página do cupom. A loja recebe o aviso na hora, no WhatsApp e no painel, com o nome do cliente, o código e o botão Confirmar uso. O sistema avisa se o cupom já foi usado, venceu ou é de outra loja. Quem preferir também pode digitar o código no painel. Se o cliente disser que foi atendido, o uso vale como confirmado e a loja tem 48 horas para contestar.",
   },
   {
     question: "As ofertas valem para qualquer cidade?",

@@ -99,7 +99,7 @@ export function HomeHero() {
               <CheckCircle2 className="h-8 w-8 text-company shrink-0" />
               <div>
                 <p className="font-semibold">Cupom válido</p>
-                <p className="text-xs text-muted-foreground">Confirmado no WhatsApp. Só agora a loja paga: R$ 5,85.</p>
+                <p className="text-xs text-muted-foreground">Confirmado no WhatsApp. Só agora a loja paga: R$ 4,68.</p>
               </div>
             </div>
           </div>

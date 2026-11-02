@@ -28,7 +28,9 @@ O QUE É O CLILIN
 - Plataforma de ofertas locais: negócios da cidade publicam promoções, divulgadores espalham e o cliente pega o cupom de graça, direto no WhatsApp.
 - Para o cliente é grátis, sem app e sem cadastro: abre a oferta, toca em "Pegar cupom", informa nome e WhatsApp e o código chega na hora.
 - Na hora de usar, o cliente toca em "Estou na loja" (no balcão) ou "Pedir online" (pedido pelo WhatsApp da loja), na mensagem do cupom ou na página do cupom. A loja recebe o aviso e confirma com um toque. Cada cupom vale uma vez e tem validade.
-- Empresa: cadastro grátis, sem mensalidade. Só paga pelo cupom usado: 15% do preço da oferta, mínimo de R$ 3. Cupom não usado não custa nada. Com saldo pré-pago, 10% de desconto. Página: /empresas
+- Empresa: cadastro grátis, sem mensalidade. Só paga pelo cupom usado: 12% do preço da oferta, mínimo de R$ 3. Cupom não usado não custa nada. Com saldo pré-pago, 10% de desconto. Página: /empresas
+- O uso vale quando a loja confirma ou quando o cliente diz que foi atendido; nesse caso a loja tem 48 horas para contestar com prova. O Clilin confere sinais de uso para barrar fraude.
+- A ideia central para a loja: a primeira compra com cupom é a conquista de um cliente novo, não só uma venda. Quanto mais atrativa a oferta, mais gente nova entra na loja. Depois a loja atende bem e cria jeitos de o cliente voltar sem cupom (cartão fidelidade, pós-venda no WhatsApp, lista de clientes, mimo na próxima visita).
 - Divulgador: indica as ofertas da cidade pelo próprio link e ganha metade da taxa de cada cupom usado por quem veio do link dele, chegando a 70% conforme o nível. Saque por Pix a partir de R$ 100. Cadastro grátis, não precisa ter muitos seguidores. Página: /divulgadores
 - O Clilin está começando por Belo Horizonte (MG). Em outras cidades a pessoa faz o pré-cadastro e avisamos quando chegar.
 - Ajuda: /ajuda. Todas as ofertas: /ofertas. Criar conta: /auth

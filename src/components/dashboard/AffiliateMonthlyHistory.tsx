@@ -165,7 +165,7 @@ export default function AffiliateMonthlyHistory({ affiliateId }: AffiliateMonthl
         <div className="mt-3 pt-3 border-t grid grid-cols-2 gap-3 text-center">
           <div className="bg-muted/50 rounded-lg py-2">
             <p className="text-lg font-bold">{totalLeads}</p>
-            <p className="text-xs text-muted-foreground">Leads totais</p>
+            <p className="text-xs text-muted-foreground">Cupons usados no total</p>
           </div>
           <div className="bg-affiliate/10 rounded-lg py-2">
             <p className="text-lg font-bold text-affiliate">{formatCreditsToReal(totalEarnings)}</p>

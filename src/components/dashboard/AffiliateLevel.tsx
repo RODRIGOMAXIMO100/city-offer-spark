@@ -111,27 +111,22 @@ export default function AffiliateLevel({ affiliateId }: AffiliateLevelProps) {
     }
   };
 
+  // O nível sobe pelo total de cupons usados por clientes que vieram do seu link (affiliate_stats.total_clicks)
+  const usadosTotal = stats?.total_clicks || 0;
   const calculateProgress = () => {
     if (!stats || !currentLevel || !nextLevel) return 0;
-    // Usar leads do MÊS, não total
-    const leadsThisMonth = stats.clicks_this_month || 0;
-    const clicksInLevel = leadsThisMonth - currentLevel.min_clicks;
-    const clicksNeeded = nextLevel.min_clicks - currentLevel.min_clicks;
-    return Math.min(Math.max((clicksInLevel / clicksNeeded) * 100, 0), 100);
+    const noNivel = usadosTotal - currentLevel.min_clicks;
+    const precisa = nextLevel.min_clicks - currentLevel.min_clicks;
+    return Math.min(Math.max((noNivel / precisa) * 100, 0), 100);
   };
 
+  // Comissão: 50% da taxa do cupom usado, vezes o multiplicador do nível (Bronze 50% até Diamante 70%)
+  const pctNivel = (mult?: number) => Math.round(50 * (mult || 1));
   const getRealCommission = () => {
-    if (!currentLevel) return { percent: '30%', perLead: 'R$ 0,30 - R$ 0,90' };
-    // Base is 30%, multiplier increases it (1.0 = 30%, 1.33 = 40%, 1.67 = 50%)
-    // CPL range is R$ 1,00 to R$ 3,00, so base affiliate earning is R$ 0,30 to R$ 0,90
-    const basePercent = 30 * currentLevel.commission_multiplier;
-    const minPerLead = (0.30 * currentLevel.commission_multiplier).toFixed(2).replace('.', ',');
-    const maxPerLead = (0.90 * currentLevel.commission_multiplier).toFixed(2).replace('.', ',');
-    return { 
-      percent: `${Math.round(basePercent)}%`, 
-      perLead: `R$ ${minPerLead} - R$ ${maxPerLead}`,
-      multiplier: currentLevel.commission_multiplier
-    };
+    const pct = pctNivel(currentLevel?.commission_multiplier);
+    // Exemplo: oferta de R$ 39, taxa de 12% = R$ 4,68
+    const exemplo = (4.68 * pct / 100).toFixed(2).replace('.', ',');
+    return { percent: `${pct}%`, exemplo: `R$ ${exemplo}` };
   };
 
   if (loading) {
@@ -174,9 +169,9 @@ export default function AffiliateLevel({ affiliateId }: AffiliateLevelProps) {
             </div>
             <div className="flex flex-col sm:items-end gap-1 ml-11 sm:ml-0">
               <Badge className="bg-card/20 text-primary-foreground border-card/30 w-fit">
-                {commission.percent} do CPL
+                {commission.percent} da taxa de cada cupom usado
               </Badge>
-              <span className="text-xs sm:text-sm font-semibold">{commission.perLead}/lead</span>
+              <span className="text-xs sm:text-sm font-semibold">Ex.: oferta de R$ 39 rende {commission.exemplo}</span>
             </div>
           </div>
         </div>
@@ -193,7 +188,7 @@ export default function AffiliateLevel({ affiliateId }: AffiliateLevelProps) {
             </div>
             <div className="text-center">
               <p className="text-3xl font-bold text-affiliate">{stats?.clicks_this_month || 0}</p>
-              <p className="text-xs text-muted-foreground">leads este mês</p>
+              <p className="text-xs text-muted-foreground">cupons usados este mês</p>
             </div>
           </div>
 
@@ -201,7 +196,7 @@ export default function AffiliateLevel({ affiliateId }: AffiliateLevelProps) {
           <div className="grid grid-cols-2 gap-1.5 sm:gap-2 text-center">
             <div className="bg-muted/50 rounded-lg py-2 px-1">
               <p className="text-base sm:text-lg font-bold">{stats?.total_clicks || 0}</p>
-              <p className="text-[10px] sm:text-xs text-muted-foreground">Leads totais</p>
+              <p className="text-[10px] sm:text-xs text-muted-foreground">Cupons usados no total</p>
             </div>
             <div className="bg-muted/50 rounded-lg py-2 px-1">
               <p className="text-base sm:text-lg font-bold">
@@ -211,18 +206,18 @@ export default function AffiliateLevel({ affiliateId }: AffiliateLevelProps) {
             </div>
           </div>
 
-          {/* Progress to next level - Based on MONTHLY leads */}
+          {/* Progresso para o próximo nível (pelo total de cupons usados) */}
           {nextLevel && (
             <div>
               <div className="flex justify-between text-sm mb-2">
                 <span className="text-muted-foreground">Progresso para {nextLevel.name}</span>
                 <span className="font-medium">
-                  {stats?.clicks_this_month || 0} / {nextLevel.min_clicks} leads
+                  {usadosTotal} / {nextLevel.min_clicks} cupons usados
                 </span>
               </div>
               <Progress value={calculateProgress()} className="h-2" />
               <p className="text-xs text-muted-foreground mt-1">
-                Faltam {Math.max(0, (nextLevel.min_clicks) - (stats?.clicks_this_month || 0))} leads este mês
+                Faltam {Math.max(0, nextLevel.min_clicks - usadosTotal)} cupons usados para subir de nível
               </p>
             </div>
           )}
@@ -244,17 +239,15 @@ export default function AffiliateLevel({ affiliateId }: AffiliateLevelProps) {
           {/* All Levels - Monthly goals */}
           <div className="pt-2 border-t">
             <div className="flex items-center justify-between mb-2">
-              <p className="text-xs sm:text-sm font-medium">Metas mensais:</p>
-              <p className="text-[10px] text-muted-foreground">Comissão sobe ao atingir meta</p>
+              <p className="text-xs sm:text-sm font-medium">Níveis:</p>
+              <p className="text-[10px] text-muted-foreground">A comissão sobe a cada nível</p>
             </div>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
               {allLevels.map((level) => {
-                const leadsThisMonth = stats?.clicks_this_month || 0;
-                const isUnlocked = leadsThisMonth >= level.min_clicks;
+                const isUnlocked = usadosTotal >= level.min_clicks;
                 const isCurrent = level.id === currentLevel?.id;
-                // Comissões fixas: Bronze 30%, Prata 40%, Ouro 50%
-                const levelPercent = level.id === 1 ? 30 : level.id === 2 ? 40 : 50;
-                const levelRange = level.id === 1 ? '0-99' : level.id === 2 ? '100-499' : '500+';
+                const levelPercent = pctNivel(level.commission_multiplier);
+                const levelRange = level.min_clicks === 0 ? 'desde o início' : `${level.min_clicks}+ cupons`;
                 
                 return (
                   <div
@@ -275,7 +268,7 @@ export default function AffiliateLevel({ affiliateId }: AffiliateLevelProps) {
                     </div>
                     <p className="text-xs font-medium">{level.name}</p>
                     <p className="text-[10px] text-muted-foreground">
-                      {levelRange} leads/mês
+                      {levelRange}
                     </p>
                     <p className="text-[10px] font-semibold text-affiliate mt-0.5">
                       {levelPercent}%

@@ -57,7 +57,7 @@ export const TOUR_STEPS: Record<string, TourStep[]> = {
     {
       target: '[data-tour="balance"]',
       title: 'Seu saldo',
-      content: 'O saldo só é usado quando um cliente usa o cupom na sua loja: 15% do preço da oferta, mínimo de R$ 3. Adicione no "+".',
+      content: 'O saldo só é usado quando um cliente usa o cupom na sua loja: 12% do preço da oferta, mínimo de R$ 3. Adicione no "+".',
       position: 'bottom',
     },
     {

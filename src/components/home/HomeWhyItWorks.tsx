@@ -29,7 +29,7 @@ const reasons = [
   {
     icon: HandCoins,
     title: "Regra clara",
-    text: "15% do preço da oferta por cupom usado, mínimo de R$ 3. Metade disso vai para o divulgador que trouxe o cliente.",
+    text: "12% do preço da oferta por cupom usado, mínimo de R$ 3. Metade disso vai para o divulgador que trouxe o cliente.",
   },
 ];
 

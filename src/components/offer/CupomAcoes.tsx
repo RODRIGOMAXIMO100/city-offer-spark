@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Loader2, MessageCircle, Store, CheckCircle2 } from 'lucide-react';
+import { Loader2, MessageCircle, Store, CheckCircle2, ThumbsUp, ThumbsDown } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 
@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 // A loja vê na hora no painel (e no WhatsApp) e confirma com um toque.
 export type CanalUso = 'loja' | 'online';
 
-export async function chamarCupom(id: string, acao: 'ver' | CanalUso) {
+export async function chamarCupom(id: string, acao: 'ver' | CanalUso | 'atendido' | 'nao_atendido') {
   const { data, error } = await supabase.functions.invoke('cupom', { body: { id, acao } });
   if (error) {
     let msg = 'Não deu para falar com a loja agora. Tente de novo.';
@@ -31,9 +31,43 @@ interface Props {
   pedirLinkInicial?: string | null;
   /** Abre o pedido online direto (link "Pedir online" do WhatsApp) */
   onPedirLink?: (link: string | null) => void;
+  /** Resposta do cliente se foi atendido (null = ainda não respondeu) */
+  atendidoInicial?: 'sim' | 'nao' | null;
 }
 
-export default function CupomAcoes({ id, canalInicial = null, lojaNome, pedirLinkInicial = null, onPedirLink }: Props) {
+// Depois de avisar a loja, o cliente diz se foi atendido. "Fui atendido" vale como uso confirmado:
+// a loja tem 48 horas para contestar. "Não fui" não gera cobrança e o Clilin verifica com a loja.
+function PerguntaAtendido({ id, inicial }: { id: string; inicial: 'sim' | 'nao' | null }) {
+  const [resp, setResp] = useState<'sim' | 'nao' | null>(inicial);
+  const [enviando, setEnviando] = useState<'sim' | 'nao' | null>(null);
+  const [erro, setErro] = useState<string | null>(null);
+  const responder = async (r: 'sim' | 'nao') => {
+    setErro(null);
+    setEnviando(r);
+    const x = await chamarCupom(id, r === 'sim' ? 'atendido' : 'nao_atendido');
+    setEnviando(null);
+    if (x.erro) { setErro(x.erro); return; }
+    setResp(r);
+  };
+  if (resp === 'sim') return <p className="text-sm text-muted-foreground">Obrigado por confirmar. Bom proveito!</p>;
+  if (resp === 'nao') return <p className="text-sm text-muted-foreground">Sentimos muito. Obrigado por avisar, vamos verificar com a loja.</p>;
+  return (
+    <div className="space-y-2 border-t border-company/20 pt-3">
+      <p className="text-sm font-medium text-foreground">Depois de usar, você foi atendido?</p>
+      <div className="grid grid-cols-2 gap-2">
+        <Button size="sm" variant="outline" onClick={() => responder('sim')} disabled={!!enviando} className="h-10">
+          {enviando === 'sim' ? <Loader2 className="h-4 w-4 animate-spin" /> : <><ThumbsUp className="mr-1.5 h-4 w-4" /> Fui atendido</>}
+        </Button>
+        <Button size="sm" variant="outline" onClick={() => responder('nao')} disabled={!!enviando} className="h-10">
+          {enviando === 'nao' ? <Loader2 className="h-4 w-4 animate-spin" /> : <><ThumbsDown className="mr-1.5 h-4 w-4" /> Não fui</>}
+        </Button>
+      </div>
+      {erro && <p className="text-xs text-destructive">{erro}</p>}
+    </div>
+  );
+}
+
+export default function CupomAcoes({ id, canalInicial = null, lojaNome, pedirLinkInicial = null, onPedirLink, atendidoInicial = null }: Props) {
   const [enviando, setEnviando] = useState<CanalUso | null>(null);
   const [canal, setCanal] = useState<CanalUso | null>(canalInicial);
   const [erro, setErro] = useState<string | null>(null);
@@ -80,6 +114,7 @@ export default function CupomAcoes({ id, canalInicial = null, lojaNome, pedirLin
         {canal === 'online' && !pedirLink && (
           <p className="text-sm text-muted-foreground">Faça o pedido no canal da loja e informe o código do cupom.</p>
         )}
+        <PerguntaAtendido id={id} inicial={atendidoInicial} />
         <button className="text-xs text-muted-foreground underline" onClick={() => setCanal(null)}>
           Avisar de novo
         </button>

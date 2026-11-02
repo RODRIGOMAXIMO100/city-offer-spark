@@ -111,6 +111,26 @@ function CompanyDashboardContent() {
     fetchMyOffers();
   }, []);
 
+  // Cupons pegos e usados por oferta (o modelo atual cobra por cupom usado, não por lead)
+  const [cuponsPorOferta, setCuponsPorOferta] = useState<Record<string, { pegos: number; usados: number }>>({});
+  useEffect(() => {
+    if (!profile?.id) return;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (supabase.from('coupons') as any)
+      .select('offer_id, status')
+      .eq('company_id', profile.id)
+      .limit(5000)
+      .then(({ data }: { data: { offer_id: string; status: string }[] | null }) => {
+        const m: Record<string, { pegos: number; usados: number }> = {};
+        (data ?? []).forEach((c) => {
+          m[c.offer_id] = m[c.offer_id] ?? { pegos: 0, usados: 0 };
+          m[c.offer_id].pegos += 1;
+          if (c.status === 'REDEEMED') m[c.offer_id].usados += 1;
+        });
+        setCuponsPorOferta(m);
+      });
+  }, [profile?.id, offers.length]);
+
   // Garantir aba "panel" ativa quando tour iniciar
   useEffect(() => {
     if (showTour) {
@@ -201,8 +221,8 @@ function CompanyDashboardContent() {
   };
   // Calculate totals
   const totalViews = offers.reduce((acc, o) => acc + o.views_count, 0);
-  const totalLeads = offers.reduce((acc, o) => acc + ((o as any).leads_count || 0), 0);
-  const conversionRate = totalViews > 0 ? ((totalLeads / totalViews) * 100).toFixed(1) : '0.0';
+  const cuponsPegos = Object.values(cuponsPorOferta).reduce((a, c) => a + c.pegos, 0);
+  const cuponsUsados = Object.values(cuponsPorOferta).reduce((a, c) => a + c.usados, 0);
 
   const handleOfferCreated = async () => {
     setShowCreateModal(false);
@@ -560,21 +580,21 @@ function CompanyDashboardContent() {
             <CardContent className="p-2 sm:p-4 text-center">
               <Eye className="h-4 w-4 sm:h-5 sm:w-5 mx-auto mb-1 text-muted-foreground" />
               <p className="text-lg sm:text-2xl font-bold">{totalViews}</p>
-              <p className="text-[10px] sm:text-xs text-muted-foreground">Views</p>
+              <p className="text-[10px] sm:text-xs text-muted-foreground">Visitas</p>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="p-2 sm:p-4 text-center">
-              <Users className="h-4 w-4 sm:h-5 sm:w-5 mx-auto mb-1 text-secondary" />
-              <p className="text-lg sm:text-2xl font-bold text-secondary">{totalLeads}</p>
-              <p className="text-[10px] sm:text-xs text-muted-foreground">Leads</p>
+              <Ticket className="h-4 w-4 sm:h-5 sm:w-5 mx-auto mb-1 text-secondary" />
+              <p className="text-lg sm:text-2xl font-bold text-secondary">{cuponsPegos}</p>
+              <p className="text-[10px] sm:text-xs text-muted-foreground">Cupons pegos</p>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="p-2 sm:p-4 text-center">
               <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5 mx-auto mb-1 text-success" />
-              <p className="text-lg sm:text-2xl font-bold text-success">{conversionRate}%</p>
-              <p className="text-[10px] sm:text-xs text-muted-foreground">Conversão</p>
+              <p className="text-lg sm:text-2xl font-bold text-success">{cuponsUsados}</p>
+              <p className="text-[10px] sm:text-xs text-muted-foreground">Clientes novos (cupons usados)</p>
             </CardContent>
           </Card>
           <Card>
@@ -599,9 +619,10 @@ function CompanyDashboardContent() {
               <div className="space-y-1.5 sm:space-y-2 min-w-0">
                 <p className="font-bold text-foreground text-sm sm:text-base">💰 Você só paga por resultado</p>
                 <ul className="text-xs sm:text-sm text-muted-foreground space-y-0.5 sm:space-y-1">
-                  <li>• <strong className="text-foreground">Só paga quando o cliente vai à loja</strong><span className="hidden sm:inline"> e usa o cupom — cliente novo de verdade</span></li>
-                  <li>• <strong className="text-foreground">Taxa de 15% por resgate</strong><span className="hidden sm:inline"> sobre o preço da oferta (mínimo R$ 3,00)</span></li>
+                  <li>• <strong className="text-foreground">A primeira compra é a conquista de um cliente novo</strong><span className="hidden sm:inline">: quanto mais atrativa a oferta, mais gente nova entra na loja</span></li>
+                  <li>• <strong className="text-foreground">Taxa de 12% por cupom usado</strong><span className="hidden sm:inline"> sobre o preço da oferta (mínimo R$ 3,00)</span></li>
                   <li>• <strong className="text-foreground">Visitas e cupons pegos são grátis</strong><span className="hidden sm:inline">: você paga só pelo cupom usado</span></li>
+                  <li>• <strong className="text-foreground">Cliente disse que foi atendido?</strong><span className="hidden sm:inline"> Vale como uso, e você tem 48 horas para contestar em Confirmar cupons</span></li>
                   <li>• <strong className="text-foreground">Divulgador ganha 50%</strong><span className="hidden sm:inline"> da taxa por cada cliente que traz (até 70% por nível)</span></li>
                 </ul>
                 <Button variant="link" asChild className="h-auto p-0 text-company text-xs sm:text-sm">
@@ -737,7 +758,7 @@ function CompanyDashboardContent() {
                                   <hr className="my-2 border-border/50" />
                                   <p className="text-xs text-muted-foreground">{getScoreTip(offerScore)}</p>
                                   <p className="text-xs font-medium mt-1">
-                                    Taxa por resgate: R$ {(Math.max(300, Math.round(offer.price_new * 100 * 0.15)) / 100).toFixed(2)}
+                                    Taxa por resgate: R$ {(Math.max(300, Math.round(offer.price_new * 100 * 0.12)) / 100).toFixed(2)}
                                   </p>
                                 </TooltipContent>
                               </Tooltip>
@@ -746,7 +767,7 @@ function CompanyDashboardContent() {
                             {/* Cost per Lead & Expiration */}
                             <div className="flex items-center gap-2 mt-1 flex-wrap">
                               <span className="text-[10px] sm:text-xs text-muted-foreground">
-                                Taxa: R$ {(Math.max(300, Math.round(offer.price_new * 100 * 0.15)) / 100).toFixed(2)}
+                                Taxa: R$ {(Math.max(300, Math.round(offer.price_new * 100 * 0.12)) / 100).toFixed(2)}
                               </span>
                               <span className="text-muted-foreground">•</span>
                               <div className={`flex items-center gap-1 text-[10px] sm:text-xs ${expInfo.color}`}>
@@ -763,8 +784,8 @@ function CompanyDashboardContent() {
                                   {offer.views_count}
                                 </span>
                               <span className="flex items-center gap-1">
-                                  <Users className="h-3 w-3" />
-                                  {(offer as any).leads_count || 0}
+                                  <Ticket className="h-3 w-3" />
+                                  {cuponsPorOferta[offer.id]?.pegos ?? 0} pegos · {cuponsPorOferta[offer.id]?.usados ?? 0} usados
                                 </span>
                                 <Badge variant={offer.active && !isExpired ? 'default' : 'secondary'} className="text-[10px]">
                                   {isExpired ? 'Expirada' : offer.active ? 'Ativa' : 'Pausada'}

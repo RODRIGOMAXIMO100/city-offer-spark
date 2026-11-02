@@ -183,7 +183,7 @@ export default function AffiliateRanking({ currentAffiliateId }: AffiliateRankin
               
               <div className="text-right shrink-0">
                 <p className="font-bold">{entry.clicks}</p>
-                <p className="text-xs text-muted-foreground">leads</p>
+                <p className="text-xs text-muted-foreground">cupons usados</p>
               </div>
             </div>
           );

@@ -10,7 +10,7 @@ export default defineTool({
     "ADMIN pode criar em nome de QUALQUER empresa passando company_id (use `list_companies` ou " +
     "`find_company` para descobrir o id da empresa desejada). Preços em reais (ex: 49.90). " +
     "A cobrança é por RESGATE de cupom: a empresa paga uma taxa calculada sobre o preço promocional " +
-    "(percentual e piso vêm de pricing_config — hoje 15% com piso de R$3,00). Ela NÃO é informada na " +
+    "(percentual e piso vêm de pricing_config — hoje 12% com piso de R$3,00). Ela NÃO é informada na " +
     "criação, é derivada de price_new; a resposta devolve a taxa já calculada.",
   inputSchema: {
     title: z.string().min(3).max(120),

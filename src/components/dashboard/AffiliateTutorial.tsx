@@ -350,7 +350,7 @@ function EscolhaOfertas() {
   const criterios = [
     {
       titulo: 'Alto Desconto',
-      descricao: 'Ofertas com 40%+ de desconto geram mais leads',
+      descricao: 'Ofertas com 40%+ de desconto trazem mais clientes',
       icone: '💰',
     },
     {

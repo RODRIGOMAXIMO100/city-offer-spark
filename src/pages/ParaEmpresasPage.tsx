@@ -20,6 +20,7 @@ const offerFields = [
 const counts = [
   "Cupom com código válido, dentro da validade",
   "O cliente avisa na hora de usar e você confirma com um toque, no WhatsApp ou no painel",
+  "O cliente diz que foi atendido: vale como uso, e você tem 48 horas para contestar com prova",
   "Usado uma vez só: depois de confirmado, o código não serve mais",
 ];
 const notCounts = [
@@ -36,7 +37,7 @@ const ParaEmpresasPage = () => (
   <div className="min-h-screen bg-background">
     <SEOHead
       title="Para empresas: cliente novo na loja, pague só pelo cupom usado"
-      description="Crie uma oferta, divulgadores da cidade espalham e o cliente chega com o cupom no WhatsApp. Sem mensalidade: 15% do preço por cupom usado, mínimo de R$ 3."
+      description="Crie uma oferta, divulgadores da cidade espalham e o cliente chega com o cupom no WhatsApp. Sem mensalidade: 12% do preço por cupom usado, mínimo de R$ 3."
       keywords={["cupom de desconto para loja", "atrair clientes", "divulgação local", "promoção no WhatsApp"]}
       canonicalUrl="/empresas"
     />

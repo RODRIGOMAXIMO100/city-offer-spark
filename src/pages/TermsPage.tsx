@@ -48,8 +48,10 @@ const sections: DocSection[] = [
     blocks: [
       {
         list: [
-          ["Taxa", "por cupom usado, a empresa paga **15% do preço com desconto da oferta, com mínimo de R$ 3**. A taxa de cada cupom fica definida no momento em que ele é emitido."],
-          ["Quando cobra", "só quando a empresa confirma o cupom (pelo WhatsApp ou no painel) e o cupom é usado. Visita, clique e cupom pego e não usado não são cobrados."],
+          ["Taxa", "por cupom usado, a empresa paga **12% do preço com desconto da oferta, com mínimo de R$ 3**. A taxa de cada cupom fica definida no momento em que ele é emitido."],
+          ["Quando cobra", "só quando o uso do cupom é confirmado. Visita, clique e cupom pego e não usado não são cobrados."],
+          ["Uso confirmado", "o uso vale quando a empresa toca em **Confirmar uso** (no painel ou no WhatsApp) **ou quando o cliente informa que foi atendido**. No segundo caso, a empresa tem **48 horas para contestar** pelo painel, explicando o que aconteceu e apresentando prova. Sem contestação no prazo, o uso é confirmado e cobrado."],
+          ["Contestação", "o Clilin analisa a contestação, os sinais de uso e o histórico das partes. Se a contestação for aceita, o cupom não é cobrado. Se for negada, o uso é confirmado e cobrado. Enquanto a análise acontece, nada é cobrado por aquele cupom."],
           ["Pré-pago", "a empresa coloca saldo no painel e cada cupom usado é descontado com **10% de desconto**. Sem saldo para o próximo cupom, as ofertas ficam pausadas para novos cupons. Os cupons já entregues continuam valendo."],
           ["Pós-pago", "quando combinado com o Clilin, os cupons usados no período entram numa fatura."],
           ["Oferta", "a empresa define o que é a promoção, os preços, as fotos, a validade da oferta e do cupom e o canal de atendimento. A empresa é obrigada a cumprir o desconto anunciado para quem apresentar um cupom válido."],
@@ -98,11 +100,14 @@ const sections: DocSection[] = [
         list: [
           "Pegar cupons com nome ou telefone falso, ou em nome de outras pessoas sem autorização.",
           "Confirmar cupom sem que o cliente tenha usado a oferta, ou combinar isso entre empresa e divulgador.",
+          "Deixar de confirmar, ou contestar, o uso de um cliente que foi de fato atendido, para não pagar a taxa.",
+          "Informar que foi atendido sem ter usado a oferta, ou usar pessoas de fora para gerar cupons e comissões.",
           "Usar robôs, automação ou mais de uma conta.",
           "Anunciar desconto falso ou enganoso.",
           "Tentar burlar ou testar os sistemas de segurança da plataforma.",
         ],
       },
+      "O Clilin acompanha sinais de uso para identificar fraude, como a resposta do cliente sobre o atendimento, a confirmação ou a falta de confirmação da empresa, contestações, aparelhos e números de WhatsApp repetidos e o padrão de cupons por divulgador e por loja.",
       "Quando há suspeita, o Clilin pode, conforme a gravidade:",
       {
         list: [
@@ -113,6 +118,7 @@ const sections: DocSection[] = [
           "Bloquear CPF, e-mail, chave Pix e dispositivos ligados à fraude.",
         ],
       },
+      "Uma empresa com usos repetidamente confirmados pelos clientes e não confirmados por ela, ou com contestações negadas de forma repetida, pode ter a conta suspensa. Para voltar, a empresa precisa demonstrar que não houve fraude.",
       "Você é avisado da decisão e pode pedir revisão por e-mail. Fraude comprovada pode ser comunicada às autoridades.",
     ],
   },

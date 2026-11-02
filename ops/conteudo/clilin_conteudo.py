@@ -134,7 +134,9 @@ REGRAS = """Você escreve o conteúdo do Instagram do Clilin (@clilin.oficial), 
 O QUE É O CLILIN
 - Plataforma de ofertas locais: negócios da cidade publicam promoções, divulgadores espalham e o cliente pega o cupom de graça, direto no WhatsApp.
 - Na hora de usar, o cliente toca em "Estou na loja" (no balcão) ou "Pedir online" (pedido pelo WhatsApp da loja), na mensagem do cupom no WhatsApp ou na página do cupom. A loja recebe o aviso na hora, no WhatsApp e no painel, e confirma o uso com um toque no botão "Confirmar uso", sem digitar código. A loja não recebe nada quando alguém só pega o cupom. Cada cupom vale uma vez.
-- A loja só paga pelo cupom usado: 15% do preço da oferta, mínimo de R$ 3. Sem mensalidade. Visita e cupom não usado não custam nada. Com saldo pré-pago, 10% de desconto.
+- A loja só paga pelo cupom usado: 12% do preço da oferta, mínimo de R$ 3. Sem mensalidade. Visita e cupom não usado não custam nada. Com saldo pré-pago, 10% de desconto.
+- O uso vale quando a loja confirma ou quando o cliente diz que foi atendido; nesse caso a loja tem 48 horas para contestar com prova. O Clilin confere sinais de uso para barrar fraude.
+- A ideia central para a loja: a primeira compra com cupom é a conquista de um cliente novo, não só uma venda. Quanto mais atrativa a oferta, mais gente nova entra na loja. Depois a loja atende bem e cria jeitos de o cliente voltar sem cupom (cartão fidelidade, pós-venda no WhatsApp, lista de clientes, mimo na próxima visita).
 - Divulgador: indica as ofertas da cidade pelo próprio link e ganha metade da taxa de cada cupom usado por quem veio do link dele, chegando a 70% conforme o nível. Saque por Pix a partir de R$ 100. Cadastro grátis, não precisa ter muitos seguidores.
 - Cliente: grátis, sem app e sem cadastro.
 - Ofertas separadas por cidade. O Clilin está começando por Belo Horizonte (MG): o cadastro de empresas e divulgadores está aberto em BH, e quem é de outra cidade faz o pré-cadastro. Pode falar de BH e dos bairros de BH. Site: clilin.com (ofertas em clilin.com/ofertas). O Clilin é um produto do Grupo MAXIMO.
@@ -175,11 +177,11 @@ Tipos de cena:
 - "gancho": abre o vídeo e prende nos 2 primeiros segundos. "texto": até 6 palavras grandes na tela. "destaque": 1 ou 2 palavras do texto para colorir. "rotulo": selo de até 4 palavras dizendo para quem é (ex.: "Para quem tem negócio").
 - "frase": a própria fala aparece grande na tela, palavra por palavra. "destaque": 1 ou 2 palavras da fala. "rotulo": opcional.
 - "celular": mostra o Clilin de verdade num celular. "tela" é uma destas: "ofertas" (cliente vendo as ofertas da cidade), "oferta" (cliente toca em Quero meu cupom e o código aparece), "whatsapp" (o cupom chegando no WhatsApp do cliente, com os botões Estou na loja e Pedir online), "confirmar" (o cliente toca em Estou na loja e a loja recebe o aviso no WhatsApp e confirma o uso com um toque), "divulgador" (divulgador copia o link da oferta e manda nos grupos). "texto": título de até 6 palavras acima do celular. "destaque": 1 ou 2 palavras do texto.
-- "numero": número grande animado. "valor": só o número; "prefixo" (ex.: "R$ ") e "sufixo" (ex.: "%"); "texto": até 10 palavras explicando; "rotulo": opcional. Só números verdadeiros do Clilin: 15% do preço por cupom usado, mínimo de R$ 3, 10% de desconto no pré-pago, 50% da taxa para o divulgador (até 70% conforme o nível), saque a partir de R$ 100.
+- "numero": número grande animado. "valor": só o número; "prefixo" (ex.: "R$ ") e "sufixo" (ex.: "%"); "texto": até 10 palavras explicando; "rotulo": opcional. Só números verdadeiros do Clilin: 12% do preço por cupom usado, mínimo de R$ 3, 10% de desconto no pré-pago, 50% da taxa para o divulgador (até 70% conforme o nível), saque a partir de R$ 100.
 - "lista": "texto": título de até 4 palavras; "itens": 2 a 4 itens de até 4 palavras cada.
 - "cta": a última cena. "texto": até 6 palavras; "destaque"; "url": "clilin.com"; "rotulo": "link na bio".
 Regras: 7 a 10 cenas. A 1ª é "gancho" e a última é "cta". Use 3 ou 4 cenas "celular" com telas diferentes que façam sentido para a pauta (empresas: oferta, whatsapp, confirmar; divulgadores: divulgador, oferta, whatsapp; clientes: ofertas, oferta, whatsapp). Varie a ordem e use pelo menos uma "frase".
-"fala": curta e natural de falar em voz alta (até 18 palavras por cena), somando 70 a 100 palavras no vídeo todo. Valores por extenso do jeito que se fala ("quinze por cento", "três reais"). O texto da tela combina com a fala, mas é mais curto.""",
+"fala": curta e natural de falar em voz alta (até 18 palavras por cena), somando 70 a 100 palavras no vídeo todo. Valores por extenso do jeito que se fala ("doze por cento", "três reais"). O texto da tela combina com a fala, mas é mais curto.""",
 }
 
 

@@ -19,7 +19,7 @@ const GROUPS: Group[] = [
     tone: "text-primary",
     faqs: [
       { q: "O que é o Clilin?", a: "Uma plataforma de ofertas locais. Negócios da cidade publicam promoções, divulgadores espalham e o cliente pega o cupom de graça, direto no WhatsApp. Na hora de usar, o cliente avisa a loja com um toque, a loja confirma e só paga pelo cupom usado." },
-      { q: "Quanto custa para usar?", a: "Para o cliente e para o divulgador, nada. Para a empresa, não tem mensalidade: ela paga 15% do preço da oferta por cupom usado, com mínimo de R$ 3. Com saldo pré-pago, sai 10% mais barato." },
+      { q: "Quanto custa para usar?", a: "Para o cliente e para o divulgador, nada. Para a empresa, não tem mensalidade: ela paga 12% do preço da oferta por cupom usado, com mínimo de R$ 3. Com saldo pré-pago, sai 10% mais barato." },
       { q: "Em quais cidades funciona?", a: "O Clilin está começando por Belo Horizonte. Em outras cidades, faça o pré-cadastro na hora de criar a conta: a gente chama quando abrir aí. Cada oferta é da cidade da loja e aparece para quem procura ofertas ali." },
       { q: "Preciso ter 18 anos?", a: "Para ter conta de empresa ou de divulgador, sim. Para pegar cupom, não precisa de conta." },
     ],
@@ -30,7 +30,7 @@ const GROUPS: Group[] = [
     tone: "text-primary",
     faqs: [
       { q: "Como pego um cupom?", a: "Em Ofertas, escolha a sua cidade e a oferta. Toque em \"Quero meu cupom\", informe nome e WhatsApp e o código de 8 letras aparece na hora. Ele também é enviado para o seu WhatsApp." },
-      { q: "Como uso o cupom?", a: "Na hora de usar, toque em Estou na loja (no balcão) ou em Pedir online (para pedir pelo WhatsApp da loja). Os botões estão na mensagem do cupom no WhatsApp e na página do cupom. A loja recebe o aviso na hora, confirma e aplica o desconto." },
+      { q: "Como uso o cupom?", a: "Na hora de usar, toque em Estou na loja (no balcão) ou em Pedir online (para pedir pelo WhatsApp da loja). Os botões estão na mensagem do cupom no WhatsApp e na página do cupom. A loja recebe o aviso na hora, confirma e aplica o desconto. Depois, diga na página do cupom se você foi atendido: isso ajuda a manter as ofertas justas." },
       { q: "O cupom tem validade?", a: "Tem. A validade aparece no cupom e é definida pela loja, nunca depois do fim da oferta. Cada cupom vale uma vez." },
       { q: "Quantos cupons posso pegar?", a: "Até 3 por dia no mesmo WhatsApp. Se você pedir de novo o cupom da mesma oferta, recebe o mesmo código enquanto ele for válido." },
     ],
@@ -42,7 +42,9 @@ const GROUPS: Group[] = [
     faqs: [
       { q: "Como crio uma oferta?", a: "Entre no painel, na aba Ofertas, e clique em criar. Informe o que é a promoção, o preço de antes e o com desconto, fotos, validade e, se atender por WhatsApp, o seu número." },
       { q: "Como confirmo o cupom do cliente?", a: "Com um toque. Quando o cliente toca em Estou na loja ou Pedir online, ele aparece na hora no painel, na aba Confirmar cupons, e no WhatsApp do seu cadastro, com o nome, o código e o botão Confirmar uso. Também dá para digitar o código no painel, encaminhar a mensagem do cliente ou mandar a foto da tela dele para o WhatsApp do Clilin. O sistema avisa se o cupom já foi usado, venceu ou é de outra loja." },
-      { q: "Como funciona a cobrança?", a: "Você coloca saldo no painel (por Pix) e cada cupom confirmado desconta a taxa: 15% do preço da oferta, mínimo de R$ 3, com 10% de desconto no pré-pago. Cupom pego e não usado não custa nada." },
+      { q: "E se o cliente disser que foi atendido e eu não confirmar?", a: "O uso vale como confirmado. Você tem 48 horas para contestar no painel, em Confirmar cupons, tocando em \"Não atendi este cliente\" e explicando o que aconteceu. Enquanto o Clilin analisa, nada é cobrado. Sem contestação no prazo, o uso é confirmado e cobrado." },
+      { q: "Por que oferecer um desconto forte?", a: "Porque a primeira compra é a conquista de um cliente novo. Quanto mais atrativa a oferta, mais gente nova entra na sua loja. Depois é atender bem para essa pessoa voltar sem cupom." },
+      { q: "Como funciona a cobrança?", a: "Você coloca saldo no painel (por Pix) e cada cupom confirmado desconta a taxa: 12% do preço da oferta, mínimo de R$ 3, com 10% de desconto no pré-pago. Cupom pego e não usado não custa nada." },
       { q: "E se o meu saldo acabar?", a: "As suas ofertas ficam pausadas para novos cupons até você colocar saldo de novo. Os cupons que já foram entregues continuam valendo." },
       { q: "Onde acompanho os resultados?", a: "No painel da empresa: quantas pessoas viram cada oferta, quantas pegaram o cupom e quantos cupons foram usados." },
       { q: "Quem divulga a minha oferta?", a: "Divulgadores da sua cidade e a própria busca de ofertas do Clilin. O divulgador só ganha quando o cliente dele usa o cupom na sua loja." },
@@ -54,8 +56,8 @@ const GROUPS: Group[] = [
     tone: "text-affiliate",
     faqs: [
       { q: "Como começo a divulgar?", a: "Crie sua conta como divulgador. No painel aparecem as ofertas da sua cidade, cada uma com o seu link. Mande o link nos grupos, no status e nas redes." },
-      { q: "Quanto eu ganho?", a: "Metade da taxa de cada cupom usado por quem veio pelo seu link, chegando a 70% conforme o seu nível. Numa oferta de R$ 39, a taxa é R$ 5,85 e você recebe cerca de R$ 2,90." },
-      { q: "Quando o dinheiro entra?", a: "Quando a loja confirma o cupom do cliente que veio pelo seu link. Você recebe uma notificação e o valor aparece no seu saldo." },
+      { q: "Quanto eu ganho?", a: "Metade da taxa de cada cupom usado por quem veio pelo seu link, chegando a 70% conforme o seu nível. Numa oferta de R$ 39, a taxa é R$ 4,68 e você recebe R$ 2,34." },
+      { q: "Quando o dinheiro entra?", a: "Quando o uso do cupom do cliente que veio pelo seu link é confirmado. Você recebe uma notificação e o valor aparece no seu saldo." },
       { q: "O que são os níveis?", a: "Quanto mais clientes você leva no mês, mais alto o seu nível: Bronze, Prata, Ouro, Platina e Diamante. Cada nível aumenta a sua comissão." },
       { q: "Preciso ter muitos seguidores?", a: "Não. O que conta é levar cliente de verdade até a loja." },
     ],
@@ -76,7 +78,7 @@ const GROUPS: Group[] = [
     faqs: [
       { q: "Posso ter mais de uma conta?", a: "Não. É uma conta de divulgador por CPF. Contas duplicadas são encerradas." },
       { q: "Esqueci minha senha. E agora?", a: "Na tela de entrar, clique em \"Esqueci minha senha\" e siga o link enviado para o seu e-mail." },
-      { q: "O que acontece se houver fraude?", a: "Cupom pego com telefone falso, validação sem cliente ou combinação entre loja e divulgador levam ao cancelamento da comissão e ao bloqueio da conta." },
+      { q: "O que acontece se houver fraude?", a: "O Clilin confere a resposta do cliente, a confirmação da loja, aparelhos e WhatsApp repetidos e o padrão de cada conta. Cupom com telefone falso, cliente que diz ter sido atendido sem ter ido, loja que deixa de confirmar cliente atendido ou combinação entre loja e divulgador levam ao cancelamento das comissões e à suspensão da conta." },
       { q: "Como apago meus dados?", a: "Escreva para contato@clilin.com com o assunto \"Privacidade\". Respondemos em até 15 dias." },
     ],
   },

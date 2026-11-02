@@ -8,8 +8,8 @@ import { Button } from "@/components/ui/button";
 const verification = [
   { icon: KeyRound, title: "Código único", text: "Cada cupom tem um código de 8 letras que só existe uma vez. Ele fica ligado à oferta, à loja e ao WhatsApp de quem pegou." },
   { icon: Clock, title: "Validade", text: "O cupom tem prazo para ser usado, definido pela loja e nunca depois do fim da oferta. Cupom vencido não passa." },
-  { icon: Store, title: "Confirmação pela loja", text: "Na hora de usar, o cliente toca em Estou na loja ou Pedir online. A loja recebe o aviso na hora, no WhatsApp e no painel, e confirma com um toque (ou digita o código). Só vale cupom da própria loja, e cada código vale uma vez: depois de confirmado, fica marcado como usado." },
-  { icon: ShieldCheck, title: "Proteção contra abuso", text: "Até 3 cupons por dia no mesmo WhatsApp e limite por aparelho. Telefone falso, validação sem cliente ou combinação entre loja e divulgador bloqueiam a conta." },
+  { icon: Store, title: "Confirmação do uso", text: "Na hora de usar, o cliente toca em Estou na loja ou Pedir online e a loja recebe o aviso na hora, no WhatsApp e no painel. O uso vale quando a loja confirma com um toque ou quando o cliente diz que foi atendido. Nesse caso, a loja tem 48 horas para contestar com prova. Cada código vale uma vez." },
+  { icon: ShieldCheck, title: "Proteção contra fraude", text: "Conferimos a resposta do cliente, a confirmação da loja, contestações, aparelhos e WhatsApp repetidos e o padrão de cupons de cada divulgador e de cada loja. Até 3 cupons por dia no mesmo WhatsApp. Loja que deixa de confirmar cliente atendido, cupom falso ou combinação entre loja e divulgador levam à suspensão da conta." },
 ];
 
 const never = [
@@ -47,7 +47,7 @@ export default function TransparencyPage() {
         <div className="max-w-5xl mx-auto px-4 sm:px-6">
           <h2 className="text-2xl sm:text-4xl font-display font-bold text-foreground mb-3">Para onde vai o dinheiro</h2>
           <p className="text-lg text-muted-foreground mb-8 max-w-3xl">
-            A loja paga só quando o cupom é usado: <strong className="text-foreground">15% do preço da oferta, com mínimo de R$ 3</strong>.
+            A loja paga só quando o cupom é usado: <strong className="text-foreground">12% do preço da oferta, com mínimo de R$ 3</strong>.
             Quando o cliente veio pelo link de um divulgador, a taxa é dividida assim:
           </p>
 
@@ -61,7 +61,7 @@ export default function TransparencyPage() {
             <div className="grid sm:grid-cols-2 gap-5 mt-6">
               <div>
                 <p className="font-display font-bold text-foreground text-lg">Metade vai para o divulgador</p>
-                <p className="text-muted-foreground">Chega a 70% conforme o nível dele no mês. Cai no saldo quando a loja confirma o cupom.</p>
+                <p className="text-muted-foreground">Chega a 70% conforme o nível dele no mês. Cai no saldo quando o uso do cupom é confirmado.</p>
               </div>
               <div>
                 <p className="font-display font-bold text-foreground text-lg">O resto mantém o Clilin</p>
@@ -73,8 +73,8 @@ export default function TransparencyPage() {
           <div className="mt-5 rounded-2xl bg-muted/50 p-5 sm:p-6">
             <p className="font-semibold text-foreground mb-1">Exemplo: pizza de R$ 39</p>
             <p className="text-muted-foreground">
-              A taxa do cupom usado é R$ 5,85. O divulgador que trouxe o cliente recebe cerca de R$ 2,90 e o Clilin fica com o resto.
-              Se a loja paga com saldo pré-pago, ela tem 10% de desconto e o cupom sai por R$ 5,27. O desconto sai da parte do Clilin, não do divulgador.
+              A taxa do cupom usado é R$ 4,68. O divulgador que trouxe o cliente recebe R$ 2,34 e o Clilin fica com o resto.
+              Se a loja paga com saldo pré-pago, ela tem 10% de desconto e o cupom sai por R$ 4,21. O desconto sai da parte do Clilin, não do divulgador.
             </p>
           </div>
         </div>

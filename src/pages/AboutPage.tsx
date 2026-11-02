@@ -9,7 +9,7 @@ import { LogoGraphic } from "@/components/brand/BrandLogo";
 const principles = [
   { icon: MapPin, title: "Perto de você", text: "Cada oferta é da cidade da loja. O Clilin existe para movimentar o comércio do lugar onde a gente vive." },
   { icon: BadgeCheck, title: "Cliente de verdade", text: "Cada cupom tem código único, validade e vale uma vez. Só conta quem chegou na loja." },
-  { icon: Scale, title: "Regra clara", text: "15% do preço por cupom usado, mínimo de R$ 3, e metade para quem indicou. Todo mundo sabe para onde vai cada real." },
+  { icon: Scale, title: "Regra clara", text: "12% do preço por cupom usado, mínimo de R$ 3, e metade para quem indicou. Todo mundo sabe para onde vai cada real." },
   { icon: ShieldCheck, title: "Só paga o que aconteceu", text: "Visita e cupom não usado não custam nada para a loja. Para o cliente, é sempre de graça." },
 ];
 
@@ -56,7 +56,7 @@ const AboutPage = () => {
               </span>
               <h3 className="text-xl font-display font-bold text-foreground mb-2">Para empresas</h3>
               <p className="text-muted-foreground mb-5">
-                Cliente novo na loja, pagando só pelo cupom usado: 15% do preço da oferta, mínimo de R$ 3. Sem mensalidade. O cliente avisa quando vai usar
+                Cliente novo na loja, pagando só pelo cupom usado: 12% do preço da oferta, mínimo de R$ 3. Sem mensalidade. O cliente avisa quando vai usar
                 e você confirma com um toque.
               </p>
               <Link to="/empresas" className="inline-flex items-center gap-2 font-semibold text-company hover:underline">

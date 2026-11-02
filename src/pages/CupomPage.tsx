@@ -21,6 +21,7 @@ interface Cupom {
   cliente: string;
   uso_canal: 'loja' | 'online' | null;
   uso_solicitado_em: string | null;
+  cliente_atendido: 'sim' | 'nao' | null;
   pedir_link: string | null;
 }
 
@@ -107,7 +108,8 @@ export default function CupomPage() {
                 <CupomAcoes
                   id={cupom.id}
                   lojaNome={cupom.loja}
-                  canalInicial={pedir && !aviso ? 'online' : null}
+                  canalInicial={pedir && !aviso ? 'online' : (cupom.uso_canal ?? null)}
+                  atendidoInicial={cupom.cliente_atendido ?? null}
                   pedirLinkInicial={cupom.pedir_link}
                 />
               )}

@@ -134,7 +134,7 @@ export function AdminCredits() {
       <div>
         <h2 className="text-2xl font-display font-bold text-foreground">Créditos das empresas</h2>
         <p className="text-sm text-muted-foreground">
-          Quando a empresa pagar por Pix, lance aqui o valor. O saldo paga os cupons usados na loja: 15% do preço da oferta, mínimo de R$ 3, com 10% de desconto no pré-pago.
+          Quando a empresa pagar por Pix, lance aqui o valor. O saldo paga os cupons usados na loja: 12% do preço da oferta, mínimo de R$ 3, com 10% de desconto no pré-pago.
         </p>
       </div>
 

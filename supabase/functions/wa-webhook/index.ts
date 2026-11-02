@@ -198,7 +198,7 @@ async function ofereceConfirmacao(admin: SupabaseClient, from: string, lojaId: s
 // ---------- confirma (botão do aviso ou da validação) ----------
 async function confirma(admin: SupabaseClient, from: string, lojaId: string, couponId: string) {
   const { data: redeemed } = await admin.from("coupons")
-    .update({ status: "REDEEMED", redeemed_at: new Date().toISOString(), redeemed_by_whatsapp: from })
+    .update({ status: "REDEEMED", redeemed_at: new Date().toISOString(), redeemed_by_whatsapp: from, confirmado_por: "loja" })
     .eq("id", couponId).eq("company_id", lojaId).eq("status", "ISSUED")
     .gt("expires_at", new Date().toISOString())
     .select("id, code, customer_phone, customer_name, offers(title)")
@@ -249,15 +249,33 @@ Deno.serve(async (req) => {
     const from = digits(msg.from);
     await admin.from("wa_messages").insert({ direction: "IN", phone: from, kind: msg.type, payload: msg });
 
-    // ---- cliente tocou em "Estou na loja" na mensagem do cupom ----
-    const payloadCliente: string = msg.type === "button" ? (msg.button?.payload || "") : "";
-    if (payloadCliente.startsWith("loja_")) {
-      const id = payloadCliente.slice(5);
+    // ---- cliente: "Estou na loja" (mensagem do cupom) e "Fui atendido / Não fui" (pergunta depois do uso) ----
+    const payloadCliente: string =
+      msg.type === "button" ? (msg.button?.payload || "")
+      : msg.type === "interactive" && msg.interactive?.type === "button_reply" ? (msg.interactive.button_reply?.id || "")
+      : "";
+    const doCliente = async (id: string) => {
       const { data: cp } = await admin.from("coupons").select("customer_phone").eq("id", id).maybeSingle();
       // só vale se quem tocou é o WhatsApp de quem pegou o cupom (DDD + 8 últimos dígitos)
       const a = digits(cp?.customer_phone || ""), b = from.replace(/^55/, "");
-      if (cp && a.slice(0, 2) === b.slice(0, 2) && a.slice(-8) === b.slice(-8)) {
-        await registraUso(admin, id, "loja", "whatsapp");
+      return !!cp && a.slice(0, 2) === b.slice(0, 2) && a.slice(-8) === b.slice(-8);
+    };
+    if (payloadCliente.startsWith("loja_")) {
+      const id = payloadCliente.slice(5);
+      if (await doCliente(id)) await registraUso(admin, id, "loja", "whatsapp");
+      return ok();
+    }
+    const resp = payloadCliente.match(/^atendido_(sim|nao)_([0-9a-f-]{36})$/i);
+    if (resp) {
+      const id = resp[2];
+      if (await doCliente(id)) {
+        const { data: c } = await admin.from("coupons").select("status, cliente_atendido, uso_solicitado_em").eq("id", id).maybeSingle();
+        if (c && c.status !== "REDEEMED" && !c.cliente_atendido && c.uso_solicitado_em) {
+          await admin.from("coupons").update({ cliente_atendido: resp[1] === "sim" ? "sim" : "nao", cliente_respondeu_em: new Date().toISOString() })
+            .eq("id", id).is("cliente_atendido", null);
+        }
+        // resposta curta dentro da janela de 24h (mensagem de serviço, sem custo)
+        await waText(from, resp[1] === "sim" ? "Obrigado por confirmar! Bom proveito." : "Sentimos muito. Obrigado por avisar, vamos verificar com a loja.");
       }
       return ok();
     }

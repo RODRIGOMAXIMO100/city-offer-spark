@@ -2,6 +2,8 @@
 //   POST { id, acao: "ver" }               -> dados do cupom
 //   POST { id, acao: "loja" | "online" }   -> cliente avisa que vai usar agora; a loja vê no painel
 //                                             e recebe 1 mensagem no WhatsApp com o botão Confirmar uso
+//   POST { id, acao: "atendido" | "nao_atendido" } -> cliente diz se foi atendido. "Fui atendido" vale como
+//                                             uso: a loja tem 48h para contestar, depois é confirmado sozinho.
 // O id do cupom (uuid) é o segredo do link: só quem recebeu o cupom tem. Sem login: verify_jwt = false.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
@@ -79,9 +81,25 @@ export async function registraUso(admin: any, id: string, canal: "loja" | "onlin
   return { ok: true, cupom: c, avisou };
 }
 
+// Cliente diz se foi atendido (página do cupom ou botão no WhatsApp). Usado pelo site e pelo wa-webhook.
+export async function respostaCliente(admin: any, id: string, atendido: boolean) {
+  const { data: c } = await admin.from("coupons")
+    .select("id, status, uso_solicitado_em, cliente_atendido, expires_at")
+    .eq("id", id).maybeSingle();
+  if (!c) return { erro: "Cupom não encontrado" };
+  if (c.status === "REDEEMED") return { ok: true, ja: true };
+  if (!c.uso_solicitado_em) return { erro: "Toque em Estou na loja ou Pedir online antes." };
+  if (c.cliente_atendido) return { ok: true, ja: true };
+  await admin.from("coupons").update({
+    cliente_atendido: atendido ? "sim" : "nao",
+    cliente_respondeu_em: new Date().toISOString(),
+  }).eq("id", id).is("cliente_atendido", null);
+  return { ok: true };
+}
+
 async function dados(admin: any, id: string) {
   const { data: c } = await admin.from("coupons")
-    .select("id, code, status, expires_at, redeemed_at, company_id, customer_name, uso_canal, uso_solicitado_em, offers(title, price_old, price_new, link_type, link_destination, city)")
+    .select("id, code, status, expires_at, redeemed_at, company_id, customer_name, uso_canal, uso_solicitado_em, cliente_atendido, offers(title, price_old, price_new, link_type, link_destination, city)")
     .eq("id", id).maybeSingle();
   if (!c) return null;
   const { data: loja } = await admin.from("profiles").select("name, telefone").eq("id", c.company_id).maybeSingle();
@@ -96,6 +114,7 @@ async function dados(admin: any, id: string) {
     loja: loja?.name || "Loja parceira",
     cliente: nomeCurto(c.customer_name),
     uso_canal: c.uso_canal, uso_solicitado_em: c.uso_solicitado_em,
+    cliente_atendido: c.cliente_atendido ?? null,
     pedir_link: wa ? `https://wa.me/${wa}?text=${encodeURIComponent(texto)}` : (o.link_destination && /^https?:\/\//.test(o.link_destination) ? o.link_destination : null),
   };
 }
@@ -108,9 +127,12 @@ Deno.serve(async (req) => {
     const id = String(body?.id ?? "").trim();
     const acao = String(body?.acao ?? "ver");
     if (!/^[0-9a-f-]{36}$/i.test(id)) return json({ error: "Cupom inválido" }, 400);
-    if (!["ver", "loja", "online"].includes(acao)) return json({ error: "Ação inválida" }, 400);
+    if (!["ver", "loja", "online", "atendido", "nao_atendido"].includes(acao)) return json({ error: "Ação inválida" }, 400);
     const admin = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
-    if (acao !== "ver") {
+    if (acao === "atendido" || acao === "nao_atendido") {
+      const r = await respostaCliente(admin, id, acao === "atendido");
+      if (r.erro) return json({ error: r.erro, cupom: await dados(admin, id) }, 409);
+    } else if (acao !== "ver") {
       const r = await registraUso(admin, id, acao as "loja" | "online", "site");
       if (r.erro && !r.cupom) return json({ error: r.erro }, 404);
       if (r.erro) return json({ error: r.erro, cupom: await dados(admin, id) }, 409);

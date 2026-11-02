@@ -52,7 +52,7 @@ export function ManualCreditsDialog({
             <Coins className="h-5 w-5 text-company" /> Comprar créditos
           </DialogTitle>
           <DialogDescription>
-            Seu saldo só é usado quando um cliente usa o cupom na sua loja: 15% do preço da oferta (mínimo de R$ 3), com 10% de desconto por ser pré-pago.
+            Seu saldo só é usado quando um cliente usa o cupom na sua loja: 12% do preço da oferta (mínimo de R$ 3), com 10% de desconto por ser pré-pago.
             Escolha o valor, fale com a gente no WhatsApp e pague por Pix. O saldo entra assim que o pagamento for confirmado, com aviso aqui no painel.
           </DialogDescription>
         </DialogHeader>

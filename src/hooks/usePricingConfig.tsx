@@ -5,7 +5,7 @@ import { supabase } from '@/integrations/supabase/client';
  * Fonte única da regra de cobrança.
  *
  * Antes disso, a taxa por resgate estava chumbada em dois lugares do frontend
- * (`Math.max(300, price_new * 100 * 0.15)`) enquanto o banco lia de
+ * (`Math.max(300, price_new * 100 * 0.12)`) enquanto o banco lia de
  * `pricing_config`. Se a taxa mudasse no banco, a tela mostrava um valor e a
  * empresa era cobrada outro. Agora tudo lê daqui.
  *
@@ -15,7 +15,7 @@ import { supabase } from '@/integrations/supabase/client';
  */
 
 export interface PricingConfig {
-  /** fração, ex.: 0.15 = 15% do preço promocional */
+  /** fração, ex.: 0.12 = 12% do preço promocional */
   fee_percent: number;
   /** piso da taxa, em centavos */
   fee_min_cents: number;
@@ -27,7 +27,7 @@ export interface PricingConfig {
 
 /** Espelha o que está em produção hoje. Só entra em cena se a leitura falhar. */
 export const PRICING_FALLBACK: PricingConfig = {
-  fee_percent: 0.15,
+  fee_percent: 0.12,
   fee_min_cents: 300,
   prepaid_discount: 0.10,
   redemption_affiliate_share: 0.50,
