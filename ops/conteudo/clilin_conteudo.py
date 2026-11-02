@@ -655,6 +655,30 @@ def espera_container(req, cid, limite=600):
     raise RuntimeError("container demorou demais")
 
 
+def carrossel_ig(req, ig, urls, cap, rodadas=4):
+    """Cria o container do carrossel no Instagram. A Meta às vezes devolve id "0" ou status ERROR
+    (código 2207032, "tente de novo") logo depois de subir as lâminas: espera e refaz do zero."""
+    for rodada in range(rodadas):
+        filhos = [req("POST", f"{ig}/media", {"image_url": u, "is_carousel_item": "true"})["id"] for u in urls]
+        for f in filhos:
+            espera_container(req, f, 120)
+        cid = "0"
+        for tent in range(5):
+            time.sleep(8 + tent * 6)
+            cid = str(req("POST", f"{ig}/media", {"media_type": "CAROUSEL", "children": ",".join(filhos), "caption": cap}).get("id") or "0")
+            if cid != "0":
+                break
+        if cid != "0":
+            try:
+                espera_container(req, cid, 180)
+                return cid
+            except RuntimeError as x:
+                log("carrossel recusado pela Meta:", limpa(x)[:120])
+        log(f"refazendo o carrossel do zero ({rodada + 2}/{rodadas})")
+        time.sleep(45)
+    raise RuntimeError("Meta não aceitou o carrossel depois de várias tentativas")
+
+
 def postar_item(item_id):
     e = env()
     c = ler(item_id)
@@ -666,20 +690,7 @@ def postar_item(item_id):
         imgs = sorted(f for f in os.listdir(pasta) if re.fullmatch(r"l\d+\.jpg", f))
         urls = publica_arquivos(item_id, imgs)
         if not est.get("instagram"):
-            filhos = [req("POST", f"{ig}/media", {"image_url": u, "is_carousel_item": "true"})["id"] for u in urls]
-            for f in filhos:
-                espera_container(req, f, 120)
-            # logo depois das lâminas a Meta às vezes devolve id "0" para o carrossel: espera e tenta de novo
-            cid = "0"
-            for tent in range(6):
-                time.sleep(6 + tent * 6)
-                cid = str(req("POST", f"{ig}/media", {"media_type": "CAROUSEL", "children": ",".join(filhos), "caption": cap}).get("id") or "0")
-                if cid != "0":
-                    break
-                log("carrossel ainda não aceito pela Meta, tentando de novo")
-            if cid == "0":
-                raise RuntimeError("Meta não criou o carrossel (id 0)")
-            espera_container(req, cid, 180)
+            cid = carrossel_ig(req, ig, urls, cap)
             mid = req("POST", f"{ig}/media_publish", {"creation_id": cid})["id"]
             link = req("GET", mid, {"fields": "permalink"}).get("permalink")
             est = marca(item_id, instagram=link or mid)
