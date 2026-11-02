@@ -15,7 +15,7 @@ interface SEOHeadProps {
 const BASE_URL = 'https://clilin.com';
 const DEFAULT_TITLE = 'Clilin - Ofertas da cidade com cupom no WhatsApp';
 const DEFAULT_DESCRIPTION = 'Ofertas dos negócios da sua cidade com cupom grátis no WhatsApp. A loja só paga quando o cupom é usado, e quem indica ganha por cliente.';
-const DEFAULT_OG_IMAGE = `${BASE_URL}/og-image.png`;
+const DEFAULT_OG_IMAGE = `${BASE_URL}/og-image.png?v=3cs`;
 
 export function SEOHead({
   title,
