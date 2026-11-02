@@ -43,7 +43,7 @@ export function AdminStatsCards({ stats }: AdminStatsCardsProps) {
           Financeiro
         </h3>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-          <Card className="hover:shadow-lg transition-shadow border-l-4 border-l-green-500">
+          <Card className="hover:shadow-lg transition-shadow border-l-4 border-l-success">
             <CardContent className="p-3">
               <div className="flex items-center justify-between">
                 <div>
@@ -54,7 +54,7 @@ export function AdminStatsCards({ stats }: AdminStatsCardsProps) {
               </div>
             </CardContent>
           </Card>
-          <Card className="hover:shadow-lg transition-shadow border-l-4 border-l-red-500">
+          <Card className="hover:shadow-lg transition-shadow border-l-4 border-l-destructive">
             <CardContent className="p-3">
               <div className="flex items-center justify-between">
                 <div>
@@ -65,7 +65,7 @@ export function AdminStatsCards({ stats }: AdminStatsCardsProps) {
               </div>
             </CardContent>
           </Card>
-          <Card className="hover:shadow-lg transition-shadow border-l-4 border-l-blue-500">
+          <Card className="hover:shadow-lg transition-shadow border-l-4 border-l-primary">
             <CardContent className="p-3">
               <div className="flex items-center justify-between">
                 <div>
@@ -78,7 +78,7 @@ export function AdminStatsCards({ stats }: AdminStatsCardsProps) {
               </div>
             </CardContent>
           </Card>
-          <Card className="hover:shadow-lg transition-shadow border-l-4 border-l-purple-500">
+          <Card className="hover:shadow-lg transition-shadow border-l-4 border-l-primary">
             <CardContent className="p-3">
               <div className="flex items-center justify-between">
                 <div>

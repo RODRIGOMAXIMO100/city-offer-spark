@@ -295,7 +295,8 @@ function AffiliateDashboardContent() {
         <div className="max-w-4xl mx-auto px-4 py-2 flex items-center justify-between gap-2">
           {/* Logo + Nome */}
           <div className="flex items-center gap-2 min-w-0">
-            <BrandLogo className="h-7 shrink-0" />
+            <BrandLogo variant="mark" className="h-7 shrink-0 sm:hidden" />
+            <BrandLogo className="h-7 shrink-0 hidden sm:block" />
             <span className="text-sm font-medium truncate max-w-[100px] sm:max-w-none">{profile?.name}</span>
           </div>
           
