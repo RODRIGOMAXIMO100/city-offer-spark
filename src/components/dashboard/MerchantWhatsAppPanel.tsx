@@ -7,7 +7,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Trash2, Phone, Plus, Info } from 'lucide-react';
+import { Loader2, Trash2, Phone, Plus, Info, BellRing } from 'lucide-react';
+import { Switch } from '@/components/ui/switch';
+import { CLILIN_WHATSAPP } from '@/lib/whatsapp';
 
 interface MerchantWhatsApp {
   id: string;
@@ -26,6 +28,34 @@ export default function MerchantWhatsAppPanel() {
   const [label, setLabel] = useState('');
   const [saving, setSaving] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [prefs, setPrefs] = useState<Record<string, unknown>>({});
+  const [aviso, setAviso] = useState(true);
+  const [salvandoAviso, setSalvandoAviso] = useState(false);
+
+  useEffect(() => {
+    if (!profile?.id) return;
+    supabase.from('profiles').select('preferences').eq('id', profile.id).maybeSingle().then(({ data }) => {
+      const p = ((data as any)?.preferences as Record<string, unknown>) || {};
+      setPrefs(p);
+      setAviso(p.aviso_cupom_whatsapp !== false);
+    });
+  }, [profile?.id]);
+
+  const trocaAviso = async (v: boolean) => {
+    if (!profile?.id) return;
+    setAviso(v);
+    setSalvandoAviso(true);
+    const novo = { ...prefs, aviso_cupom_whatsapp: v };
+    const { error } = await supabase.from('profiles').update({ preferences: novo } as any).eq('id', profile.id);
+    setSalvandoAviso(false);
+    if (error) {
+      setAviso(!v);
+      toast({ title: 'Não foi possível salvar', description: error.message, variant: 'destructive' });
+      return;
+    }
+    setPrefs(novo);
+    toast({ title: v ? 'Aviso ligado' : 'Aviso desligado' });
+  };
 
   const load = async () => {
     if (!profile?.id) return;
@@ -76,7 +106,7 @@ export default function MerchantWhatsAppPanel() {
     }
     setPhone('');
     setLabel('');
-    toast({ title: 'Número autorizado', description: 'Já pode resgatar cupons pelo WhatsApp.' });
+    toast({ title: 'Número autorizado', description: 'Esse número já pode confirmar cupons pelo WhatsApp.' });
     load();
   };
 
@@ -108,17 +138,43 @@ export default function MerchantWhatsAppPanel() {
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-lg">
           <Phone className="h-5 w-5 text-primary" />
-          WhatsApp autorizados a resgatar cupons
+          Confirmar cupons pelo WhatsApp
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="flex items-start gap-2 rounded-md bg-muted/50 p-3 text-sm text-muted-foreground">
           <Info className="h-4 w-4 mt-0.5 flex-shrink-0 text-primary" />
-          <p>
-            Cadastre aqui os números que sua equipe usa no balcão. Só esses números conseguem confirmar
-            um resgate de cupom pelo WhatsApp. Use apenas dígitos com DDI + DDD, ex:{' '}
-            <span className="font-mono font-semibold">5531999998888</span>.
-          </p>
+          <div className="space-y-1.5">
+            <p>
+              Quando alguém pega um cupom, avisamos no WhatsApp com o botão <strong>Confirmar uso</strong>. O cliente
+              chegou? Um toque e pronto, sem digitar código.
+            </p>
+            <p>
+              Também dá para mandar o código ou uma foto da tela do cliente para o WhatsApp do Clilin
+              {CLILIN_WHATSAPP ? (
+                <>
+                  {' '}(
+                  <a className="font-semibold text-primary underline" href={`https://wa.me/${CLILIN_WHATSAPP}`} target="_blank" rel="noopener noreferrer">
+                    abrir conversa
+                  </a>
+                  )
+                </>
+              ) : null}
+              . O WhatsApp do seu cadastro já vale. Cadastre abaixo outros números da equipe do balcão, só com dígitos,
+              DDI e DDD, ex: <span className="font-mono font-semibold">5531999998888</span>.
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center justify-between gap-4 rounded-xl border border-border p-4">
+          <div className="flex items-start gap-3">
+            <BellRing className="h-5 w-5 mt-0.5 text-primary flex-shrink-0" />
+            <div>
+              <p className="font-medium text-foreground">Avisar no WhatsApp a cada cupom pego</p>
+              <p className="text-sm text-muted-foreground">Com o botão Confirmar uso para quando o cliente chegar.</p>
+            </div>
+          </div>
+          <Switch checked={aviso} disabled={salvandoAviso} onCheckedChange={trocaAviso} aria-label="Avisar no WhatsApp a cada cupom pego" />
         </div>
 
         <form onSubmit={handleAdd} className="grid gap-3 sm:grid-cols-[1fr_1fr_auto] sm:items-end">

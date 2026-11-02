@@ -31,6 +31,20 @@ const templates = [
       },
     ],
   },
+  {
+    // aviso para a loja: alguém pegou um cupom; o botão confirma o uso quando o cliente chega
+    name: 'clilin_novo_cupom',
+    language: 'pt_BR',
+    category: 'UTILITY',
+    components: [
+      {
+        type: 'BODY',
+        text: 'Novo cupom da sua oferta *{{1}}*.\n\nCliente: *{{2}}*\nCódigo: *{{3}}*\nVálido até: {{4}}\n\nQuando o cliente chegar, toque em *Confirmar uso*.',
+        example: { body_text: [['Pizza grande + refri', 'Maria S.', 'CL8K4P2Q', '09/11/2026']] },
+      },
+      { type: 'BUTTONS', buttons: [{ type: 'QUICK_REPLY', text: 'Confirmar uso' }] },
+    ],
+  },
 ];
 
 Deno.serve(async (req) => {

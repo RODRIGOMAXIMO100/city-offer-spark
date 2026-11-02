@@ -835,8 +835,8 @@ function CompanyDashboardContent() {
           </TabsContent>
 
           <TabsContent value="coupons" className="mt-0 space-y-4 sm:space-y-6">
-            <RedeemCouponPanel />
             <MerchantWhatsAppPanel />
+            <RedeemCouponPanel />
           </TabsContent>
         </Tabs>
       </div>
