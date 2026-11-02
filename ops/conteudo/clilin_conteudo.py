@@ -655,7 +655,7 @@ def espera_container(req, cid, limite=600):
     raise RuntimeError("container demorou demais")
 
 
-def carrossel_ig(req, ig, urls, cap, rodadas=2):
+def carrossel_ig(req, ig, urls, cap, rodadas=1):
     """Cria o container do carrossel no Instagram. A Meta às vezes devolve id "0" ou status ERROR
     (código 2207032) logo depois de subir as lâminas: espera e refaz do zero.
     Enquanto o @clilin.oficial não estiver ligado à página do Facebook, a Meta recusa carrossel COM
@@ -669,8 +669,8 @@ def carrossel_ig(req, ig, urls, cap, rodadas=2):
         for f in filhos:
             espera_container(req, f, 120)
         cid = "0"
-        for tent in range(5):
-            time.sleep(8 + tent * 6)
+        for tent in range(3):
+            time.sleep(10 + tent * 10)
             dados = {"media_type": "CAROUSEL", "children": ",".join(filhos)}
             if not sem_legenda:
                 dados["caption"] = cap
