@@ -655,27 +655,36 @@ def espera_container(req, cid, limite=600):
     raise RuntimeError("container demorou demais")
 
 
-def carrossel_ig(req, ig, urls, cap, rodadas=4):
+def carrossel_ig(req, ig, urls, cap, rodadas=2):
     """Cria o container do carrossel no Instagram. A Meta às vezes devolve id "0" ou status ERROR
-    (código 2207032, "tente de novo") logo depois de subir as lâminas: espera e refaz do zero."""
-    for rodada in range(rodadas):
+    (código 2207032) logo depois de subir as lâminas: espera e refaz do zero.
+    Enquanto o @clilin.oficial não estiver ligado à página do Facebook, a Meta recusa carrossel COM
+    legenda (sem legenda passa). Nesse caso a última rodada sai sem legenda e a legenda vira o
+    primeiro comentário. Devolve (container, legenda_no_comentario)."""
+    for rodada in range(rodadas + 1):
+        sem_legenda = rodada == rodadas
+        if sem_legenda:
+            log("carrossel sem legenda (a legenda vai no primeiro comentário)")
         filhos = [req("POST", f"{ig}/media", {"image_url": u, "is_carousel_item": "true"})["id"] for u in urls]
         for f in filhos:
             espera_container(req, f, 120)
         cid = "0"
         for tent in range(5):
             time.sleep(8 + tent * 6)
-            cid = str(req("POST", f"{ig}/media", {"media_type": "CAROUSEL", "children": ",".join(filhos), "caption": cap}).get("id") or "0")
+            dados = {"media_type": "CAROUSEL", "children": ",".join(filhos)}
+            if not sem_legenda:
+                dados["caption"] = cap
+            cid = str(req("POST", f"{ig}/media", dados).get("id") or "0")
             if cid != "0":
                 break
         if cid != "0":
             try:
                 espera_container(req, cid, 180)
-                return cid
+                return cid, sem_legenda
             except RuntimeError as x:
                 log("carrossel recusado pela Meta:", limpa(x)[:120])
-        log(f"refazendo o carrossel do zero ({rodada + 2}/{rodadas})")
-        time.sleep(45)
+        if rodada < rodadas:
+            time.sleep(30)
     raise RuntimeError("Meta não aceitou o carrossel depois de várias tentativas")
 
 
@@ -690,8 +699,13 @@ def postar_item(item_id):
         imgs = sorted(f for f in os.listdir(pasta) if re.fullmatch(r"l\d+\.jpg", f))
         urls = publica_arquivos(item_id, imgs)
         if not est.get("instagram"):
-            cid = carrossel_ig(req, ig, urls, cap)
+            cid, comentario = carrossel_ig(req, ig, urls, cap)
             mid = req("POST", f"{ig}/media_publish", {"creation_id": cid})["id"]
+            if comentario:
+                try:
+                    req("POST", f"{mid}/comments", {"message": cap})
+                except RuntimeError as x:
+                    log("não deu para comentar a legenda:", limpa(x)[:120])
             link = req("GET", mid, {"fields": "permalink"}).get("permalink")
             est = marca(item_id, instagram=link or mid)
             log("INSTAGRAM OK", link)
