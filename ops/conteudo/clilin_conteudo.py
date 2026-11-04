@@ -693,6 +693,54 @@ def carrossel_ig(req, ig, urls, cap, rodadas=1):
     raise RuntimeError("Meta não aceitou o carrossel depois de várias tentativas")
 
 
+def ja_publicado(req, ig, c, tipo, desde):
+    """Procura no Instagram um post deste item feito depois de `desde` (proteção contra post repetido:
+    a Meta às vezes publica e mesmo assim devolve erro na hora de buscar o link)."""
+    cap = legenda(c)[:60].strip()
+    alvo = "CAROUSEL_ALBUM" if tipo == "carrossel" else "VIDEO"
+    try:
+        lst = req("GET", f"{ig}/media", {"fields": "id,timestamp,caption,permalink,media_type", "limit": 15}).get("data", [])
+    except RuntimeError as x:
+        log("não deu para conferir posts recentes:", limpa(x)[:120])
+        raise
+    for m in lst:
+        try:
+            ts = datetime.datetime.strptime(m["timestamp"], "%Y-%m-%dT%H:%M:%S%z")
+        except (KeyError, ValueError):
+            continue
+        if ts < desde or m.get("media_type") not in (alvo, "REELS"):
+            continue
+        texto = (m.get("caption") or "")[:60].strip()
+        if not texto or texto == cap:
+            return m["id"], m.get("permalink") or m["id"]
+    return None
+
+
+def link_ig(req, mid):
+    """Link do post. Logo depois de publicar a Meta às vezes ainda não responde: tenta algumas vezes e,
+    se não der, fica o id (o post já está no ar)."""
+    for k in range(4):
+        try:
+            return req("GET", mid, {"fields": "permalink"}).get("permalink") or mid
+        except RuntimeError:
+            time.sleep(5 + 5 * k)
+    return mid
+
+
+def adota_publicado(req, ig, item_id, c, est):
+    """Se uma tentativa anterior já publicou (e deu erro depois), grava o post em vez de postar de novo."""
+    if not (est.get("publicando_em") or est.get("tentativas")):
+        return est
+    desde = datetime.datetime.fromisoformat(est.get("publicando_em") or c.get("criado"))
+    if desde.tzinfo is None:
+        desde = desde.replace(tzinfo=agora().tzinfo)
+    achou = ja_publicado(req, ig, c, c["tipo"], desde - datetime.timedelta(minutes=2))
+    if achou:
+        log("já estava publicado no Instagram, não posta de novo:", achou[1])
+        return marca(item_id, instagram=achou[1])
+    return est
+
+
 def postar_item(item_id):
     e = env()
     c = ler(item_id)
@@ -704,16 +752,19 @@ def postar_item(item_id):
         imgs = sorted(f for f in os.listdir(pasta) if re.fullmatch(r"l\d+\.jpg", f))
         urls = publica_arquivos(item_id, imgs)
         if not est.get("instagram"):
+            est = adota_publicado(req, ig, item_id, c, est)
+        if not est.get("instagram"):
             cid, comentario = carrossel_ig(req, ig, urls, cap)
+            est = marca(item_id, publicando_em=agora().isoformat(timespec="seconds"))
             mid = req("POST", f"{ig}/media_publish", {"creation_id": cid})["id"]
+            est = marca(item_id, instagram=mid)  # grava já: nada depois daqui pode fazer postar de novo
             if comentario:
                 try:
                     req("POST", f"{mid}/comments", {"message": cap})
                 except RuntimeError as x:
                     log("não deu para comentar a legenda:", limpa(x)[:120])
-            link = req("GET", mid, {"fields": "permalink"}).get("permalink")
-            est = marca(item_id, instagram=link or mid)
-            log("INSTAGRAM OK", link)
+            est = marca(item_id, instagram=link_ig(req, mid))
+            log("INSTAGRAM OK", est["instagram"])
         pid, ptok = pagina_fb(e, req)
         if pid and not est.get("facebook"):
             fotos = [req("POST", f"{pid}/photos", {"url": u, "published": "false"}, token=ptok)["id"] for u in urls]
@@ -721,20 +772,27 @@ def postar_item(item_id):
             for k, f in enumerate(fotos):
                 dados[f"attached_media[{k}]"] = json.dumps({"media_fbid": f})
             post = req("POST", f"{pid}/feed", dados, token=ptok)["id"]
-            est = marca(item_id, facebook=req("GET", post, {"fields": "permalink_url"}, token=ptok).get("permalink_url") or post)
+            est = marca(item_id, facebook=post)
+            try:
+                est = marca(item_id, facebook=req("GET", post, {"fields": "permalink_url"}, token=ptok).get("permalink_url") or post)
+            except RuntimeError:
+                pass
             log("FACEBOOK OK", est["facebook"])
         elif not pid:
             log("página do Facebook do Clilin ainda não ligada: só Instagram")
     else:
         (vurl,) = publica_arquivos(item_id, ["reel.mp4"])
         if not est.get("instagram"):
+            est = adota_publicado(req, ig, item_id, c, est)
+        if not est.get("instagram"):
             cid = req("POST", f"{ig}/media", {"media_type": "REELS", "video_url": vurl, "caption": cap,
                                                "share_to_feed": "true", "thumb_offset": "900"})["id"]
             espera_container(req, cid, 900)
+            est = marca(item_id, publicando_em=agora().isoformat(timespec="seconds"))
             mid = req("POST", f"{ig}/media_publish", {"creation_id": cid})["id"]
-            link = req("GET", mid, {"fields": "permalink"}).get("permalink")
-            est = marca(item_id, instagram=link or mid)
-            log("INSTAGRAM OK", link)
+            est = marca(item_id, instagram=mid)  # grava já: nada depois daqui pode fazer postar de novo
+            est = marca(item_id, instagram=link_ig(req, mid))
+            log("INSTAGRAM OK", est["instagram"])
         pid, ptok = pagina_fb(e, req)
         if pid and not est.get("facebook"):
             v = req("POST", f"{pid}/videos", {"file_url": vurl, "description": cap}, token=ptok)
