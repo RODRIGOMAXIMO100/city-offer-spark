@@ -410,14 +410,18 @@ def lamina_capa(l, estilo, total):
     lg = logo("logo_branco", 74)
     im.alpha_composite(lg, (84, 84))
     d.rounded_rectangle([84, 230, 84 + 16, 230 + 120], radius=8, fill=LARANJA if c2 != LARANJA else BRANCO)
-    f, ls = cabe(d, l["titulo"].upper(), "Unbounded", 900, W - 190, 6, 112, 62)
+    # o bloco (título + texto) não pode encostar no "arraste" lá embaixo: diminui a fonte se precisar
+    for t_max, x_lin in ((112, 4), (96, 3), (84, 3), (72, 3)):
+        f, ls = cabe(d, l["titulo"].upper(), "Unbounded", 900, W - 190, 6, t_max, 62)
+        ft, lt = cabe(d, l["texto"], "Onest", 500, W - 220, x_lin, 46, 34)
+        lh = int(f.size * 1.08)
+        if 230 + len(ls) * lh + 40 + len(lt) * int(ft.size * 1.32) <= H - 190:
+            break
     y = 230
-    lh = int(f.size * 1.08)
     for ln in ls:
         d.text((126, y), ln, font=f, fill=BRANCO)
         y += lh
     y += 40
-    ft, lt = cabe(d, l["texto"], "Onest", 500, W - 220, 4, 46, 34)
     for ln in lt:
         d.text((126, y), ln, font=ft, fill=(255, 255, 255, 235))
         y += int(ft.size * 1.32)
@@ -471,26 +475,38 @@ def lamina_meio(l, pag, total, estilo):
 
 def lamina_fim(l, total, estilo):
     im = gradiente(W, H, ESCURO, VIOLETA).convert("RGBA")
+    d = ImageDraw.Draw(im)
+    # o botão fica logo abaixo do texto; o bloco inteiro (título + texto + botão) cabe acima do logo.
+    # Se o texto for grande, a fonte diminui e o bloco sobe (antes o texto passava por baixo do botão).
+    bot_h, gap_bot, limite = 110, 56, H - 190
+    for t_max, x_max, x_min in ((84, 44, 32), (72, 38, 30), (64, 34, 28)):
+        f, ls = cabe(d, l["titulo"], "Unbounded", 800, W - 200, 3, t_max, 52)
+        ft, lt = cabe(d, l["texto"], "Onest", 500, W - 220, 3, x_max, x_min)
+        lh_t, lh_x = int(f.size * 1.14), int(ft.size * 1.38)
+        altura = len(ls) * lh_t + 30 + len(lt) * lh_x + gap_bot + bot_h
+        if 560 + altura <= limite or 470 + altura <= limite:
+            break
+    y = max(470, min(560, limite - altura))
+    # símbolo acima do bloco
     camada = Image.new("RGBA", (W, H), (0, 0, 0, 0))
-    arcos(ImageDraw.Draw(camada), W // 2 - 40, 330, 9.5, [VIOLETA + (255,), ROSA + (255,), LARANJA + (255,)], 34)
+    esc = 9.5 if y >= 540 else 8.0
+    arcos(ImageDraw.Draw(camada), W // 2 - 40, y - 230 if esc == 9.5 else y - 200, esc,
+          [VIOLETA + (255,), ROSA + (255,), LARANJA + (255,)], 34 if esc == 9.5 else 30)
     im.alpha_composite(camada)
     d = ImageDraw.Draw(im)
-    y = 560
-    f, ls = cabe(d, l["titulo"], "Unbounded", 800, W - 200, 3, 84, 52)
     for ln in ls:
         d.text(((W - d.textlength(ln, font=f)) / 2, y), ln, font=f, fill=BRANCO)
-        y += int(f.size * 1.14)
+        y += lh_t
     y += 30
-    ft, lt = cabe(d, l["texto"], "Onest", 500, W - 220, 4, 44, 32)
     for ln in lt:
         d.text(((W - d.textlength(ln, font=ft)) / 2, y), ln, font=ft, fill=(236, 230, 255))
-        y += int(ft.size * 1.38)
-    # botão do site
+        y += lh_x
+    # botão do site, logo abaixo do texto
     fb = titulo_f(48, 800)
     tx = "clilin.com"
     tw = d.textlength(tx, font=fb)
-    bx, by = (W - tw) / 2 - 56, H - 330
-    botao = gradiente(int(tw + 112), 110, ROSA, LARANJA).convert("RGBA")
+    bx, by = (W - tw) / 2 - 56, int(y + gap_bot - 10)
+    botao = gradiente(int(tw + 112), bot_h, ROSA, LARANJA).convert("RGBA")
     m = Image.new("L", botao.size, 0)
     ImageDraw.Draw(m).rounded_rectangle([0, 0, botao.width - 1, botao.height - 1], radius=55, fill=255)
     im.paste(botao, (int(bx), by), m)
