@@ -648,19 +648,19 @@ def espera_container(req, cid, limite=600):
         except RuntimeError as x:
             # logo depois de criado, o container às vezes ainda não responde (subcode 33)
             falhas += 1
-            if falhas > 8 or "Unsupported get" not in str(x):
+            if falhas > 6 or "Unsupported get" not in str(x):
                 raise
-            time.sleep(8)
+            time.sleep(15)
             continue
         if st == "FINISHED":
             return
         if st in ("ERROR", "EXPIRED"):
             raise RuntimeError(f"container {st}")
-        time.sleep(8)
+        time.sleep(15)
     raise RuntimeError("container demorou demais")
 
 
-def carrossel_ig(req, ig, urls, cap, rodadas=1):
+def carrossel_ig(req, ig, urls, cap, rodadas=0):
     """Cria o container do carrossel no Instagram. A Meta às vezes devolve id "0" ou status ERROR
     (código 2207032) logo depois de subir as lâminas: espera e refaz do zero.
     Enquanto o @clilin.oficial não estiver ligado à página do Facebook, a Meta recusa carrossel COM
@@ -669,6 +669,8 @@ def carrossel_ig(req, ig, urls, cap, rodadas=1):
     for rodada in range(rodadas + 1):
         sem_legenda = rodada == rodadas
         if sem_legenda:
+            # no @clilin.oficial a Meta nunca aceitou carrossel com legenda: vai direto sem legenda
+            # (economiza chamadas da API, que tem limite por hora)
             log("carrossel sem legenda (a legenda vai no primeiro comentário)")
         filhos = [req("POST", f"{ig}/media", {"image_url": u, "is_carousel_item": "true"})["id"] for u in urls]
         for f in filhos:
@@ -716,10 +718,30 @@ def ja_publicado(req, ig, c, tipo, desde):
     return None
 
 
+def publica_ig(req, ig, item_id, c, cid):
+    """media_publish. A Meta às vezes publica e mesmo assim devolve erro (limite de chamadas, bloqueio
+    temporário): nesse caso confere se o post foi ao ar antes de dar erro."""
+    try:
+        return req("POST", f"{ig}/media_publish", {"creation_id": cid})["id"]
+    except RuntimeError:
+        time.sleep(20)
+        desde = datetime.datetime.fromisoformat(estado(item_id)["publicando_em"]) - datetime.timedelta(minutes=2)
+        try:
+            achou = ja_publicado(req, ig, c, c["tipo"], desde)
+        except RuntimeError:
+            achou = None
+        if achou:
+            log("a Meta deu erro mas o post foi ao ar:", achou[1])
+            return achou[1]
+        raise
+
+
 def link_ig(req, mid):
     """Link do post. Logo depois de publicar a Meta às vezes ainda não responde: tenta algumas vezes e,
     se não der, fica o id (o post já está no ar)."""
-    for k in range(4):
+    if str(mid).startswith("http"):
+        return mid
+    for k in range(3):
         try:
             return req("GET", mid, {"fields": "permalink"}).get("permalink") or mid
         except RuntimeError:
@@ -756,9 +778,9 @@ def postar_item(item_id):
         if not est.get("instagram"):
             cid, comentario = carrossel_ig(req, ig, urls, cap)
             est = marca(item_id, publicando_em=agora().isoformat(timespec="seconds"))
-            mid = req("POST", f"{ig}/media_publish", {"creation_id": cid})["id"]
+            mid = publica_ig(req, ig, item_id, c, cid)
             est = marca(item_id, instagram=mid)  # grava já: nada depois daqui pode fazer postar de novo
-            if comentario:
+            if comentario and not str(mid).startswith("http"):
                 try:
                     req("POST", f"{mid}/comments", {"message": cap})
                 except RuntimeError as x:
@@ -789,7 +811,7 @@ def postar_item(item_id):
                                                "share_to_feed": "true", "thumb_offset": "900"})["id"]
             espera_container(req, cid, 900)
             est = marca(item_id, publicando_em=agora().isoformat(timespec="seconds"))
-            mid = req("POST", f"{ig}/media_publish", {"creation_id": cid})["id"]
+            mid = publica_ig(req, ig, item_id, c, cid)
             est = marca(item_id, instagram=mid)  # grava já: nada depois daqui pode fazer postar de novo
             est = marca(item_id, instagram=link_ig(req, mid))
             log("INSTAGRAM OK", est["instagram"])
